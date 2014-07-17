@@ -20,10 +20,12 @@ function drawChart() {
 	  
 function drawVisualization() {
 	// Create and populate a data table.
+    gData = new google.visualization.DataTable();
 	var now = new Date();
 	var start = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 	var end = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-	gData = getInitialData(start, end);
+    loadRange(start, end);
+
 		
 	// specify options
 	var options = {
@@ -54,4 +56,20 @@ function drawVisualization() {
 	onRangeChange();
 	
 	drawChart();
+}
+
+function handleServiceResponse(response) {
+    if (response.isError()) {
+        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+    }
+    gData = response.getDataTable();
+    console.log(gData);
+    gTimeline.draw(gData);
+}
+
+
+function loadRange(start, end) {
+    var query = new google.visualization.Query('datatable?start=' + start.getTime() + '&end=' + end.getTime());
+    query.send(handleServiceResponse);
 }
