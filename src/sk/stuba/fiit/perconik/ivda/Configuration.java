@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -18,26 +19,36 @@ import java.util.Map;
 
 
 @XmlRootElement
-public class Configuration implements Serializable {
+public final class Configuration implements Serializable {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
     private static JAXBContext context = null;
     private static Configuration instance = null;
 
     private static final String FILENAME = "configuration.xml";
-    public static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
+    private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
     private static final String CONFIG_DIR;
 
     private Map<String, String> mapa = new HashMap<String, String>();
-    private String url = "";
+    private String uacaLink;
+
 
     static {
+        // Load conf dir
+        CONFIG_DIR = System.getProperty("config.dir", System.getProperty("user.dir") + File.separator + "conf");
+
+        // Prepare log4j
+        String log4jLoggingPropFile = new File(CONFIG_DIR,
+                LOGGING_PROPERTIES_FILE).getAbsolutePath();
+        PropertyConfigurator.configureAndWatch(
+                log4jLoggingPropFile,
+                30000);
+
         try {
             context = JAXBContext.newInstance(Configuration.class);
         } catch (JAXBException ex) {
             logger.log(Level.ERROR, null, ex);
         }
-        CONFIG_DIR = System.getProperty("config.dir");
     }
 
     private Configuration() {
@@ -101,5 +112,13 @@ public class Configuration implements Serializable {
             result = ToStringBuilder.reflectionToString(this);
         }
         return result;
+    }
+
+    public String getUacaLink() {
+        return uacaLink;
+    }
+
+    public void setUacaLink(String uacaLink) {
+        this.uacaLink = uacaLink;
     }
 }

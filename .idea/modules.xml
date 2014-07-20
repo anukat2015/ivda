@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../perconik/com.gratex.perconik.services/com.gratex.perconik.services.iml" filepath="$PROJECT_DIR$/../perconik/com.gratex.perconik.services/com.gratex.perconik.services.iml" />
       <module fileurl="file://$PROJECT_DIR$/sk.stuba.fiit.perconik.ivda.iml" filepath="$PROJECT_DIR$/sk.stuba.fiit.perconik.ivda.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../perconik-uaca/useractivity.app/useractivity.app.iml" filepath="$PROJECT_DIR$/../perconik-uaca/useractivity.app/useractivity.app.iml" />
     </modules>
   </component>
 </project>

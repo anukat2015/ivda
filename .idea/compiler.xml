@@ -24,9 +24,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="com.gratex.perconik.services" />
         <module name="diplomovka" />
-        <module name="sk.stuba.fiit.perconik.ivda" />
         <module name="sk.stuba.fiit.perconik.visualize" />
+        <module name="useractivity.app" />
+      </profile>
+      <profile default="false" name="Annotation profile for perconik.update" enabled="true">
+        <sourceOutputDir name="update\generated-sources\annotations" />
+        <sourceTestOutputDir name="update\generated-test-sources\test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
   </component>
