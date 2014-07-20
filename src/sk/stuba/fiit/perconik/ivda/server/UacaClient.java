@@ -2,8 +2,11 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import sk.stuba.fiit.perconik.ivda.Configuration;
+import sk.stuba.fiit.perconik.ivda.deserializers.JacksonContextResolver;
 import sk.stuba.fiit.perconik.ivda.dto.PagedResponse;
+import sk.stuba.fiit.perconik.ivda.dto.SearchResponse;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -21,11 +24,15 @@ import java.net.URISyntaxException;
 public class UacaClient {
     private static final Logger logger = Logger.getLogger(UacaClient.class.getName());
 
-    private Client client = ClientBuilder.newClient();
+    private Client client;
     private URI destination;
 
     public UacaClient() {
-        client = ClientBuilder.newClient();
+        client = ClientBuilder.newBuilder()
+                .register(JacksonJsonProvider.class)
+                .register(JacksonContextResolver.class)
+                .build();
+
         String url = Configuration.getInstance().getUacaLink();
         try {
             destination = new URI(url);
@@ -45,7 +52,6 @@ public class UacaClient {
             if (status != Response.Status.Family.SUCCESSFUL) {
                 logger.error("UacaClient error");
             }
-            logger.info(response.readEntity(String.class));
             return response.readEntity(aClass);
         } finally {
             response.close();
@@ -58,11 +64,10 @@ public class UacaClient {
 
     public PagedResponse<EventDto> getUserActivity() {
         UriBuilder builder = getDestination();
+        builder.path("useractivity");
         builder.queryParam("timefrom", "2014-04-16T12:00Z");
         builder.queryParam("page", 1);
         builder.queryParam("pagesize", 10);
-        class SearchResponse extends PagedResponse<EventDto> {
-        }
         return (PagedResponse<EventDto>) synchronizedRequest(builder.build(), SearchResponse.class);
     }
 

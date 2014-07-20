@@ -65,3 +65,123 @@
    at System.Web.HttpApplication.ExecuteStep(IExecutionStep step, Boolean& completedSynchronously)
 --><!-- 
 This error page might contain sensitive information because ASP.NET is configured to show verbose error messages using &lt;customErrors mode="Off"/&gt;. Consider using &lt;customErrors mode="On"/&gt; or &lt;customErrors mode="RemoteOnly"/&gt; in production environments.-->
+2014-07-20 18:27:19,169: main INFO  ivda.Configuration - Configuratio file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:27:19,224: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:29:19,596: main INFO  server.UacaClient - {"ResultSet":[{"EventId":"1b3647cb-43a7-4d63-8943-fe106c299a05","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T11:13:42.847Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"taskhost","Pid":4792}],"KilledProcesses":[{"Name":"SearchProtocolHost","Pid":4148},{"Name":"SearchFilterHost","Pid":4928},{"Name":"taskeng","Pid":1484},{"Name":"sppsvc","Pid":4176},{"Name":"SearchProtocolHost","Pid":4328}]},{"EventId":"3007fb5c-c8c2-44ff-8b69-c228991d85fc","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T11:08:42.843Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"svchost","Pid":4232},{"Name":"LMS","Pid":5008},{"Name":"daemonu","Pid":1300},{"Name":"svchost","Pid":408},{"Name":"UNS","Pid":5032},{"Name":"TOTALCMD","Pid":4912},{"Name":"SearchProtocolHost","Pid":4148},{"Name":"SUService","Pid":4408},{"Name":"SearchIndexer","Pid":4156},{"Name":"SearchFilterHost","Pid":4928},{"Name":"taskeng","Pid":1484},{"Name":"sppsvc","Pid":4176},{"Name":"MSOSYNC","Pid":4964},{"Name":"DZSVC64","Pid":2404},{"Name":"SearchProtocolHost","Pid":4328}],"KilledProcesses":[{"Name":"PIconStartup","Pid":3104},{"Name":"audiodg","Pid":1064},{"Name":"userinit","Pid":3372},{"Name":"reader_sl","Pid":4016},{"Name":"svchost","Pid":1976},{"Name":"Updater","Pid":2392},{"Name":"HyperW7Svc64","Pid":864},{"Name":"TOTALCMD","Pid":4320},{"Name":"igfxsrvc","Pid":3816},{"Name":"taskeng","Pid":1780}]},{"EventId":"911877c8-64d4-4984-843c-5a866625ca16","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T11:03:42.792Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"winlogon","Pid":768},{"Name":"svchost","Pid":512},{"Name":"System","Pid":4},{"Name":"PresentationFontCache","Pid":2052},{"Name":"lsass","Pid":648},{"Name":"btwdins","Pid":1800},{"Name":"RegSrvc","Pid":2312},{"Name":"WmiPrvSE","Pid":2568},{"Name":"rundll32","Pid":3848},{"Name":"svchost","Pid":1164},{"Name":"CamMute","Pid":2188},{"Name":"DLG","Pid":3980},{"Name":"lsm","Pid":656},{"Name":"TpScrex","Pid":2960},{"Name":"svchost","Pid":2452},{"Name":"svchost","Pid":1436},{"Name":"TPHKSVC","Pid":1696},{"Name":"CxAudMsg64","Pid":1824},{"Name":"hkcmd","Pid":3744},{"Name":"PIconStartup","Pid":3104},{"Name":"SynTPLpr","Pid":2976},{"Name":"svchost","Pid":804},{"Name":"nvvsvc","Pid":932},{"Name":"micmute","Pid":2212},{"Name":"nusb3mon","Pid":3108},{"Name":"audiodg","Pid":1064},{"Name":"WUDFHost","Pid":1324},{"Name":"userinit","Pid":3372},{"Name":"explorer","Pid":3500},{"Name":"igfxpers","Pid":3756},{"Name":"jusched","Pid":2988},{"Name":"EvtEng","Pid":1968},{"Name":"reader_sl","Pid":4016},{"Name":"SynTPHelper","Pid":3892},{"Name":"svchost","Pid":1976},{"Name":"WUDFHost","Pid":2872},{"Name":"TpKnrres","Pid":3768},{"Name":"TPKNRSVC","Pid":2236},{"Name":"smss","Pid":320},{"Name":"wininit","Pid":576},{"Name":"SASrv","Pid":2368},{"Name":"CTAudSvc","Pid":1092},{"Name":"armsvc","Pid":1732},{"Name":"rundll32","Pid":2756},{"Name":"dwm","Pid":3396},{"Name":"csrss","Pid":584},{"Name":"tphkload","Pid":1608},{"Name":"SynTPEnh","Pid":3656},{"Name":"rundll32","Pid":3784},{"Name":"NvXDSync","Pid":1228},{"Name":"svchost","Pid":976},{"Name":"lvvsst","Pid":2260},{"Name":"virtscrl","Pid":2772},{"Name":"csrss","Pid":472},{"Name":"svchost","Pid":2136},{"Name":"Updater","Pid":2392},{"Name":"svchost","Pid":476},{"Name":"svchost","Pid":2012},{"Name":"TpShocks","Pid":3676},{"Name":"HyperW7Svc64","Pid":864},{"Name":"nvvsvc","Pid":1248},{"Name":"unsecapp","Pid":2656},{"Name":"TOTALCMD","Pid":4320},{"Name":"svchost","Pid":356},{"Name":"wlanext","Pid":1636},{"Name":"fmapp","Pid":3684},{"Name":"BTTray","Pid":3940},{"Name":"java","Pid":4068},{"Name":"igfxsrvc","Pid":3816},{"Name":"rundll32","Pid":616},{"Name":"conhost","Pid":1644},{"Name":"conhost","Pid":4076},{"Name":"spoolsv","Pid":1904},{"Name":"jhi_service","Pid":2160},{"Name":"TPONSCR","Pid":2800},{"Name":"taskhost","Pid":3440},{"Name":"taskeng","Pid":1780},{"Name":"RCIMGDIR","Pid":4084},{"Name":"SCHTASK","Pid":3700},{"Name":"nvSCPAPISvr","Pid":2424},{"Name":"tpnumlkd","Pid":3064},{"Name":"rundll32","Pid":3448},{"Name":"services","Pid":636},{"Name":"ibmpmsvc","Pid":892},{"Name":"upeksvr","Pid":1532}],"KilledProcesses":[]},{"EventId":"ce1b8ebf-e64b-45db-9e40-04cfa6066010","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/monitoringstarted","Timestamp":"2014-07-20T11:03:42.465Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"SessionId":"67e990c7-2103-4444-b0f9-c7580fea53b4","AppName":"UACA","AppVersion":"2.0.6"},{"EventId":"2756c8ce-0d6f-415c-bafd-722ecfe05e75","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:46:36.735Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[],"KilledProcesses":[{"Name":"taskeng","Pid":5816}]},{"EventId":"6c586591-c7f1-40c0-8500-bd89588b95ca","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:41:36.732Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"taskeng","Pid":5816}],"KilledProcesses":[]},{"EventId":"405c8e47-bb48-4045-9ba8-2c51d7b1d1b1","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:36:36.73Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[],"KilledProcesses":[{"Name":"taskeng","Pid":5648}]},{"EventId":"a410d5c6-8be4-498e-8a72-ba6415d05a7c","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:31:36.728Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"taskeng","Pid":5648}],"KilledProcesses":[]},{"EventId":"523b8cd7-1e8a-4745-b785-a3f7ee9140d7","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:26:36.725Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[],"KilledProcesses":[{"Name":"taskeng","Pid":2736}]},{"EventId":"d14a7e42-4311-4908-9932-efe8d1940ce2","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T09:21:36.722Z","User":"steltecia\\pzbell","Workstation":"city17","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"taskeng","Pid":2736}],"KilledProcesses":[]}],"PageIndex":1,"PageCnt":21118,"PageSize":10,"Links":[{"Rel":"previous","Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=0&pagesize=10"},{"Rel":"next","Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=2&pagesize=10"}]}
+2014-07-20 18:31:19,767: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:31:19,822: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:35:18,173: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:35:18,224: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:40:10,856: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:40:10,903: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:48:31,068: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:48:31,119: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:49:06,264: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:49:06,314: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:52:10,971: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:52:11,030: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 18:59:54,977: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 18:59:55,028: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:02:10,701: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:02:10,819: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:08:20,776: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:08:20,826: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:10:02,030: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:10:02,081: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:22:21,783: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:22:21,834: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:27:45,331: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:27:45,379: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:29:35,613: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:29:35,664: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:31:33,479: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:31:33,532: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:37:08,494: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:37:08,542: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 19:48:13,050: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 19:48:13,167: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+

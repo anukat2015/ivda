@@ -10,11 +10,11 @@ import java.util.Set;
  * Created by Seky on 20. 7. 2014.
  */
 public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
-    private Class<T> mClass;
+    private Class<T> baseClass;
 
     public PolymorhicDeserializer(Class<T> aClass, String jsonAttribute) {
         super(jsonAttribute);
-        mClass = aClass;
+        baseClass = aClass;
     }
 
     /**
@@ -25,7 +25,7 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
      */
     public void pushSubTypesOf(String packageName, Method callMethod) {
         Reflections reflections = new Reflections(packageName);
-        Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(mClass);
+        Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(baseClass);
         try {
             for (Class<? extends T> aClass : subTypes) {
                 Object object = callMethod.invoke(aClass.newInstance());
@@ -53,9 +53,9 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
             Method getter;
 
             try {
-                getter = mClass.getMethod("get" + name);
+                getter = baseClass.getMethod("get" + name);
             } catch (NoSuchMethodException e) {
-                getter = mClass.getMethod("is" + name);
+                getter = baseClass.getMethod("is" + name);
             }
             pushSubTypesOf(packageName, getter);
         } catch (NoSuchMethodException e) {
@@ -63,7 +63,7 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
         }
     }
 
-    public Class<T> getmClass() {
-        return mClass;
+    public Class<T> getBaseClass() {
+        return baseClass;
     }
 }

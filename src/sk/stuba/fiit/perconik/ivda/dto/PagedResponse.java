@@ -8,72 +8,75 @@ import java.util.List;
  * Created by Seky on 19. 7. 2014.
  */
 public class PagedResponse<T> implements Serializable{
-    private Integer PageIndex;
-    private Integer PageSize;
-    private Integer PageCnt;
-    private List<Link> Links;
+    private Integer pageIndex;
+    private Integer pageSize;
+    private Integer pageCnt;
+    private List<Link> links;
     // Custom data
-    private List<T> ResultSet;
+    private List<T> resultSet;
+
+    public PagedResponse() {
+    }
 
     public Integer getPageSize() {
-        return PageSize;
+        return pageSize;
     }
 
     public void setPageSize(Integer pageSize) {
-        PageSize = pageSize;
+        this.pageSize = pageSize;
     }
 
     public Integer getPageIndex() {
-        return PageIndex;
+        return pageIndex;
     }
 
     public void setPageIndex(Integer pageIndex) {
-        PageIndex = pageIndex;
+        this.pageIndex = pageIndex;
     }
 
     public Integer getPageCnt() {
-        return PageCnt;
+        return pageCnt;
     }
 
     public void setPageCnt(Integer pageCnt) {
-        PageCnt = pageCnt;
+        this.pageCnt = pageCnt;
     }
 
     public List<Link> getLinks() {
-        return Links;
+        return links;
     }
 
     public void setLinks(List<Link> links) {
-        Links = links;
+        this.links = links;
     }
 
     public List<T> getResultSet() {
-        return ResultSet;
+        return resultSet;
     }
 
     public void setResultSet(List<T> resultSet) {
-        ResultSet = resultSet;
+        this.resultSet = resultSet;
     }
 
     @Override
     public String toString() {
         return "PagedResponse{" +
-                "PageIndex=" + PageIndex +
-                ", PageSize=" + PageSize +
-                ", PageCnt=" + PageCnt +
-                ", Links=" + Links +
-                ", ResultSet=" + ResultSet +
+                "pageIndex=" + pageIndex +
+                ", pageSize=" + pageSize +
+                ", pageCnt=" + pageCnt +
+                ", links=" + links +
+                ", resultSet=" + resultSet +
                 '}';
     }
 
     public int getPageFirstItem()
     {
-        return PageIndex * PageSize;
+        return pageIndex * pageSize;
     }
 
     public int getPageLastItem()
     {
-        int i = getPageFirstItem() + PageSize - 1;
+        int i = getPageFirstItem() + pageSize - 1;
         int count = getPageCnt() - 1;
         if (i > count)
         {
@@ -88,14 +91,14 @@ public class PagedResponse<T> implements Serializable{
 
     public boolean isHasNextPage()
     {
-        return (PageIndex + 1) * PageSize + 1 <= getPageCnt();
+        return (pageIndex + 1) * pageSize + 1 <= getPageCnt();
     }
 
     public void nextPage()
     {
         if (isHasNextPage())
         {
-            PageIndex++;
+            pageIndex++;
         }
     }
 
@@ -108,14 +111,14 @@ public class PagedResponse<T> implements Serializable{
     {
         if (isHasPreviousPage())
         {
-            PageIndex--;
+            pageIndex--;
         }
     }
 }
 
 /*
 {
-   "ResultSet":[
+   "resultSet":[
       {
          "EventId":"cf915acd-3bfe-4a9a-a3f9-5c217e6c7d19",
          "EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/close",
@@ -131,10 +134,10 @@ public class PagedResponse<T> implements Serializable{
       }
       }
    ],
-   "PageIndex":1,
-   "PageCnt":21109,
-   "PageSize":10,
-   "Links":[
+   "pageIndex":1,
+   "pageCnt":21109,
+   "pageSize":10,
+   "links":[
       {
          "Rel":"previous",
          "Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=0&pagesize=10"

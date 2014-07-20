@@ -88,7 +88,7 @@ public final class Configuration implements Serializable {
 
         try {
             File file = new File(CONFIG_DIR, FILENAME);
-            logger.log(Level.INFO, "Configuratio file: " + file.getAbsolutePath());
+            logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
             konstanten = (Configuration) context.createUnmarshaller().unmarshal(file);
         } catch (Throwable ex) {
             logger.warn("Configuration not loaded");

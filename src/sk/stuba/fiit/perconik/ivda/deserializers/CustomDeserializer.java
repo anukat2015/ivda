@@ -2,7 +2,6 @@ package sk.stuba.fiit.perconik.ivda.deserializers;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,15 +22,17 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
         registry = new HashMap<>();
     }
 
-    public void register(String str,
-                         Class<? extends T> aClass) {
-        registry.put(str, aClass);
+    public void register(String key, Class<? extends T> aClass) {
+        if(registry.containsKey(key)) {
+            throw new RuntimeException("Key '" + key + "'aldready exist");
+        }
+        registry.put(key, aClass);
     }
 
     @Override
     public T deserialize(
             JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = mapper.readTree(jp);
         JsonNode attribute = root.get(watchedAttribute);
