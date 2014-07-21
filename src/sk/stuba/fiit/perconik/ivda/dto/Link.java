@@ -10,6 +10,9 @@ public class Link implements Serializable{
     private String Rel;
     private URI Href;
 
+    public Link() {
+    }
+
     public String getRel() {
         return Rel;
     }

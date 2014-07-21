@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.deserializers;
 
+import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -10,11 +11,30 @@ import java.util.Set;
  * Created by Seky on 20. 7. 2014.
  */
 public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
-    private Class<T> baseClass;
+    private static final Logger logger = Logger.getLogger(PolymorhicDeserializer.class.getName());
 
-    public PolymorhicDeserializer(Class<T> aClass, String jsonAttribute) {
+    private Class<T> baseClass;
+    private boolean mTryLongestSubsequence;
+
+    /**
+     * Deserialize polymorfed objects by specific keys. Like a URI
+     * <p/>
+     * When system can not find class for http://perconik.gratex.com/useractivity/event/web/tab/switchto
+     * it will try search for nearest object like a http://perconik.gratex.com/useractivity/event/web/tab
+     * and it will map for this class.
+     *
+     * @param aClass                Definition of class
+     * @param jsonAttribute         Name of jason atribute
+     * @param tryLongestSubsequence on / off looking for subsequnce
+     */
+    public PolymorhicDeserializer(Class<T> aClass, String jsonAttribute, boolean tryLongestSubsequence) {
         super(jsonAttribute);
         baseClass = aClass;
+        mTryLongestSubsequence = tryLongestSubsequence;
+    }
+
+    public PolymorhicDeserializer(Class<T> baseClass, String attribute) {
+        this(baseClass, attribute, true);
     }
 
     /**
@@ -48,8 +68,7 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
      */
     public void pushSubTypesOf(String packageName) {
         try {
-            String attribute = getWatchedAttribute();
-            String name = Character.toUpperCase(attribute.charAt(0)) + attribute.substring(1);
+            String name = getWatchedAttribute();
             Method getter;
 
             try {
@@ -65,5 +84,42 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
 
     public Class<T> getBaseClass() {
         return baseClass;
+    }
+
+    @Override
+    protected Class<? extends T> searchForClass(String key) {
+        Class<? extends T> aClass = super.searchForClass(key);
+        if (!mTryLongestSubsequence) return aClass;
+        if (aClass == null) {
+            logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
+            String longestString = findLongestSubsequnceForKey(key);
+            if (!longestString.isEmpty()) {
+                aClass = super.searchForClass(longestString);
+                register(key, aClass);
+                logger.info("Finded longest subsequnce for '" + key + "' as '" + longestString + "'. Registering to class '" + aClass.getName());
+            }
+        }
+        return aClass;
+    }
+
+    private String findLongestSubsequnceForKey(String searchKey) {
+        Set<String> keys = registry.keySet();
+        String longestString = "";
+        for (String key : keys) {
+            if (searchKey.startsWith(key)) {
+                if (key.length() > longestString.length()) {
+                    longestString = key;
+                }
+            }
+        }
+        return longestString;
+    }
+
+    @Override
+    public String toString() {
+        return "PolymorhicDeserializer{" +
+                "baseClass=" + baseClass +
+                ", mTryLongestSubsequence=" + mTryLongestSubsequence +
+                '}';
     }
 }

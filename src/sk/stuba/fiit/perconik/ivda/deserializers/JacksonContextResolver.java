@@ -1,7 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.deserializers;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -17,18 +18,17 @@ import javax.ws.rs.ext.Provider;
 @Consumes(MediaType.APPLICATION_JSON)
 public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
-    private ObjectMapper objectMapper;
+    private ObjectMapper mapper;
 
     public JacksonContextResolver() throws Exception {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new EventDeserializerModule());
-        objectMapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
-        // objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.setPropertyNamingStrategy(new CaseInsensitiveNaming());
+        mapper = new ObjectMapper();
+        mapper.registerModule(new EventDeserializerModule());
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
     }
 
     @Override
     public ObjectMapper getContext(Class<?> objectType) {
-        return objectMapper;
+        return mapper;
     }
 }

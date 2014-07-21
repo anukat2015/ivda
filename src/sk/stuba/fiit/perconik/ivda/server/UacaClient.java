@@ -1,8 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import sk.stuba.fiit.perconik.ivda.Configuration;
 import sk.stuba.fiit.perconik.ivda.deserializers.JacksonContextResolver;
 import sk.stuba.fiit.perconik.ivda.dto.PagedResponse;
@@ -52,6 +52,7 @@ public class UacaClient {
             if (status != Response.Status.Family.SUCCESSFUL) {
                 logger.error("UacaClient error");
             }
+            // logger.info( response.readEntity(String.class) );
             return response.readEntity(aClass);
         } finally {
             response.close();

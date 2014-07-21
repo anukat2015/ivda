@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.dto;
 
-import javax.ws.rs.core.Link;
 import java.io.Serializable;
 import java.util.List;
 

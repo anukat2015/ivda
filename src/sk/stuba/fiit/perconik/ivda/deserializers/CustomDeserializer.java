@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.deserializers;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by Seky on 20. 7. 2014.
  */
 public class CustomDeserializer<T> extends JsonDeserializer<T> {
-    private Map<String, Class<? extends T>> registry;
+    protected Map<String, Class<? extends T>> registry;
     private String watchedAttribute;
 
     public CustomDeserializer(String attribute) {
@@ -23,8 +23,8 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
     }
 
     public void register(String key, Class<? extends T> aClass) {
-        if(registry.containsKey(key)) {
-            throw new RuntimeException("Key '" + key + "'aldready exist");
+        if (registry.containsKey(key)) {
+            throw new RuntimeException("Key '" + key + "'already exist");
         }
         registry.put(key, aClass);
     }
@@ -39,11 +39,15 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
         if (attribute == null) {
             throw new IOException("Attribute '" + attribute + "' not found !");
         }
-        Class<? extends T> aClass = registry.get(attribute.getTextValue());
+        Class<? extends T> aClass = searchForClass(attribute.asText());
         if (aClass == null) {
-            throw new IOException("Class not found for '" + attribute.getTextValue() + "'.");
+            throw new IOException("Class not found for '" + attribute.asText() + "'.");
         }
-        return mapper.readValue(root, aClass);
+        return mapper.readValue(root.traverse(), aClass);
+    }
+
+    protected Class<? extends T> searchForClass(String key) {
+        return registry.get(key);
     }
 
     public String getWatchedAttribute() {

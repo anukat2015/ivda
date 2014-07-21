@@ -185,3 +185,193 @@ This error page might contain sensitive information because ASP.NET is configure
     <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
 </configuration>
 
+2014-07-20 23:19:16,917: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:19:17,081: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:20:31,921: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:20:31,977: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:39:05,364: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:39:05,411: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:39:30,993: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:39:31,044: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:40:20,160: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:40:20,215: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:41:33,644: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:41:33,700: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:42:55,762: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:42:55,823: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:43:25,693: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:43:25,761: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:43:57,071: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:43:57,125: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:45:20,448: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:45:20,529: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:52:05,581: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:52:05,635: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:58:23,703: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:58:23,772: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-20 23:58:25,314: main INFO  server.UacaClient - {"ResultSet":[{"EventId":"70a9a661-3935-41df-b7c5-0e0843d896ee","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T20:54:45.804Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"SearchFilterHost","Pid":12712}],"KilledProcesses":[{"Name":"SearchFilterHost","Pid":12680}]},{"EventId":"93d66a57-e647-4906-b8e0-a07f9ea3cce4","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T20:49:45.767Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"SearchFilterHost","Pid":12680}],"KilledProcesses":[{"Name":"SearchFilterHost","Pid":3604},{"Name":"svchost","Pid":10388}]},{"EventId":"93a6761d-d33a-4eaf-92e5-78910c16ac84","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T20:44:45.756Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"SearchFilterHost","Pid":3604}],"KilledProcesses":[{"Name":"SearchFilterHost","Pid":2888},{"Name":"SearchFilterHost","Pid":5748},{"Name":"SearchProtocolHost","Pid":12712}]},{"EventId":"5977dd22-6461-4b04-a9eb-9089ccc0ceb1","EventTypeUri":"http://perconik.gratex.com/useractivity/event/system/processeschangedsincechceck","Timestamp":"2014-07-20T20:39:45.748Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"StartedProcesses":[{"Name":"livecomm","Pid":4932},{"Name":"SearchFilterHost","Pid":2888},{"Name":"svchost","Pid":10388},{"Name":"SearchProtocolHost","Pid":12712},{"Name":"SearchProtocolHost","Pid":12496}],"KilledProcesses":[{"Name":"opera","Pid":10708},{"Name":"svchost","Pid":6104}]},{"EventId":"8749394c-27cc-4a24-b0b8-8ecfaba5687e","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/switchto","Timestamp":"2014-07-20T20:35:41.617Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"about:blank","TabId":"318"},{"EventId":"e9afd72d-a8a4-4505-86fe-45e9d3ee4b41","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/open","Timestamp":"2014-07-20T20:35:41.615Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"opera://startpage/#speeddial","TabId":"318"},{"EventId":"83e718cd-f842-472e-9cd4-3c54cf16bb61","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/close","Timestamp":"2014-07-20T20:35:40.545Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"https://www.facebook.com/photo.php?fbid=840205715990581&set=pcb.840206912657128&type=1&theater","TabId":"300"},{"EventId":"8d3ee8b1-02eb-4eb7-9f4e-a9dde9656d73","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/switchto","Timestamp":"2014-07-20T20:35:40.543Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"http://www.cerstvakava.cz/clanky/jak-spravne-pripravit-frappe/?utm_source=Kaf%C3%A9noviny&utm_campaign=862010ff6b-00088-letni-cteni-mimo-prahu-2014-07-18&utm_medium=email&utm_term=0_b8e5c90a6f-862010ff6b-72851293","TabId":"315"},{"EventId":"0b7b44b6-997d-4aca-ae66-2e3fcb86c1b2","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/navigate","Timestamp":"2014-07-20T20:35:36.666Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"https://www.facebook.com/photo.php?fbid=840205715990581&set=pcb.840206912657128&type=1&theater","TabId":"300","TransitionTypeUri":"http://perconik.gratex.com/useractivity/enum/webnavigateevent/transitiontype#bylink"},{"EventId":"13d45646-cfe1-47e9-9633-b668d315d9f9","EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/navigate","Timestamp":"2014-07-20T20:35:34.586Z","User":"steltecia\\krastocny","Workstation":"karras-pc","WasCommitForcedByUser":false,"SessionId":"15","AppName":"Chrome","AppVersion":"35.0.1916.153","Url":"https://www.facebook.com/photo.php?fbid=840205592657260&set=pcb.840206912657128&type=1&theater","TabId":"300","TransitionTypeUri":"http://perconik.gratex.com/useractivity/enum/webnavigateevent/transitiontype#bylink"}],"PageIndex":1,"PageCnt":21121,"PageSize":10,"Links":[{"Rel":"previous","Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=0&pagesize=10"},{"Rel":"next","Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=2&pagesize=10"}]}
+2014-07-20 23:59:21,661: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-20 23:59:21,714: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:01:46,797: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:01:46,864: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:15:38,363: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:15:38,423: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:18:42,900: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:18:42,959: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:19:21,533: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:19:21,582: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:19:51,183: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:19:51,234: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:49:18,217: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:49:18,279: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:50:13,584: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:50:13,634: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 00:59:46,201: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 00:59:46,273: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 01:19:57,618: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 01:19:57,673: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 02:29:23,792: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 02:29:23,908: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 02:29:28,267: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/switchto', trying longest subsequnce.
+2014-07-21 02:29:28,267: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/switchto' as 'http://perconik.gratex.com/useractivity/event'. Registering class 'com.gratex.perconik.useractivity.app.dto.ApplicationEventDto
+2014-07-21 02:31:37,000: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 02:31:37,051: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 02:31:39,170: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/switchto', trying longest subsequnce.
+2014-07-21 02:31:39,170: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/switchto' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
+2014-07-21 02:31:39,179: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/open', trying longest subsequnce.
+2014-07-21 02:31:39,179: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/open' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
+2014-07-21 02:31:39,180: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/close', trying longest subsequnce.
+2014-07-21 02:31:39,180: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/close' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
+2014-07-21 02:33:40,433: main INFO  ivda.Configuration - Configuration file: D:\workspace\sk.stuba.fiit.perconik.ivda\conf\configuration.xml
+2014-07-21 02:33:40,483: main INFO  ivda.Configuration - *********** Configuration **************
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api</uacaLink>
+</configuration>
+
+2014-07-21 02:33:42,611: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/switchto', trying longest subsequnce.
+2014-07-21 02:33:42,611: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/switchto' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
+2014-07-21 02:33:42,619: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/open', trying longest subsequnce.
+2014-07-21 02:33:42,620: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/open' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
+2014-07-21 02:33:42,621: main INFO  deserializers.PolymorhicDeserializer - Cannot find class for key 'http://perconik.gratex.com/useractivity/event/web/tab/close', trying longest subsequnce.
+2014-07-21 02:33:42,621: main INFO  deserializers.PolymorhicDeserializer - Finded longest subsequnce for 'http://perconik.gratex.com/useractivity/event/web/tab/close' as 'http://perconik.gratex.com/useractivity/event/web/tab'. Registering class 'com.gratex.perconik.useractivity.app.dto.web.WebTabEventDto
