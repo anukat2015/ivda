@@ -73,3 +73,11 @@ function loadRange(start, end) {
     var query = new google.visualization.Query('datatable?start=' + start.getTime() + '&end=' + end.getTime());
     query.send(handleServiceResponse);
 }
+/*
+ $.ajax({
+ url: 'http://example.com/',
+ type: 'PUT',
+ data: 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
+ success: function() { alert('PUT completed'); }
+ });
+ */

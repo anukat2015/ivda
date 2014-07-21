@@ -1,20 +1,21 @@
-package sk.stuba.fiit.perconik.ivda;
+package sk.stuba.fiit.perconik.ivda.vcs;
 
-import static java.lang.System.out;
-import java.util.Arrays;
-import java.util.List;
-import sk.stuba.fiit.perconik.utilities.SmartStringBuilder;
 import difflib.Chunk;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static java.lang.System.out;
+
 public final class DiffUtilsExample
 {
 	public static void main(String[] args)
 	{
-		List<?> o0;
-		List<?> r0;
+		List<String> o0;
+		List<String> r0;
 		
 		o0 = Arrays.asList("a", "b", "c", "d", "e", "f");
 		r0 = Arrays.asList("x", "a", "b", "c", "x", "e");
@@ -22,7 +23,7 @@ public final class DiffUtilsExample
 		//o0 = Arrays.asList(1000, 1001, 1002, 1003, 1004, 1005, 1006);
 		//r0 = Arrays.asList(2000, 1001, 1002, 1003, 2000, 1004, 1005);
 
-		Patch p = DiffUtils.diff(o0, r0);
+		Patch<String> p = DiffUtils.diff(o0, r0);
 		
 		out.println(patchToString(p));
 	}
