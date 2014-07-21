@@ -42,7 +42,7 @@ public class UacaClient {
         }
     }
 
-    private Object synchronizedRequest(URI uri, Class<?> aClass) {
+    protected Object synchronizedRequest(URI uri, Class<?> aClass) {
         WebTarget fullTarget = client.target(uri);
         Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
         Response response = invocation.invoke();
@@ -70,13 +70,6 @@ public class UacaClient {
         builder.queryParam("page", 1);
         builder.queryParam("pagesize", 10);
         return (PagedResponse<EventDto>) synchronizedRequest(builder.build(), SearchResponse.class);
-    }
-
-    public static void main(String[] args) throws Exception {
-        UacaClient client = new UacaClient();
-        PagedResponse response = client.getUserActivity();
-        logger.info(response);
-
     }
 }
 
