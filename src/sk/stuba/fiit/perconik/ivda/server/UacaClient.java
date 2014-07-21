@@ -4,7 +4,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.Configuration;
-import sk.stuba.fiit.perconik.ivda.deserializers.JacksonContextResolver;
+import sk.stuba.fiit.perconik.ivda.deserializer.JacksonContextResolver;
 import sk.stuba.fiit.perconik.ivda.dto.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.dto.SearchResponse;
 

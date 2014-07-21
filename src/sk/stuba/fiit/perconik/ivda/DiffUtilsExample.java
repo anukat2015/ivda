@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.core.java.examples;
+package sk.stuba.fiit.perconik.ivda;
 
 import static java.lang.System.out;
 import java.util.Arrays;

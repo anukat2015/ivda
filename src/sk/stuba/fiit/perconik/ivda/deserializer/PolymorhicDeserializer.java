@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.deserializers;
+package sk.stuba.fiit.perconik.ivda.deserializer;
 
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;

@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.deserializers;
+package sk.stuba.fiit.perconik.ivda.deserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
