@@ -5,8 +5,8 @@ import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.Configuration;
 import sk.stuba.fiit.perconik.ivda.deserializer.JacksonContextResolver;
-import sk.stuba.fiit.perconik.ivda.dto.PagedResponse;
-import sk.stuba.fiit.perconik.ivda.dto.SearchResponse;
+import sk.stuba.fiit.perconik.ivda.entities.PagedResponse;
+import sk.stuba.fiit.perconik.ivda.entities.SearchResponse;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -28,10 +28,7 @@ public class UacaClient {
     private URI destination;
 
     public UacaClient() {
-        client = ClientBuilder.newBuilder()
-                .register(JacksonJsonProvider.class)
-                .register(JacksonContextResolver.class)
-                .build();
+        client = ClientBuilder.newBuilder().register(JacksonJsonProvider.class).register(JacksonContextResolver.class).build();
 
         String url = Configuration.getInstance().getUacaLink();
         try {

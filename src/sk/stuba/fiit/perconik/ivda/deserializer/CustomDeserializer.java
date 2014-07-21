@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,9 +31,12 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
     }
 
     @Override
-    public T deserialize(
-            JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("registry", registry).append("watchedAttribute", watchedAttribute).toString();
+    }
+
+    @Override
+    public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = mapper.readTree(jp);
         JsonNode attribute = root.get(watchedAttribute);
@@ -54,11 +58,4 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
         return watchedAttribute;
     }
 
-    @Override
-    public String toString() {
-        return "CustomDeserializer{" +
-                "registry=" + registry +
-                ", watchedAttribute='" + watchedAttribute + '\'' +
-                '}';
-    }
 }

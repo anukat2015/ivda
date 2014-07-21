@@ -22,13 +22,11 @@ import java.util.Map;
 public final class Configuration implements Serializable {
 
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
-    private static JAXBContext context = null;
-    private static Configuration instance = null;
-
     private static final String FILENAME = "configuration.xml";
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
     private static final String CONFIG_DIR;
-
+    private static JAXBContext context = null;
+    private static Configuration instance = null;
     private Map<String, String> mapa = new HashMap<String, String>();
     private String uacaLink;
 
@@ -38,11 +36,8 @@ public final class Configuration implements Serializable {
         CONFIG_DIR = System.getProperty("config.dir", System.getProperty("user.dir") + File.separator + "conf");
 
         // Prepare log4j
-        String log4jLoggingPropFile = new File(CONFIG_DIR,
-                LOGGING_PROPERTIES_FILE).getAbsolutePath();
-        PropertyConfigurator.configureAndWatch(
-                log4jLoggingPropFile,
-                30000);
+        String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
+        PropertyConfigurator.configureAndWatch(log4jLoggingPropFile, 30000);
 
         try {
             context = JAXBContext.newInstance(Configuration.class);
@@ -69,6 +64,19 @@ public final class Configuration implements Serializable {
         return instance;
     }
 
+    public static Configuration read() {
+        Configuration konstanten = null;
+
+        try {
+            File file = new File(CONFIG_DIR, FILENAME);
+            logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
+            konstanten = (Configuration) context.createUnmarshaller().unmarshal(file);
+        } catch (Throwable ex) {
+            logger.warn("Configuration not loaded");
+        }
+        return konstanten;
+    }
+
     public void write() {
         FileOutputStream writer = null;
         XMLEncoder encoder = null;
@@ -81,19 +89,6 @@ public final class Configuration implements Serializable {
         } catch (Throwable ex) {
             logger.log(Level.ERROR, null, ex);
         }
-    }
-
-    public static Configuration read() {
-        Configuration konstanten = null;
-
-        try {
-            File file = new File(CONFIG_DIR, FILENAME);
-            logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
-            konstanten = (Configuration) context.createUnmarshaller().unmarshal(file);
-        } catch (Throwable ex) {
-            logger.warn("Configuration not loaded");
-        }
-        return konstanten;
     }
 
     @Override

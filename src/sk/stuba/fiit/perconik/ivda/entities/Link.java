@@ -1,4 +1,6 @@
-package sk.stuba.fiit.perconik.ivda.dto;
+package sk.stuba.fiit.perconik.ivda.entities;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -6,7 +8,7 @@ import java.net.URI;
 /**
  * Created by Seky on 19. 7. 2014.
  */
-public class Link implements Serializable{
+public class Link implements Serializable {
     private String Rel;
     private URI Href;
 
@@ -25,15 +27,13 @@ public class Link implements Serializable{
         return Href;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("Href", Href).append("Rel", Rel).toString();
+    }
+
     public void setHref(URI href) {
         Href = href;
     }
 
-    @Override
-    public String toString() {
-        return "Link{" +
-                "Rel='" + Rel + '\'' +
-                ", Href=" + Href +
-                '}';
-    }
 }

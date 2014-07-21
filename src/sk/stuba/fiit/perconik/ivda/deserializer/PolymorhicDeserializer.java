@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.deserializer;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 
@@ -46,6 +47,9 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
     public void pushSubTypesOf(String packageName, Method callMethod) {
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(baseClass);
+        if (subTypes.isEmpty()) {
+            logger.info("Package '" + packageName + "' is empty.");
+        }
         try {
             for (Class<? extends T> aClass : subTypes) {
                 Object object = callMethod.invoke(aClass.newInstance());
@@ -102,6 +106,11 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
         return aClass;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("baseClass", baseClass).append("mTryLongestSubsequence", mTryLongestSubsequence).toString();
+    }
+
     private String findLongestSubsequnceForKey(String searchKey) {
         Set<String> keys = registry.keySet();
         String longestString = "";
@@ -115,11 +124,4 @@ public class PolymorhicDeserializer<T> extends CustomDeserializer<T> {
         return longestString;
     }
 
-    @Override
-    public String toString() {
-        return "PolymorhicDeserializer{" +
-                "baseClass=" + baseClass +
-                ", mTryLongestSubsequence=" + mTryLongestSubsequence +
-                '}';
-    }
 }

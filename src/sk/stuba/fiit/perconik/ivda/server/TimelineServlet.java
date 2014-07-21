@@ -23,6 +23,7 @@ import java.util.List;
  */
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger logger = Logger.getLogger(TimelineServlet.class.getName());
+    private static List<ColumnDescription> columnDescriptions = ImmutableList.copyOf(new ColumnDescription[]{new ColumnDescription("start", ValueType.DATETIME, "Start date"), new ColumnDescription("end", ValueType.DATETIME, "End date"), new ColumnDescription("content", ValueType.TEXT, "Content"), new ColumnDescription("group", ValueType.TEXT, "Group"), new ColumnDescription("className", ValueType.TEXT, "ClassName")});
 
     public Date convertDate(String dateString) {
         try {
@@ -33,15 +34,6 @@ public final class TimelineServlet extends DataSourceServlet {
             throw new WebApplicationException("Bad date format " + dateString, Response.Status.BAD_REQUEST);
         }
     }
-
-    private static List<ColumnDescription> columnDescriptions =
-            ImmutableList.copyOf(new ColumnDescription[]{
-                    new ColumnDescription("start", ValueType.DATETIME, "Start date"),
-                    new ColumnDescription("end", ValueType.DATETIME, "End date"),
-                    new ColumnDescription("content", ValueType.TEXT, "Content"),
-                    new ColumnDescription("group", ValueType.TEXT, "Group") ,
-                    new ColumnDescription("className", ValueType.TEXT, "ClassName")
-            });
 
     @Override
     public DataTable generateDataTable(Query query, HttpServletRequest req) {

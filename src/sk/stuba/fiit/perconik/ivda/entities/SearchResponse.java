@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.dto;
+package sk.stuba.fiit.perconik.ivda.entities;
 
 import com.gratex.perconik.useractivity.app.dto.EventDto;
 
