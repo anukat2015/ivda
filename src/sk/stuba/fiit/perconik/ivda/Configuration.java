@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ public final class Configuration implements Serializable {
     private static JAXBContext context = null;
     private static Configuration instance = null;
     private Map<String, String> mapa = new HashMap<String, String>();
-    private String uacaLink;
+    private URI uacaLink;
 
 
     static {
@@ -109,11 +110,21 @@ public final class Configuration implements Serializable {
         return result;
     }
 
-    public String getUacaLink() {
+    public URI getUacaLink() {
         return uacaLink;
     }
 
-    public void setUacaLink(String uacaLink) {
+    public void setUacaLink(URI uacaLink) {
         this.uacaLink = uacaLink;
     }
 }
+
+/*
+        String url = Configuration.getInstance().getUacaLink();
+        URI destination;
+        try {
+            destination = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Configuration UACA url malformed.");
+        }
+ */

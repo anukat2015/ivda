@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.entities;
+package sk.stuba.fiit.perconik.ivda.Client;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -9,31 +9,31 @@ import java.net.URI;
  * Created by Seky on 19. 7. 2014.
  */
 public class Link implements Serializable {
-    private String Rel;
-    private URI Href;
+    private String rel;
+    private URI href;
 
     public Link() {
     }
 
     public String getRel() {
-        return Rel;
+        return rel;
     }
 
     public void setRel(String rel) {
-        Rel = rel;
+        this.rel = rel;
     }
 
     public URI getHref() {
-        return Href;
+        return href;
+    }
+
+    public void setHref(URI href) {
+        this.href = href;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("Href", Href).append("Rel", Rel).toString();
-    }
-
-    public void setHref(URI href) {
-        Href = href;
+        return new ToStringBuilder(this).append("href", href).append("rel", rel).toString();
     }
 
 }
