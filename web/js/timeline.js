@@ -24,7 +24,7 @@ function drawVisualization() {
 	var now = new Date();
 	var start = new Date(now.getTime() - 4 * 60 * 60 * 1000);
 	var end = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    loadRange(start, end);
+    //loadRange(start, end);
 
 		
 	// specify options
@@ -54,6 +54,7 @@ function drawVisualization() {
 	gTimeline.draw(gData);
 	gTimeline.setVisibleChartRange(start, end);
 	onRangeChange();
+    onRangeChanged();
 	
 	drawChart();
 }
@@ -69,8 +70,8 @@ function handleServiceResponse(response) {
 }
 
 
-function loadRange(start, end) {
-    var query = new google.visualization.Query('datatable?start=' + start.getTime() + '&end=' + end.getTime());
+function loadRange(start, end, width) {
+    var query = new google.visualization.Query('datatable?start=' + start.getTime() + '&end=' + end.getTime() + '&width=' + width);
     query.send(handleServiceResponse);
 }
 /*

@@ -15,7 +15,7 @@ function onRangeChange() {
 function onRangeChanged() {
 	var range = gTimeline.getVisibleChartRange();
 	console.log("range changed" + dateFormat(range.start) + " " + dateFormat(range.end));
-	loadRange(range.start, range.end);
+	loadRange(range.start, range.end, gTimeline.size.contentWidth);
 }
 
 function setTime() {

@@ -118,13 +118,3 @@ public final class Configuration implements Serializable {
         this.uacaLink = uacaLink;
     }
 }
-
-/*
-        String url = Configuration.getInstance().getUacaLink();
-        URI destination;
-        try {
-            destination = new URI(url);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Configuration UACA url malformed.");
-        }
- */

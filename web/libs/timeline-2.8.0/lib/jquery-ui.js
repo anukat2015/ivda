@@ -4954,7 +4954,7 @@ function stringParse( string ) {
 	if ( rgba.length ) {
 
 		// if this came from a parsed string, force "transparent" when alpha is 0
-		// chrome, (and maybe others) return "transparent" as rgba(0,0,0,0)
+		// chrome, (and MAYBE others) return "transparent" as rgba(0,0,0,0)
 		if ( rgba.join() === "0,0,0,0" ) {
 			jQuery.extend( rgba, colors.transparent );
 		}
@@ -7155,7 +7155,7 @@ $.widget( "ui.autocomplete", $.ui.autocomplete, {
 			noResults: "No search results.",
 			results: function( amount ) {
 				return amount + ( amount > 1 ? " results are" : " result is" ) +
-					" available, use up and down arrow keys to navigate.";
+					" AVAILABLE, use up and down arrow keys to navigate.";
 			}
 		}
 	},

@@ -777,7 +777,7 @@ links.Timeline.prototype.getVisibleChartRange = function() {
  * @return {Object} range    An object with parameters min and max.
  *                           - {Date} min is the lowest start date of the items
  *                           - {Date} max is the highest start or end date of the items
- *                           If no data is available, the values of min and max
+ *                           If no data is AVAILABLE, the values of min and max
  *                           will be undefined
  */
 links.Timeline.prototype.getDataRange = function (withMargin) {
