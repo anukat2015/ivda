@@ -2,10 +2,10 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.client.DownloadAll;
-import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.client.EventsResponse;
-import sk.stuba.fiit.perconik.ivda.client.PagedResponse;
+import sk.stuba.fiit.perconik.ivda.Client.DownloadAll;
+import sk.stuba.fiit.perconik.ivda.Client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.Client.EventsResponse;
+import sk.stuba.fiit.perconik.ivda.Client.PagedResponse;
 
 import java.net.URI;
 
