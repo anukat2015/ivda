@@ -52,15 +52,18 @@ public class ShowFileDiff {
                 .findGitDir() // scan up the file system tree
                 .build();
 
-        // the diff works on TreeIterators, we prepare two for the two branches
-        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, "09c65401f3730eb3e619c33bf31e2376fb393727");
-        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, "aa31703b65774e4a06010824601e56375a70078c");
+        // Zmenene kiznice na najnovsi Jackson. Vyriesene naming policy pre Jackson. Entity URI String prerobeny na URI. Uaca client stahuje data a deserializuju sa v poriadku.
+        // Sekerak at 21. 7. 2014 2:37
+        AbstractTreeIterator newTreeParser = prepareTreeParser(repository, "bab63155318d0123649b41beefa8b5c883bbc5ad");
+        // Vycistene subory. Client funguje spravne. Jackson je zachyteny a konfiguruje sa. Je potrebne doriesit PropertyNamingStrategy
+        // Sekerak at 20. 7. 2014 20:13 (committed at 20. 7. 2014 20:13)
+        AbstractTreeIterator oldTreeParser = prepareTreeParser(repository, "634c695c66b891bebaedf09096268418a225cf28");
 
         // then the procelain diff-command returns a list of diff entries
         List<DiffEntry> diff = new Git(repository).diff().
                 setOldTree(oldTreeParser).
                 setNewTree(newTreeParser).
-                setPathFilter(PathFilter.create("README.md")).
+                setPathFilter(PathFilter.create("src/sk/stuba/fiit/perconik/ivda/server/UacaClient.java")).
                 call();
         for (DiffEntry entry : diff) {
             System.out.println("Entry: " + entry + ", from: " + entry.getOldId() + ", to: " + entry.getNewId());
