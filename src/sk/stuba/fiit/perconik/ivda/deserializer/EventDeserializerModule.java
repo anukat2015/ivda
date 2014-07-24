@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.deserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.gratex.perconik.useractivity.app.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.dto.EventDto;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -22,7 +22,7 @@ public final class EventDeserializerModule extends SimpleModule {
         super("PolymorphicAnimalDeserializerModule", new Version(1, 0, 0, "1.0-SNAPSHOT", "sk.stuba.fiit.perconik.ivda", "sk.stuba.fiit.perconik.ivda"));
 
         deserializer = new PolymorphicDeserializer<>(EventDto.class, "EventTypeUri");
-        deserializer.pushSubTypesOf("com.gratex.perconik.useractivity.app.dto");
+        deserializer.pushSubTypesOf("sk.stuba.fiit.perconik.ivda.dto");
         addDeserializer(EventDto.class, deserializer);
         setMixInAnnotation(XMLGregorianCalendar.class, XMLGregorianCalendarMixIn.class);
     }

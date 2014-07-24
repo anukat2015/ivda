@@ -34,8 +34,10 @@ public class WebClient {
             if (status != Response.Status.Family.SUCCESSFUL) {
                 logger.error("WebClient error");
             }
-            // logger.info( response.readEntity(String.class) );
-            return response.readEntity(aClass);
+            Object object = response.readEntity(aClass);
+            //logger.info("Downloaded:");
+            //logger.info(object);
+            return object;
         } finally {
             response.close();
         }

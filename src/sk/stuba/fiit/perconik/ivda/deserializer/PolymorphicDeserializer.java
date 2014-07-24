@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.deserializer;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 

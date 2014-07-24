@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.Client;
 
-import com.gratex.perconik.useractivity.app.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.dto.EventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.

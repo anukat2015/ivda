@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.Client;
 
-import com.gratex.perconik.useractivity.app.dto.EventDto;
 import org.apache.log4j.Logger;
 
 import java.net.URI;
@@ -14,29 +13,9 @@ public abstract class DownloadAll<T> {
     private WebClient client;
     private Class<?> mClass;
 
-    public DownloadAll(URI uri, Class<?> aClass) {
+    public DownloadAll(Class<?> aClass) {
         client = new WebClient();
         mClass = aClass;
-
-        // Start downloading ...
-        downloadedNonRecursive(uri);
-    }
-
-    public static void main(String[] args) {
-
-        URI link = new EventsRequest().setParameters(null).getURI();
-
-        DownloadAll<EventDto> download = new DownloadAll<EventDto>(link, EventsResponse.class) {
-            int counter = 0;
-
-            @Override
-            protected boolean downloaded(PagedResponse<EventDto> response) {
-                counter++;
-                if (counter == 3) return false;
-                logger.info(response.getResultSet().toString());
-                return true;
-            }
-        };
     }
 
     private URI getNextURI(PagedResponse<T> response) {
@@ -51,7 +30,7 @@ public abstract class DownloadAll<T> {
         return null;
     }
 
-    private void downloadedNonRecursive(URI uri) {
+    protected void downloadedNonRecursive(URI uri) {
         while (uri != null) {
             PagedResponse<T> response;
             response = (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
