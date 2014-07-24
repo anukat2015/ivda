@@ -3,12 +3,14 @@ package sk.stuba.fiit.perconik.ivda.server;
 import com.google.visualization.datasource.DataSourceServlet;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
+import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.Client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import java.util.Date;
 
 /**
  * Created by Seky on 17. 7. 2014.
@@ -16,45 +18,27 @@ import java.util.Date;
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger logger = Logger.getLogger(TimelineServlet.class.getName());
 
-    public Date convertDate(String dateString) {
-        try {
-            if (dateString == null || dateString.isEmpty()) throw new Exception();
-            Long time = Long.valueOf(dateString);
-            return new Date(time);
-        } catch (Exception e) {
-            throw new WebApplicationException("Bad date format " + dateString, Response.Status.BAD_REQUEST);
-        }
-    }
-
     @Override
     public DataTable generateDataTable(Query query, HttpServletRequest req) {
         // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
         // Vplyv na rozsah ma jedine  zoom
         // Cize musime vypocitat sirku okna a poslat to sem
-
-        /*
-        Returns an array of item indices whose range or value falls within the start and end properties, which each one of them is a Date object.
-         */
-        Date start = convertDate(req.getParameter("start"));
-        Date end = convertDate(req.getParameter("end"));
+        GregorianCalendar start, end;
         Integer width;
         try {
+            start = DateUtils.fromString(req.getParameter("start"));
+            end = DateUtils.fromString(req.getParameter("end"));
             width = Integer.valueOf(req.getParameter("width"));
-        } catch(NumberFormatException e)  {
-            throw new WebApplicationException("Bad width format ", Response.Status.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
-        logger.info("Start: " + start + " end:" + end + " width:" + width);
+        logger.info("Start: " + DateUtils.toString(start) +
+                " end:" + DateUtils.toString(end) +
+                " width:" + width);
 
-        // Create a data table.
-        MyDataTable data = new MyDataTable();
-
-        // Fill the data table.
-        //try {
-            data.AddExample();
-        //} catch (TypeMismatchException e) {
-        //    System.out.println("Invalid type!");
-        //}
-        return data;
+        EventsRequest request = new EventsRequest().set(start, end).set("steltecia");
+        ProcessEventsToDataTable process = new ProcessEventsToDataTable(request);
+        return process.getDataTable();
     }
 
     @Override
