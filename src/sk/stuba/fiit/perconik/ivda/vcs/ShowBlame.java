@@ -1,4 +1,4 @@
-package org.dstadler.jgit.porcelain;
+package sk.stuba.fiit.perconik.ivda.vcs;
 
 /*
     Copyright 2013, 2014 Dominik Stadler
