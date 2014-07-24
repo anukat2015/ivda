@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.vcs;
+package sk.stuba.fiit.perconik.ivda.vcs.nepotrebne;
 
 import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
