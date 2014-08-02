@@ -8,6 +8,7 @@ import com.gratex.perconik.services.ast.rcs.GetUserResponse;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.NtlmAuthenticator;
 import sk.stuba.fiit.perconik.ivda.client.DownloadAll;
 import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.client.EventsResponse;
@@ -16,8 +17,6 @@ import sk.stuba.fiit.perconik.ivda.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.dto.ide.IdeCodeEventRequest;
 import sk.stuba.fiit.perconik.ivda.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.dto.ide.RcsServerDto;
-
-import javax.xml.ws.BindingProvider;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -37,19 +36,14 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
     }
 
     public void test() {
+        java.net.Authenticator.setDefault(new NtlmAuthenticator("steltecia\\PublicServices", "FiitSvc123."));
         AstRcsWcfSvc tester = new AstRcsWcfSvc();
         IAstRcsWcfSvc service = tester.getPort(IAstRcsWcfSvc.class);
-
-        //add username and password for container authentication (HTTP LEVEL)
-        BindingProvider bp = (BindingProvider) service;
-        bp.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, "steltecia\\PublicServices");
-        bp.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "FiitSvc123.");
-        //bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "http://perconik.fiit.stuba.sk/AstRcs/");
 
         GetUserRequest req = new GetUserRequest();
         req.setUserId(1);
         GetUserResponse resposne = service.getUser(req);
-        resposne.toString();
+        logger.info("U " + resposne.toString());
     }
 
     @Override
@@ -87,7 +81,7 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         }
 
         RcsServerDto rcsServer = dokument.getRcsServer();
-        if(rcsServer == null) { // tzv ide o lokalny subor bez riadeniaverzii
+        if (rcsServer == null) { // tzv ide o lokalny subor bez riadeniaverzii
             logger.info("Lokalny subor");
             return;
         }
