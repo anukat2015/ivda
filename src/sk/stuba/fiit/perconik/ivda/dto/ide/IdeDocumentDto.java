@@ -1,6 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.dto.ide;
 
-public class IdeDocumentDto {
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
+
+public class IdeDocumentDto implements Serializable  {
 	/**
 	 * Specifies the version of the document
 	 */
@@ -108,4 +112,10 @@ public class IdeDocumentDto {
 	public void setBranch(String branch) {
 		this.branch = branch;
 	}
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

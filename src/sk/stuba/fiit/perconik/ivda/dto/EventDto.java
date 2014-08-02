@@ -6,9 +6,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.Serializable;
 import java.net.URI;
 
-public class EventDto {
+public class EventDto implements Serializable {
     public static final String BASE_URI = "http://perconik.gratex.com/useractivity";
 
     @JsonSerialize(using = ToStringSerializer.class)

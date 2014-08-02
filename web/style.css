@@ -7,10 +7,12 @@ html, body {
     float: left;
     width: 75%;
 }
+
 .clear {
     display: block;
     clear: both;
 }
+
 /*
 #new {
 	position: absolute;
@@ -32,21 +34,26 @@ html, body {
     /*height: 100%;*/
 }
 
+.more {
+/*    display: none;*/
+}
+
 /* Custom styles for the Timeline */
+
 div.timeline-frame {
     border-color: #5D99C3;
 
     border-radius: 5px;
-    -moz-border-radius: 5px; /* For Firefox 3.6 and older */
+    -moz-border-radius: 5px;
 }
 
 div.timeline-axis {
     border-color: #5D99C3;
 
     background-color: #5D99C3;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5D99C3', endColorstr='#3A6DA0'); /* for IE */
-    background: -webkit-gradient(linear, left top, left bottom, from(#5D99C3), to(#3A6DA0)); /* for webkit browsers */
-    background: -moz-linear-gradient(top, #5D99C3, #3A6DA0); /* for firefox 3.6+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5D99C3', endColorstr='#3A6DA0');
+    background: -webkit-gradient(linear, left top, left bottom, from(#5D99C3), to(#3A6DA0));
+    background: -moz-linear-gradient(top, #5D99C3, #3A6DA0);
 }
 
 div.timeline-axis-grid {
@@ -74,16 +81,16 @@ div.timeline-event-content {
 }
 
 div.unavailable {
-    background-color: #F03030; /* red */
-    border-color: #bd2828; /* red */
+    background-color: #F03030;
+    border-color: #bd2828;
 }
 
 div.available {
-    background-color: #1AA11A; /* green */
-    border-color: #136e13; /* green */
+    background-color: #1AA11A;
+    border-color: #136e13;
 }
 
 div.maybe {
-    background-color: #FFA500; /* orange */
-    border-color: #cc8100; /* orange */
+    background-color: #FFA500;
+    border-color: #cc8100;
 }

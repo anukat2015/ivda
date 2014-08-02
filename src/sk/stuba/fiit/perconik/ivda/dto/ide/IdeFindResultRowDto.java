@@ -1,6 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.dto.ide;
 
-public class IdeFindResultRowDto {
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
+
+public class IdeFindResultRowDto implements Serializable {
     /**
      * Zero based index of a row where the match has been found or null if it has not been determined
      */
@@ -64,4 +68,10 @@ public class IdeFindResultRowDto {
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

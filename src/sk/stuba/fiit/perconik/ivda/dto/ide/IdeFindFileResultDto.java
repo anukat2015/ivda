@@ -1,9 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.dto.ide;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-public class IdeFindFileResultDto {
+public class IdeFindFileResultDto implements Serializable {
     public IdeDocumentDto file;
     private List<IdeFindResultRowDto> rows;
     
@@ -43,4 +46,10 @@ public class IdeFindFileResultDto {
 	public void setRows(List<IdeFindResultRowDto> rows) {
 		this.rows = rows;
 	}
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }

@@ -5,8 +5,9 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.Client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.DateUtils;
+import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.dto.ide.IdeCodeEventRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -26,17 +27,25 @@ public final class TimelineServlet extends DataSourceServlet {
         GregorianCalendar start, end;
         Integer width;
         try {
-            start = DateUtils.fromString(req.getParameter("start"));
+            /*start = DateUtils.fromString(req.getParameter("start"));
             end = DateUtils.fromString(req.getParameter("end"));
-            width = Integer.valueOf(req.getParameter("width"));
+            width = Integer.valueOf(req.getParameter("width"));   */
+            start = DateUtils.fromString("2014-06-01T08:00:00.000Z");
+            end = DateUtils.fromString("2014-07-30T16:00:00.000Z");
+            width = Integer.valueOf(1012);
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
+        return generateDataTable(start, end, width);
+    }
+
+    protected DataTable generateDataTable(GregorianCalendar start, GregorianCalendar end, Integer width) {
         logger.info("Start: " + DateUtils.toString(start) +
                 " end:" + DateUtils.toString(end) +
                 " width:" + width);
 
-        EventsRequest request = new EventsRequest().set(start, end).set("steltecia");
+        EventsRequest request = new EventsRequest();
+        request.setTime(start, end).setUser("steltecia").setType(new IdeCodeEventRequest(), "pastefromweb");
         ProcessEventsToDataTable process = new ProcessEventsToDataTable(request);
         return process.getDataTable();
     }

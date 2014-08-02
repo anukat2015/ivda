@@ -32,32 +32,44 @@ function inicializeTimeline(nowDate) {
         width: "100%",
         height: "50%",
         layout: "box",
+        style: 'box',
         axisOnTop: true,
-        eventMargin: 1,  // minimal margin between events
+        eventMargin: 2,  // minimal margin between events
         eventMarginAxis: 0, // minimal margin beteen events and the axis
         editable: false,
         showNavigation: true,
-        zoomMin: 1000 * 60 * 1,             // 5sec
+        zoomMin: 1000 * 60 * 1,             // 5 min
         zoomMax: 1000 * 60 * 60 * 24 * 7,     // tyzden
-        animate: true,
-        animateZoom: true,
+        animate: false,   // TODO: vypnut pri velkom pocte prvkov
+        animateZoom: false,
         //cluster: true,
-        groupMinHeight: 100
+        showMajorLabels: true,
+
+        stackEvents: false,
+        cluster: true,
+        snapEvents: true,
+
+
+        groupMinHeight: 200
     };
 
     // Instantiate our timeline object.
     gTimeline = new links.Timeline(document.getElementById('mytimeline'), options);
-    google.visualization.events.addListener(gTimeline, 'rangechange', onRangeChange);
-    google.visualization.events.addListener(gTimeline, 'rangechanged', onRangeChanged);
+    //google.visualization.events.addListener(gTimeline, 'rangechange', onRangeChange);
+    //google.visualization.events.addListener(gTimeline, 'rangechanged', onRangeChanged);
     google.visualization.events.addListener(gTimeline, 'select', onSelect);
 
     // Nastav hlavny cas odkedy budeme hladat eventy
-    var start = new Date(nowDate.getTime() - 5 * 60 * 60 * 1000); // poslednych 5 min
+    //var start = new Date(nowDate.getTime() - 5 * 60 * 60 * 1000); // poslednych 5 min
+    var start = new Date(nowDate.getTime() -  2 * 24 * 60 * 60 * 1000); // posledne 2 dni
     var end = nowDate;
     gTimeline.draw();
     gTimeline.setVisibleChartRange(start, end);
-    onRangeChange();
-    onRangeChanged();
+
+    // nacitaj uvodne data
+    document.getElementById('startDate').value = dateFormat(start);
+    document.getElementById('endDate').value = dateFormat(end);
+    loadRange(start, end, gTimeline.size.contentWidth);
 }
 
 function drawVisualization() {
@@ -66,7 +78,7 @@ function drawVisualization() {
     gDataTable = new google.visualization.Table(document.getElementById('datatable'));
     gData = new google.visualization.DataTable();
 
-    var start = new Date("2014-07-23T14:47:12.000");    // debug
+    var start = new Date("2014-07-11T16:00:00.000Z");    // debug
     //var start = new Date();
     inicializeTimeline(start);
     drawChart();

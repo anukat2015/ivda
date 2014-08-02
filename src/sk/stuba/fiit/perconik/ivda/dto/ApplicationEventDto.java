@@ -1,7 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.dto;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 public class ApplicationEventDto extends EventDto {
     private String appName;
     private String appVersion;
@@ -33,13 +31,10 @@ public class ApplicationEventDto extends EventDto {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
-/*@Override
+
+    /* Nepouziva sa ...
+    @Override
     protected UriBuilder getDefaultEventTypeUri() {
 		return super.getDefaultEventTypeUri().path("application");
 	}*/
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("appName", appName).append("appVersion", appVersion).append("sessionId", sessionId).toString();
-    }
 }

@@ -15,13 +15,13 @@
 
     <dependencies>
 
-<!--
-        <dependency>
-            <groupId>com.googlecode.java-diff-utils</groupId>
-            <artifactId>diffutils</artifactId>
-            <version>1.3.0</version>
-        </dependency>
--->
+        <!--
+                <dependency>
+                    <groupId>com.googlecode.java-diff-utils</groupId>
+                    <artifactId>diffutils</artifactId>
+                    <version>1.3.0</version>
+                </dependency>
+        -->
 
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -41,11 +41,11 @@
             <version>1.2.16</version>
         </dependency>
 
-<!--        <dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>17.0</version>
-        </dependency>-->
+        </dependency>
 
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -101,11 +101,11 @@
             <version>3.4.1.201406201815-r</version>
         </dependency>
 
-  <!--      <dependency>
-            <groupId>org.gitective</groupId>
-            <artifactId>gitective-core</artifactId>
-            <version>0.9.9</version>
-        </dependency>-->
+        <!--      <dependency>
+                  <groupId>org.gitective</groupId>
+                  <artifactId>gitective-core</artifactId>
+                  <version>0.9.9</version>
+              </dependency>-->
 
         <dependency>
             <groupId>commons-io</groupId>
