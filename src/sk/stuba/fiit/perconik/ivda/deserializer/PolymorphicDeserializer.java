@@ -72,7 +72,8 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
      */
     public void pushSubTypesOf(String packageName) {
         try {
-            String name = getWatchedAttribute();
+            String attributeName = getWatchedAttribute();
+            String name = Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
             Method getter;
 
             try {

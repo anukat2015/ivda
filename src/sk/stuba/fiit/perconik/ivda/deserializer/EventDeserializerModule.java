@@ -21,7 +21,7 @@ public final class EventDeserializerModule extends SimpleModule {
     public EventDeserializerModule() {
         super("PolymorphicAnimalDeserializerModule", new Version(1, 0, 0, "1.0-SNAPSHOT", "sk.stuba.fiit.perconik.ivda", "sk.stuba.fiit.perconik.ivda"));
 
-        deserializer = new PolymorphicDeserializer<>(EventDto.class, "EventTypeUri");
+        deserializer = new PolymorphicDeserializer<>(EventDto.class, "eventTypeUri");
         deserializer.pushSubTypesOf("sk.stuba.fiit.perconik.ivda.dto");
         addDeserializer(EventDto.class, deserializer);
         setMixInAnnotation(XMLGregorianCalendar.class, XMLGregorianCalendarMixIn.class);

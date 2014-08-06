@@ -30,7 +30,7 @@ public final class TimelineServlet extends DataSourceServlet {
             /*start = DateUtils.fromString(req.getParameter("start"));
             end = DateUtils.fromString(req.getParameter("end"));
             width = Integer.valueOf(req.getParameter("width"));   */
-            start = DateUtils.fromString("2014-01-01T08:00:00.000Z");
+            start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
             end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
             width = Integer.valueOf(1012);
         } catch (Exception e) {

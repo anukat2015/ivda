@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.deserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.ws.rs.Consumes;
@@ -24,7 +23,7 @@ public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
         mapper = new ObjectMapper();
         mapper.registerModule(new EventDeserializerModule());
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
+        //mapper.setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
     }
 
     @Override

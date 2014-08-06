@@ -14,7 +14,7 @@ public class PagedResponse<T extends Serializable> implements Serializable {
     private Integer pageCnt;
     private List<Link> links;
     // Custom data
-    private List<T> resultSet;
+    private List<T> ResultSet;
 
     public PagedResponse() {
     }
@@ -52,16 +52,16 @@ public class PagedResponse<T extends Serializable> implements Serializable {
     }
 
     public List<T> getResultSet() {
-        return resultSet;
+        return ResultSet;
     }
 
     public void setResultSet(List<T> resultSet) {
-        this.resultSet = resultSet;
+        this.ResultSet = resultSet;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("links", links).append("pageCnt", pageCnt).append("pageIndex", pageIndex).append("pageSize", pageSize).append("resultSet", resultSet).toString();
+        return new ToStringBuilder(this).append("links", links).append("pageCnt", pageCnt).append("pageIndex", pageIndex).append("pageSize", pageSize).append("ResultSet", ResultSet).toString();
     }
 
     public int getPageFirstItem() {
@@ -103,7 +103,7 @@ public class PagedResponse<T extends Serializable> implements Serializable {
 
 /*
 {
-   "resultSet":[
+   "ResultSet":[
       {
          "EventId":"cf915acd-3bfe-4a9a-a3f9-5c217e6c7d19",
          "EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/close",
