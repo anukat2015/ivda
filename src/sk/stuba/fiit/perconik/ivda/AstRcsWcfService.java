@@ -4,7 +4,6 @@ import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.dto.ide.IdeDocumentDto;
 
 import java.net.URI;
 import java.util.List;
@@ -23,7 +22,7 @@ public class AstRcsWcfService {
         java.net.Authenticator.setDefault(new NtlmAuthenticator("steltecia\\PublicServices", "FiitSvc123."));
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
-        test();
+        //test();
     }
 
     private AstRcsWcfService() {
@@ -74,6 +73,7 @@ public class AstRcsWcfService {
         return returnOne(response.getRcsProjects().getValue().getRcsProjectDto());
     }
 
+    // ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
     public static ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) {
         SearchChangesetsRequest req = new SearchChangesetsRequest();
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
@@ -83,71 +83,36 @@ public class AstRcsWcfService {
         return returnOne(response.getChangesets().getValue().getChangesetDto());
     }
 
-    // ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
-    public static ChangesetDto getChangesetDto(IdeDocumentDto dokument) {
-        try {
-            String changesetIdInRcs = dokument.getChangesetIdInRcs();
-            if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-                throw new Exception("Changesetid 0");
-            }
-
-            RcsServerDto server = getRcsServerDto(dokument.getRcsServer().getUrl());
-            RcsProjectDto project = getRcsProjectDto(server);
-            return getChangesetDto(changesetIdInRcs, project);
-        } catch (Exception e) {
-            logger.info("getChangesetDto", e);
+    public static FileVersionDto getFileVersionDto(ChangesetDto chs, String serverPath, RcsProjectDto project) {
+        // $/PerConIK
+        // ITGenerator/ITGenerator.Lib/ActivitySvcCaller.cs
+        String prefix = project.getUrl().getValue() + "/";
+        if(!serverPath.startsWith(prefix)) {
+            throw new RuntimeException();
         }
-        return null;
+        String startUrl = serverPath.substring(prefix.length(), serverPath.length());
+        SearchFilesRequest req = new SearchFilesRequest();
+        req.setChangesetId(chs.getId());
+        req.setUrlStart(factory.createSearchFilesRequestUrlStart(startUrl));
+        SearchFilesResponse response = service.searchFiles(req);
+        checkResponse(response);
+        return returnOne(response.getFileVersions().getValue().getFileVersionDto());
     }
 
-            /*try {
-            FileTfsIdentifierDto tfdId = factory.createFileTfsIdentifierDto();
-            req.setChangesetId( factory.createSearchCodeEntitiesRequestChangesetId(id) );
-            SearchCodeEntitiesResponse response;
-            response = service.search
-            logger.info("SearchCodeEntitiesRequest " + response.getCodeEntityVersions().getValue().getCodeEntityVersionDto().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static String getFile(Integer fileVersion) {
+        GetFileContentRequest req = new GetFileContentRequest();
+        req.setVersionId(fileVersion);
+        GetFileContentResponse response = service.getFileContent(req);
+        return response.getContent().getValue();
+    }
 
+    /*
         try {
             SearchCodeEntitiesRequest req = new SearchCodeEntitiesRequest();
             req.setChangesetId( factory.createSearchCodeEntitiesRequestChangesetId(id) );
             SearchCodeEntitiesResponse response;
             response = service.searchCodeEntities(req);
             logger.info("SearchCodeEntitiesRequest " + response.getCodeEntityVersions().getValue().getCodeEntityVersionDto().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-                try {
-            GetChangesetRequest req = new GetChangesetRequest();
-            req.setChangesetId(id);
-            GetChangesetResponse response;
-            response = service.getChangeset(req);
-            logger.info("U" + response.getChangeset().getValue().getCommitter().getValue().getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            GetChangesetRcsProjectRequest req = new GetChangesetRcsProjectRequest();
-            req.setChangesetId(id);
-            GetChangesetRcsProjectResponse response;
-            response = service.getChangesetRcsProject(req);
-            logger.info("GetChangesetRcsProjectRequest " + response.getRcsProject().getValue().getUrl().getValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // deprecated GetCodeEntitiesOfFileByRawRcsArguments
-
-        try {
-            GetChangedFilesRequest req2 = new GetChangedFilesRequest();
-            req2.setChangesetId(id);
-            GetChangedFilesResponse response2;
-            response2 = service.getChangedFiles(req2);
-            logger.info("GetChangedFilesRequest " + response2.getFileVersions().getValue().getFileVersionDto().toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -172,16 +137,6 @@ public class AstRcsWcfService {
             e.printStackTrace();
         }
 
-
-        try {
-            GetFileContentRequest req3 = new GetFileContentRequest();
-            req3.setVersionId(id);
-            GetFileContentResponse response3;
-            response3 = service.getFileContent(req3);
-            logger.info("GetFileContentRequest " + response3.getContent().getValue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-         */
+    */
 }
 

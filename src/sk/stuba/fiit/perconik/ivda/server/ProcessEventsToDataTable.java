@@ -1,11 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
-import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.client.DownloadAll;
 import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.client.EventsResponse;
@@ -73,8 +71,23 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         }
         String fragment = rcsServer.getTypeUri().getFragment();
 
-        ChangesetDto changeset = AstRcsWcfService.getChangesetDto(dokument);
-
+        String changesetIdInRcs = dokument.getChangesetIdInRcs();
+        if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
+            return;
+        }
+        /*
+        try {
+            RcsServerDto server = AstRcsWcfService.getRcsServerDto(dokument.getRcsServer().getUrl());
+            RcsProjectDto project = AstRcsWcfService.getRcsProjectDto(server);
+            ChangesetDto changeset = AstRcsWcfService.getChangesetDto(dokument.getChangesetIdInRcs(), project);
+            FileVersionDto fileVersion = AstRcsWcfService.getFileVersionDto(changeset, dokument.getServerPath(), project);
+            String content = AstRcsWcfService.getFile(fileVersion.getId());
+            logger.info( cevent.getText() );
+            logger.info(content);
+        } catch (Exception e) {
+            logger.info("proccessItem", e);
+        }
+        */
 
         // teraz je otazka co chceme sledovat, povodny kod?
         // alebo chceme sledovat kod ktory sa uz upravil a poslal na server?
