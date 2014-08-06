@@ -22,7 +22,9 @@ public class DateUtils {
     }
 
     public static GregorianCalendar fromString(String dateString) {
-        if (dateString == null || dateString.isEmpty()) throw new IllegalArgumentException("dateString empty");
+        if (dateString == null || dateString.isEmpty()) {
+            throw new IllegalArgumentException("dateString is empty");
+        }
         GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("Europe/Bratislava"));
         try {
             gc.setTime(format.parse(dateString));
