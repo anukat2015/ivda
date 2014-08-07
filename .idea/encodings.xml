@@ -4,31 +4,31 @@
     <file url="file://$PROJECT_DIR$/../perconik-uaca/useractivity.app" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../perconik.github.io" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../perconik/com.gratex.perconik.services" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ApplicationEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/BashCommandEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/EventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/MonitoringStartedEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ProcessDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ProcessesChangedSinceCheckEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/SystemEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeCheckinEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeCodeElementEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeCodeEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeDocumentDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeDocumentEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeFindEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeFindFileResultDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeFindResultRowDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeProjectEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/IdeStateChangeEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/ide/RcsServerDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebBookmarkEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebCopyEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebNavigateEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebSaveDocumentEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/dto/web/WebTabEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ApplicationEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/BashCommandEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/EventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/MonitoringStartedEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ProcessDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ProcessesChangedSinceCheckEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/SystemEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCheckinEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeElementEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeDocumentDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeDocumentEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindFileResultDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindResultRowDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeProjectEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeStateChangeEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/RcsServerDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebBookmarkEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebCopyEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebNavigateEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebSaveDocumentEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebTabEventDto.java" charset="UTF-8" />
   </component>
 </project>
 

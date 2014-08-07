@@ -9,14 +9,14 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.client.DownloadAll;
-import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.client.EventsResponse;
-import sk.stuba.fiit.perconik.ivda.client.PagedResponse;
-import sk.stuba.fiit.perconik.ivda.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.dto.ide.IdeCodeEventRequest;
-import sk.stuba.fiit.perconik.ivda.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.uaca.client.DownloadAll;
+import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
+import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeDocumentDto;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -74,7 +74,7 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
             logger.info("ZAUJIMAVE getBranch nieje null");
         }
 
-        sk.stuba.fiit.perconik.ivda.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
+        sk.stuba.fiit.perconik.ivda.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             logger.info("Lokalny subor");
             return;

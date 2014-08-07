@@ -6,8 +6,8 @@ import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.DateUtils;
-import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.dto.ide.IdeCodeEventRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
