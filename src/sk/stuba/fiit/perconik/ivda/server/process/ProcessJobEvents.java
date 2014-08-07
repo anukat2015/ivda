@@ -1,17 +1,19 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
+import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ApplicationEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebTabEventDto;
 
 /**
  * Created by Seky on 7. 8. 2014.
  */
-public class ProcessAllEvents extends ProcessEventsToDataTable {
-    public ProcessAllEvents(EventsRequest request) {
+public class ProcessJobEvents extends ProcessEventsToDataTable {
+    public ProcessJobEvents(EventsRequest request) {
         super(request);
     }
 
@@ -20,15 +22,17 @@ public class ProcessAllEvents extends ProcessEventsToDataTable {
         String action = event.getActionName();
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
-        String content = action +
+        String description = action +
                 "<span class=\"more\"><pre>"
                 + event + "<br/>"
                 + "</pre></span>";
 
-        String description = null;
-        if(event instanceof ApplicationEventDto) {
-            description = ((ApplicationEventDto) event).getSessionId();
+        if (event instanceof WebTabEventDto) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
         }
-        dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, content, description);
+
+        if (event instanceof IdeEventRequest) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.MAYBE, description);
+        }
     }
 }

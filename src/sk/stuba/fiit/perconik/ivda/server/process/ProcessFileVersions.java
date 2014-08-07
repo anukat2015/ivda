@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.common.io.Files;
 import com.google.visualization.datasource.base.TypeMismatchException;
@@ -9,6 +9,7 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;

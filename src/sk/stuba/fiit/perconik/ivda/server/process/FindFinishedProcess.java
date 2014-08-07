@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
@@ -23,7 +23,7 @@ public abstract class FindFinishedProcess {
     private static final Logger logger = Logger.getLogger(FindFinishedProcess.class.getName());
     private static final String fileName = "processBlackList.txt";
 
-    protected Map<Integer, FullProcess> startedApps;
+    protected Map<Integer, FinishedProcess> startedApps;
     protected Set<String> appBlackList;
 
     public FindFinishedProcess() {
@@ -44,17 +44,17 @@ public abstract class FindFinishedProcess {
             if (appBlackList.contains(started.getName())) {
                 continue;
             }
-            FullProcess item = new FullProcess();
+            FinishedProcess item = new FinishedProcess();
             item.start = timestamp;
             item.process = started;
-            FullProcess saved = startedApps.put(started.getPid(), item);
+            FinishedProcess saved = startedApps.put(started.getPid(), item);
             if (saved != null) {
                 logger.info("Process s takym PID uz existuje...");
             }
         }
 
         for (ProcessDto killed : event.getKilledProcesses()) {
-            FullProcess saved = startedApps.get(killed.getPid());
+            FinishedProcess saved = startedApps.get(killed.getPid());
             if (saved != null) {
                 startedApps.remove(killed.getPid());
                 finded(saved);
@@ -62,11 +62,11 @@ public abstract class FindFinishedProcess {
         }
     }
 
-    protected abstract void finded(FullProcess process);
+    protected abstract void finded(FinishedProcess process);
 
     public void flushUnfinished() {
-        Set<Map.Entry<Integer, FullProcess>> set = startedApps.entrySet();
-        for (Map.Entry<Integer, FullProcess> entry : set) {
+        Set<Map.Entry<Integer, FinishedProcess>> set = startedApps.entrySet();
+        for (Map.Entry<Integer, FinishedProcess> entry : set) {
             logger.info("Nema hranicu " + entry.getValue().process.getName()
                             + " " + DateUtils.toString(entry.getValue().start)
                             + " " + Integer.toString(entry.getValue().process.getPid())
@@ -74,7 +74,7 @@ public abstract class FindFinishedProcess {
         }
     }
 
-    protected class FullProcess {
+    protected class FinishedProcess {
         public GregorianCalendar start;
         public GregorianCalendar end;
         public ProcessDto process;

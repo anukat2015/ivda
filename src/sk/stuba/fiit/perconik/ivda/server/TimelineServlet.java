@@ -6,7 +6,10 @@ import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.DateUtils;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessAllProcess;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -51,7 +54,7 @@ public final class TimelineServlet extends DataSourceServlet {
 
         //start = DateUtils.fromString("2014-08-06T01:00:00.000Z");
         //end = DateUtils.fromString("2014-08-06T23:00:00.000Z");
-        //request.setTime(start, end); // TODO: setUser("steltecia\\krastocny"); premaze zvlastne vysledky ktore  by nema, preco neviem ...
+        //request.setTime(start, end);
         //process = new ProcessWebTabEvents(request);
 
 
@@ -73,7 +76,7 @@ public final class TimelineServlet extends DataSourceServlet {
 
         start = DateUtils.fromString("2014-07-03T00:00:01.000Z");
         end = DateUtils.fromString("2014-07-05T23:59:00.000Z");
-        request.setTime(start, end).setUser("steltecia\\pzbell");
+        request.setTime(start, end).setUser("steltecia\\pzbell").setType(new ProcessesChangedSinceCheckEventDto());
         process = new ProcessAllProcess(request);
 
         logger.info("Start: " + DateUtils.toString(start) +

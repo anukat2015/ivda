@@ -1,6 +1,7 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
+import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -15,7 +16,7 @@ public class ProcessAllProcess extends ProcessEventsToDataTable {
         super(request);
         finishedProcess = new FindFinishedProcess() {
             @Override
-            protected void finded(FullProcess process) {
+            protected void finded(FinishedProcess process) {
                 try {
                     dataTable.add("A", process.start, process.end, MyDataTable.ClassName.AVAILABLE, process.process.getName());
                 } catch (TypeMismatchException e) {

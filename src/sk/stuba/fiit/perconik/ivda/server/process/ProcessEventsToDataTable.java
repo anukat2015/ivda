@@ -1,7 +1,8 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.DownloadAll;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
