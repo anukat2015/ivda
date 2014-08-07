@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -25,7 +26,13 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     private URI getNextURI(PagedResponse<T> response) {
         for (Link link : response.getLinks()) {
             if (link.getRel().equals("next")) {
-                return link.getHref();
+                URI uri = link.getHref();
+                try {
+                    uri = new URI( uri.toString().replace("steltecia/", "steltecia%5") );
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                return uri;
             }
         }
         if (response.isHasNextPage()) {
@@ -39,6 +46,9 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
         while (uri != null) {
             PagedResponse<T> response;
             response = downloadUrl(uri);
+            if(response.getResultSet().isEmpty()) {
+                logger.warn("Resultset is empty! Bad request?");
+            }
             if (!downloaded(response)) {
                 logger.info("Downloading canceled.");
                 canceled();

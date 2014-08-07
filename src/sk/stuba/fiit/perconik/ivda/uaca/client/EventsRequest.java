@@ -20,6 +20,7 @@ public class EventsRequest implements Serializable {
         builder.path("useractivity");
         builder.queryParam("page", 0);
         builder.queryParam("pagesize", 100);
+        builder.queryParam("ascending", true);  // pre spravne hladanie procesov
     }
 
     public URI getURI() {
