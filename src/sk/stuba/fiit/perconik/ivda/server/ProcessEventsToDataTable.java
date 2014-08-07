@@ -1,9 +1,15 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
+import com.google.common.io.Files;
 import com.google.visualization.datasource.base.TypeMismatchException;
+import com.gratex.perconik.services.ast.rcs.ChangesetDto;
+import com.gratex.perconik.services.ast.rcs.FileVersionDto;
+import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
+import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.client.DownloadAll;
 import sk.stuba.fiit.perconik.ivda.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.client.EventsResponse;
@@ -11,6 +17,9 @@ import sk.stuba.fiit.perconik.ivda.client.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.dto.ide.IdeCodeEventRequest;
 import sk.stuba.fiit.perconik.ivda.dto.ide.IdeDocumentDto;
+
+import java.io.File;
+import java.nio.charset.Charset;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -44,6 +53,7 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         return true;   // chceme dalej stahovat
     }
 
+    private final static File cacheFolder = new File("C:/cache/");
 
     private void proccessItem(EventDto event) throws TypeMismatchException {
         if (!(event instanceof IdeCodeEventRequest)) return;
@@ -75,19 +85,30 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
             return;
         }
-        /*
+
         try {
+            logger.info(cevent.getText());
             RcsServerDto server = AstRcsWcfService.getRcsServerDto(dokument.getRcsServer().getUrl());
             RcsProjectDto project = AstRcsWcfService.getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getFileVersionDto(changeset, dokument.getServerPath(), project);
-            String content = AstRcsWcfService.getFile(fileVersion.getId());
-            logger.info( cevent.getText() );
-            logger.info(content);
+
+            String name;
+            File cacheFile;
+            String content;
+            Integer id;
+
+            id = fileVersion.getId();
+            name = Files.getNameWithoutExtension( dokument.getLocalPath() ) + id;
+            cacheFile = new File(cacheFolder, name);
+            logger.info(cacheFile);
+            content = AstRcsWcfService.getFileContent(id);
+            Files.write(content, cacheFile, Charset.defaultCharset());
+           // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
         } catch (Exception e) {
             logger.info("proccessItem", e);
         }
-        */
+
 
         // teraz je otazka co chceme sledovat, povodny kod?
         // alebo chceme sledovat kod ktory sa uz upravil a poslal na server?

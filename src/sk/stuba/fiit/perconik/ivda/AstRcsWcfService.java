@@ -59,7 +59,7 @@ public class AstRcsWcfService {
             throw new RuntimeException("PagedResponse is null");
         }
         if (res.getPageCount() != 1) {
-            throw new RuntimeException("PagedResponse have more than one items.");
+            throw new RuntimeException("PagedResponse have more / less than one items.");
         }
     }
 
@@ -87,7 +87,7 @@ public class AstRcsWcfService {
         // $/PerConIK
         // ITGenerator/ITGenerator.Lib/ActivitySvcCaller.cs
         String prefix = project.getUrl().getValue() + "/";
-        if(!serverPath.startsWith(prefix)) {
+        if (!serverPath.startsWith(prefix)) {
             throw new RuntimeException();
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
@@ -99,14 +99,35 @@ public class AstRcsWcfService {
         return returnOne(response.getFileVersions().getValue().getFileVersionDto());
     }
 
-    public static String getFile(Integer fileVersion) {
+    public static String getFileContent(Integer fileVersion) {
         GetFileContentRequest req = new GetFileContentRequest();
         req.setVersionId(fileVersion);
         GetFileContentResponse response = service.getFileContent(req);
         return response.getContent().getValue();
     }
 
+    public static FileVersionDto getFile(Integer versionID) {
+        GetFileRequest req = new GetFileRequest();
+        req.setVersionId(versionID);
+        GetFileResponse response = service.getFile(req);
+        return response.getVersion().getValue();
+    }
+
+
+    public static List<ChangesetDto> getChangeset(Integer entityID) {
+        GetFileChangesetsRequest req = new GetFileChangesetsRequest();
+        req.setEntityId(entityID);
+        GetFileChangesetsResponse response = service.getFileChangesets(req);
+        return response.getChangesets().getValue().getChangesetDto();
+    }
+
     /*
+            GetFilesByTfsIdentifiersRequest req = new GetFilesByTfsIdentifiersRequest();
+        ArrayOfFileTfsIdentifierDto dto = new ArrayOfFileTfsIdentifierDto();
+        req.setIdentifiers(factory.createGetFilesByTfsIdentifiersRequestIdentifiers(dto));
+        GetFilesByTfsIdentifiersResponse response = service.getFilesByTfsIdentifiers(req)
+        return returnOne(response.getVersions().getValue().getFileVersionDto());
+
         try {
             SearchCodeEntitiesRequest req = new SearchCodeEntitiesRequest();
             req.setChangesetId( factory.createSearchCodeEntitiesRequestChangesetId(id) );
@@ -126,17 +147,6 @@ public class AstRcsWcfService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        try {
-            GetFileChangesetsRequest req3 = new GetFileChangesetsRequest();
-            req3.setEntityId(2);
-            GetFileChangesetsResponse response3;
-            response3 = service.getFileChangesets(req3);
-            logger.info("GetFileChangesetsRequest " + response3.getChangesets().getValue().getChangesetDto().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     */
 }
 
