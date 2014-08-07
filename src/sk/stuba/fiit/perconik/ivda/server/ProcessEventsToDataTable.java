@@ -15,10 +15,10 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.MonitoringStartedEventDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeDocumentDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebTabEventDto;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -57,20 +57,29 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
     }
 
     private void downloadWebTabEventb(EventDto event) throws TypeMismatchException {
-        String action = ""; //event.getActionName();
+        String action = event.getActionName();
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
-        String description = "<span class=\"more\"><pre>"
+        String description = action +
+                "<span class=\"more\"><pre>"
                 + event + "<br/>"
                 + "</pre></span>";
 
+        if (event instanceof MonitoringStartedEventDto) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
+        }
+
+        if (event instanceof ProcessesChangedSinceCheckEventDto) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.MAYBE, description);
+        }
+        /*
         if (event instanceof WebTabEventDto) {
             dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
         }
 
         if (event instanceof IdeEventRequest) {
             dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.MAYBE, description);
-        }
+        }*/
     }
 
 

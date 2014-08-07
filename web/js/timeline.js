@@ -45,8 +45,9 @@ function inicializeTimeline(nowDate) {
         //cluster: true,
         showMajorLabels: true,
 
-        stackEvents: false,
-        cluster: true,
+        stackEvents: true,
+        //stackEvents: false,
+        //cluster: true,
         snapEvents: true,
 
 

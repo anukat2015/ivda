@@ -87,11 +87,11 @@ div.unavailable {
 }
 
 div.available {
-    background-color: #1AA11A;
+    /*background-color: #1AA11A;*/
     border-color: #136e13;
 }
 
 div.maybe {
-    background-color: #FFA500;
+    /*background-color: #FFA500;*/
     border-color: #cc8100;
 }
