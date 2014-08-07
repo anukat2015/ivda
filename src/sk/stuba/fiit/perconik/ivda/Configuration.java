@@ -25,7 +25,7 @@ public final class Configuration implements Serializable {
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
     private static final String FILENAME = "configuration.xml";
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
-    private static final String CONFIG_DIR;
+    public static final String CONFIG_DIR;
     private static JAXBContext context = null;
     private static Configuration instance = null;
     private Map<String, String> mapa = new HashMap<String, String>();
@@ -60,22 +60,22 @@ public final class Configuration implements Serializable {
                 logger.error(error);
                 throw new RuntimeException(error);
             }
-            logger.info("*********** Configuration **************\n" + instance.toString());
+            //logger.info("*********** Configuration **************\n" + instance.toString());
         }
         return instance;
     }
 
     public static Configuration read() {
-        Configuration konstanten = null;
+        Configuration constanten = null;
 
         try {
             File file = new File(CONFIG_DIR, FILENAME);
             logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
-            konstanten = (Configuration) context.createUnmarshaller().unmarshal(file);
+            constanten = (Configuration) context.createUnmarshaller().unmarshal(file);
         } catch (Throwable ex) {
             logger.warn("Configuration not loaded");
         }
-        return konstanten;
+        return constanten;
     }
 
     public void write() {

@@ -20,7 +20,8 @@ public class MyDataTable extends DataTable implements Serializable {
                     new ColumnDescription("end", ValueType.DATETIME, "End date"),
                     new ColumnDescription("content", ValueType.TEXT, "Content"),
                     new ColumnDescription("group", ValueType.TEXT, "Group"),
-                    new ColumnDescription("className", ValueType.TEXT, "ClassName")
+                    new ColumnDescription("className", ValueType.TEXT, "ClassName"),
+                    new ColumnDescription("description", ValueType.TEXT, "Description")
             });
 
     public MyDataTable() {
@@ -29,7 +30,15 @@ public class MyDataTable extends DataTable implements Serializable {
     }
 
     public void add(String group, GregorianCalendar start, ClassName className, String content) throws TypeMismatchException {
-        addRowFromValues(start, null, content, group, className.toString());
+        addRowFromValues(start, null, content, group, className.toString(), null);
+    }
+
+    public void add(String group, GregorianCalendar start, ClassName className, String content, String description) throws TypeMismatchException {
+        addRowFromValues(start, null, content, group, className.toString(), description);
+    }
+
+    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) throws TypeMismatchException {
+        addRowFromValues(start, end, content, group, className.toString(), null);
     }
 
     public enum ClassName {
