@@ -7,7 +7,6 @@ import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.DateUtils;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -30,8 +29,10 @@ public final class TimelineServlet extends DataSourceServlet {
             /*start = DateUtils.fromString(req.getParameter("start"));
             end = DateUtils.fromString(req.getParameter("end"));
             width = Integer.valueOf(req.getParameter("width"));   */
-            start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
-            end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
+            //start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
+            //end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
+            start = DateUtils.fromString("2014-08-06T01:00:00.000Z");
+            end = DateUtils.fromString("2014-08-06T23:00:00.000Z");
             width = Integer.valueOf(1012);
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
@@ -45,7 +46,8 @@ public final class TimelineServlet extends DataSourceServlet {
                 " width:" + width);
 
         EventsRequest request = new EventsRequest();
-        request.setTime(start, end).setUser("steltecia").setType(new IdeCodeEventRequest(), "pastefromweb");
+        //request.setTime(start, end).setUser("steltecia").setType(new IdeCodeEventRequest(), "pastefromweb");
+        request.setTime(start, end); // TODO: setUser("steltecia\\krastocny"); premaze zvlastne vysledky ktore  by nema, preco neviem ...
         ProcessEventsToDataTable process = new ProcessEventsToDataTable(request);
         return process.getDataTable();
     }

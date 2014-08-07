@@ -17,6 +17,8 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebTabEventDto;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -26,9 +28,10 @@ import java.nio.charset.Charset;
  */
 public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
     private static final Logger logger = Logger.getLogger(ProcessEventsToDataTable.class.getName());
-    private int counter = 0;
-    private MyDataTable dataTable;
+    private final static File cacheFolder = new File("C:/cache/");
+    protected MyDataTable dataTable;
     private EventsRequest request;
+
 
     public ProcessEventsToDataTable(EventsRequest request) {
         super(EventsResponse.class);
@@ -37,12 +40,8 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         start();
     }
 
-
     @Override
     protected boolean downloaded(PagedResponse<EventDto> response) {
-        counter++;
-        //if (counter == 5) return false;
-
         try {
             for (EventDto event : response.getResultSet()) {
                 proccessItem(event);
@@ -53,9 +52,29 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         return true;   // chceme dalej stahovat
     }
 
-    private final static File cacheFolder = new File("C:/cache/");
-
     private void proccessItem(EventDto event) throws TypeMismatchException {
+        downloadWebTabEventb(event);
+    }
+
+    private void downloadWebTabEventb(EventDto event) throws TypeMismatchException {
+        String action = ""; //event.getActionName();
+        GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
+        String description = "<span class=\"more\"><pre>"
+                + event + "<br/>"
+                + "</pre></span>";
+
+        if (event instanceof WebTabEventDto) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
+        }
+
+        if (event instanceof IdeEventRequest) {
+            dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.MAYBE, description);
+        }
+    }
+
+
+    private void downloadFileVersionByPasteFromWeb(EventDto event) throws TypeMismatchException {
         if (!(event instanceof IdeCodeEventRequest)) return;
         if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
         String action = event.getActionName();
@@ -99,12 +118,12 @@ public class ProcessEventsToDataTable extends DownloadAll<EventDto> {
             Integer id;
 
             id = fileVersion.getId();
-            name = Files.getNameWithoutExtension( dokument.getLocalPath() ) + id;
+            name = Files.getNameWithoutExtension(dokument.getLocalPath()) + id;
             cacheFile = new File(cacheFolder, name);
             logger.info(cacheFile);
             content = AstRcsWcfService.getFileContent(id);
             Files.write(content, cacheFile, Charset.defaultCharset());
-           // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
+            // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
         } catch (Exception e) {
             logger.info("proccessItem", e);
         }
