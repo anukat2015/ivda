@@ -35,10 +35,11 @@ html, body {
 }
 
 .more {
-/*    display: none;*/
+    display: none;
 }
 
 /* Custom styles for the Timeline */
+
 
 div.timeline-frame {
     border-color: #5D99C3;

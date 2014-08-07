@@ -59,3 +59,16 @@ function setCurrentTime() {
 function onReSize() {
     gTimeline.redraw();
 }
+
+function onLoad() {
+    // Inicializuj data
+    gDateFormater = new google.visualization.DateFormat({formatType: 'medium'});
+    gDataTable = new google.visualization.Table(document.getElementById('datatable'));
+    gData = new google.visualization.DataTable();
+
+    var start = new Date("2014-08-06T12:00:00.000Z");    // debug
+    //var start = new Date();
+    initializeTooltip();
+    inicializeTimeline(start);
+    drawChart();
+}

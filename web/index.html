@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
     <script type="text/javascript" src="js/events.js"></script>
@@ -22,7 +23,7 @@
         var gDateFormater = undefined;
 
         google.load("visualization", "1", {packages: ["corechart", 'table']});
-        google.setOnLoadCallback(drawVisualization);
+        google.setOnLoadCallback(onLoad);
     </script>
 </head>
 

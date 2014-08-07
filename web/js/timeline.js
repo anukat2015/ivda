@@ -31,8 +31,8 @@ function inicializeTimeline(nowDate) {
     var options = {
         width: "100%",
         height: "50%",
-        layout: "box",
-        style: 'box',
+        layout: "dot",
+        style: 'dot',
         axisOnTop: true,
         eventMargin: 2,  // minimal margin between events
         eventMarginAxis: 0, // minimal margin beteen events and the axis
@@ -72,16 +72,16 @@ function inicializeTimeline(nowDate) {
     loadRange(start, end, gTimeline.size.contentWidth);
 }
 
-function drawVisualization() {
-    // Inicializuj data
-    gDateFormater = new google.visualization.DateFormat({formatType: 'medium'});
-    gDataTable = new google.visualization.Table(document.getElementById('datatable'));
-    gData = new google.visualization.DataTable();
-
-    var start = new Date("2014-07-11T16:00:00.000Z");    // debug
-    //var start = new Date();
-    inicializeTimeline(start);
-    drawChart();
+function initializeTooltip() {
+    $( document ).tooltip({
+        items: ".timeline-event-dot-container",
+        content: function() {
+            var element = $( this );
+            if ( element.is( "div" ) ) {
+                return element.children().text();
+            }
+        }
+    });
 }
 
 function handleServiceResponse(response) {
