@@ -4,7 +4,7 @@ import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdeFindEventRDto extends IdeEventRDto {
+public class IdeFindEventDto extends IdeEventDto {
     /**
      * Search query
      */
@@ -56,7 +56,7 @@ public class IdeFindEventRDto extends IdeEventRDto {
      */
     private List<IdeFindFileResultDto> resultsPerFiles;
 
-    public IdeFindEventRDto() {
+    public IdeFindEventDto() {
     }
 
     /**

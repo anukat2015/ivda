@@ -2,8 +2,8 @@ package sk.stuba.fiit.perconik.ivda.uaca.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeProjectEventRDto extends IdeEventRDto {
-    public IdeProjectEventRDto() {
+public class IdeProjectEventDto extends IdeEventDto {
+    public IdeProjectEventDto() {
     }
 
     public void setEventType(String eventType) {

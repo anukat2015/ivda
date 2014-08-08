@@ -12,7 +12,7 @@ import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventRDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeDocumentDto;
 
 import java.io.File;
@@ -29,13 +29,13 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
     }
 
     protected void proccessItem(EventDto event) throws TypeMismatchException {
-        if (!(event instanceof IdeCodeEventRDto)) return;
+        if (!(event instanceof IdeCodeEventDto)) return;
         if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
         String action = event.getActionName();
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
 
-        IdeCodeEventRDto cevent = (IdeCodeEventRDto) event;
+        IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         IdeDocumentDto dokument = cevent.getDocument();
         if (cevent.getStartColumnIndex() != null) {
             logger.info("ZAUJIMAVE getStartColumnIndex nieje null");

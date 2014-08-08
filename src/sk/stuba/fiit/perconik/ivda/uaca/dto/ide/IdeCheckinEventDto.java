@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.uaca.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeCheckinEventRDto extends IdeEventRDto {
+public class IdeCheckinEventDto extends IdeEventDto {
     /**
      * Changeset id as specified in a RCS
      */
@@ -13,7 +13,7 @@ public class IdeCheckinEventRDto extends IdeEventRDto {
      */
     private RcsServerDto rcsServer;
 
-    public IdeCheckinEventRDto() {
+    public IdeCheckinEventDto() {
     }
 
     /**

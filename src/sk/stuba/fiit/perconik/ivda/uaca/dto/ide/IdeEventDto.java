@@ -4,7 +4,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.dto.ApplicationEventDto;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeEventRDto extends ApplicationEventDto {
+public class IdeEventDto extends ApplicationEventDto {
     /**
      * Name of the current project
      */
@@ -14,7 +14,7 @@ public class IdeEventRDto extends ApplicationEventDto {
      */
     private String solutionName;
 
-    public IdeEventRDto() {
+    public IdeEventDto() {
     }
 
     /**

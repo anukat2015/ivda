@@ -6,7 +6,7 @@ import javax.ws.rs.core.UriBuilder;
  * Common request used for events: PasteFromWeb, SelectionChanged, Paste, Copy,
  * Cut
  */
-public class IdeCodeEventRDto extends IdeEventRDto {
+public class IdeCodeEventDto extends IdeEventDto {
     /**
      * Text that was subject of a given event. For instance text that was pasted from the web.
      */
@@ -37,7 +37,7 @@ public class IdeCodeEventRDto extends IdeEventRDto {
      */
     private IdeDocumentDto document;
 
-    public IdeCodeEventRDto() {
+    public IdeCodeEventDto() {
     }
 
     /**

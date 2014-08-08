@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.uaca.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeStateChangeEventRDto extends IdeEventRDto {
+public class IdeStateChangeEventDto extends IdeEventDto {
     /**
      * Uri specifying state/perspective to which has been IDE switched.
      * It should be in form of:
@@ -11,7 +11,7 @@ public class IdeStateChangeEventRDto extends IdeEventRDto {
      */
     private String stateTypeUri;
 
-    public IdeStateChangeEventRDto() {
+    public IdeStateChangeEventDto() {
     }
 
     /**

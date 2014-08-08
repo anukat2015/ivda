@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.uaca.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeCodeElementEventRDto extends IdeEventRDto {
+public class IdeCodeElementEventDto extends IdeEventDto {
     /**
      * Type of code element.
      * It should be in form of:
@@ -16,7 +16,7 @@ public class IdeCodeElementEventRDto extends IdeEventRDto {
      */
     private String elementFullName;
 
-    public IdeCodeElementEventRDto() {
+    public IdeCodeElementEventDto() {
     }
 
     /**
