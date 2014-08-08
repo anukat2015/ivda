@@ -14,6 +14,13 @@ Step-by-step approach enables visualisation of various actions taken during the 
 - Maven 3.2
 - Apache Tomcat 7.0.54 (to run)
 
+## Service dependencies
+This solution is vizualization of caught developer's action.
+Developer's action are stored at REST services:
+
+* http://perconik.fiit.stuba.sk/UserActivity/
+* http://perconik.fiit.stuba.sk/AstRcs/AstRcsWcfSvc.svc
+
 ## Setup
 
 1. Clone repository into workspace
@@ -26,7 +33,7 @@ Step-by-step approach enables visualisation of various actions taken during the 
 
 ## Configuration directory content
 - configuration.xml - Project configuration file  
-- processBlackList.txt - List of black listed processes  
+- processBlackList.txt - List of black-listed/ignored processes  
 - log4j.properties - Log4j configuration file
   
 ## Acknowledgement
@@ -41,5 +48,6 @@ ITMS 26240220039, co-funded by the ERDF.
 This software is released under the [MIT License](LICENSE.md).
 
 ## Credits
+- Mgr. Alena Kovárová, PhD . - Supervisor 
 - Jos de Jong, Almende B.V. - Javascript library [timeline-2.8.0](http://almende.github.io/chap-links-library/timeline.html)
 - Pavol Zbell - Java consultant 
