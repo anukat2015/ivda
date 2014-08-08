@@ -15,17 +15,17 @@ import java.util.List;
  */
 public class AstRcsWcfService {
     private static final Logger logger = Logger.getLogger(AstRcsWcfService.class.getName());
-    private static final IAstRcsWcfSvc service;
-    private static final ObjectFactory factory;
+    private final IAstRcsWcfSvc service;
+    private final ObjectFactory factory;
 
-    static {
+    private AstRcsWcfService() {
         java.net.Authenticator.setDefault(new NtlmAuthenticator("steltecia\\PublicServices", "FiitSvc123."));
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
-        //test();
     }
 
-    private AstRcsWcfService() {
+    public static AstRcsWcfService getInstance() {
+        return SingletonHolder.INSTANCE;
     }
 
     private static <T> T returnOne(List<T> items) {
@@ -39,14 +39,14 @@ public class AstRcsWcfService {
         return items.get(0);
     }
 
-    private static void test() {
+    public UserDto getUser(Integer id) {
         GetUserRequest req = new GetUserRequest();
-        req.setUserId(1);
-        GetUserResponse resposne = service.getUser(req);
-        logger.info("U " + resposne.toString());
+        req.setUserId(id);
+        GetUserResponse response = service.getUser(req);
+        return response.getUser().getValue();
     }
 
-    public static RcsServerDto getRcsServerDto(URI url) {
+    public RcsServerDto getRcsServerDto(URI url) {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
         req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
         SearchRcsServersResponse response = service.searchRcsServers(req);
@@ -54,7 +54,7 @@ public class AstRcsWcfService {
         return returnOne(response.getRcsServers().getValue().getRcsServerDto());
     }
 
-    private static void checkResponse(PagedResponse res) {
+    private void checkResponse(PagedResponse res) {
         if (res == null) {
             throw new RuntimeException("PagedResponse is null");
         }
@@ -63,7 +63,7 @@ public class AstRcsWcfService {
         }
     }
 
-    public static RcsProjectDto getRcsProjectDto(RcsServerDto server) {
+    public RcsProjectDto getRcsProjectDto(RcsServerDto server) {
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
         //req.setUrl();  // nazov projektu $/PerConIK
@@ -74,7 +74,7 @@ public class AstRcsWcfService {
     }
 
     // ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
-    public static ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) {
+    public ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) {
         SearchChangesetsRequest req = new SearchChangesetsRequest();
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
         req.setRcsProjectId(project.getId());
@@ -83,7 +83,7 @@ public class AstRcsWcfService {
         return returnOne(response.getChangesets().getValue().getChangesetDto());
     }
 
-    public static FileVersionDto getFileVersionDto(ChangesetDto chs, String serverPath, RcsProjectDto project) {
+    public FileVersionDto getFileVersionDto(ChangesetDto chs, String serverPath, RcsProjectDto project) {
         // $/PerConIK
         // ITGenerator/ITGenerator.Lib/ActivitySvcCaller.cs
         String prefix = project.getUrl().getValue() + "/";
@@ -99,26 +99,29 @@ public class AstRcsWcfService {
         return returnOne(response.getFileVersions().getValue().getFileVersionDto());
     }
 
-    public static String getFileContent(Integer fileVersion) {
+    public String getFileContent(Integer fileVersion) {
         GetFileContentRequest req = new GetFileContentRequest();
         req.setVersionId(fileVersion);
         GetFileContentResponse response = service.getFileContent(req);
         return response.getContent().getValue();
     }
 
-    public static FileVersionDto getFile(Integer versionID) {
+    public FileVersionDto getFile(Integer versionID) {
         GetFileRequest req = new GetFileRequest();
         req.setVersionId(versionID);
         GetFileResponse response = service.getFile(req);
         return response.getVersion().getValue();
     }
 
-
-    public static List<ChangesetDto> getChangeset(Integer entityID) {
+    public List<ChangesetDto> getChangeset(Integer entityID) {
         GetFileChangesetsRequest req = new GetFileChangesetsRequest();
         req.setEntityId(entityID);
         GetFileChangesetsResponse response = service.getFileChangesets(req);
         return response.getChangesets().getValue().getChangesetDto();
+    }
+
+    private static class SingletonHolder {
+        public static final AstRcsWcfService INSTANCE = new AstRcsWcfService();
     }
 
     /*

@@ -61,10 +61,10 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
 
         try {
             logger.info(cevent.getText());
-            RcsServerDto server = AstRcsWcfService.getRcsServerDto(dokument.getRcsServer().getUrl());
-            RcsProjectDto project = AstRcsWcfService.getRcsProjectDto(server);
-            ChangesetDto changeset = AstRcsWcfService.getChangesetDto(dokument.getChangesetIdInRcs(), project);
-            FileVersionDto fileVersion = AstRcsWcfService.getFileVersionDto(changeset, dokument.getServerPath(), project);
+            RcsServerDto server = AstRcsWcfService.getInstance().getRcsServerDto(dokument.getRcsServer().getUrl());
+            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
+            ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
+            FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
 
             String name;
             File cacheFile;
@@ -75,7 +75,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             name = Files.getNameWithoutExtension(dokument.getLocalPath()) + id;
             cacheFile = new File(cacheFolder, name);
             logger.info(cacheFile);
-            content = AstRcsWcfService.getFileContent(id);
+            content = AstRcsWcfService.getInstance().getFileContent(id);
             Files.write(content, cacheFile, Charset.defaultCharset());
             // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
         } catch (Exception e) {
