@@ -6,7 +6,7 @@ import com.ibm.icu.util.TimeZone;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventRDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebTabEventDto;
 
 /**
@@ -31,7 +31,7 @@ public class ProcessJobEvents extends ProcessEventsToDataTable {
             dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
         }
 
-        if (event instanceof IdeEventRequest) {
+        if (event instanceof IdeEventRDto) {
             dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.MAYBE, description);
         }
     }

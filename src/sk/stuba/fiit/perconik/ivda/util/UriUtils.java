@@ -32,6 +32,9 @@ public final class UriUtils {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
             for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                if (pd.getName().equals("class")) {
+                    continue;
+                }
                 Object value = pd.getReadMethod().invoke(object);
                 if (value != null) {
                     builder.queryParam(pd.getName(), URLEncoder.encode(value.toString(), "UTF-8"));

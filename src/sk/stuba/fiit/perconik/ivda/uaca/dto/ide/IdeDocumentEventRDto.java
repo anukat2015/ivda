@@ -2,14 +2,14 @@ package sk.stuba.fiit.perconik.ivda.uaca.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeDocumentEventRequest extends IdeEventRequest {
+public class IdeDocumentEventRDto extends IdeEventRDto {
     /**
      * Document that has been subject of this event
      */
 
     private IdeDocumentDto document;
 
-    public IdeDocumentEventRequest() {
+    public IdeDocumentEventRDto() {
     }
 
     /**
