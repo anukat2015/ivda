@@ -1,44 +1,34 @@
-# PerConIK Eclipse Integration
+# PerConIK - Interactive visualization of developer‘s actions at software product development
 
-User activity tracking in Eclipse.
+Lukas Sekerak's diploma thesis solution.
+
+## Project idea
+
+Software product development provokes numerous unanswered questions which may not be easily resolved. Many visualization techniques do not offer the option to view the development process from the perspective of particular steps of a developer.  
+
+Step-by-step approach enables visualisation of various actions taken during the process – such as utilization of a browser or communication/informationchannels for trouble-shooting etc. Another significant indicator to be mindful of is transcription of own or externally acquired code. These actions are parts of software product development and their visualization may answer questions such as: “If a developer uses a browser (a particular portal) frequently during code-writing, how often is the code rewritten? Does this tendency apply to all of his source codes? If so, does this apply to every other developer in the same manner?”
 
 ## Requirements
 
 - Java 1.7
-- Eclipse 4.3
 - Maven 3.2
-- Tycho 0.20
-
-### Optional
-
-- Elasticsearch 1.2
-- User Activity Client Application 2.0
+- Apache Tomcat 7.0.54 (to run)
 
 ## Setup
 
-- Clone [perconik project](https://github.com/perconik/perconik) into workspace
-- Clone [perconik update repository](https://github.com/perconik/perconik.github.io) into workspace
+1. Clone repository into workspace
+2. Download external maven libraries
+3. Build project
+4. Edit project's configuration properties at file 'conf/configuration.xml'
+4. Deploy artifact to server
+5. Set VM option Dconfig.dir to configuration directory.
+    Example: -Dconfig.dir=D:\workspace\sk.stuba.fiit.perconik.ivda\conf
 
-## Building
-
-1. Download external libraries with `sk.stuba.fiit.perconik.libraries/download/run`
-2. Build project by running `mvn clean install -Dtycho.localArtifacts=ignore`
-
-## Versioning
-
-- Use [version-tiger](https://github.com/inventage/version-tiger) for versioning
-- Commit only version changes, never combine source code with version changes
-- Start each version change commit with `Bump`
-- Do not use Maven Tycho for versioning 
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin new-feature`)
-5. Create new Pull Request
-
+## Configuration directory content
+- configuration.xml - Project configuration file  
+- processBlackList.txt - List of black listed processes  
+- log4j.properties - Log4j configuration file
+  
 ## Acknowledgement
 
 This Software is the partial result of the Research and Development
@@ -50,34 +40,6 @@ ITMS 26240220039, co-funded by the ERDF.
 
 This software is released under the [MIT License](LICENSE.md).
 
-
-
-# README #
-
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+## Credits
+- Jos de Jong, Almende B.V. - Javascript library [timeline-2.8.0](http://almende.github.io/chap-links-library/timeline.html)
+- Pavol Zbell - Java consultant 
