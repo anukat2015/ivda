@@ -7,7 +7,9 @@ import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -34,8 +36,13 @@ public class EventsRequest implements Serializable {
     }
 
     public EventsRequest setType(URI EventTypeUri) {
-        builder.queryParam("EventTypeUri", EventTypeUri);
-        builder.queryParam("ExactType", true);
+        try {
+            String encode = URLEncoder.encode(EventTypeUri.toString(), "UTF-8");
+            builder.queryParam("EventTypeUri", encode);
+            builder.queryParam("ExactType", true);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return this;
     }
 

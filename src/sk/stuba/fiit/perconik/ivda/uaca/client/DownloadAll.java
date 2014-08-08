@@ -1,11 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.uaca.client;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -23,21 +25,25 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
         mClass = aClass;
     }
 
-    private URI getNextURI(PagedResponse<T> response) {
-        for (Link link : response.getLinks()) {
-            if (link.getRel().equals("next")) {
-                URI uri = link.getHref();
-                try {
-                    uri = new URI( uri.toString().replace("steltecia/", "steltecia%5") );
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-                return uri;
+    private URI getNextURI(PagedResponse<T> response, URI uri) {
+        // Stary sposob pomocou citania URL adresy v "next" policku v odpovedi nefunguje spravne
+        if (!response.isHasNextPage()) {
+            return null;
+        }
+
+        List<NameValuePair> pairs = URLEncodedUtils.parse(uri, "UTF-8");
+        Integer actual;
+        for(NameValuePair pair : pairs) {
+            if(pair.getName().equals("page")) {
+                actual = Integer.valueOf(pair.getValue());
+                String txtURI = uri.toString();
+                Integer next = actual + 1;
+                txtURI = txtURI.replace("page=" + actual, "page=" + next);
+                return URI.create(txtURI);
             }
         }
-        if (response.isHasNextPage()) {
-            logger.error("Link with rel=next not found.");
-        }
+
+        logger.error("Page key do not exist in URI.");
         return null;
     }
 
@@ -54,7 +60,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
                 canceled();
                 break;
             }
-            uri = getNextURI(response);
+            uri = getNextURI(response, uri);
         }
         logger.info("Downloading finished.");
         finished();

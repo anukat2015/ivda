@@ -64,24 +64,8 @@ public class PagedResponse<T extends Serializable> implements Serializable {
         return new ToStringBuilder(this).append("links", links).append("pageCnt", pageCnt).append("pageIndex", pageIndex).append("pageSize", pageSize).append("ResultSet", ResultSet).toString();
     }
 
-    public int getPageFirstItem() {
-        return pageIndex * pageSize;
-    }
-
-    public int getPageLastItem() {
-        int i = getPageFirstItem() + pageSize - 1;
-        int count = getPageCnt() - 1;
-        if (i > count) {
-            i = count;
-        }
-        if (i < 0) {
-            i = 0;
-        }
-        return i;
-    }
-
     public boolean isHasNextPage() {
-        return (pageIndex + 1) * pageSize + 1 <= getPageCnt();
+        return (pageIndex+1) < pageCnt;
     }
 
     public void nextPage() {
