@@ -4,6 +4,7 @@ import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.Configuration;
 
 import java.net.URI;
 import java.util.List;
@@ -19,7 +20,7 @@ public class AstRcsWcfService {
     private final ObjectFactory factory;
 
     private AstRcsWcfService() {
-        java.net.Authenticator.setDefault(new NtlmAuthenticator("steltecia\\PublicServices", "FiitSvc123."));
+        authenticate();
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
     }
@@ -37,6 +38,12 @@ public class AstRcsWcfService {
             throw new RuntimeException("List have more than one items.");
         }
         return items.get(0);
+    }
+
+    protected void authenticate() {
+        String username = Configuration.getInstance().getAstRcs().get("username");
+        String password = Configuration.getInstance().getAstRcs().get("password");
+        java.net.Authenticator.setDefault(new NtlmAuthenticator(username, password));
     }
 
     public UserDto getUser(Integer id) {
