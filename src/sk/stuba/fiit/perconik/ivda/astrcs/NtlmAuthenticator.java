@@ -5,12 +5,19 @@ import java.net.PasswordAuthentication;
 
 /**
  * Created by Seky on 2. 8. 2014.
+ * Trieda na prihlasenie do NTLM protokolu.
  */
-public class NtlmAuthenticator extends Authenticator {
+public final class NtlmAuthenticator extends Authenticator {
 
     private final String username;
     private final char[] password;
 
+    /**
+     * Trieda na prihlasenie do NTLM protokolu.
+     *
+     * @param username
+     * @param password
+     */
     public NtlmAuthenticator(final String username, final String password) {
         super();
         this.username = new String(username);

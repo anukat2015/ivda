@@ -11,19 +11,21 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * Created by Seky on 20. 7. 2014.
+ * <p/>
+ * Upraveny JacksonContextResolver, kde registrujeme pre Jackson vlastny modul.
+ * Zaroven sa tu nastavuju nastavenia Jacksonu.
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class JacksonContextResolver implements ContextResolver<ObjectMapper> {
+public final class JacksonContextResolver implements ContextResolver<ObjectMapper> {
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public JacksonContextResolver() throws Exception {
         mapper = new ObjectMapper();
         mapper.registerModule(new EventDeserializerModule());
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        //mapper.setPropertyNamingStrategy(PropertyNamingStrategy.PASCAL_CASE_TO_CAMEL_CASE);
     }
 
     @Override

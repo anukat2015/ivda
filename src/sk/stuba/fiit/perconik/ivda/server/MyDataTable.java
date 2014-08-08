@@ -12,9 +12,13 @@ import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
+ * Trieda MyDataTable definuje stlpce, ktore pouzivame v klientovi.
  */
-public class MyDataTable extends DataTable implements Serializable {
-    private static List<ColumnDescription> columnDescriptions = ImmutableList.copyOf(
+public final class MyDataTable extends DataTable implements Serializable {
+    /**
+     * Definovane stlpce.
+     */
+    private static final List<ColumnDescription> columnDescriptions = ImmutableList.copyOf(
             new ColumnDescription[]{
                     new ColumnDescription("start", ValueType.DATETIME, "Start date"),
                     new ColumnDescription("end", ValueType.DATETIME, "End date"),
@@ -29,18 +33,50 @@ public class MyDataTable extends DataTable implements Serializable {
         addColumns(columnDescriptions);
     }
 
+    /**
+     * Pridaj riadok.
+     *
+     * @param group
+     * @param start
+     * @param className
+     * @param content
+     * @throws TypeMismatchException
+     */
     public void add(String group, GregorianCalendar start, ClassName className, String content) throws TypeMismatchException {
         addRowFromValues(start, null, content, group, className.toString(), null);
     }
 
+    /**
+     * Pridaj riadok.
+     *
+     * @param group
+     * @param start
+     * @param className
+     * @param content
+     * @param description
+     * @throws TypeMismatchException
+     */
     public void add(String group, GregorianCalendar start, ClassName className, String content, String description) throws TypeMismatchException {
         addRowFromValues(start, null, content, group, className.toString(), description);
     }
 
+    /**
+     * Pridaj riadok.
+     *
+     * @param group
+     * @param start
+     * @param end
+     * @param className
+     * @param content
+     * @throws TypeMismatchException
+     */
     public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) throws TypeMismatchException {
         addRowFromValues(start, end, content, group, className.toString(), null);
     }
 
+    /**
+     * Definovane CSS styli v klientovi.
+     */
     public enum ClassName {
         UNAVAILABLE("unavailable"),
         AVAILABLE("available"),

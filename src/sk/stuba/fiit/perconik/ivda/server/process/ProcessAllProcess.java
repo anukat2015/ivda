@@ -16,7 +16,7 @@ public class ProcessAllProcess extends ProcessEventsToDataTable {
         super(request);
         finishedProcess = new FindFinishedProcess() {
             @Override
-            protected void finded(FinishedProcess process) {
+            protected void found(FinishedProcess process) {
                 try {
                     dataTable.add("A", process.start, process.end, MyDataTable.ClassName.AVAILABLE, process.process.getName());
                 } catch (TypeMismatchException e) {

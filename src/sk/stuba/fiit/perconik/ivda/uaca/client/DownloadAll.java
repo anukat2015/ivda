@@ -11,7 +11,11 @@ import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
- * Neskor trieda moze asynchronne volat ...
+ * <p/>
+ * HTTP client pre sluzbu UACA. Ktory stahnie prvu stranku, poskytne udaje, stiahne druhu stranu atd.
+ * Client cachuje odpovede do cacheFolder zlozky.
+ * <p/>
+ * TODO: Neskor trieda moze asynchronne volat ...
  */
 public abstract class DownloadAll<T extends Serializable> implements Serializable {
     private static final Logger logger = Logger.getLogger(DownloadAll.class.getName());
@@ -33,8 +37,8 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
 
         List<NameValuePair> pairs = URLEncodedUtils.parse(uri, "UTF-8");
         Integer actual;
-        for(NameValuePair pair : pairs) {
-            if(pair.getName().equals("page")) {
+        for (NameValuePair pair : pairs) {
+            if (pair.getName().equals("page")) {
                 actual = Integer.valueOf(pair.getValue());
                 String txtURI = uri.toString();
                 Integer next = actual + 1;
@@ -52,7 +56,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
         while (uri != null) {
             PagedResponse<T> response;
             response = downloadUrl(uri);
-            if(response.getResultSet().isEmpty()) {
+            if (response.getResultSet().isEmpty()) {
                 logger.warn("Resultset is empty! Bad request?");
             }
             if (!downloaded(response)) {
@@ -67,35 +71,50 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     }
 
     private PagedResponse<T> downloadUrl(URI uri) {
-        PagedResponse<T> response = null;
         String cacheName = Integer.toString(uri.hashCode());
         File cacheFile = new File(cacheFolder, cacheName);
+        PagedResponse<T> response = null;
 
-        FileInputStream file = null;
+        try {
+            response = deserialize(cacheFile, uri);
+        } catch (FileNotFoundException f) {
+            response = (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
+            serialize(cacheFile, response);
+        }
+        return response;
+    }
+
+    private PagedResponse<T> deserialize(File cacheFile, URI uri) throws FileNotFoundException {
         try {
             // Deserialize
-            file = new FileInputStream(cacheFile);
+            FileInputStream file = new FileInputStream(cacheFile);
             try {
+                PagedResponse<T> response;
                 logger.info("Deserializing from " + cacheFile);
                 response = (PagedResponse<T>) SerializationUtils.deserialize(file);
-                logger.info("Deserializing finished.");
                 file.close();
+                return response;
             } catch (Exception e) {
+                // Chyba pri deserializaciii
                 file.close();
                 logger.info("Deleting cache file.");
                 cacheFile.delete();
                 throw new FileNotFoundException();
             }
         } catch (FileNotFoundException e) {
-            response = (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
-            serialize(response, cacheFile);
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return response;
+        return null;
     }
 
+    /**
+     * Spracuj odpoved vo vlastnej metode.
+     *
+     * @param response
+     * @return true - pokracuj v stahovani dalej
+     */
     protected abstract boolean downloaded(PagedResponse<T> response);
 
     protected void canceled() {
@@ -105,13 +124,12 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     protected void finished() {
     }
 
-    protected void serialize(PagedResponse<T> response, File cacheFile) {
+    private void serialize(File cacheFile, PagedResponse<T> response) {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(cacheFile);
             logger.info("Serializing to " + cacheFile);
             SerializationUtils.serialize(response, fos);
-            logger.info("Serializing finished.");
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

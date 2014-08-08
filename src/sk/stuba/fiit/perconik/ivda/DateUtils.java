@@ -9,23 +9,22 @@ import java.text.ParseException;
 
 /**
  * Created by Seky on 23. 7. 2014.
+ * <p/>
+ * Pomocna trieda na formatovanie datumov.
+ * Javascript posiela ISO 8601, sluzba si to pyta.
+ * Vytvorene na zaklade:
+ * http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-format
+ * http://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date
  */
 public class DateUtils {
-    // Javascript posiela ISO 8601, sluzba si to pyta
-    // SimpleDateFormat nepodporuje 'XXX' premenne pri parsovani, podla dokumentacie ale ANO
-    // http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-format
-    // http://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date
     private static final DateFormat format = new ISO8601DateFormat();
-
-    static {
-
-    }
+    private static final TimeZone tz = TimeZone.getTimeZone("Europe/Bratislava");
 
     public static GregorianCalendar fromString(String dateString) {
         if (dateString == null || dateString.isEmpty()) {
             throw new IllegalArgumentException("dateString is empty");
         }
-        GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("Europe/Bratislava"));
+        GregorianCalendar gc = new GregorianCalendar(tz);
         try {
             gc.setTime(format.parse(dateString));
         } catch (ParseException e) {

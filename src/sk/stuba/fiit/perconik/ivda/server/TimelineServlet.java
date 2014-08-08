@@ -17,10 +17,19 @@ import javax.ws.rs.core.Response;
 
 /**
  * Created by Seky on 17. 7. 2014.
+ * <p/>
+ * Servlet pre TImeline.
  */
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger logger = Logger.getLogger(TimelineServlet.class.getName());
 
+    /**
+     * Spracuj parametre ziadosti. Nasledne generuj tabulku.
+     *
+     * @param query
+     * @param req
+     * @return
+     */
     @Override
     public DataTable generateDataTable(Query query, HttpServletRequest req) {
         // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
@@ -41,6 +50,14 @@ public final class TimelineServlet extends DataSourceServlet {
         return generateDataTable(start, end, width);
     }
 
+    /**
+     * Generuj datovu tabulku pre klienta na zaklade ziadosti.
+     *
+     * @param start
+     * @param end
+     * @param width
+     * @return
+     */
     protected DataTable generateDataTable(GregorianCalendar start, GregorianCalendar end, Integer width) {
 
         EventsRequest request = new EventsRequest();
@@ -75,7 +92,7 @@ public final class TimelineServlet extends DataSourceServlet {
 //        process = new ProcessJobEvents(request);
 
         start = DateUtils.fromString("2014-07-03T00:00:01.000Z");
-        end = DateUtils.fromString("2014-07-05T23:59:00.000Z");
+        end = DateUtils.fromString("2014-07-03T23:59:00.000Z");
         request.setTime(start, end).setUser("steltecia\\pzbell").setType(new ProcessesChangedSinceCheckEventDto());
         process = new ProcessAllProcess(request);
 

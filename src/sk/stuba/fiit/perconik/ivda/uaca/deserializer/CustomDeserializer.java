@@ -13,16 +13,27 @@ import java.util.Map;
 
 /**
  * Created by Seky on 20. 7. 2014.
+ * <p/>
+ * Vlastny deserializer. Ktory priradi objekt z jsonu na zaklade specifickeho kluca.
  */
 public class CustomDeserializer<T> extends JsonDeserializer<T> {
     protected Map<String, Class<? extends T>> registry;
     private String watchedAttribute;
 
+    /**
+     * @param attribute Atribut, ktory sa hlada v JSONe.
+     */
     public CustomDeserializer(String attribute) {
         watchedAttribute = attribute;
         registry = new HashMap<>();
     }
 
+    /**
+     * Pomocou tejto metody sa definuju kluce, ktore su priradene triedam.
+     *
+     * @param key
+     * @param aClass
+     */
     public void register(String key, Class<? extends T> aClass) {
         if (registry.containsKey(key)) {
             throw new RuntimeException("Key '" + key + "'already exist");

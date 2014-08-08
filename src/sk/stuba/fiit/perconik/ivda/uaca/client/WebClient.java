@@ -15,6 +15,8 @@ import java.net.URI;
 
 /**
  * Created by Seky on 18. 7. 2014.
+ * <p/>
+ * HTTP jednoduchy client na stahovanie odpovedi zo sluzieb.
  */
 public class WebClient implements Serializable {
     private static final Logger logger = Logger.getLogger(WebClient.class.getName());
@@ -22,6 +24,7 @@ public class WebClient implements Serializable {
     private Client client;
 
     public WebClient() {
+        // Zaregistruj nase providery
         client = ClientBuilder.newBuilder().register(JacksonJsonProvider.class).register(JacksonContextResolver.class).build();
     }
 

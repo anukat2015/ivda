@@ -7,6 +7,26 @@ import java.util.List;
 
 /**
  * Created by Seky on 19. 7. 2014.
+ * <p/>
+ * Vseobecna datova entita, ktora reprezentuje odpoved z UACA sluzby.
+ * Odpoved ma v JSONe tva:
+ * <p/>
+ * {
+ * "ResultSet":[],
+ * "pageIndex":1,
+ * "pageCnt":21109,
+ * "pageSize":10,
+ * "links":[
+ * {
+ * "Rel":"previous",
+ * "Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=0&pagesize=10"
+ * },
+ * {
+ * "Rel":"next",
+ * "Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=2&pagesize=10"
+ * }
+ * ]
+ * }
  */
 public class PagedResponse<T extends Serializable> implements Serializable {
     private Integer pageIndex;
@@ -65,7 +85,7 @@ public class PagedResponse<T extends Serializable> implements Serializable {
     }
 
     public boolean isHasNextPage() {
-        return (pageIndex+1) < pageCnt;
+        return (pageIndex + 1) < pageCnt;
     }
 
     public void nextPage() {
@@ -84,37 +104,3 @@ public class PagedResponse<T extends Serializable> implements Serializable {
         }
     }
 }
-
-/*
-{
-   "ResultSet":[
-      {
-         "EventId":"cf915acd-3bfe-4a9a-a3f9-5c217e6c7d19",
-         "EventTypeUri":"http://perconik.gratex.com/useractivity/event/web/tab/close",
-         "Timestamp":"2014-07-18T12:00:51.596Z",
-         "User":"steltecia\\krastocny",
-         "Workstation":"karras-pc",
-         "WasCommitForcedByUser":false,
-         "SessionId":"15",
-         "AppName":"Chrome",
-         "AppVersion":"35.0.1916.153",
-         "Url":"https://onedrive.live.com/options?ru=https%3a%2f%2fonedrive.live.com%2f",
-         "TabId":"297"
-      }
-      }
-   ],
-   "pageIndex":1,
-   "pageCnt":21109,
-   "pageSize":10,
-   "links":[
-      {
-         "Rel":"previous",
-         "Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=0&pagesize=10"
-      },
-      {
-         "Rel":"next",
-         "Href":"http://perconik.fiit.stuba.sk/UserActivity/api/useractivity?timefrom=2014-04-16T12:00Z&page=2&pagesize=10"
-      }
-   ]
-}
- */

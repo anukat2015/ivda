@@ -18,6 +18,11 @@ import java.util.Set;
 
 /**
  * Created by Seky on 7. 8. 2014.
+ * <p/>
+ * Trieda sa pozera na vytvorene a ukoncene procesy.
+ * Pomocou PID procesu hlada zaciatok a ukoncenie procesu.
+ * Nasledne danemu procesu priradi aproximovane casi zaciatku a ukoncenia.
+ * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
  */
 public abstract class FindFinishedProcess {
     private static final Logger logger = Logger.getLogger(FindFinishedProcess.class.getName());
@@ -27,15 +32,24 @@ public abstract class FindFinishedProcess {
     protected Set<String> appBlackList;
 
     public FindFinishedProcess() {
+        startedApps = new HashMap<>();
+        loadBlacklist();
+    }
+
+    protected void loadBlacklist() {
         File file = new File(Configuration.CONFIG_DIR, fileName);
         try {
             appBlackList = new HashSet<>(FileUtils.readLines(file));
         } catch (IOException e) {
             logger.error("Error reading from " + fileName, e);
         }
-        startedApps = new HashMap<>();
     }
 
+    /**
+     * Skontroluj zoznam procesov.
+     *
+     * @param event
+     */
     protected void check(ProcessesChangedSinceCheckEventDto event) {
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
@@ -58,13 +72,21 @@ public abstract class FindFinishedProcess {
             if (saved != null) {
                 startedApps.remove(killed.getPid());
                 saved.end = timestamp;
-                finded(saved);
+                found(saved);
             }
         }
     }
 
-    protected abstract void finded(FinishedProcess process);
+    /**
+     * Nasiel sa zaciatok a koniec procesu.
+     *
+     * @param process
+     */
+    protected abstract void found(FinishedProcess process);
 
+    /**
+     * Vypis neukoncene procesy.
+     */
     public void flushUnfinished() {
         Set<Map.Entry<Integer, FinishedProcess>> set = startedApps.entrySet();
         for (Map.Entry<Integer, FinishedProcess> entry : set) {

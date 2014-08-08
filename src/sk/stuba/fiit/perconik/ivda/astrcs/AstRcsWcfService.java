@@ -14,7 +14,7 @@ import java.util.List;
  * Pomocna trieda sluzbu AstRcsWcf.
  * document.ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
  */
-public class AstRcsWcfService {
+public final class AstRcsWcfService {
     private static final Logger logger = Logger.getLogger(AstRcsWcfService.class.getName());
     private final IAstRcsWcfSvc service;
     private final ObjectFactory factory;

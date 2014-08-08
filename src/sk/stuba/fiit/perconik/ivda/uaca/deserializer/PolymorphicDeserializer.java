@@ -10,6 +10,8 @@ import java.util.Set;
 
 /**
  * Created by Seky on 20. 7. 2014.
+ * <p/>
+ * Deserialize polymorfed objects by specific keys. Like a URI
  */
 public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     private static final Logger logger = Logger.getLogger(PolymorphicDeserializer.class.getName());
@@ -18,8 +20,6 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     private boolean mTryLongestSubsequence;
 
     /**
-     * Deserialize polymorfed objects by specific keys. Like a URI
-     * <p/>
      * When system can not find class for http://perconik.gratex.com/useractivity/event/web/tab/switchto
      * it will try search for nearest object like a http://perconik.gratex.com/useractivity/event/web/tab
      * and it will map for this class.
@@ -112,6 +112,12 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         return new ToStringBuilder(this).appendSuper(super.toString()).append("baseClass", baseClass).append("mTryLongestSubsequence", mTryLongestSubsequence).toString();
     }
 
+    /**
+     * Search nearest string.
+     *
+     * @param searchKey
+     * @return
+     */
     private String findLongestSubsequnceForKey(String searchKey) {
         Set<String> keys = registry.keySet();
         String longestString = "";
