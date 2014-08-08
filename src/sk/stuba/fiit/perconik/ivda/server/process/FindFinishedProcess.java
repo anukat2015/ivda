@@ -49,7 +49,7 @@ public abstract class FindFinishedProcess {
             item.process = started;
             FinishedProcess saved = startedApps.put(started.getPid(), item);
             if (saved != null) {
-                logger.info("Process s takym PID uz existuje...");
+                logger.info("Process s takym PID uz existuje... " + saved);
             }
         }
 
@@ -57,6 +57,7 @@ public abstract class FindFinishedProcess {
             FinishedProcess saved = startedApps.get(killed.getPid());
             if (saved != null) {
                 startedApps.remove(killed.getPid());
+                saved.end = timestamp;
                 finded(saved);
             }
         }
@@ -67,10 +68,7 @@ public abstract class FindFinishedProcess {
     public void flushUnfinished() {
         Set<Map.Entry<Integer, FinishedProcess>> set = startedApps.entrySet();
         for (Map.Entry<Integer, FinishedProcess> entry : set) {
-            logger.info("Nema hranicu " + entry.getValue().process.getName()
-                            + " " + DateUtils.toString(entry.getValue().start)
-                            + " " + Integer.toString(entry.getValue().process.getPid())
-            );
+            logger.info("Nema hranicu " + entry.getValue());
         }
     }
 
@@ -78,5 +76,12 @@ public abstract class FindFinishedProcess {
         public GregorianCalendar start;
         public GregorianCalendar end;
         public ProcessDto process;
+
+        @Override
+        public String toString() {
+            return process.getName()
+                    + " " + Integer.toString(process.getPid())
+                    + " " + DateUtils.toString(start);
+        }
     }
 }
