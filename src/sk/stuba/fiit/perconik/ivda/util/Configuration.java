@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda;
+package sk.stuba.fiit.perconik.ivda.util;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Level;

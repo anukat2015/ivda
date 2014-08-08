@@ -5,6 +5,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 
+import javax.ws.rs.core.UriBuilder;
 import java.io.*;
 import java.net.URI;
 import java.util.List;
@@ -36,14 +37,10 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
         }
 
         List<NameValuePair> pairs = URLEncodedUtils.parse(uri, "UTF-8");
-        Integer actual;
         for (NameValuePair pair : pairs) {
             if (pair.getName().equals("page")) {
-                actual = Integer.valueOf(pair.getValue());
-                String txtURI = uri.toString();
-                Integer next = actual + 1;
-                txtURI = txtURI.replace("page=" + actual, "page=" + next);
-                return URI.create(txtURI);
+                Integer actual = Integer.valueOf(pair.getValue()) + 1;
+                return UriBuilder.fromUri(uri).replaceQueryParam("page", actual).build();
             }
         }
 

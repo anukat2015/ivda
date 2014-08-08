@@ -4,8 +4,8 @@ import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.Configuration;
-import sk.stuba.fiit.perconik.ivda.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 

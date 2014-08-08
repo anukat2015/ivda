@@ -4,7 +4,7 @@ import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import java.net.URI;
 import java.util.List;

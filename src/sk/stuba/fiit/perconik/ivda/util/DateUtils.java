@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda;
+package sk.stuba.fiit.perconik.ivda.util;
 
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.ibm.icu.util.GregorianCalendar;
@@ -16,7 +16,7 @@ import java.text.ParseException;
  * http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-format
  * http://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date
  */
-public class DateUtils {
+public final class DateUtils {
     private static final DateFormat format = new ISO8601DateFormat();
     private static final TimeZone tz = TimeZone.getTimeZone("Europe/Bratislava");
 
