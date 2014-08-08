@@ -19,3 +19,11 @@ lsm
 dwm
 conhost
 MSBuild
+System
+lsass
+csrss
+wininit
+services
+smss
+PresentationFontCache
+winlogon
