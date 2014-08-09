@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.DateFormat;
 import java.text.ParseException;
 
@@ -39,5 +40,11 @@ public final class DateUtils {
 
     public static GregorianCalendar createUtcNow() {
         return new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+    }
+
+    public static GregorianCalendar normalizeGregorianCalendar(XMLGregorianCalendar c) {
+        GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        timestamp.setTime(c.toGregorianCalendar().getTime());
+        return timestamp;
     }
 }
