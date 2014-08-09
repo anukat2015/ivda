@@ -19,7 +19,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
         cacheFolder = getCacheFolder();
         cache = CacheBuilder.newBuilder()
                 .concurrencyLevel(4)
-                .maximumSize(10000)
+                .maximumSize(200)
                 .expireAfterWrite(3, TimeUnit.HOURS)
                 .removalListener(new RemovalListener<Key, Value>() {
 

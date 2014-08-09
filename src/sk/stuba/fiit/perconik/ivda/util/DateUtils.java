@@ -6,6 +6,7 @@ import com.ibm.icu.util.TimeZone;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Seky on 23. 7. 2014.
@@ -24,7 +25,9 @@ public final class DateUtils {
     public static GregorianCalendar fromString(String dateString) {
         GregorianCalendar gc = new GregorianCalendar(tz);
         try {
-            gc.setTime(format.parse(dateString));
+            Date datum = format.parse(dateString);
+            gc.setTimeInMillis(datum.getTime());
+            gc.setLenient(false);
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }

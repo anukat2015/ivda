@@ -74,10 +74,20 @@ public final class MyDataTable extends DataTable implements Serializable {
         add(group, start, end, className, content, null);
     }
 
-    public void add(String group, final GregorianCalendar start, final GregorianCalendar end, ClassName className, String content, String description) throws TypeMismatchException {
+    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content, String description) throws TypeMismatchException {
+
         // Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
-        if (start != null) start.add(GregorianCalendar.HOUR, 1); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
-        //if (end != null) end.add(GregorianCalendar.HOUR, 1);
+        if (start != null) {
+            start = (GregorianCalendar) start.clone(); // GregorianCalendar asi nie je immutable
+            start.roll(GregorianCalendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+            start.roll(GregorianCalendar.HOUR, true); // .add() sa sprava inac
+        }
+        if (end != null) {
+            end = (GregorianCalendar) end.clone();  // klasicky roll sa sprava tiez inac
+            end.roll(GregorianCalendar.HOUR, true);  // https://groups.google.com/forum/#!topic/comp.lang.java.programmer/dcQnxrVhSYo
+            end.roll(GregorianCalendar.HOUR, true);
+        }
+
         addRowFromValues(start, end, content, group, className.toString(), description);
     }
 
