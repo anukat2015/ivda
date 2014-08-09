@@ -16,7 +16,10 @@
     <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
+    <script type="text/javascript" src="js/toolbar.js"></script>
+    <script type="text/javascript" src="js/chart.js"></script>
     <script type="text/javascript">
+        var gToolbar = undefined;
         var gTimeline = undefined;
         var gData = undefined;
         var gChart = undefined;
@@ -32,8 +35,8 @@
 <p>
     Start time: <input type="text" id="startDate" value="">
     End time: <input type="text" id="endDate" value="">
-    <input type="button" id="setRange" value="Set" onclick="setTime();">
-    <input type="button" id="setCurrentTime" value="Current time" onclick="setCurrentTime();">
+    <input type="button" id="setRange" value="Set" onclick="onSetTime();">
+    <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();">
 </p>
 
 <div id="mytimeline"></div>

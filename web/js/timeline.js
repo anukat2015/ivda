@@ -1,31 +1,3 @@
-// Called when the Visualization API is loaded.
-
-function drawChart() {
-    var data = google.visualization.arrayToDataTable([
-        ['Task', 'Hours per Day'],
-        ['Work', 11],
-        ['Eat', 2],
-        ['Commute', 2],
-        ['Watch TV', 2],
-        ['Sleep', 7]
-    ]);
-
-    var options = {
-        title: 'My Daily Activities'
-    };
-
-    var gChart = new google.visualization.PieChart(document.getElementById('piechart'));
-    gChart.draw(data, options);
-}
-
-function convertDateToUTC(date) {
-    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-}
-
-function createDateAsUTC(date) {
-    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
-}
-
 function inicializeTimeline(nowDate) {
     // Nastavenia timeline
     var options = {
@@ -44,13 +16,10 @@ function inicializeTimeline(nowDate) {
         animateZoom: false,
         //cluster: true,
         showMajorLabels: true,
-
         stackEvents: true,
         //stackEvents: false,
         //cluster: true,
         snapEvents: true,
-
-
         groupMinHeight: 200
     };
 
@@ -68,8 +37,7 @@ function inicializeTimeline(nowDate) {
     gTimeline.setVisibleChartRange(start, end);
 
     // nacitaj uvodne data
-    document.getElementById('startDate').value = dateFormat(start);
-    document.getElementById('endDate').value = dateFormat(end);
+    gToolbar.setTime(start, end);
     loadRange(start, end, gTimeline.size.contentWidth);
 }
 
@@ -92,10 +60,10 @@ function handleServiceResponse(response) {
     }
     gData = response.getDataTable();
     /*var dateFormatter = new google.visualization.DateFormat(
-        {timeZone: 4}
-    );
-    dateFormatter.format(gData, 0);
-    dateFormatter.format(gData, 1); */
+     {timeZone: 4}
+     );
+     dateFormatter.format(gData, 0);
+     dateFormatter.format(gData, 1); */
     //console.log(gData);
     gTimeline.draw(gData);
     gDataTable.draw(gData, {
