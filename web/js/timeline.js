@@ -62,7 +62,7 @@ function inicializeTimeline(nowDate) {
 
     // Nastav hlavny cas odkedy budeme hladat eventy
     //var start = new Date(nowDate.getTime() - 5 * 60 * 60 * 1000); // poslednych 5 min
-    var start = new Date(nowDate.getTime() -  2 * 24 * 60 * 60 * 1000); // posledne 2 dni
+    var start = new Date(nowDate.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
     var end = nowDate;
     gTimeline.draw();
     gTimeline.setVisibleChartRange(start, end);
@@ -74,11 +74,11 @@ function inicializeTimeline(nowDate) {
 }
 
 function initializeTooltip() {
-    $( document ).tooltip({
+    $(document).tooltip({
         items: ".timeline-event-dot-container",
-        content: function() {
-            var element = $( this );
-            if ( element.is( "div" ) ) {
+        content: function () {
+            var element = $(this);
+            if (element.is("div")) {
                 return element.children().text();
             }
         }
@@ -91,6 +91,11 @@ function handleServiceResponse(response) {
         return;
     }
     gData = response.getDataTable();
+    /*var dateFormatter = new google.visualization.DateFormat(
+        {timeZone: 4}
+    );
+    dateFormatter.format(gData, 0);
+    dateFormatter.format(gData, 1); */
     //console.log(gData);
     gTimeline.draw(gData);
     gDataTable.draw(gData, {
@@ -104,8 +109,8 @@ function handleServiceResponse(response) {
 
 function loadRange(start, end, width) {
     var parameters = $.param({
-        start: createDateAsUTC(start).toISOString(),
-        end: createDateAsUTC(end).toISOString(),
+        start: gDateFormater.format(start),
+        end: gDateFormater.format(end),
         width: width
     });
     var query = new google.visualization.Query("datatable?" + parameters);

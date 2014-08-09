@@ -1,19 +1,16 @@
 package sk.stuba.fiit.perconik.ivda.uaca.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.ibm.icu.util.GregorianCalendar;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.ws.rs.core.UriBuilder;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
 import java.net.URI;
 
 public class EventDto implements Serializable {
     public static final String BASE_URI = "http://perconik.gratex.com/useractivity";
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    private XMLGregorianCalendar timestamp;
+    private GregorianCalendar timestamp;
     private String eventId;
     private String user;
     private String workstation;
@@ -31,11 +28,11 @@ public class EventDto implements Serializable {
         this.eventId = eventId;
     }
 
-    public XMLGregorianCalendar getTimestamp() {
+    public GregorianCalendar getTimestamp() {
         return this.timestamp;
     }
 
-    public void setTimestamp(XMLGregorianCalendar timestamp) {
+    public void setTimestamp(GregorianCalendar timestamp) {
         this.timestamp = timestamp;
     }
 

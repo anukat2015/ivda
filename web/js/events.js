@@ -35,7 +35,7 @@ function onRangeChange() {
 }
 function onRangeChanged() {
     var range = gTimeline.getVisibleChartRange();
-    console.log("onRangeChanged     LOCAL FORMAT " + gDateFormater.formatValue(range.start) + " " + gDateFormater.formatValue(range.end));
+    console.log("onRangeChanged     LOCAL FORMAT " + gDateFormater.format(range.start) + " " + gDateFormater.format(range.end));
     console.log("                   ISO FORMAT " + range.start.toISOString() + " " + range.end.toISOString());
     loadRange(range.start, range.end, gTimeline.size.contentWidth);
 }
@@ -62,8 +62,8 @@ function onReSize() {
 
 function onLoad() {
     // Inicializuj data
-    gDateFormater = new google.visualization.DateFormat({formatType: 'medium'});
     gDataTable = new google.visualization.Table(document.getElementById('datatable'));
+    gDataTable.
     gData = new google.visualization.DataTable();
 
     var start = new Date("2014-08-06T12:00:00.000Z");    // debug

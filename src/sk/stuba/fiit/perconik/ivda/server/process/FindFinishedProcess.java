@@ -52,7 +52,7 @@ public abstract class FindFinishedProcess {
      */
     protected void check(ProcessesChangedSinceCheckEventDto event) {
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
+        timestamp.setTime(event.getTimestamp().getTime());
 
         for (ProcessDto started : event.getStartedProcesses()) {
             if (appBlackList.contains(started.getName())) {

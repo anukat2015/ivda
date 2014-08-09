@@ -13,6 +13,7 @@
     <script type="text/javascript" src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
+    <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
     <script type="text/javascript">
@@ -20,7 +21,7 @@
         var gData = undefined;
         var gChart = undefined;
         var gDataTable = undefined;
-        var gDateFormater = undefined;
+        var gDateFormater = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         google.load("visualization", "1", {packages: ["corechart", 'table']});
         google.setOnLoadCallback(onLoad);

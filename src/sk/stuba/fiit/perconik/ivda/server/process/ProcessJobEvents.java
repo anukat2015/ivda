@@ -21,7 +21,7 @@ public class ProcessJobEvents extends ProcessEventsToDataTable {
     protected void proccessItem(EventDto event) throws TypeMismatchException {
         String action = event.getActionName();
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
+        timestamp.setTime(event.getTimestamp().getTime());
         String description = action +
                 "<span class=\"more\"><pre>"
                 + event + "<br/>"

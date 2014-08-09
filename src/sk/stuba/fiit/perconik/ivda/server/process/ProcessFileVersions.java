@@ -33,7 +33,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
         if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
         String action = event.getActionName();
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(event.getTimestamp().toGregorianCalendar().getTime());
+        timestamp.setTime(event.getTimestamp().getTime());
 
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         IdeDocumentDto dokument = cevent.getDocument();

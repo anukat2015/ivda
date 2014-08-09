@@ -90,8 +90,9 @@ public final class TimelineServlet extends DataSourceServlet {
 //        request.setTime(start, end).setUser("steltecia\\pzbell");
 //        process = new ProcessJobEvents(request);
 
-        start = DateUtils.fromString("2014-07-03T00:00:01.000Z");
-        end = DateUtils.fromString("2014-07-03T23:59:00.000Z");
+        start = DateUtils.fromString("2014-07-03T00:00:01.000");
+        //end = DateUtils.fromString("2014-07-03T23:59:00.000");
+        end = DateUtils.fromString("2014-07-03T10:59:00.000");
         request.setTime(start, end).setUser("steltecia\\pzbell"); //.setType(new ProcessesChangedSinceCheckEventDto());
         process = new ProcessAsGroup(request);
 

@@ -11,17 +11,17 @@
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ProcessDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ProcessesChangedSinceCheckEventDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/SystemEventDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCheckinEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeElementEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCheckinEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeElementEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeCodeEventDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeDocumentDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeDocumentEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeDocumentEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindEventDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindFileResultDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeFindResultRowDto.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeProjectEventRequest.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeStateChangeEventRequest.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeProjectEventDto.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/IdeStateChangeEventDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/ide/RcsServerDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebBookmarkEventDto.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/sk/stuba/fiit/perconik/ivda/uaca/dto/web/WebCopyEventDto.java" charset="UTF-8" />

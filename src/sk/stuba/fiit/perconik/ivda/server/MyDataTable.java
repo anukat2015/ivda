@@ -43,7 +43,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @throws TypeMismatchException
      */
     public void add(String group, GregorianCalendar start, ClassName className, String content) throws TypeMismatchException {
-        addRowFromValues(start, null, content, group, className.toString(), null);
+        add(group, start, null, className, content, null);
     }
 
     /**
@@ -57,7 +57,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @throws TypeMismatchException
      */
     public void add(String group, GregorianCalendar start, ClassName className, String content, String description) throws TypeMismatchException {
-        addRowFromValues(start, null, content, group, className.toString(), description);
+        add(group, start, null, className, content, description);
     }
 
     /**
@@ -71,7 +71,14 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @throws TypeMismatchException
      */
     public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) throws TypeMismatchException {
-        addRowFromValues(start, end, content, group, className.toString(), null);
+        add(group, start, end, className, content, null);
+    }
+
+    public void add(String group, final GregorianCalendar start, final GregorianCalendar end, ClassName className, String content, String description) throws TypeMismatchException {
+        // Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
+        if (start != null) start.add(GregorianCalendar.HOUR, 1); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+        //if (end != null) end.add(GregorianCalendar.HOUR, 1);
+        addRowFromValues(start, end, content, group, className.toString(), description);
     }
 
     /**

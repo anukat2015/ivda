@@ -1,12 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.util;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Seky on 23. 7. 2014.
@@ -16,15 +15,13 @@ import java.text.ParseException;
  * Vytvorene na zaklade:
  * http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-format
  * http://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date
+ * Oni to prerobili zase na iny format, ach !
  */
 public final class DateUtils {
-    private static final DateFormat format = new ISO8601DateFormat();
-    private static final TimeZone tz = TimeZone.getTimeZone("Europe/Bratislava");
+    private static final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
+    private static final TimeZone tz = TimeZone.getTimeZone("GMT");
 
     public static GregorianCalendar fromString(String dateString) {
-        if (dateString == null || dateString.isEmpty()) {
-            throw new IllegalArgumentException("dateString is empty");
-        }
         GregorianCalendar gc = new GregorianCalendar(tz);
         try {
             gc.setTime(format.parse(dateString));
@@ -38,13 +35,4 @@ public final class DateUtils {
         return format.format(c.getTime());
     }
 
-    public static GregorianCalendar createUtcNow() {
-        return new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-    }
-
-    public static GregorianCalendar normalizeGregorianCalendar(XMLGregorianCalendar c) {
-        GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(c.toGregorianCalendar().getTime());
-        return timestamp;
-    }
 }
