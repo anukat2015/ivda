@@ -6,10 +6,13 @@ import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.MonitoringStartedEventDto;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebEventDto;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * Created by Seky on 8. 8. 2014.
@@ -18,7 +21,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     /**
      * tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
      */
-    private static final int ACTIVITY_MIN_INTERVAL = 1000 * 60 * 1;
+    private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(1);
 
     /**
      * tzv. raz za 5 min s amusi poslat udaj o procesoch, vtedy sa da chapat, ze je na pocitaci ale eventy sa nezachytavaju
@@ -29,8 +32,11 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     private EventDto lastEvent = null;  // potrebne pre meranie podla casu
     private Integer inGroup = 0;
 
+    private BlackListedProcesses blacklist;
+
     public ProcessAsGroup(EventsRequest request) {
         super(request);
+        blacklist = new BlackListedProcesses();
         if (!request.getAscending()) {
             throw new IllegalArgumentException("Ascening should be true");
         }
@@ -44,6 +50,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         }
         // Dalsie entity znamenaju aktivitu, ProcessesChangedSinceCheckEventDto sa miesa spolu s ostatynmi aktivitamy preto ich ignorujeme
         if (event instanceof ProcessesChangedSinceCheckEventDto) {
+            checkProcess((ProcessesChangedSinceCheckEventDto) event);
             return;
         }
 
@@ -59,19 +66,47 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         lastEvent = event;
     }
 
-    protected void checkGroup(EventDto actual) throws TypeMismatchException {
+    /**
+     * Vyvojar mozno zapol inu aplikaciu ako WEB alebo IDE a tym padom stale pracoval.
+     * Skontroluj to.
+     *
+     * @param actual
+     * @return
+     * @throws TypeMismatchException
+     */
+    protected boolean checkProcess(ProcessesChangedSinceCheckEventDto actual) throws TypeMismatchException {
+        for (ProcessDto process : actual.getStartedProcesses()) {
+            if (blacklist.contains(process)) {
+                continue;
+            }
+            // Ide o zaujimavy process
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Ked interval medzi eventami jepriliz velky, rozdel interval.
+     *
+     * @param actual
+     * @return
+     * @throws TypeMismatchException
+     */
+    protected boolean parseByTime(EventDto actual) throws TypeMismatchException {
         long actualTimestamp = actual.getTimestamp().getTimeInMillis();
         long lastTimestamp = lastEvent.getTimestamp().getTimeInMillis();
         long diff = actualTimestamp - lastTimestamp;
-        String  a = DateUtils.toString(actual.getTimestamp());
-        String  b = DateUtils.toString(lastEvent.getTimestamp());
         if (diff > ACTIVITY_MIN_INTERVAL) {
             // Je to velky casovy rozdiel
             foundGroupEnd();
             firstEvent = actual;
-            return;
+            return true;
         }
+        return false;
+    }
 
+    protected void checkGroup(EventDto actual) throws TypeMismatchException {
+        if (parseByTime(actual)) return;
         /*
         if (lastEvent instanceof WebEventDto && firstEvent instanceof WebEventDto) {
             return; // su rovnake

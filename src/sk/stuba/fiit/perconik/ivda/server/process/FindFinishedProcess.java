@@ -2,17 +2,12 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,23 +21,13 @@ import java.util.Set;
  */
 public abstract class FindFinishedProcess {
     private static final Logger logger = Logger.getLogger(FindFinishedProcess.class.getName());
-    private static final String fileName = "processBlackList.txt";
 
     protected Map<Integer, FinishedProcess> startedApps;
-    protected Set<String> appBlackList;
+    protected BlackListedProcesses appBlackList;
 
     public FindFinishedProcess() {
         startedApps = new HashMap<>();
-        loadBlacklist();
-    }
-
-    protected void loadBlacklist() {
-        File file = new File(Configuration.CONFIG_DIR, fileName);
-        try {
-            appBlackList = new HashSet<>(FileUtils.readLines(file));
-        } catch (IOException e) {
-            logger.error("Error reading from " + fileName, e);
-        }
+        appBlackList = new BlackListedProcesses();
     }
 
     /**
@@ -55,7 +40,7 @@ public abstract class FindFinishedProcess {
         timestamp.setTime(event.getTimestamp().getTime());
 
         for (ProcessDto started : event.getStartedProcesses()) {
-            if (appBlackList.contains(started.getName())) {
+            if (appBlackList.contains(started)) {
                 continue;
             }
             FinishedProcess item = new FinishedProcess();
