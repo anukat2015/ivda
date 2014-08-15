@@ -8,7 +8,9 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -28,8 +30,16 @@ public final class MyDataTable extends DataTable implements Serializable {
                     new ColumnDescription("description", ValueType.TEXT, "Description")
             });
 
+    /**
+     * Udaje dodavene do group sa nahradzuju inym retazcom.
+     * Ochrana sukromia.
+     */
+    private final Map<String, String> replaceGroup;
+    private char alphabetCurrent = 'A';
+
     public MyDataTable() {
         super();
+        replaceGroup = new HashMap<>();
         addColumns(columnDescriptions);
     }
 
@@ -88,6 +98,18 @@ public final class MyDataTable extends DataTable implements Serializable {
             end.roll(GregorianCalendar.HOUR, true);
         }
 
+        // Nahrad skupinu
+        if (group != null) {
+            String groupnew = replaceGroup.get(group);
+            if (groupnew == null) {
+                groupnew = "" + alphabetCurrent;
+                replaceGroup.put(group, groupnew);
+                alphabetCurrent++;
+            }
+            group = groupnew;
+        }
+
+        // Uloz vysledok
         addRowFromValues(start, end, content, group, className.toString(), description);
     }
 
