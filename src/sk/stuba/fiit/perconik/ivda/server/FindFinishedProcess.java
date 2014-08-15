@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.process;
+package sk.stuba.fiit.perconik.ivda.server;
 
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
@@ -35,7 +35,7 @@ public abstract class FindFinishedProcess {
      *
      * @param event
      */
-    protected void check(ProcessesChangedSinceCheckEventDto event) {
+    public void check(ProcessesChangedSinceCheckEventDto event) {
         GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         timestamp.setTime(event.getTimestamp().getTime());
 

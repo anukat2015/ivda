@@ -5,10 +5,11 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessAsGroup;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessAllEvents;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
+import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -62,10 +63,12 @@ public final class TimelineServlet extends DataSourceServlet {
         EventsRequest request = new EventsRequest();
         ProcessEventsToDataTable process;
 
-        //start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
-        //end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
-        //request.setTime(start, end).setUser("steltecia").setType(new IdeCodeEventRequest(), "pastefromweb");
-        // process = new ProcessFileVersions();
+        start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
+        end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
+        request.setTime(start, end);
+        //request.setType(new IdeCodeEventDto(), "pastefromweb");
+        request.setType(new IdeCheckinEventDto());
+        process = new ProcessAllEvents(request);
 
 
         //start = DateUtils.fromString("2014-08-06T01:00:00.000Z");
@@ -90,11 +93,10 @@ public final class TimelineServlet extends DataSourceServlet {
 //        request.setTime(start, end).setUser("steltecia\\pzbell");
 //        process = new ProcessJobEvents(request);
 
-        start = DateUtils.fromString("2014-07-03T00:00:01.000");
-        //end = DateUtils.fromString("2014-07-03T23:59:00.000");
-        end = DateUtils.fromString("2014-07-03T10:59:00.000");
-        request.setTime(start, end).setUser("steltecia\\pzbell"); //.setType(new ProcessesChangedSinceCheckEventDto());
-        process = new ProcessAsGroup(request);
+        //start = DateUtils.fromString("2014-07-03T00:00:01.000");
+        //end = DateUtils.fromString("2014-07-03T10:59:00.000");
+        //request.setTime(start, end).setUser("steltecia\\pzbell"); //.setType(new ProcessesChangedSinceCheckEventDto());
+        //process = new ProcessAsGroup(request);
 
         logger.info("Start: " + DateUtils.toString(start) +
                 " end:" + DateUtils.toString(end) +

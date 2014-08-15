@@ -6,8 +6,6 @@ import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
-import com.ibm.icu.util.GregorianCalendar;
-import com.ibm.icu.util.TimeZone;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
@@ -32,8 +30,6 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
         if (!(event instanceof IdeCodeEventDto)) return;
         if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
         String action = event.getActionName();
-        GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(event.getTimestamp().getTime());
 
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         IdeDocumentDto dokument = cevent.getDocument();
@@ -56,11 +52,12 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
 
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
         if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
+            logger.info("changesetIdInRcs empty");
             return;
         }
 
         try {
-            logger.info(cevent.getText());
+            logger.info("Skopiroval:" + cevent.getText());
             RcsServerDto server = AstRcsWcfService.getInstance().getRcsServerDto(dokument.getRcsServer().getUrl());
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
@@ -74,7 +71,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             id = fileVersion.getId();
             name = Files.getNameWithoutExtension(dokument.getLocalPath()) + id;
             cacheFile = new File(cacheFolder, name);
-            logger.info(cacheFile);
+            logger.info("Ulozene do cache:" + cacheFile);
             content = AstRcsWcfService.getInstance().getFileContent(id);
             Files.write(content, cacheFile, Charset.defaultCharset());
             // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
@@ -109,6 +106,6 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
                 + "</pre></span>";
 
 
-        dataTable.add(event.getUser(), timestamp, MyDataTable.ClassName.AVAILABLE, description);
+        dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "pastefromweb", description);
     }
 }

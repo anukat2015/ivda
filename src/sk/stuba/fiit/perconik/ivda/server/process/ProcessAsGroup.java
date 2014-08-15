@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.ibm.icu.util.GregorianCalendar;
+import sk.stuba.fiit.perconik.ivda.server.BlackListedProcesses;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
@@ -133,6 +134,9 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         } else if (firstEvent instanceof IdeEventDto) {
             type = MyDataTable.ClassName.MAYBE;
             content = "Ide";
+        } else if (firstEvent instanceof ProcessesChangedSinceCheckEventDto) {
+            type = MyDataTable.ClassName.AVAILABLE;
+            content = "Iny proces";
         } else {
             logger.warn("Neznamy typ entity prisiel az sem.");
             type = MyDataTable.ClassName.UNAVAILABLE; // tzv nezanmy typ entity prisiel
