@@ -40,5 +40,4 @@ function onLoad() {
     //var start = new Date();
     initializeTooltip();
     inicializeTimeline(start);
-    drawChart();
 }

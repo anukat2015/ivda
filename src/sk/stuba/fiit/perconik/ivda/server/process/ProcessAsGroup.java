@@ -126,16 +126,20 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         GregorianCalendar start = firstEvent.getTimestamp();
         GregorianCalendar end = lastEvent.getTimestamp();
         MyDataTable.ClassName type;
+        String content;
         if (firstEvent instanceof WebEventDto) {
             type = MyDataTable.ClassName.AVAILABLE;
+            content = "Web";
         } else if (firstEvent instanceof IdeEventDto) {
             type = MyDataTable.ClassName.MAYBE;
+            content = "Ide";
         } else {
             logger.warn("Neznamy typ entity prisiel az sem.");
             type = MyDataTable.ClassName.UNAVAILABLE; // tzv nezanmy typ entity prisiel
+            content = "Unknown";
         }
 
-        dataTable.add(firstEvent.getUser(), start, end, type, "Interval", inGroup.toString());
+        dataTable.add(firstEvent.getUser(), start, end, type, content, inGroup.toString());
         inGroup = 0;
     }
 

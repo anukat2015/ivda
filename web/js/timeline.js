@@ -65,6 +65,7 @@ function handleServiceResponse(response) {
      dateFormatter.format(gData, 0);
      dateFormatter.format(gData, 1); */
     //console.log(gData);
+    drawChart(gData);
     gTimeline.draw(gData);
     gDataTable.draw(gData, {
         allowHtml: true,
