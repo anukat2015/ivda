@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,5 +36,16 @@ public class BlackListedProcesses implements Serializable {
 
     public boolean contains(ProcessDto process) {
         return data.contains(process.getName());
+    }
+
+    public boolean atLeastOneSpecial(List<ProcessDto> list) {
+        for (ProcessDto process : list) {
+            if (contains(process)) {
+                continue;
+            }
+            // Ide o zaujimavy process
+            return true;
+        }
+        return false;
     }
 }

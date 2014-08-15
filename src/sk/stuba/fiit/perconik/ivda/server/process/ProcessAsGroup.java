@@ -6,7 +6,6 @@ import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.MonitoringStartedEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebEventDto;
@@ -42,16 +41,27 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         }
     }
 
+    /**
+     * Zakladnym principom je vytvoreny interval od prveho az po posledny event. Nasledne na zaklade casu
+     * alebo roznych typov sa interval pretrhne.
+     *
+     * @param event
+     * @throws TypeMismatchException
+     */
     @Override
     protected void proccessItem(EventDto event) throws TypeMismatchException {
         // Ignorujeme malo podstatne entity  ... startovanie monitorovania neznamena nic
         if (event instanceof MonitoringStartedEventDto) {
             return;
         }
+
+
         // Dalsie entity znamenaju aktivitu, ProcessesChangedSinceCheckEventDto sa miesa spolu s ostatynmi aktivitamy preto ich ignorujeme
         if (event instanceof ProcessesChangedSinceCheckEventDto) {
-            checkProcess((ProcessesChangedSinceCheckEventDto) event);
-            return;
+            if (!checkProcesses((ProcessesChangedSinceCheckEventDto) event)) {
+                // Nejde o zaujimavy proces, pravdepodobne nic nerobil
+                return;
+            }
         }
 
         // Ak si prvy uloz sa a pokracuj dalej
@@ -72,17 +82,9 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      *
      * @param actual
      * @return
-     * @throws TypeMismatchException
      */
-    protected boolean checkProcess(ProcessesChangedSinceCheckEventDto actual) throws TypeMismatchException {
-        for (ProcessDto process : actual.getStartedProcesses()) {
-            if (blacklist.contains(process)) {
-                continue;
-            }
-            // Ide o zaujimavy process
-            return true;
-        }
-        return false;
+    protected boolean checkProcesses(ProcessesChangedSinceCheckEventDto actual) {
+        return blacklist.atLeastOneSpecial(actual.getStartedProcesses());
     }
 
     /**
