@@ -67,14 +67,21 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
 
         // Ak si prvy uloz sa a pokracuj dalej
         if (firstEvent == null) {
-            firstEvent = event;
-            lastEvent = event;
-            return;
+            createNewGroup(event);
+            add2Group(event);  // musi sa nastavit skor ako v checkGroup
+            return; // moze pokracovat dalej, checkGroup neovplinvi ked prvya posledny je ten isty ale nemussi :)
         }
 
-        inGroup++;
-        checkGroup(event);
+        if (divideByTime(event) || divideByType(event)) {
+            foundEndOfGroup();
+            createNewGroup(event);
+        }
+        add2Group(event);
+    }
+
+    protected void add2Group(EventDto event) {
         lastEvent = event;
+        inGroup++;
     }
 
     /**
@@ -89,52 +96,62 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     }
 
     /**
-     * Ked interval medzi eventami jepriliz velky, rozdel interval.
+     * Ked interval medzi eventami je priliz velky, rozdel interval.
      *
      * @param actual
      * @return
      * @throws TypeMismatchException
      */
-    protected boolean parseByTime(EventDto actual) throws TypeMismatchException {
+    protected boolean divideByTime(EventDto actual) throws TypeMismatchException {
         long actualTimestamp = actual.getTimestamp().getTimeInMillis();
-        long lastTimestamp = lastEvent.getTimestamp().getTimeInMillis();
+        long lastTimestamp = getLastEvent().getTimestamp().getTimeInMillis();
         long diff = actualTimestamp - lastTimestamp;
-        if (diff > ACTIVITY_MIN_INTERVAL) {
-            // Je to velky casovy rozdiel
-            foundGroupEnd();
-            firstEvent = actual;
-            return true;
+        return (diff > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
+    }
+
+    public EventDto getLastEvent() {
+        return lastEvent;
+    }
+
+    public EventDto getFirstEvent() {
+        return firstEvent;
+    }
+
+    /**
+     * Rozdel interval ked prvky su odlisneho typu
+     *
+     * @param actual
+     * @return
+     * @throws TypeMismatchException
+     */
+    protected boolean divideByType(EventDto actual) throws TypeMismatchException {
+        if (getLastEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
+            return false; // su rovnake
+        } else if (getLastEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {
+            return false; // su rovnake
         }
-        return false;
+        // nie su rovnake alebo pojde o novy typ
+        return true;
     }
 
-    protected void checkGroup(EventDto actual) throws TypeMismatchException {
-        if (parseByTime(actual)) return;
-        /*
-        if (lastEvent instanceof WebEventDto && firstEvent instanceof WebEventDto) {
-            return; // su rovnake
-        } else if (lastEvent instanceof IdeEventDto && firstEvent instanceof IdeEventDto) {
-            return; // su rovnake
-        } else {   // nie su rovnake alebo pojde o novy typ
-            foundGroupEnd();
-            firstEvent = lastEvent;
-            return;
-        }  */
+    protected void createNewGroup(EventDto actual) {
+        inGroup = 0;
+        firstEvent = actual;
     }
 
-    protected void foundGroupEnd() throws TypeMismatchException {
+    protected void foundEndOfGroup() throws TypeMismatchException {
         // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
-        GregorianCalendar start = firstEvent.getTimestamp();
-        GregorianCalendar end = lastEvent.getTimestamp();
+        GregorianCalendar start = getFirstEvent().getTimestamp();
+        GregorianCalendar end = getLastEvent().getTimestamp();
         MyDataTable.ClassName type;
         String content;
-        if (firstEvent instanceof WebEventDto) {
+        if (getFirstEvent() instanceof WebEventDto) {
             type = MyDataTable.ClassName.AVAILABLE;
             content = "Web";
-        } else if (firstEvent instanceof IdeEventDto) {
+        } else if (getFirstEvent() instanceof IdeEventDto) {
             type = MyDataTable.ClassName.MAYBE;
             content = "Ide";
-        } else if (firstEvent instanceof ProcessesChangedSinceCheckEventDto) {
+        } else if (getFirstEvent() instanceof ProcessesChangedSinceCheckEventDto) {
             type = MyDataTable.ClassName.AVAILABLE;
             content = "Iny proces";
         } else {
@@ -143,16 +160,16 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
             content = "Unknown";
         }
 
-        dataTable.add(firstEvent.getUser(), start, end, type, content, inGroup.toString());
-        inGroup = 0;
+        dataTable.add(getFirstEvent().getUser(), start, end, type, content, inGroup.toString());
     }
 
+    @Override
     protected void finished() {
-        if (firstEvent == null) {
-            return; // ked ziadny prvok nebl v odpovedi
+        if (getFirstEvent() == null) {
+            return; // ked ziadny prvok nebol v odpovedi
         }
         try {
-            foundGroupEnd();
+            foundEndOfGroup();
         } catch (TypeMismatchException e) {
             e.printStackTrace();
         }
