@@ -85,33 +85,39 @@ public final class MyDataTable extends DataTable implements Serializable {
         add(group, start, end, className, content, null);
     }
 
-    public void add(String group, GregorianCalendar start, @Nullable GregorianCalendar end, ClassName className, @Nullable String content, @Nullable String description) throws TypeMismatchException {
-
-        // Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
-        if (start != null) {
-            start = (GregorianCalendar) start.clone(); // GregorianCalendar asi nie je immutable
-            start.roll(GregorianCalendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
-            start.roll(GregorianCalendar.HOUR, true); // .add() sa sprava inac
-        }
-        if (end != null) {
-            end = (GregorianCalendar) end.clone();  // klasicky roll sa sprava tiez inac
-            end.roll(GregorianCalendar.HOUR, true);  // https://groups.google.com/forum/#!topic/comp.lang.java.programmer/dcQnxrVhSYo
-            end.roll(GregorianCalendar.HOUR, true);
-        }
-
-        // Nahrad skupinu
-        if (group != null) {
-            String groupnew = replaceGroup.get(group);
-            if (groupnew == null) {
-                groupnew = "" + alphabetCurrent;
-                replaceGroup.put(group, groupnew);
-                alphabetCurrent++;
-            }
-            group = groupnew;
-        }
-
+    public void add(String group,
+                    GregorianCalendar start,
+                    @Nullable GregorianCalendar end,
+                    ClassName className,
+                    @Nullable String content,
+                    @Nullable String description
+    ) throws TypeMismatchException {
         // Uloz vysledok
-        addRowFromValues(start, end, content, group, className.toString(), description);
+        addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+    }
+
+    /**
+     * Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
+     *
+     * @param time
+     */
+    protected GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
+        if (time == null) return time;
+        time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
+        time.roll(GregorianCalendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+        time.roll(GregorianCalendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
+        return time;
+    }
+
+    protected String blackoutName(@Nullable String name) {
+        if (name == null) return name;
+        String groupnew = replaceGroup.get(name);
+        if (groupnew == null) {
+            groupnew = "" + alphabetCurrent;
+            replaceGroup.put(name, groupnew);
+            alphabetCurrent++;
+        }
+        return groupnew;
     }
 
     /**
