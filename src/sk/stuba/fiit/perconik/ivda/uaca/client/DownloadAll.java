@@ -29,7 +29,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     private final Class<? extends PagedResponse<T>> mClass;
     private final GuavaFilesCache<URI, PagedResponse<T>> cache;
 
-    public DownloadAll(Class<? extends PagedResponse<T>> aClass) {
+    protected DownloadAll(Class<? extends PagedResponse<T>> aClass) {
         mClass = aClass;
         client = new WebClient();
         cache = new GuavaFilesCache<URI, PagedResponse<T>>() {
@@ -50,6 +50,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
 
             @Override
             protected PagedResponse<T> fileNotFound(URI uri) {
+                //noinspection unchecked
                 return (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
             }
         };
@@ -86,6 +87,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
                 canceled();
                 break;
             }
+            //noinspection ConstantConditions
             uri = getNextURI(response, uri);
         }
         logger.info("Downloading finished.");

@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public final class UriUtils {
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
-        Map<String, String> qpairs = new LinkedHashMap<String, String>();
+        Map<String, String> qpairs = new LinkedHashMap<>();
         String[] pairs = url.getQuery().split("&");
         for (String pair : pairs) {
             int part = pair.indexOf("=");

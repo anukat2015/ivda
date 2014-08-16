@@ -13,12 +13,11 @@ import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 public final class EventDeserializerModule extends SimpleModule {
     private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.ivda.uaca.dto";
     private static final String GROUP_ID = "sk.stuba.fiit.perconik.ivda"; // alias adresa projektu
-    private final PolymorphicDeserializer<EventDto> deserializer;
 
     public EventDeserializerModule() {
         super("PolymorphicDeserializerModule", new Version(1, 0, 0, "1.0-SNAPSHOT", GROUP_ID, GROUP_ID));
 
-        deserializer = new PolymorphicDeserializer<>(EventDto.class, "eventTypeUri");
+        PolymorphicDeserializer<EventDto> deserializer = new PolymorphicDeserializer<>(EventDto.class, "eventTypeUri");
         deserializer.pushSubTypesOf(ENTITIES_PACKAGE);
         addDeserializer(EventDto.class, deserializer);
         addDeserializer(GregorianCalendar.class, new GregorianCalendarDeserializer());

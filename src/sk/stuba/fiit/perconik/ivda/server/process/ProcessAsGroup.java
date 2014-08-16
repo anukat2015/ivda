@@ -32,7 +32,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     private EventDto lastEvent = null;  // potrebne pre meranie podla casu
     private Integer inGroup = 0;
 
-    private BlackListedProcesses blacklist;
+    private final BlackListedProcesses blacklist;
 
     public ProcessAsGroup(EventsRequest request) {
         super(request);
@@ -102,7 +102,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * @return
      * @throws TypeMismatchException
      */
-    protected boolean divideByTime(EventDto actual) throws TypeMismatchException {
+    protected boolean divideByTime(EventDto actual)  {
         long actualTimestamp = actual.getTimestamp().getTimeInMillis();
         long lastTimestamp = getLastEvent().getTimestamp().getTimeInMillis();
         long diff = actualTimestamp - lastTimestamp;
@@ -124,7 +124,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * @return
      * @throws TypeMismatchException
      */
-    protected boolean divideByType(EventDto actual) throws TypeMismatchException {
+    protected boolean divideByType(EventDto actual) {
         if (getLastEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
             return false; // su rovnake
         } else if (getLastEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {

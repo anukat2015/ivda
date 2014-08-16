@@ -26,7 +26,7 @@ public final class Configuration implements Serializable {
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
     private static JAXBContext context = null;
     private static Configuration instance = null;
-    private Map<String, String> astRcs = new HashMap<String, String>();
+    private Map<String, String> astRcs = new HashMap<>();
     private URI uacaLink;
 
     static {
@@ -54,7 +54,7 @@ public final class Configuration implements Serializable {
         return instance;
     }
 
-    public static Configuration read() {
+    private static Configuration read() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
             logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
@@ -65,7 +65,7 @@ public final class Configuration implements Serializable {
         }
     }
 
-    public void write() {
+    private void write() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
             Marshaller marshaller = context.createMarshaller();

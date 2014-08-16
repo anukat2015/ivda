@@ -18,8 +18,8 @@ import java.io.File;
 public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
     protected static final Logger logger = Logger.getLogger(ProcessEventsToDataTable.class.getName());
     private final static File cacheFolder = new File("C:/cache/");
-    protected MyDataTable dataTable;
-    private EventsRequest request;
+    protected final MyDataTable dataTable;
+    private final EventsRequest request;
 
 
     public ProcessEventsToDataTable(EventsRequest request) {
@@ -42,12 +42,18 @@ public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
 
     protected abstract void proccessItem(EventDto event) throws TypeMismatchException;
 
-    public @NotNull MyDataTable getDataTable() {
+    public
+    @NotNull
+    MyDataTable getDataTable() {
         return dataTable;
     }
 
     public void start() {
-        downloadedNonRecursive(request.getURI());
+        try {
+            downloadedNonRecursive(request.getURI());
+        } catch (Exception e) {
+            logger.error("Nemozem vygenerovat adresu.", e);
+        }
     }
-};
+}
 

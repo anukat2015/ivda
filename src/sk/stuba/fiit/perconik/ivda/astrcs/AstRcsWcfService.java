@@ -21,7 +21,7 @@ public final class AstRcsWcfService {
     private static final Logger logger = Logger.getLogger(AstRcsWcfService.class.getName());
     private final IAstRcsWcfSvc service;
     private final ObjectFactory factory;
-    private List<RcsServerDto> servers;
+    private final List<RcsServerDto> servers;
 
     private AstRcsWcfService() {
         authenticate();
@@ -59,6 +59,7 @@ public final class AstRcsWcfService {
     }
 
     public RcsServerDto getNearestRcsServerDto(URI url) {
+
         return Strings.findLongestPrefix(servers, url.toString(), new Function<RcsServerDto, String>() {
             @Override
             public String apply(RcsServerDto input) {

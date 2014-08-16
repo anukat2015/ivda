@@ -11,7 +11,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
  * Created by Seky on 7. 8. 2014.
  */
 public class ProcessAllProcess extends ProcessEventsToDataTable {
-    protected FindFinishedProcess finishedProcess;
+    private final FindFinishedProcess finishedProcess;
 
     public ProcessAllProcess(EventsRequest request) {
         super(request);

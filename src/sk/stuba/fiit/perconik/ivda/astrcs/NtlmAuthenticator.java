@@ -20,7 +20,7 @@ public final class NtlmAuthenticator extends Authenticator {
      */
     public NtlmAuthenticator(final String username, final String password) {
         super();
-        this.username = new String(username);
+        this.username = username;
         this.password = password.toCharArray();
     }
 

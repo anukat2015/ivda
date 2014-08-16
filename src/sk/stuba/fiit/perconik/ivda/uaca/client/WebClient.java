@@ -21,7 +21,7 @@ import java.net.URI;
 public class WebClient implements Serializable {
     private static final Logger logger = Logger.getLogger(WebClient.class.getName());
 
-    private Client client;
+    private final Client client;
 
     public WebClient() {
         // Zaregistruj nase providery

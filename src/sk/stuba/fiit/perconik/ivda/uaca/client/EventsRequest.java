@@ -20,7 +20,7 @@ public final class EventsRequest extends EventsURI {
         builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
     }
 
-    public URI getURI() {
+    public URI getURI() throws Exception {
         return UriUtils.addBeanProperties(builder, EventsURI.class, this).build();
     }
 

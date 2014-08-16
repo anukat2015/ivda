@@ -102,7 +102,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @param time
      */
     protected GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
-        if (time == null) return time;
+        if (time == null) return null;
         time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
         time.roll(GregorianCalendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
         time.roll(GregorianCalendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
@@ -110,7 +110,7 @@ public final class MyDataTable extends DataTable implements Serializable {
     }
 
     protected String blackoutName(@Nullable String name) {
-        if (name == null) return name;
+        if (name == null) return null;
         String groupnew = replaceGroup.get(name);
         if (groupnew == null) {
             groupnew = "" + alphabetCurrent;

@@ -24,6 +24,7 @@ public final class Strings {
         T longestString = null;
         for (T object : collection) {
             String key = trans.apply(object);
+            assert key != null;
             if (search.startsWith(key)) {
                 int length = longestString == null ? 0 : trans.apply(longestString).length();
                 if (key.length() > length) {

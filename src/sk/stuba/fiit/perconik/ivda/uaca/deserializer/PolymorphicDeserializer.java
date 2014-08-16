@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Set;
@@ -66,23 +65,16 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
      * @param packageName
      * @param callMethod
      */
-    public void pushSubTypesOf(String packageName, Method callMethod) {
+    public void pushSubTypesOf(String packageName, Method callMethod) throws Exception {
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(baseClass);
         if (subTypes.isEmpty()) {
             logger.info("Package '" + packageName + "' is empty.");
         }
-        try {
-            for (Class<? extends T> aClass : subTypes) {
-                Object object = callMethod.invoke(aClass.newInstance());
-                register(object.toString(), aClass);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
+
+        for (Class<? extends T> aClass : subTypes) {
+            Object object = callMethod.invoke(aClass.newInstance());
+            register(object.toString(), aClass);
         }
     }
 
@@ -104,7 +96,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
                 getter = baseClass.getMethod("is" + name);
             }
             pushSubTypesOf(packageName, getter);
-        } catch (NoSuchMethodException e) {
+        } catch (Exception e) {
             throw new RuntimeException("I cant find getter", e);
         }
     }
@@ -119,6 +111,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         if (!mTryLongestSubsequence) return aClass;
         if (aClass == null) {
             logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
+            //noinspection NullableProblems
             String longestString = Strings.findLongestPrefix(registry.keySet(), key, new Function<String, String>() {
                 @Override
                 public String apply(String input) {

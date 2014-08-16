@@ -49,7 +49,6 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             logger.info("Lokalny subor");
             return;
         }
-        String fragment = rcsServer.getTypeUri().getFragment();
 
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
         if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny

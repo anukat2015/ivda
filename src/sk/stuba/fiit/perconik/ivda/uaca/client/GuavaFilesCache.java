@@ -25,7 +25,8 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
 
                     @Override
                     public void onRemoval(RemovalNotification<Key, Value> notification) {
-                        File cacheFile = computeFilePath(cacheFolder, notification.getKey());
+                        @SuppressWarnings("ConstantConditions") File cacheFile = computeFilePath(cacheFolder, notification.getKey());
+                        //noinspection ResultOfMethodCallIgnored
                         cacheFile.delete();
                     }
                 })
@@ -44,7 +45,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
     protected abstract File getCacheFolder();
 
     protected Value loadFromFile(final Key key) throws Exception {
-        Value response = null;
+        Value response;
         File cacheFile = computeFilePath(cacheFolder, key);
 
         try {
@@ -67,32 +68,28 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
      */
     protected abstract File computeFilePath(final File folder, Key key);
 
+    @SuppressWarnings("unchecked")
     protected Value deserialize(File cacheFile) throws Exception {
+        // Deserialize
+        FileInputStream file = new FileInputStream(cacheFile);
         try {
-            // Deserialize
-            FileInputStream file = new FileInputStream(cacheFile);
-            try {
-                Value response;
-                logger.info("Deserializing from " + cacheFile);
-                response = (Value) SerializationUtils.deserialize(file);
-                file.close();
-                return response;
-            } catch (Exception e) {
-                // Chyba pri deserializaciii
-                file.close();
-                logger.info("Deleting cache file.");
-                cacheFile.delete();
-                throw new FileNotFoundException();
-            }
-        } catch (FileNotFoundException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
+            Value response;
+            logger.info("Deserializing from " + cacheFile);
+            response = (Value) SerializationUtils.deserialize(file);
+            file.close();
+            return response;
+        } catch (Exception e) {
+            // Chyba pri deserializaciii
+            file.close();
+            logger.info("Deleting cache file.");
+            //noinspection ResultOfMethodCallIgnored
+            cacheFile.delete();
+            throw new FileNotFoundException();
         }
     }
 
     protected void serialize(File cacheFile, Value response) throws Exception {
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         try {
             fos = new FileOutputStream(cacheFile);
             logger.info("Serializing to " + cacheFile);
@@ -101,7 +98,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
         } catch (FileNotFoundException e) {
             logger.error("Nemozem vytvorit subor s nazvom: " + cacheFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 }

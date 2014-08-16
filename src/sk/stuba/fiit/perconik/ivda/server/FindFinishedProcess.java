@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import com.ibm.icu.util.GregorianCalendar;
-import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -22,8 +21,8 @@ import java.util.Set;
 public abstract class FindFinishedProcess {
     private static final Logger logger = Logger.getLogger(FindFinishedProcess.class.getName());
 
-    protected Map<Integer, FinishedProcess> startedApps;
-    protected BlackListedProcesses appBlackList;
+    private final Map<Integer, FinishedProcess> startedApps;
+    private final BlackListedProcesses appBlackList;
 
     public FindFinishedProcess() {
         startedApps = new HashMap<>();
@@ -36,27 +35,31 @@ public abstract class FindFinishedProcess {
      * @param event
      */
     public void check(ProcessesChangedSinceCheckEventDto event) {
-        GregorianCalendar timestamp = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        timestamp.setTime(event.getTimestamp().getTime());
+        checkStarted(event);
+        checkKilled(event);
+    }
 
+    protected void checkStarted(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto started : event.getStartedProcesses()) {
             if (appBlackList.contains(started)) {
                 continue;
             }
             FinishedProcess item = new FinishedProcess();
-            item.start = timestamp;
+            item.start = event.getTimestamp();
             item.process = started;
             FinishedProcess saved = startedApps.put(started.getPid(), item);
             if (saved != null) {
                 logger.info("Process s takym PID uz existuje... " + saved);
             }
         }
+    }
 
+    protected void checkKilled(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto killed : event.getKilledProcesses()) {
             FinishedProcess saved = startedApps.get(killed.getPid());
             if (saved != null) {
                 startedApps.remove(killed.getPid());
-                saved.end = timestamp;
+                saved.end = event.getTimestamp();
                 found(saved);
             }
         }

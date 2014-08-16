@@ -17,7 +17,7 @@ import java.util.Map;
  * Vlastny deserializer. Ktory priradi objekt z jsonu na zaklade specifickeho kluca.
  */
 public class CustomDeserializer<T> extends JsonDeserializer<T> {
-    protected Map<String, Class<? extends T>> registry;
+    protected final Map<String, Class<? extends T>> registry;
     private final String watchedAttribute;
 
     /**
@@ -52,7 +52,7 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
         JsonNode root = mapper.readTree(jp);
         JsonNode attribute = root.get(watchedAttribute);
         if (attribute == null) {
-            throw new IOException("Attribute '" + attribute + "' not found !");
+            throw new IOException("Attribute '" + watchedAttribute + "' not found !");
         }
         Class<? extends T> aClass = searchForClass(attribute.asText());
         if (aClass == null) {
