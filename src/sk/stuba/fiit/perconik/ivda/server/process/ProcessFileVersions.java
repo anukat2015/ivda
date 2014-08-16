@@ -9,9 +9,9 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCodeEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -44,7 +44,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             LOGGER.info("ZAUJIMAVE getBranch nieje null");
         }
 
-        sk.stuba.fiit.perconik.ivda.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
+        sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             LOGGER.info("Lokalny subor");
             return;

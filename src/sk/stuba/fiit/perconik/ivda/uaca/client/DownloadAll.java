@@ -60,7 +60,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
      *
      * @param uri adresa ktora sa ma stiahnut
      */
-    private void downloadedNonRecursive(URI uri) {
+    public void downloadedNonRecursive(URI uri) {
         LOGGER.info("Starting downloading.");
         while (uri != null) {
             PagedResponse<T> response = downloadUri(uri);

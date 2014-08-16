@@ -10,8 +10,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -33,7 +33,7 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
         String action = event.getActionName();
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
-        sk.stuba.fiit.perconik.ivda.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
+        sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             LOGGER.info("rcsServer empty");
             return;

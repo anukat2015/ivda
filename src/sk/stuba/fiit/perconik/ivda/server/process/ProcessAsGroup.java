@@ -5,11 +5,11 @@ import com.ibm.icu.util.GregorianCalendar;
 import sk.stuba.fiit.perconik.ivda.server.BlackListedProcesses;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.MonitoringStartedEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
 
 import java.util.concurrent.TimeUnit;
 

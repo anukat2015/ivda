@@ -8,8 +8,8 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessChangesets;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCheckinEventDto;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;

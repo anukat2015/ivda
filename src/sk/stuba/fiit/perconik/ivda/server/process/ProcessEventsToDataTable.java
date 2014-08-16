@@ -7,7 +7,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.DownloadAll;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 import javax.validation.constraints.NotNull;
 

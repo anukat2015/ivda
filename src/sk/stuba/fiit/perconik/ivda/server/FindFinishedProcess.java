@@ -2,9 +2,9 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
+import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
 import java.util.HashMap;
 import java.util.Map;

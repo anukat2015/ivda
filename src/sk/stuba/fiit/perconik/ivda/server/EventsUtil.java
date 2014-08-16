@@ -1,9 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeEventDto;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.web.WebEventDto;
+
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
 
 import javax.validation.constraints.NotNull;
 

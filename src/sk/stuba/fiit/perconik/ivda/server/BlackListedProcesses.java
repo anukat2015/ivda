@@ -1,8 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import org.apache.commons.io.FileUtils;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 
 import java.io.File;
 import java.io.IOException;

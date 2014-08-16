@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.uaca.client;
 
 import com.ibm.icu.util.GregorianCalendar;
-import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
