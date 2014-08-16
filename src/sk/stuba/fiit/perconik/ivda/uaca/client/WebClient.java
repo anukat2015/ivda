@@ -19,8 +19,10 @@ import java.net.URI;
  * HTTP jednoduchy client na stahovanie odpovedi zo sluzieb.
  */
 public class WebClient implements Serializable {
-    private static final Logger logger = Logger.getLogger(WebClient.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WebClient.class.getName());
+    private static final long serialVersionUID = -7510866714791572678L;
 
+    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final Client client;
 
     public WebClient() {
@@ -28,22 +30,23 @@ public class WebClient implements Serializable {
         client = ClientBuilder.newBuilder().register(JacksonJsonProvider.class).register(JacksonContextResolver.class).build();
     }
 
-    public Object synchronizedRequest(URI uri, Class<?> aClass) {
+    public final Object synchronizedRequest(URI uri, Class<?> aClass) {
         WebTarget fullTarget = client.target(uri);
         Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
 
-        logger.info("synchronizedRequest start " + uri.toString());
+        LOGGER.info("synchronizedRequest start " + uri);
         Response response = invocation.invoke();
-        logger.info("synchronizedRequest end ");
+        LOGGER.info("synchronizedRequest end ");
 
         try {
             Response.Status.Family status = response.getStatusInfo().getFamily();
             if (status != Response.Status.Family.SUCCESSFUL) {
-                logger.error("WebClient error");
+                LOGGER.error("WebClient error");
             }
+            @SuppressWarnings("UnnecessaryLocalVariable")
             Object object = response.readEntity(aClass);
-            //logger.info("Downloaded:");
-            //logger.info(object);
+            //LOGGER.info("Downloaded:");
+            //LOGGER.info(object);
             return object;
         } finally {
             response.close();

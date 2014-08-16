@@ -35,13 +35,13 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
 
         sk.stuba.fiit.perconik.ivda.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
-            logger.info("rcsServer empty");
+            LOGGER.info("rcsServer empty");
             return;
         }
 
         String changesetIdInRcs = cevent.getChangesetIdInRcs();
         if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-            logger.info("changesetIdInRcs empty");
+            LOGGER.info("changesetIdInRcs empty");
             return;
         }
 
@@ -51,27 +51,27 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
         Integer id;
 
         try {
-            logger.info("-----------------");
-            RcsServerDto server = AstRcsWcfService.getInstance().getRcsServerDto(rcsServer.getUrl());
-            logger.info(ToStringBuilder.reflectionToString(server));
+            LOGGER.info("-----------------");
+            RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
+            LOGGER.info(ToStringBuilder.reflectionToString(server));
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
-            logger.info(ToStringBuilder.reflectionToString(project));
+            LOGGER.info(ToStringBuilder.reflectionToString(project));
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(changesetIdInRcs, project);
-            logger.info(ToStringBuilder.reflectionToString(changeset));
+            LOGGER.info(ToStringBuilder.reflectionToString(changeset));
             List<FileVersionDto> fileVersion = AstRcsWcfService.getInstance().getFileVersionsDto(changeset, project);
 
             for (FileVersionDto file : fileVersion) {
-                logger.info(ToStringBuilder.reflectionToString(file));
+                LOGGER.info(ToStringBuilder.reflectionToString(file));
                 id = file.getId();
                 name = Files.getNameWithoutExtension(file.getUrl().getValue()) + id;
                 cacheFile = new File(cacheFolder, name);
-                logger.info("Ulozene do cache:" + cacheFile);
+                LOGGER.info("Ulozene do cache:" + cacheFile);
                 content = AstRcsWcfService.getInstance().getFileContent(id);
                 Files.write(content, cacheFile, Charset.defaultCharset());
             }
-            logger.info("-----------------");
+            LOGGER.info("-----------------");
         } catch (Exception e) {
-            logger.info("proccessItem", e);
+            LOGGER.info("proccessItem", e);
         }
 
         String description = action

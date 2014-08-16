@@ -14,34 +14,32 @@ import java.net.URI;
  * Trieda ktora namapuje EventsURI vlastnosti a ulozi ich do URI.
  */
 public final class EventsRequest extends EventsURI {
-    private final UriBuilder builder; // stara sa  encodovanie
+    private static final long serialVersionUID = 1794091480392084768L;
 
-    public EventsRequest() {
-        builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
-    }
+    public EventsRequest() {}
 
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public URI getURI() throws Exception {
+        UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
         return UriUtils.addBeanProperties(builder, EventsURI.class, this).build();
     }
 
 
-    public EventsRequest setTime(GregorianCalendar from, GregorianCalendar to) {
+    public void setTime(GregorianCalendar from, GregorianCalendar to) {
         timeFrom = DateUtils.toString(from);
         timeTo = DateUtils.toString(to);
-        return this;
     }
 
-    public EventsRequest setType(URI EventTypeUri) {
-        eventTypeUri = EventTypeUri.toString();
+    public void setType(URI type) {
+        eventTypeUri = type.toString();
         exactType = true;
-        return this;
     }
 
-    public EventsRequest setType(EventDto event) {
-        return setType(event.getEventTypeUri());
+    public void setType(EventDto event) {
+        setType(event.getEventTypeUri());
     }
 
-    public EventsRequest setType(EventDto event, String subtype) {
-        return setType(UriBuilder.fromUri(event.getEventTypeUri()).path(subtype).build());
+    public void setType(EventDto event, String subtype) {
+        setType(UriBuilder.fromUri(event.getEventTypeUri()).path(subtype).build());
     }
 }

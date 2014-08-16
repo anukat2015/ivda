@@ -13,6 +13,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 public final class EventDeserializerModule extends SimpleModule {
     private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.ivda.uaca.dto";
     private static final String GROUP_ID = "sk.stuba.fiit.perconik.ivda"; // alias adresa projektu
+    private static final long serialVersionUID = -4285741198907663688L;
 
     public EventDeserializerModule() {
         super("PolymorphicDeserializerModule", new Version(1, 0, 0, "1.0-SNAPSHOT", GROUP_ID, GROUP_ID));

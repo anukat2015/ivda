@@ -21,27 +21,28 @@ import java.util.Map;
 public final class Configuration implements Serializable {
 
     public static final String CONFIG_DIR;
-    private static final Logger logger = Logger.getLogger(Configuration.class.getName());
+    private static final long serialVersionUID = -1848584185011896784L;
+    private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
     private static final String FILENAME = "configuration.xml";
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
-    private static JAXBContext context = null;
-    private static Configuration instance = null;
-    private Map<String, String> astRcs = new HashMap<>();
+    private static JAXBContext context;
+    private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private File cacheFolder;
 
     static {
         // Load conf dir
+        //noinspection AccessOfSystemProperties
         CONFIG_DIR = System.getProperty("config.dir", System.getProperty("user.dir") + File.separator + "conf");
 
         // Prepare log4j
         String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
-        PropertyConfigurator.configureAndWatch(log4jLoggingPropFile, 30000);
+        PropertyConfigurator.configureAndWatch(log4jLoggingPropFile, 30000L);
 
         try {
             context = JAXBContext.newInstance(Configuration.class);
         } catch (JAXBException ex) {
-            logger.log(Level.ERROR, null, ex);
+            LOGGER.log(Level.ERROR, null, ex);
         }
     }
 
@@ -49,45 +50,34 @@ public final class Configuration implements Serializable {
     }
 
     public static Configuration getInstance() {
-        if (instance == null) {
-            instance = read();
-        }
-        return instance;
+        return ConfigurationHolder.INSTANCE;
     }
 
     private static Configuration read() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
-            logger.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
+            LOGGER.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
             return (Configuration) context.createUnmarshaller().unmarshal(file);
         } catch (Exception e) {
-            logger.error("Configuration not loaded", e);
-            throw new RuntimeException(e);
+            LOGGER.error("Configuration not loaded", e);
+            throw new RuntimeException("Configuration not loaded", e);
         }
     }
 
-    private void write() {
-        try {
-            File file = new File(CONFIG_DIR, FILENAME);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty("jaxb.formatted.output", true);
-            marshaller.marshal(this, file);
-            logger.info("Configuration file saved: " + file.getAbsolutePath());
-        } catch (Exception e) {
-            logger.error("Configuration can not be marshalled.", e);
-        }
+    private static Marshaller getMarshaller() throws JAXBException {
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty("jaxb.formatted.output", true);
+        return marshaller;
     }
 
     @Override
     public String toString() {
         try {
             StringWriter writer = new StringWriter();
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty("jaxb.formatted.output", true);
-            marshaller.marshal(this, writer);
+            getMarshaller().marshal(this, writer);
             return writer.getBuffer().toString();
         } catch (Exception e) {
-            logger.error("Configuration can not be marshalled", e);
+            LOGGER.error("Configuration can not be marshalled", e);
         }
         return ToStringBuilder.reflectionToString(this);
     }
@@ -114,5 +104,9 @@ public final class Configuration implements Serializable {
 
     public void setCacheFolder(File cacheFolder) {
         this.cacheFolder = cacheFolder;
+    }
+
+    private static class ConfigurationHolder {
+        private static final Configuration INSTANCE = read();
     }
 }

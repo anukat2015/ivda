@@ -22,14 +22,14 @@ public final class JacksonContextResolver implements ContextResolver<ObjectMappe
 
     private final ObjectMapper mapper;
 
-    public JacksonContextResolver() throws Exception {
+    public JacksonContextResolver() {
         mapper = new ObjectMapper();
         mapper.registerModule(new EventDeserializerModule());
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 
     @Override
-    public ObjectMapper getContext(Class<?> objectType) {
+    public ObjectMapper getContext(Class<?> type) {
         return mapper;
     }
 }

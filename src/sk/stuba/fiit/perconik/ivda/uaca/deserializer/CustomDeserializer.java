@@ -25,7 +25,7 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
      */
     public CustomDeserializer(String attribute) {
         watchedAttribute = attribute;
-        registry = new HashMap<>();
+        registry = new HashMap<>(100);
     }
 
     /**
@@ -43,11 +43,11 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append("registry", registry).append("watchedAttribute", watchedAttribute).toString();
+        return new ToStringBuilder(this).append("registry", registry).append("watchedAttribute", watchedAttribute).toString();
     }
 
     @Override
-    public T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public final T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         JsonNode root = mapper.readTree(jp);
         JsonNode attribute = root.get(watchedAttribute);

@@ -28,6 +28,8 @@ import java.io.Serializable;
  * If true, results are ordered ascending or from the oldest to the newest events
  */
 public class EventsURI implements Serializable {
+    private static final long serialVersionUID = -402296428944403239L;
+
     protected Integer page;
     protected Integer pageSize;
     protected String timeFrom;

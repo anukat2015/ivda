@@ -9,6 +9,7 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import javax.annotation.Nullable;
+import java.net.Authenticator;
 import java.net.URI;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * document.ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
  */
 public final class AstRcsWcfService {
-    private static final Logger logger = Logger.getLogger(AstRcsWcfService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AstRcsWcfService.class.getName());
     private final IAstRcsWcfSvc service;
     private final ObjectFactory factory;
     private final List<RcsServerDto> servers;
@@ -27,9 +28,15 @@ public final class AstRcsWcfService {
         authenticate();
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
-        servers = getRcsServersDto();
+        try {
+            servers = getRcsServersDto();
+            LOGGER.info("Logged in.");
+        } catch (NotFoundException e) {
+            throw new RuntimeException("No servers found. Connected?");
+        }
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static AstRcsWcfService getInstance() {
         return SingletonHolder.INSTANCE;
     }
@@ -45,10 +52,11 @@ public final class AstRcsWcfService {
         return items.get(0);
     }
 
-    protected void authenticate() {
+    @SuppressWarnings("MethodMayBeStatic")
+    private void authenticate() {
         String username = Configuration.getInstance().getAstRcs().get("username");
         String password = Configuration.getInstance().getAstRcs().get("password");
-        java.net.Authenticator.setDefault(new NtlmAuthenticator(username, password));
+        Authenticator.setDefault(new NtlmAuthenticator(username, password));
     }
 
     public UserDto getUser(Integer id) {
@@ -59,7 +67,6 @@ public final class AstRcsWcfService {
     }
 
     public RcsServerDto getNearestRcsServerDto(URI url) {
-
         return Strings.findLongestPrefix(servers, url.toString(), new Function<RcsServerDto, String>() {
             @Override
             public String apply(RcsServerDto input) {
@@ -68,15 +75,15 @@ public final class AstRcsWcfService {
         });
     }
 
-    public RcsServerDto getRcsServerDto(URI url) {
+    public RcsServerDto getRcsServerDto(URI url) throws NotFoundException {
         return returnOne(getRcsServersDto(url));
     }
 
-    public List<RcsServerDto> getRcsServersDto() {
+    public List<RcsServerDto> getRcsServersDto() throws NotFoundException {
         return getRcsServersDto(null);
     }
 
-    public List<RcsServerDto> getRcsServersDto(@Nullable URI url) {
+    public List<RcsServerDto> getRcsServersDto(@Nullable URI url) throws NotFoundException {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
         if (url != null) {
             req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
@@ -86,16 +93,17 @@ public final class AstRcsWcfService {
         return response.getRcsServers().getValue().getRcsServerDto();
     }
 
-    private void checkResponse(@Nullable PagedResponse res) {
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+    private static void checkResponse(@Nullable PagedResponse res) throws NotFoundException {
         if (res == null) {
-            throw new RuntimeException("PagedResponse is null");
+            throw new NotFoundException("PagedResponse is null");
         }
         if (res.getPageCount() != 1) {
-            throw new RuntimeException("PagedResponse have more / less than one items.");
+            throw new NotFoundException("PagedResponse have more or less than one items.");
         }
     }
 
-    public RcsProjectDto getRcsProjectDto(RcsServerDto server) {
+    public RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
         //req.setUrl();  // nazov projektu $/PerConIK
@@ -106,7 +114,7 @@ public final class AstRcsWcfService {
     }
 
     // ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
-    public ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) {
+    public ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) throws NotFoundException {
         SearchChangesetsRequest req = new SearchChangesetsRequest();
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
         req.setRcsProjectId(project.getId());
@@ -115,22 +123,23 @@ public final class AstRcsWcfService {
         return returnOne(response.getChangesets().getValue().getChangesetDto());
     }
 
-    public FileVersionDto getFileVersionDto(ChangesetDto chs, String serverPath, RcsProjectDto project) {
+    public FileVersionDto getFileVersionDto(ChangesetDto chs, String serverPath, RcsProjectDto project) throws NotFoundException {
         // $/PerConIK
         // ITGenerator/ITGenerator.Lib/ActivitySvcCaller.cs
-        String prefix = project.getUrl().getValue() + "/";
+        //noinspection HardcodedFileSeparator
+        String prefix = project.getUrl().getValue() + '/';
         if (!serverPath.startsWith(prefix)) {
-            throw new RuntimeException();
+            throw new RuntimeException("Prefix zadanej cedzy a projektu nesedi.");
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
         return returnOne(getFileVersionsDto(chs, project, startUrl));
     }
 
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project) {
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project) throws NotFoundException {
         return getFileVersionsDto(chs, project, null);
     }
 
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, @Nullable String startUrl) {
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, @Nullable String startUrl) throws NotFoundException {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
         if (startUrl != null) {
@@ -164,6 +173,17 @@ public final class AstRcsWcfService {
 
     private static class SingletonHolder {
         public static final AstRcsWcfService INSTANCE = new AstRcsWcfService();
+    }
+
+    public static class NotFoundException extends Exception {
+        private static final long serialVersionUID = 0L;
+
+        public NotFoundException() {
+        }
+
+        public NotFoundException(String msg) {
+            super(msg);
+        }
     }
 }
 

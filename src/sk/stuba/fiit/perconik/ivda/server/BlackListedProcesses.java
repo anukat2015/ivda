@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
@@ -14,37 +13,37 @@ import java.util.Set;
 
 /**
  * Created by Seky on 10. 8. 2014.
+ * <p/>
+ * Trieda ktora nacitava a stara sa o black-list zoznam procesov.
  */
-public class BlackListedProcesses implements Serializable {
-    private static final Logger logger = Logger.getLogger(BlackListedProcesses.class.getName());
-    private static final String fileName = "processBlackList.txt";
-
-    private Set<String> data;
+public final class BlackListedProcesses implements Serializable {
+    private static final String FILE_NAME = "processBlackList.txt";
+    private static final long serialVersionUID = -5261716921783440593L;
+    private Set<String> processList;
 
     public BlackListedProcesses() {
         loadBlackList();
     }
 
-    protected void loadBlackList() {
-        File file = new File(Configuration.CONFIG_DIR, fileName);
+    private void loadBlackList() {
         try {
-            data = new HashSet<>(FileUtils.readLines(file));
+            File file = new File(Configuration.CONFIG_DIR, FILE_NAME);
+            processList = new HashSet<>(FileUtils.readLines(file));
         } catch (IOException e) {
-            logger.error("Error reading from " + fileName, e);
+            throw new RuntimeException("BlackListedProcesses error reading from file:" + FILE_NAME);
         }
     }
 
     public boolean contains(ProcessDto process) {
-        return data.contains(process.getName());
+        return processList.contains(process.getName());
     }
 
-    public boolean atLeastOneSpecial(List<ProcessDto> list) {
+    public boolean checkAtLeastOneAllowed(List<ProcessDto> list) {
         for (ProcessDto process : list) {
-            if (contains(process)) {
-                continue;
+            if (!contains(process)) {
+                // Ide o zaujimavy process
+                return true;
             }
-            // Ide o zaujimavy process
-            return true;
         }
         return false;
     }

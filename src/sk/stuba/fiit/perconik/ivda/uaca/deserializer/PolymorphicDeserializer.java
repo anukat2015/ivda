@@ -69,7 +69,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(baseClass);
         if (subTypes.isEmpty()) {
-            logger.info("Package '" + packageName + "' is empty.");
+            logger.warn("Package '" + packageName + "' is empty.");
         }
 
         for (Class<? extends T> aClass : subTypes) {
@@ -108,7 +108,9 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     @Override
     protected Class<? extends T> searchForClass(String key) {
         Class<? extends T> aClass = super.searchForClass(key);
-        if (!mTryLongestSubsequence) return aClass;
+        if (!mTryLongestSubsequence) {
+            return aClass;
+        }
         if (aClass == null) {
             logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
             //noinspection NullableProblems

@@ -5,6 +5,7 @@ import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
+import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 
 import javax.annotation.Nullable;
@@ -18,10 +19,11 @@ import java.util.Map;
  * Trieda MyDataTable definuje stlpce, ktore pouzivame v klientovi.
  */
 public final class MyDataTable extends DataTable implements Serializable {
+    private static final long serialVersionUID = 2235473137254607516L;
     /**
      * Definovane stlpce.
      */
-    private static final List<ColumnDescription> columnDescriptions = ImmutableList.copyOf(
+    private static final List<ColumnDescription> COLUMN_DESCRIPTIONS = ImmutableList.copyOf(
             new ColumnDescription[]{
                     new ColumnDescription("start", ValueType.DATETIME, "Start date"),
                     new ColumnDescription("end", ValueType.DATETIME, "End date"),
@@ -40,8 +42,22 @@ public final class MyDataTable extends DataTable implements Serializable {
 
     public MyDataTable() {
         super();
-        replaceGroup = new HashMap<>();
-        addColumns(columnDescriptions);
+        replaceGroup = new HashMap<>(16);
+        addColumns(COLUMN_DESCRIPTIONS);
+    }
+
+    /**
+     * Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
+     *
+     * @param time
+     */
+    private static GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
+        if (time != null) {
+            time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
+            time.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+            time.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
+        }
+        return time;
     }
 
     /**
@@ -85,6 +101,7 @@ public final class MyDataTable extends DataTable implements Serializable {
         add(group, start, end, className, content, null);
     }
 
+    @SuppressWarnings("MethodWithTooManyParameters")
     public void add(String group,
                     GregorianCalendar start,
                     @Nullable GregorianCalendar end,
@@ -96,24 +113,14 @@ public final class MyDataTable extends DataTable implements Serializable {
         addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
     }
 
-    /**
-     * Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
-     *
-     * @param time
-     */
-    protected GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
-        if (time == null) return null;
-        time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
-        time.roll(GregorianCalendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
-        time.roll(GregorianCalendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
-        return time;
-    }
-
-    protected String blackoutName(@Nullable String name) {
-        if (name == null) return null;
+    private String blackoutName(@Nullable String name) {
+        if (name == null) {
+            //noinspection ReturnOfNull
+            return null;
+        }
         String groupnew = replaceGroup.get(name);
         if (groupnew == null) {
-            groupnew = "" + alphabetCurrent;
+            groupnew = String.valueOf(alphabetCurrent);
             replaceGroup.put(name, groupnew);
             alphabetCurrent++;
         }
@@ -130,17 +137,17 @@ public final class MyDataTable extends DataTable implements Serializable {
 
         private final String name;
 
-        ClassName(String name) {
-            this.name = name;
+        ClassName(String type) {
+            name = type;
         }
 
-        public static ClassName fromValue(String name) {
+        public static ClassName fromValue(String value) {
             for (ClassName item : ClassName.values()) {
-                if (item.name.equals(name)) {
+                if (item.name.equals(value)) {
                     return item;
                 }
             }
-            throw new IllegalArgumentException(name);
+            throw new IllegalArgumentException(value);
         }
 
         @Override

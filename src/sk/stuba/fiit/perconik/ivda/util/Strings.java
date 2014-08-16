@@ -7,6 +7,8 @@ import java.util.Collection;
 
 /**
  * Created by Seky on 16. 8. 2014.
+ * <p/>
+ * Pomocna trieda pre retazce.
  */
 public final class Strings {
     /**
@@ -18,15 +20,14 @@ public final class Strings {
      * @param <T>
      * @return
      */
-    public static
     @Nullable
-    <T> T findLongestPrefix(Collection<T> collection, String search, Function<T, String> trans) {
+    public static <T> T findLongestPrefix(Collection<T> collection, String search, Function<T, String> trans) {
         T longestString = null;
         for (T object : collection) {
             String key = trans.apply(object);
             assert key != null;
             if (search.startsWith(key)) {
-                int length = longestString == null ? 0 : trans.apply(longestString).length();
+                int length = (longestString == null) ? 0 : trans.apply(longestString).length();
                 if (key.length() > length) {
                     longestString = object;
                 }

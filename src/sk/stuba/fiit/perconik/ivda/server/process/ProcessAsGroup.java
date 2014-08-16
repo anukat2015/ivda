@@ -92,7 +92,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * @return
      */
     protected boolean checkProcesses(ProcessesChangedSinceCheckEventDto actual) {
-        return blacklist.atLeastOneSpecial(actual.getStartedProcesses());
+        return blacklist.checkAtLeastOneAllowed(actual.getStartedProcesses());
     }
 
     /**

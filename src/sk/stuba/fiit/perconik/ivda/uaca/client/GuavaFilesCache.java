@@ -9,18 +9,28 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 9. 8. 2014.
+ * <p/>
+ * Cachuj informacie pomocou Guava kniznice. Pricom perzistentne uloz hodnoty na zaklade klucov.
  */
-public abstract class GuavaFilesCache<Key, Value extends Serializable> {
-    protected static final Logger logger = Logger.getLogger(GuavaFilesCache.class.getName());
+@SuppressWarnings("TypeParameterNamingConvention")
+public abstract class GuavaFilesCache<Key, Value extends Serializable> implements Serializable {
+    private static final Logger LOGGER = Logger.getLogger(GuavaFilesCache.class.getName());
+    private static final long serialVersionUID = 3013869214720455765L;
     private final File cacheFolder;
+    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final LoadingCache<Key, Value> cache;
 
-    public GuavaFilesCache() {
+    @SuppressWarnings({"AbstractMethodCallInConstructor", "OverridableMethodCallDuringObjectConstruction", "OverriddenMethodCallDuringObjectConstruction"})
+    protected GuavaFilesCache() {
         cacheFolder = getCacheFolder();
-        cache = CacheBuilder.newBuilder()
+        cache = buildCache();
+    }
+
+    protected LoadingCache<Key, Value> buildCache() {
+        return CacheBuilder.newBuilder()
                 .concurrencyLevel(4)
-                .maximumSize(200)
-                .expireAfterWrite(3, TimeUnit.HOURS)
+                .maximumSize(200L)
+                .expireAfterWrite(3L, TimeUnit.HOURS)
                 .removalListener(new RemovalListener<Key, Value>() {
 
                     @Override
@@ -32,25 +42,25 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
                 })
                 .build(new CacheLoader<Key, Value>() {
                     @Override
-                    public Value load(@SuppressWarnings("unused") final Key key) throws Exception {
+                    public Value load(@SuppressWarnings("unused") Key key) throws Exception {
                         return loadFromFile(key);
                     }
                 });
     }
 
-    public LoadingCache<Key, Value> getCache() {
+    public final LoadingCache<Key, Value> getCache() {
         return cache;
     }
 
     protected abstract File getCacheFolder();
 
-    protected Value loadFromFile(final Key key) throws Exception {
+    protected final Value loadFromFile(Key key) {
         Value response;
         File cacheFile = computeFilePath(cacheFolder, key);
 
         try {
             response = deserialize(cacheFile);
-        } catch (FileNotFoundException f) {
+        } catch (FileNotFoundException e) {
             response = fileNotFound(key);
             serialize(cacheFile, response);
         }
@@ -66,39 +76,41 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
      * @param key
      * @return
      */
-    protected abstract File computeFilePath(final File folder, Key key);
+    protected abstract File computeFilePath(File folder, Key key);
 
     @SuppressWarnings("unchecked")
-    protected Value deserialize(File cacheFile) throws Exception {
+    protected Value deserialize(File cacheFile) throws FileNotFoundException {
         // Deserialize
         FileInputStream file = new FileInputStream(cacheFile);
         try {
-            Value response;
-            logger.info("Deserializing from " + cacheFile);
-            response = (Value) SerializationUtils.deserialize(file);
+            LOGGER.info("Deserializing from " + cacheFile);
+            Value response = (Value) SerializationUtils.deserialize(file);
             file.close();
             return response;
         } catch (Exception e) {
-            // Chyba pri deserializaciii
-            file.close();
-            logger.info("Deleting cache file.");
+            // Chyba pri deserializacii, vymaz teda objekt a uloz ho znova
+            try {
+                file.close();
+            } catch (IOException e1) {
+                LOGGER.info("Cannot close file:" + cacheFile);
+            }
+            LOGGER.info("Deleting cache file.");
             //noinspection ResultOfMethodCallIgnored
             cacheFile.delete();
-            throw new FileNotFoundException();
+            throw new FileNotFoundException(cacheFile.toString());
         }
     }
 
-    protected void serialize(File cacheFile, Value response) throws Exception {
-        FileOutputStream fos;
+    protected void serialize(File cacheFile, Value response) {
         try {
-            fos = new FileOutputStream(cacheFile);
-            logger.info("Serializing to " + cacheFile);
+            FileOutputStream fos = new FileOutputStream(cacheFile);
+            LOGGER.info("Serializing to " + cacheFile);
             SerializationUtils.serialize(response, fos);
             fos.close();
         } catch (FileNotFoundException e) {
-            logger.error("Nemozem vytvorit subor s nazvom: " + cacheFile);
+            LOGGER.error("Nemozem vytvorit subor s nazvom: " + cacheFile);
         } catch (IOException e) {
-            throw e;
+            LOGGER.error("Nemozem zapisat do suboru: " + cacheFile);
         }
     }
 }

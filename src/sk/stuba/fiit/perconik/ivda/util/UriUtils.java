@@ -13,22 +13,25 @@ import java.util.Map;
 
 /**
  * Created by Seky on 8. 8. 2014.
+ * <p/>
+ * Pomocna trieda pre rpacovanie s URI.
  */
 public final class UriUtils {
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
-        Map<String, String> qpairs = new LinkedHashMap<>();
+        Map<String, String> qpairs = new LinkedHashMap<>(16);
+        @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
         String[] pairs = url.getQuery().split("&");
         for (String pair : pairs) {
-            int part = pair.indexOf("=");
+            int part = pair.indexOf('=');
             qpairs.put(URLDecoder.decode(pair.substring(0, part), "UTF-8"), URLDecoder.decode(pair.substring(part + 1), "UTF-8"));
         }
         return qpairs;
     }
 
-    public static UriBuilder addBeanProperties(UriBuilder builder, Class<?> beanClass, Object object) throws Exception {
+    public static UriBuilder addBeanProperties(UriBuilder builder, Class<?> beanClass, Object object) throws java.beans.IntrospectionException, java.lang.reflect.InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
         for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-            if (pd.getName().equals("class")) {
+            if ("class".equals(pd.getName())) {
                 continue;
             }
             Object value = pd.getReadMethod().invoke(object);

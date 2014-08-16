@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.uaca.client;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
@@ -17,46 +18,26 @@ import java.util.List;
  * Created by Seky on 22. 7. 2014.
  * <p/>
  * HTTP client pre sluzbu UACA. Ktory stahnie prvu stranku, poskytne udaje, stiahne druhu stranu atd.
- * Client cachuje odpovede do cacheFolder zlozky.
+ * Client cachuje odpovede do CACHE_FOLDER zlozky.
  * <p/>
- * TODO: Neskor trieda moze asynchronne volat ...
  */
 public abstract class DownloadAll<T extends Serializable> implements Serializable {
-    private static final Logger logger = Logger.getLogger(DownloadAll.class.getName());
-    private final static File cacheFolder = new File("C:/cache/");
+    private static final Logger LOGGER = Logger.getLogger(DownloadAll.class.getName());
+    private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
+    private static final long serialVersionUID = -8441631869020848898L;
 
     private final WebClient client;
     private final Class<? extends PagedResponse<T>> mClass;
-    private final GuavaFilesCache<URI, PagedResponse<T>> cache;
+    private final MyGuavaFilesCache cache;
 
     protected DownloadAll(Class<? extends PagedResponse<T>> aClass) {
         mClass = aClass;
         client = new WebClient();
-        cache = new GuavaFilesCache<URI, PagedResponse<T>>() {
-            @Override
-            protected File getCacheFolder() {
-                return cacheFolder;
-            }
-
-            @Override
-            protected File computeFilePath(File folder, URI uri) {
-                try {
-                    return new File(cacheFolder, URLEncoder.encode(uri.toString(), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected PagedResponse<T> fileNotFound(URI uri) {
-                //noinspection unchecked
-                return (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
-            }
-        };
+        cache = new MyGuavaFilesCache();
     }
 
-    private @Nullable URI getNextURI(PagedResponse<T> response, URI uri) {
+    @Nullable
+    private URI getNextURI(PagedResponse<T> response, URI uri) {
         // Stary sposob pomocou citania URL adresy v "next" policku v odpovedi nefunguje spravne
         if (!response.isHasNextPage()) {
             return null;
@@ -64,37 +45,41 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
 
         List<NameValuePair> pairs = URLEncodedUtils.parse(uri, "UTF-8");
         for (NameValuePair pair : pairs) {
-            if (pair.getName().equals("page")) {
+            if ("page".equals(pair.getName())) {
                 Integer actual = Integer.valueOf(pair.getValue()) + 1;
                 return UriBuilder.fromUri(uri).replaceQueryParam("page", actual).build();
             }
         }
 
-        logger.error("Page key do not exist in URI.");
+        LOGGER.error("Page key do not exist in URI.");
         return null;
     }
 
-    protected void downloadedNonRecursive(URI uri) {
-        logger.info("Starting downloading.");
+    /**
+     * TODO: Neskor trieda moze asynchronne volat ...
+     *
+     * @param uri adresa ktora sa ma stiahnut
+     */
+    private void downloadedNonRecursive(URI uri) {
+        LOGGER.info("Starting downloading.");
         while (uri != null) {
-            PagedResponse<T> response;
-            response = downloadUri(uri);
+            PagedResponse<T> response = downloadUri(uri);
             if (response.getResultSet().isEmpty()) {
-                logger.warn("Resultset is empty! Bad request?");
+                LOGGER.warn("Resultset is empty! Bad request?");
             }
-            if (!downloaded(response)) {
-                logger.info("Downloading canceled.");
+            if (!isDownloaded(response)) {
+                LOGGER.info("Downloading canceled.");
                 canceled();
                 break;
             }
             //noinspection ConstantConditions
             uri = getNextURI(response, uri);
         }
-        logger.info("Downloading finished.");
+        LOGGER.info("Downloading finished.");
         finished();
     }
 
-    protected PagedResponse<T> downloadUri(URI uri) {
+    private PagedResponse<T> downloadUri(URI uri) {
         return cache.getCache().getUnchecked(uri);
     }
 
@@ -104,12 +89,36 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
      * @param response
      * @return true - pokracuj v stahovani dalej
      */
-    protected abstract boolean downloaded(PagedResponse<T> response);
+    protected abstract boolean isDownloaded(PagedResponse<T> response);
 
     protected void canceled() {
     }
 
     protected void finished() {
+    }
+
+    private final class MyGuavaFilesCache extends GuavaFilesCache<URI, PagedResponse<T>> {
+        private static final long serialVersionUID = -2771011404900728777L;
+
+        @Override
+        protected File getCacheFolder() {
+            return CACHE_FOLDER;
+        }
+
+        @Override
+        protected File computeFilePath(File folder, URI uri) {
+            try {
+                return new File(CACHE_FOLDER, URLEncoder.encode(uri.toString(), "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("UTF-8 encoding not supported.");
+            }
+        }
+
+        @Override
+        protected PagedResponse<T> fileNotFound(URI uri) {
+            //noinspection unchecked
+            return (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
+        }
     }
 
 }

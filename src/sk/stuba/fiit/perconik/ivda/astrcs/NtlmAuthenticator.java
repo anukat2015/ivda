@@ -9,8 +9,8 @@ import java.net.PasswordAuthentication;
  */
 public final class NtlmAuthenticator extends Authenticator {
 
-    private final String username;
-    private final char[] password;
+    private final String m_username;
+    private final char[] m_password;
 
     /**
      * Trieda na prihlasenie do NTLM protokolu.
@@ -18,14 +18,14 @@ public final class NtlmAuthenticator extends Authenticator {
      * @param username
      * @param password
      */
-    public NtlmAuthenticator(final String username, final String password) {
+    public NtlmAuthenticator(String username, String password) {
         super();
-        this.username = username;
-        this.password = password.toCharArray();
+        m_username = username;
+        m_password = password.toCharArray();
     }
 
     @Override
     public PasswordAuthentication getPasswordAuthentication() {
-        return (new PasswordAuthentication(username, password));
+        return new PasswordAuthentication(m_username, m_password);
     }
 }

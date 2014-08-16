@@ -35,29 +35,29 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         IdeDocumentDto dokument = cevent.getDocument();
         if (cevent.getStartColumnIndex() != null) {
-            logger.info("ZAUJIMAVE getStartColumnIndex nieje null");
+            LOGGER.info("ZAUJIMAVE getStartColumnIndex nieje null");
         }
         if (cevent.getEndColumnIndex() != null) {
-            logger.info("ZAUJIMAVE getEndColumnIndex nieje null");
+            LOGGER.info("ZAUJIMAVE getEndColumnIndex nieje null");
         }
         if (dokument.getBranch() != null) {
-            logger.info("ZAUJIMAVE getBranch nieje null");
+            LOGGER.info("ZAUJIMAVE getBranch nieje null");
         }
 
         sk.stuba.fiit.perconik.ivda.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
-            logger.info("Lokalny subor");
+            LOGGER.info("Lokalny subor");
             return;
         }
 
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
         if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-            logger.info("changesetIdInRcs empty");
+            LOGGER.info("changesetIdInRcs empty");
             return;
         }
 
         try {
-            logger.info("Skopiroval:" + cevent.getText());
+            LOGGER.info("Skopiroval:" + cevent.getText());
             RcsServerDto server = AstRcsWcfService.getInstance().getRcsServerDto(dokument.getRcsServer().getUrl());
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
@@ -71,12 +71,12 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             id = fileVersion.getId();
             name = Files.getNameWithoutExtension(dokument.getLocalPath()) + id;
             cacheFile = new File(cacheFolder, name);
-            logger.info("Ulozene do cache:" + cacheFile);
+            LOGGER.info("Ulozene do cache:" + cacheFile);
             content = AstRcsWcfService.getInstance().getFileContent(id);
             Files.write(content, cacheFile, Charset.defaultCharset());
             // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
         } catch (Exception e) {
-            logger.info("proccessItem", e);
+            LOGGER.info("proccessItem", e);
         }
 
 

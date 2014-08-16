@@ -10,41 +10,40 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 
 import javax.validation.constraints.NotNull;
-import java.io.File;
 
 /**
  * Created by Seky on 22. 7. 2014.
+ * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
 public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
-    protected static final Logger logger = Logger.getLogger(ProcessEventsToDataTable.class.getName());
-    private final static File cacheFolder = new File("C:/cache/");
+    protected static final Logger LOGGER = Logger.getLogger(ProcessEventsToDataTable.class.getName());
+    private static final long serialVersionUID = 6600835762437333632L;
     protected final MyDataTable dataTable;
     private final EventsRequest request;
 
 
-    public ProcessEventsToDataTable(EventsRequest request) {
+    protected ProcessEventsToDataTable(EventsRequest myrequest) {
         super(EventsResponse.class);
-        this.request = request;
+        request = myrequest;
         dataTable = new MyDataTable();
     }
 
     @Override
-    protected boolean downloaded(PagedResponse<EventDto> response) {
+    protected boolean isDownloaded(PagedResponse<EventDto> response) {
         try {
             for (EventDto event : response.getResultSet()) {
                 proccessItem(event);
             }
         } catch (TypeMismatchException e) {
-            logger.error("Type mismatch", e);
+            LOGGER.error("Type mismatch", e);
         }
         return true;   // chceme dalej stahovat
     }
 
     protected abstract void proccessItem(EventDto event) throws TypeMismatchException;
 
-    public
     @NotNull
-    MyDataTable getDataTable() {
+    public MyDataTable getDataTable() {
         return dataTable;
     }
 
@@ -52,7 +51,7 @@ public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         try {
             downloadedNonRecursive(request.getURI());
         } catch (Exception e) {
-            logger.error("Nemozem vygenerovat adresu.", e);
+            LOGGER.error("Nemozem vygenerovat adresu.", e);
         }
     }
 }

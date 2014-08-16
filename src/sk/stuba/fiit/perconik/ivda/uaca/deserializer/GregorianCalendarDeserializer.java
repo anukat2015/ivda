@@ -7,9 +7,12 @@ import com.ibm.icu.util.GregorianCalendar;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * Created by Seky on 9. 8. 2014.
+ *
+ * Deserializer pre triedu GregorianCalendar.
  */
 public final class GregorianCalendarDeserializer extends JsonDeserializer<GregorianCalendar> {
     @Override
@@ -19,9 +22,13 @@ public final class GregorianCalendarDeserializer extends JsonDeserializer<Gregor
             throw new IOException("dateString is empty");
         }
         String tzPart = text.substring(text.length() - 5, text.length());
-        if (!tzPart.equals("0000Z")) {
+        if (!"0000Z".equals(tzPart)) {
             throw new IOException("Zase zmenili format datumu ....");
         }
-        return DateUtils.fromString(text.substring(0, text.length() - 5));
+        try {
+            return DateUtils.fromString(text.substring(0, text.length() - 5));
+        } catch (ParseException e) {
+            throw new IOException("dateString nemozem precitat.", e);
+        }
     }
 }

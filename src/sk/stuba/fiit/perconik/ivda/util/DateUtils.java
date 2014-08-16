@@ -14,28 +14,24 @@ import java.util.Date;
  * Pomocna trieda na formatovanie datumov.
  * Javascript posiela ISO 8601, sluzba si to pyta.
  * Vytvorene na zaklade:
- * http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-format
+ * http://stackoverflow.com/questions/17319793/convert-date-or-calendar-type-into-string-FORMAT
  * http://stackoverflow.com/questions/2201925/converting-iso-8601-compliant-string-to-java-util-date
- * Oni to prerobili zase na iny format, ach !
+ * Oni to prerobili zase na iny FORMAT, ach !
  */
 public final class DateUtils {
-    private static final DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
-    private static final TimeZone tz = TimeZone.getTimeZone("GMT");
+    private static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
+    private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
 
-    public static GregorianCalendar fromString(String dateString) {
-        GregorianCalendar gc = new GregorianCalendar(tz);
-        try {
-            Date datum = format.parse(dateString);
-            gc.setTimeInMillis(datum.getTime());
-            gc.setLenient(false);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
-        }
+    public static GregorianCalendar fromString(String dateString) throws ParseException {
+        GregorianCalendar gc = new GregorianCalendar(TIME_ZONE);
+        Date datum = FORMAT.parse(dateString);
+        gc.setTimeInMillis(datum.getTime());
+        gc.setLenient(false);
         return gc;
     }
 
-    public static String toString(GregorianCalendar c) {
-        return format.format(c.getTime());
+    public static String toString(GregorianCalendar calender) {
+        return FORMAT.format(calender.getTime());
     }
 
 }

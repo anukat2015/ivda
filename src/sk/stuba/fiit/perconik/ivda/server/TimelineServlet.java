@@ -21,7 +21,8 @@ import javax.ws.rs.core.Response;
  * Servlet pre TImeline.
  */
 public final class TimelineServlet extends DataSourceServlet {
-    private static final Logger logger = Logger.getLogger(TimelineServlet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
+    private static final long serialVersionUID = 4252962999830460395L;
 
     /**
      * Spracuj parametre ziadosti. Nasledne generuj tabulku.
@@ -31,19 +32,23 @@ public final class TimelineServlet extends DataSourceServlet {
      * @return
      */
     @Override
-    public DataTable generateDataTable(Query query, HttpServletRequest req) {
+    public DataTable generateDataTable(Query query, HttpServletRequest request) {
         // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
         // Vplyv na rozsah ma jedine  zoom
         // Cize musime vypocitat sirku okna a poslat to sem
-        GregorianCalendar start, end;
+        GregorianCalendar start;
+        GregorianCalendar end;
         Integer width;
+        //noinspection OverlyBroadCatchBlock
         try {
-            start = DateUtils.fromString(req.getParameter("start"));
-            end = DateUtils.fromString(req.getParameter("end"));
-            width = Integer.valueOf(req.getParameter("width"));
+            start = DateUtils.fromString(request.getParameter("start"));
+            end = DateUtils.fromString(request.getParameter("end"));
+            width = Integer.valueOf(request.getParameter("width"));
             //start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
             //end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
-            width = Integer.valueOf(1012);
+            start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
+            end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
+            width = 1012;
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
@@ -58,13 +63,10 @@ public final class TimelineServlet extends DataSourceServlet {
      * @param width
      * @return
      */
-    protected DataTable generateDataTable(GregorianCalendar start, GregorianCalendar end, Integer width) {
-
+    private static DataTable generateDataTable(GregorianCalendar start, GregorianCalendar end, Integer width) {
         EventsRequest request = new EventsRequest();
         ProcessEventsToDataTable process;
 
-        start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
-        end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
         request.setTime(start, end);
         request.setUser("steltecia\\pzbell");
         //request.setType(new IdeCodeEventDto(), "pastefromweb");
@@ -99,7 +101,7 @@ public final class TimelineServlet extends DataSourceServlet {
         //request.setTime(start, end).setUser("steltecia\\pzbell"); //.setType(new ProcessesChangedSinceCheckEventDto());
         //process = new ProcessAsGroup(request);
 
-        logger.info("Start: " + DateUtils.toString(start) +
+        LOGGER.info("Start: " + DateUtils.toString(start) +
                 " end:" + DateUtils.toString(end) +
                 " width:" + width);
         process.start();

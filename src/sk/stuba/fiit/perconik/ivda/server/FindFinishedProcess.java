@@ -19,13 +19,13 @@ import java.util.Set;
  * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
  */
 public abstract class FindFinishedProcess {
-    private static final Logger logger = Logger.getLogger(FindFinishedProcess.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FindFinishedProcess.class.getName());
 
     private final Map<Integer, FinishedProcess> startedApps;
     private final BlackListedProcesses appBlackList;
 
-    public FindFinishedProcess() {
-        startedApps = new HashMap<>();
+    protected FindFinishedProcess() {
+        startedApps = new HashMap<>(200);
         appBlackList = new BlackListedProcesses();
     }
 
@@ -34,27 +34,28 @@ public abstract class FindFinishedProcess {
      *
      * @param event
      */
-    public void check(ProcessesChangedSinceCheckEventDto event) {
-        checkStarted(event);
-        checkKilled(event);
+    public final void handle(ProcessesChangedSinceCheckEventDto event) {
+        handleStarted(event);
+        handleKilled(event);
     }
 
-    protected void checkStarted(ProcessesChangedSinceCheckEventDto event) {
+    private void handleStarted(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto started : event.getStartedProcesses()) {
             if (appBlackList.contains(started)) {
                 continue;
             }
+
             FinishedProcess item = new FinishedProcess();
             item.start = event.getTimestamp();
             item.process = started;
             FinishedProcess saved = startedApps.put(started.getPid(), item);
             if (saved != null) {
-                logger.info("Process s takym PID uz existuje... " + saved);
+                LOGGER.info("Process s takym PID uz existuje... " + saved);
             }
         }
     }
 
-    protected void checkKilled(ProcessesChangedSinceCheckEventDto event) {
+    private void handleKilled(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto killed : event.getKilledProcesses()) {
             FinishedProcess saved = startedApps.get(killed.getPid());
             if (saved != null) {
@@ -75,14 +76,14 @@ public abstract class FindFinishedProcess {
     /**
      * Vypis neukoncene procesy.
      */
-    public void flushUnfinished() {
+    public final void flushUnfinished() {
         Set<Map.Entry<Integer, FinishedProcess>> set = startedApps.entrySet();
         for (Map.Entry<Integer, FinishedProcess> entry : set) {
-            logger.info("Nema hranicu " + entry.getValue());
+            LOGGER.info("Nema hranicu " + entry.getValue());
         }
     }
 
-    protected class FinishedProcess {
+    protected static final class FinishedProcess {
         public GregorianCalendar start;
         public GregorianCalendar end;
         public ProcessDto process;
@@ -90,8 +91,8 @@ public abstract class FindFinishedProcess {
         @Override
         public String toString() {
             return process.getName()
-                    + " " + Integer.toString(process.getPid())
-                    + " " + DateUtils.toString(start);
+                    + ' ' + Integer.toString(process.getPid())
+                    + ' ' + DateUtils.toString(start);
         }
     }
 }

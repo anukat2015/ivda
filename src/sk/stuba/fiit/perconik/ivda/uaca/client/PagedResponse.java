@@ -9,10 +9,10 @@ import java.util.List;
  * Created by Seky on 19. 7. 2014.
  * <p/>
  * Vseobecna datova entita, ktora reprezentuje odpoved z UACA sluzby.
- * Odpoved ma v JSONe tva:
+ * Odpoved ma v JSONe tvar:
  * <p/>
  * {
- * "ResultSet":[],
+ * "resultSet":[],
  * "pageIndex":1,
  * "pageCnt":21109,
  * "pageSize":10,
@@ -29,15 +29,14 @@ import java.util.List;
  * }
  */
 public class PagedResponse<T extends Serializable> implements Serializable {
+    private static final long serialVersionUID = 3892748839161178943L;
+
     private Integer pageIndex;
     private Integer pageSize;
     private Integer pageCnt;
     private List<Link> links;
     // Custom data
-    private List<T> ResultSet;
-
-    public PagedResponse() {
-    }
+    private List<T> resultSet;
 
     public Integer getPageSize() {
         return pageSize;
@@ -72,16 +71,16 @@ public class PagedResponse<T extends Serializable> implements Serializable {
     }
 
     public List<T> getResultSet() {
-        return ResultSet;
+        return resultSet;
     }
 
     public void setResultSet(List<T> resultSet) {
-        this.ResultSet = resultSet;
+        this.resultSet = resultSet;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("links", links).append("pageCnt", pageCnt).append("pageIndex", pageIndex).append("pageSize", pageSize).append("ResultSet", ResultSet).toString();
+        return new ToStringBuilder(this).append("links", links).append("pageCnt", pageCnt).append("pageIndex", pageIndex).append("pageSize", pageSize).append("resultSet", resultSet).toString();
     }
 
     public boolean isHasNextPage() {
@@ -95,7 +94,7 @@ public class PagedResponse<T extends Serializable> implements Serializable {
     }
 
     public boolean isHasPreviousPage() {
-        return getPageIndex() > 0;
+        return pageIndex > 0;
     }
 
     public void previousPage() {

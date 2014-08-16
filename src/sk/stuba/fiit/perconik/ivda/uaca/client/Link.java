@@ -11,11 +11,9 @@ import java.net.URI;
  * Datova entita pre Link vrateny v UACA klientovi.
  */
 public final class Link implements Serializable {
+    private static final long serialVersionUID = -8976006536157835573L;
     private String rel;
     private URI href;
-
-    public Link() {
-    }
 
     public String getRel() {
         return rel;
