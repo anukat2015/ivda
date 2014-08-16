@@ -2,7 +2,7 @@ function inicializeTimeline(nowDate) {
     // Nastavenia timeline
     var options = {
         width: "100%",
-        height: "50%",
+        height: "60%",
         layout: "dot",
         style: 'dot',
         axisOnTop: true,
@@ -20,7 +20,7 @@ function inicializeTimeline(nowDate) {
         //stackEvents: false,
         //cluster: true,
         snapEvents: true,
-        groupMinHeight: 200
+        groupMinHeight: 70
     };
 
     // Instantiate our timeline object.
