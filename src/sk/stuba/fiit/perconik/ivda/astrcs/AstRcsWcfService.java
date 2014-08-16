@@ -1,10 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.astrcs;
 
+import com.google.common.base.Function;
 import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import java.net.URI;
 import java.util.List;
@@ -18,11 +20,13 @@ public final class AstRcsWcfService {
     private static final Logger logger = Logger.getLogger(AstRcsWcfService.class.getName());
     private final IAstRcsWcfSvc service;
     private final ObjectFactory factory;
+    private List<RcsServerDto> servers;
 
     private AstRcsWcfService() {
         authenticate();
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
+        servers = getRcsServersDto();
     }
 
     public static AstRcsWcfService getInstance() {
@@ -53,12 +57,31 @@ public final class AstRcsWcfService {
         return response.getUser().getValue();
     }
 
+    public RcsServerDto getNearestRcsServerDto(URI url) {
+        return Strings.findLongestPrefix(servers, url.toString(), new Function<RcsServerDto, String>() {
+            @Override
+            public String apply(RcsServerDto input) {
+                return input.getUrl().getValue();
+            }
+        });
+    }
+
     public RcsServerDto getRcsServerDto(URI url) {
+        return returnOne(getRcsServersDto(url));
+    }
+
+    public List<RcsServerDto> getRcsServersDto() {
+        return getRcsServersDto(null);
+    }
+
+    public List<RcsServerDto> getRcsServersDto(URI url) {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
-        req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
+        if (url != null) {
+            req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
+        }
         SearchRcsServersResponse response = service.searchRcsServers(req);
         checkResponse(response);
-        return returnOne(response.getRcsServers().getValue().getRcsServerDto());
+        return response.getRcsServers().getValue().getRcsServerDto();
     }
 
     private void checkResponse(PagedResponse res) {

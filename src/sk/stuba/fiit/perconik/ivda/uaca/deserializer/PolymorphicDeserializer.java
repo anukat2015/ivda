@@ -1,11 +1,14 @@
 package sk.stuba.fiit.perconik.ivda.uaca.deserializer;
 
+import com.google.common.base.Function;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -36,6 +39,25 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
 
     public PolymorphicDeserializer(Class<T> baseClass, String attribute) {
         this(baseClass, attribute, true);
+    }
+
+    /**
+     * find longest / nearest prefix
+     *
+     * @param collection
+     * @param search
+     * @return
+     */
+    private static String findLongestPrefix(Collection<String> collection, String search) {
+        String longestString = "";
+        for (String key : collection) {
+            if (search.startsWith(key)) {
+                if (key.length() > longestString.length()) {
+                    longestString = key;
+                }
+            }
+        }
+        return longestString;
     }
 
     /**
@@ -97,8 +119,13 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         if (!mTryLongestSubsequence) return aClass;
         if (aClass == null) {
             logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
-            String longestString = findLongestSubsequnceForKey(key);
-            if (!longestString.isEmpty()) {
+            String longestString = Strings.findLongestPrefix(registry.keySet(), key, new Function<String, String>() {
+                @Override
+                public String apply(String input) {
+                    return input;
+                }
+            });
+            if (longestString != null) {
                 aClass = super.searchForClass(longestString);
                 register(key, aClass);
                 logger.info("Finded longest subsequnce for '" + key + "' as '" + longestString + "'. Registering to class '" + aClass.getName());
@@ -111,24 +138,4 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).append("baseClass", baseClass).append("mTryLongestSubsequence", mTryLongestSubsequence).toString();
     }
-
-    /**
-     * Search nearest string.
-     *
-     * @param searchKey
-     * @return
-     */
-    private String findLongestSubsequnceForKey(String searchKey) {
-        Set<String> keys = registry.keySet();
-        String longestString = "";
-        for (String key : keys) {
-            if (searchKey.startsWith(key)) {
-                if (key.length() > longestString.length()) {
-                    longestString = key;
-                }
-            }
-        }
-        return longestString;
-    }
-
 }
