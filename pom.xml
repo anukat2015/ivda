@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>../sk.stuba.fiit.perconik.uaca.dto</module>
         <module>../perconik/com.gratex.perconik.services</module>
     </modules>
 
