@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * Created by Seky on 9. 8. 2014.
  */
-public class GregorianCalendarDeserializer extends JsonDeserializer<GregorianCalendar> {
+public final class GregorianCalendarDeserializer extends JsonDeserializer<GregorianCalendar> {
     @Override
     public GregorianCalendar deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         String text = jp.getText();

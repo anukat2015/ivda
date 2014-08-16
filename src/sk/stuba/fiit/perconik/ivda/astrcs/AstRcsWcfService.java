@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public final class AstRcsWcfService {
         return getRcsServersDto(null);
     }
 
-    public List<RcsServerDto> getRcsServersDto(URI url) {
+    public List<RcsServerDto> getRcsServersDto(@Nullable URI url) {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
         if (url != null) {
             req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
@@ -84,7 +85,7 @@ public final class AstRcsWcfService {
         return response.getRcsServers().getValue().getRcsServerDto();
     }
 
-    private void checkResponse(PagedResponse res) {
+    private void checkResponse(@Nullable PagedResponse res) {
         if (res == null) {
             throw new RuntimeException("PagedResponse is null");
         }
@@ -128,7 +129,7 @@ public final class AstRcsWcfService {
         return getFileVersionsDto(chs, project, null);
     }
 
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, String startUrl) {
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, @Nullable String startUrl) {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
         if (startUrl != null) {

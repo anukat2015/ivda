@@ -87,9 +87,8 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
         } catch (FileNotFoundException e) {
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
-        return null;
     }
 
     protected void serialize(File cacheFile, Value response) throws Exception {

@@ -4,6 +4,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.Serializable;
@@ -24,9 +25,9 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     private static final Logger logger = Logger.getLogger(DownloadAll.class.getName());
     private final static File cacheFolder = new File("C:/cache/");
 
-    private WebClient client;
-    private Class<? extends PagedResponse<T>> mClass;
-    private GuavaFilesCache<URI, PagedResponse<T>> cache;
+    private final WebClient client;
+    private final Class<? extends PagedResponse<T>> mClass;
+    private final GuavaFilesCache<URI, PagedResponse<T>> cache;
 
     public DownloadAll(Class<? extends PagedResponse<T>> aClass) {
         mClass = aClass;
@@ -54,7 +55,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
         };
     }
 
-    private URI getNextURI(PagedResponse<T> response, URI uri) {
+    private @Nullable URI getNextURI(PagedResponse<T> response, URI uri) {
         // Stary sposob pomocou citania URL adresy v "next" policku v odpovedi nefunguje spravne
         if (!response.isHasNextPage()) {
             return null;

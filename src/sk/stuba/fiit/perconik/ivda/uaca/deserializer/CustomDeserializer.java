@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class CustomDeserializer<T> extends JsonDeserializer<T> {
     protected Map<String, Class<? extends T>> registry;
-    private String watchedAttribute;
+    private final String watchedAttribute;
 
     /**
      * @param attribute Atribut, ktory sa hlada v JSONe.

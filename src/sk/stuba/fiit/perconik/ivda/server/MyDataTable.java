@@ -7,6 +7,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.GregorianCalendar;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public final class MyDataTable extends DataTable implements Serializable {
         add(group, start, end, className, content, null);
     }
 
-    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content, String description) throws TypeMismatchException {
+    public void add(String group, GregorianCalendar start, @Nullable GregorianCalendar end, ClassName className, @Nullable String content, @Nullable String description) throws TypeMismatchException {
 
         // Datatable vyzaduje GMT time zone, ale server v response potom odosle datum bez time zone teda prideme o cast datumu
         if (start != null) {

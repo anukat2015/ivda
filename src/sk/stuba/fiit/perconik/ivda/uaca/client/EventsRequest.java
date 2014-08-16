@@ -13,7 +13,7 @@ import java.net.URI;
  * Created by Seky on 22. 7. 2014.
  * Trieda ktora namapuje EventsURI vlastnosti a ulozi ich do URI.
  */
-public class EventsRequest extends EventsURI {
+public final class EventsRequest extends EventsURI {
     private final UriBuilder builder; // stara sa  encodovanie
 
     public EventsRequest() {

@@ -19,8 +19,8 @@ import java.util.Set;
 public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     private static final Logger logger = Logger.getLogger(PolymorphicDeserializer.class.getName());
 
-    private Class<T> baseClass;
-    private boolean mTryLongestSubsequence;
+    private final Class<T> baseClass;
+    private final boolean mTryLongestSubsequence;
 
     /**
      * When system can not find class for http://perconik.gratex.com/useractivity/event/web/tab/switchto

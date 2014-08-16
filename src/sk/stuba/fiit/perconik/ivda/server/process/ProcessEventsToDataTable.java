@@ -9,6 +9,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 
 /**
@@ -41,7 +42,7 @@ public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
 
     protected abstract void proccessItem(EventDto event) throws TypeMismatchException;
 
-    public MyDataTable getDataTable() {
+    public @NotNull MyDataTable getDataTable() {
         return dataTable;
     }
 
