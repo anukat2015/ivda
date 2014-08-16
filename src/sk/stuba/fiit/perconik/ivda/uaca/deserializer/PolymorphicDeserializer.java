@@ -3,10 +3,10 @@ package sk.stuba.fiit.perconik.ivda.uaca.deserializer;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
+import sk.stuba.fiit.perconik.ivda.util.Objects;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -40,25 +40,6 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
     }
 
     /**
-     * find longest / nearest prefix
-     *
-     * @param collection
-     * @param search
-     * @return
-     */
-    private static String findLongestPrefix(Collection<String> collection, String search) {
-        String longestString = "";
-        for (String key : collection) {
-            if (search.startsWith(key)) {
-                if (key.length() > longestString.length()) {
-                    longestString = key;
-                }
-            }
-        }
-        return longestString;
-    }
-
-    /**
      * Call object's method to get specific object's value and compare it with JSON attribute
      *
      * @param packageName
@@ -85,15 +66,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
      */
     public void pushSubTypesOf(String packageName) {
         try {
-            String attributeName = getWatchedAttribute();
-            String name = Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
-            Method getter;
-
-            try {
-                getter = baseClass.getMethod("get" + name);
-            } catch (NoSuchMethodException e) {
-                getter = baseClass.getMethod("is" + name);
-            }
+            Method getter = Objects.getGetter(baseClass, getWatchedAttribute() );
             pushSubTypesOf(packageName, getter);
         } catch (Exception e) {
             throw new RuntimeException("I cant find getter", e);

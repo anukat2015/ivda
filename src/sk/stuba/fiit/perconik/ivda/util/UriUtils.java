@@ -2,9 +2,11 @@ package sk.stuba.fiit.perconik.ivda.util;
 
 import javax.ws.rs.core.UriBuilder;
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -28,7 +30,7 @@ public final class UriUtils {
         return qpairs;
     }
 
-    public static UriBuilder addBeanProperties(UriBuilder builder, Class<?> beanClass, Object object) throws java.beans.IntrospectionException, java.lang.reflect.InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
+    public static UriBuilder addBeanProperties(UriBuilder builder, Class<?> beanClass, Object object) throws IntrospectionException, InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
         for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
             if ("class".equals(pd.getName())) {

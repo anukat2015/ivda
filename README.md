@@ -10,7 +10,7 @@ Step-by-step approach enables visualisation of various actions taken during the 
 
 ## Requirements
 
-- Java 1.7
+- Java 1.8
 - Maven 3.2
 - Apache Tomcat 7.0.54 (to run)
 

@@ -39,12 +39,6 @@ public final class BlackListedProcesses implements Serializable {
     }
 
     public boolean checkAtLeastOneAllowed(List<ProcessDto> list) {
-        for (ProcessDto process : list) {
-            if (!contains(process)) {
-                // Ide o zaujimavy process
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(process -> !contains(process));
     }
 }
