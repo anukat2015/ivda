@@ -29,7 +29,7 @@ public class ProcessAllProcess extends ProcessEventsToDataTable {
     }
 
     @Override
-    protected void proccessItem(EventDto event) throws TypeMismatchException {
+    protected void proccessItem(EventDto event) {
         if (!(event instanceof ProcessesChangedSinceCheckEventDto)) return;
         ProcessesChangedSinceCheckEventDto cevent = (ProcessesChangedSinceCheckEventDto) event;
         finishedProcess.handle(cevent);

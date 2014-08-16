@@ -15,7 +15,7 @@ public class ProcessAllEvents extends ProcessEventsToDataTable {
     }
 
     @Override
-    protected void proccessItem(EventDto event) throws TypeMismatchException {
+    protected void proccessItem(EventDto event) {
         String action = event.getActionName();
         String description = "<span class=\"more\"><pre>"
                 + event + "<br/>"

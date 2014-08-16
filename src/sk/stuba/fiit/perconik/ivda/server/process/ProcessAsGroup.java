@@ -50,7 +50,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * @throws TypeMismatchException
      */
     @Override
-    protected void proccessItem(EventDto event) throws TypeMismatchException {
+    protected void proccessItem(EventDto event) {
         // Ignorujeme malo podstatne entity  ... startovanie monitorovania neznamena nic
         if (event instanceof MonitoringStartedEventDto) {
             return;
@@ -139,7 +139,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         firstEvent = actual;
     }
 
-    protected void foundEndOfGroup() throws TypeMismatchException {
+    protected void foundEndOfGroup() {
         // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
         GregorianCalendar start = getFirstEvent().getTimestamp();
         GregorianCalendar end = getLastEvent().getTimestamp();
@@ -151,10 +151,6 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         if (getFirstEvent() == null) {
             return; // ked ziadny prvok nebol v odpovedi
         }
-        try {
-            foundEndOfGroup();
-        } catch (TypeMismatchException e) {
-            e.printStackTrace();
-        }
+        foundEndOfGroup();
     }
 }

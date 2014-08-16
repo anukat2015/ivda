@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
-import com.google.visualization.datasource.base.TypeMismatchException;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.DownloadAll;
@@ -30,17 +29,11 @@ public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
 
     @Override
     protected boolean isDownloaded(PagedResponse<EventDto> response) {
-        try {
-            for (EventDto event : response.getResultSet()) {
-                proccessItem(event);
-            }
-        } catch (TypeMismatchException e) {
-            LOGGER.error("Type mismatch", e);
-        }
+        response.getResultSet().forEach(this::proccessItem);
         return true;   // chceme dalej stahovat
     }
 
-    protected abstract void proccessItem(EventDto event) throws TypeMismatchException;
+    protected abstract void proccessItem(EventDto event);
 
     @NotNull
     public MyDataTable getDataTable() {

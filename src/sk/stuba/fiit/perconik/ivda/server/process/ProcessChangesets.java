@@ -28,7 +28,7 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
     }
 
     @Override
-    protected void proccessItem(EventDto event) throws TypeMismatchException {
+    protected void proccessItem(EventDto event) {
         if (!(event instanceof IdeCheckinEventDto)) return;
         String action = event.getActionName();
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;

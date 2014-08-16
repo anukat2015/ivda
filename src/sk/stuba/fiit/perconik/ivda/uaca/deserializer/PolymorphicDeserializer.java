@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.uaca.deserializer;
 
-import com.google.common.base.Function;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
@@ -114,12 +113,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         if (aClass == null) {
             logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
             //noinspection NullableProblems
-            String longestString = Strings.findLongestPrefix(registry.keySet(), key, new Function<String, String>() {
-                @Override
-                public String apply(String input) {
-                    return input;
-                }
-            });
+            String longestString = Strings.findLongestPrefix(registry.keySet(), key, input -> input);
             if (longestString != null) {
                 aClass = super.searchForClass(longestString);
                 register(key, aClass);

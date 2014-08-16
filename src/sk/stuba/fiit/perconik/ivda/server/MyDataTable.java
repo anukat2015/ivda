@@ -7,6 +7,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
+import org.apache.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Map;
  * Trieda MyDataTable definuje stlpce, ktore pouzivame v klientovi.
  */
 public final class MyDataTable extends DataTable implements Serializable {
+    protected static final Logger LOGGER = Logger.getLogger(MyDataTable.class.getName());
     private static final long serialVersionUID = 2235473137254607516L;
     /**
      * Definovane stlpce.
@@ -69,7 +71,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @param content
      * @throws TypeMismatchException
      */
-    public void add(String group, GregorianCalendar start, ClassName className, String content) throws TypeMismatchException {
+    public void add(String group, GregorianCalendar start, ClassName className, String content) {
         add(group, start, null, className, content, null);
     }
 
@@ -83,7 +85,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @param description
      * @throws TypeMismatchException
      */
-    public void add(String group, GregorianCalendar start, ClassName className, String content, String description) throws TypeMismatchException {
+    public void add(String group, GregorianCalendar start, ClassName className, String content, String description) {
         add(group, start, null, className, content, description);
     }
 
@@ -97,7 +99,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @param content
      * @throws TypeMismatchException
      */
-    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) throws TypeMismatchException {
+    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content)  {
         add(group, start, end, className, content, null);
     }
 
@@ -108,9 +110,13 @@ public final class MyDataTable extends DataTable implements Serializable {
                     ClassName className,
                     @Nullable String content,
                     @Nullable String description
-    ) throws TypeMismatchException {
+    ) {
         // Uloz vysledok
-        addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+        try {
+            super.addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+        } catch (TypeMismatchException e) {
+            LOGGER.error("TypeMismatchException error at MyDataTable.", e);
+        }
     }
 
     private String blackoutName(@Nullable String name) {

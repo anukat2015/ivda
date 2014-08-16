@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.astrcs;
 
-import com.google.common.base.Function;
 import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
@@ -67,12 +66,7 @@ public final class AstRcsWcfService {
     }
 
     public RcsServerDto getNearestRcsServerDto(URI url) {
-        return Strings.findLongestPrefix(servers, url.toString(), new Function<RcsServerDto, String>() {
-            @Override
-            public String apply(RcsServerDto input) {
-                return input.getUrl().getValue();
-            }
-        });
+        return Strings.findLongestPrefix(servers, url.toString(), input -> input.getUrl().getValue());
     }
 
     public RcsServerDto getRcsServerDto(URI url) throws NotFoundException {

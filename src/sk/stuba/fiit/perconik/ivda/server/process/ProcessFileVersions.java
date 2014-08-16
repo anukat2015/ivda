@@ -27,7 +27,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
     }
 
     @Override
-    protected void proccessItem(EventDto event) throws TypeMismatchException {
+    protected void proccessItem(EventDto event) {
         if (!(event instanceof IdeCodeEventDto)) return;
         if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
         String action = event.getActionName();
