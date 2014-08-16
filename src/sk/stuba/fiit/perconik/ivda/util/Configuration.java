@@ -28,6 +28,7 @@ public final class Configuration implements Serializable {
     private static Configuration instance = null;
     private Map<String, String> astRcs = new HashMap<>();
     private URI uacaLink;
+    private File cacheFolder;
 
     static {
         // Load conf dir
@@ -105,5 +106,13 @@ public final class Configuration implements Serializable {
 
     public void setAstRcs(Map<String, String> astRcs) {
         this.astRcs = astRcs;
+    }
+
+    public File getCacheFolder() {
+        return cacheFolder;
+    }
+
+    public void setCacheFolder(File cacheFolder) {
+        this.cacheFolder = cacheFolder;
     }
 }
