@@ -98,12 +98,22 @@ public final class AstRcsWcfService {
             throw new RuntimeException();
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
+        return returnOne(getFileVersionsDto(chs, project, startUrl));
+    }
+
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project) {
+        return getFileVersionsDto(chs, project, null);
+    }
+
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, String startUrl) {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
-        req.setUrlStart(factory.createSearchFilesRequestUrlStart(startUrl));
+        if (startUrl != null) {
+            req.setUrlStart(factory.createSearchFilesRequestUrlStart(startUrl));
+        }
         SearchFilesResponse response = service.searchFiles(req);
         checkResponse(response);
-        return returnOne(response.getFileVersions().getValue().getFileVersionDto());
+        return response.getFileVersions().getValue().getFileVersionDto();
     }
 
     public String getFileContent(Integer fileVersion) {
@@ -130,33 +140,5 @@ public final class AstRcsWcfService {
     private static class SingletonHolder {
         public static final AstRcsWcfService INSTANCE = new AstRcsWcfService();
     }
-
-    /*
-            GetFilesByTfsIdentifiersRequest req = new GetFilesByTfsIdentifiersRequest();
-        ArrayOfFileTfsIdentifierDto dto = new ArrayOfFileTfsIdentifierDto();
-        req.setIdentifiers(factory.createGetFilesByTfsIdentifiersRequestIdentifiers(dto));
-        GetFilesByTfsIdentifiersResponse response = service.getFilesByTfsIdentifiers(req)
-        return returnOne(response.getVersions().getValue().getFileVersionDto());
-
-        try {
-            SearchCodeEntitiesRequest req = new SearchCodeEntitiesRequest();
-            req.setChangesetId( factory.createSearchCodeEntitiesRequestChangesetId(id) );
-            SearchCodeEntitiesResponse response;
-            response = service.searchCodeEntities(req);
-            logger.info("SearchCodeEntitiesRequest " + response.getCodeEntityVersions().getValue().getCodeEntityVersionDto().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            GetCodeEntityChangesetsRequest req3 = new GetCodeEntityChangesetsRequest();
-            req3.setEntityId(2);
-            GetCodeEntityChangesetsResponse response3;
-            response3 = service.getCodeEntityChangesets(req3);
-            logger.info("GetCodeEntityChangesetsRequest " + response3.getChangesets().getValue().getChangesetDto().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    */
 }
 
