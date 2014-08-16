@@ -3,7 +3,6 @@ package sk.stuba.fiit.perconik.ivda.uaca.client;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.util.GuavaFilesCache;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
@@ -41,7 +40,7 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
             @Override
             protected File computeFilePath(File folder, URI uri) {
                 try {
-                    return new File(cacheFolder, "D-" + URLEncoder.encode(uri.toString(), "UTF-8"));
+                    return new File(cacheFolder, URLEncoder.encode(uri.toString(), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

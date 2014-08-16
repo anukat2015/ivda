@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.util;
+package sk.stuba.fiit.perconik.ivda.uaca.client;
 
 import com.google.common.cache.*;
 import org.apache.commons.lang.SerializationUtils;
@@ -100,7 +100,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> {
             SerializationUtils.serialize(response, fos);
             fos.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("Nemozem vytvorit subor s nazvom: " + cacheFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

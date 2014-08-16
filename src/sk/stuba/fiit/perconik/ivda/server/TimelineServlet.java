@@ -5,7 +5,7 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessAllEvents;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessChangesets;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.ide.IdeCheckinEventDto;
@@ -66,9 +66,10 @@ public final class TimelineServlet extends DataSourceServlet {
         start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
         end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
         request.setTime(start, end);
+        request.setUser("steltecia\\pzbell");
         //request.setType(new IdeCodeEventDto(), "pastefromweb");
         request.setType(new IdeCheckinEventDto());
-        process = new ProcessAllEvents(request);
+        process = new ProcessChangesets(request);
 
 
         //start = DateUtils.fromString("2014-08-06T01:00:00.000Z");
