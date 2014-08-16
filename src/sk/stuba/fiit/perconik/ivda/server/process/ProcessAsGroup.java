@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.ibm.icu.util.GregorianCalendar;
 import sk.stuba.fiit.perconik.ivda.server.BlackListedProcesses;
-import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.uaca.dto.MonitoringStartedEventDto;
@@ -143,24 +143,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
         GregorianCalendar start = getFirstEvent().getTimestamp();
         GregorianCalendar end = getLastEvent().getTimestamp();
-        MyDataTable.ClassName type;
-        String content;
-        if (getFirstEvent() instanceof WebEventDto) {
-            type = MyDataTable.ClassName.AVAILABLE;
-            content = "Web";
-        } else if (getFirstEvent() instanceof IdeEventDto) {
-            type = MyDataTable.ClassName.MAYBE;
-            content = "Ide";
-        } else if (getFirstEvent() instanceof ProcessesChangedSinceCheckEventDto) {
-            type = MyDataTable.ClassName.AVAILABLE;
-            content = "Iny proces";
-        } else {
-            logger.warn("Neznamy typ entity prisiel az sem.");
-            type = MyDataTable.ClassName.UNAVAILABLE; // tzv nezanmy typ entity prisiel
-            content = "Unknown";
-        }
-
-        dataTable.add(getFirstEvent().getUser(), start, end, type, content, inGroup.toString());
+        dataTable.add(getFirstEvent().getUser(), start, end, EventsUtil.event2Classname(getFirstEvent()), EventsUtil.event2name(getFirstEvent()), inGroup.toString());
     }
 
     @Override
