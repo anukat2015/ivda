@@ -1,28 +1,23 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
-import com.google.common.io.Files;
-import com.google.visualization.datasource.base.TypeMismatchException;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.util.List;
 
 /**
  * Created by Seky on 15. 8. 2014.
  */
 public class ProcessChangesets extends ProcessEventsToDataTable {
-    private final static File cacheFolder = new File("C:/cache/");
-
     public ProcessChangesets(EventsRequest request) {
         super(request);
     }
@@ -45,11 +40,6 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
             return;
         }
 
-        String name;
-        File cacheFile;
-        String content;
-        Integer id;
-
         try {
             LOGGER.info("-----------------");
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
@@ -61,17 +51,15 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
             List<FileVersionDto> fileVersion = AstRcsWcfService.getInstance().getFileVersionsDto(changeset, project);
 
             for (FileVersionDto file : fileVersion) {
-                LOGGER.info(ToStringBuilder.reflectionToString(file));
-                id = file.getId();
-                name = Files.getNameWithoutExtension(file.getUrl().getValue()) + id;
-                cacheFile = new File(cacheFolder, name);
-                LOGGER.info("Ulozene do cache:" + cacheFile);
-                content = AstRcsWcfService.getInstance().getFileContent(id);
-                Files.write(content, cacheFile, Charset.defaultCharset());
+                FileVersionsUtil.save(file);
             }
             LOGGER.info("-----------------");
+        } catch (AstRcsWcfService.NotFoundException e) {
+            LOGGER.info("Chybaju nejake udaje:" + e.getMessage());
+            return;
         } catch (Exception e) {
-            LOGGER.info("proccessItem", e);
+            LOGGER.error("proccessItem", e);
+            return;
         }
 
         String description = action
@@ -81,4 +69,5 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
 
         dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", description);
     }
+
 }
