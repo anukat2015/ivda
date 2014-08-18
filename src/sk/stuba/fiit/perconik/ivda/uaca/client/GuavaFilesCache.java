@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.uaca.client;
 
 import com.google.common.cache.*;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
@@ -80,7 +81,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
      * @return
      */
     protected File computeFilePath(File folder, Key key) {
-        return new File(folder, new String(DigestUtils.sha(key.toString())) );
+        return new File(folder, Hex.encodeHexString(DigestUtils.sha(key.toString())) );
     }
 
     @SuppressWarnings("unchecked")
