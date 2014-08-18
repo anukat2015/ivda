@@ -56,7 +56,7 @@ public class ProcessFileVersions extends ProcessEventsToDataTable {
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-            FileVersionsUtil.save(fileVersion);
+            FileVersionsUtil.getContent(fileVersion);
             // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
         } catch (Exception e) {
             LOGGER.info("proccessItem", e);

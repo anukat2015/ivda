@@ -4,7 +4,9 @@ import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import difflib.Delta;
+import difflib.DiffUtils;
+import difflib.Patch;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
@@ -18,6 +20,8 @@ import java.util.List;
  * Created by Seky on 15. 8. 2014.
  */
 public class ProcessChangesets extends ProcessEventsToDataTable {
+    private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
+
     public ProcessChangesets(EventsRequest request) {
         super(request);
     }
@@ -49,46 +53,50 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
         }
 
         try {
-            LOGGER.info("-----------------");
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            LOGGER.info(ToStringBuilder.reflectionToString(server));
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
-            LOGGER.info(ToStringBuilder.reflectionToString(project));
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(changesetIdInRcs, project);
-            LOGGER.info(ToStringBuilder.reflectionToString(changeset));
             List<FileVersionDto> fileVersion = AstRcsWcfService.getInstance().getChangedFiles(changeset);
 
-            // server 4
-            // project 6
-            // changesetIdInRcs 763939e441e5e713ec8f6fcc3fe4c5c590d8897a
-            // changeset 3825  - committer pavol.zbell@gmail.com id 23
-
-
             for (FileVersionDto file : fileVersion) {
-                if (file.getUrl().getValue().contains("JavaElementEventType")) {
-                    // url sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java
-                    // entity id 20252
-                    // id 31517
-                    // ancestorID 4284, type EDIT
-                    // ancestorID2 je null
+                if (file.getUrl().getValue().equals(ZAUJIMAVY_SUBOR)) {
                     LOGGER.info(FileVersionsUtil.getName(file));
+                    najdenySubor(file);
+
+                    String description = action
+                            + "<span class=\"more\"><pre>"
+                            + cevent + "<br/>"
+                            + "</pre></span>";
+
+                    dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", description);
+                    return; // ignoruj ostatne
                 }
             }
-            LOGGER.info("-----------------");
+
         } catch (AstRcsWcfService.NotFoundException e) {
             LOGGER.info("Chybaju nejake udaje:" + e.getMessage());
-            return;
         } catch (Exception e) {
             LOGGER.error("proccessItem", e);
-            return;
         }
-
-        String description = action
-                + "<span class=\"more\"><pre>"
-                + cevent + "<br/>"
-                + "</pre></span>";
-
-        dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", description);
     }
 
+    /**
+     * Dany subor sme nasli, zachyt ID, vypis hodnotu
+     *
+     * @param file
+     */
+    private void najdenySubor(FileVersionDto file) {
+        try {
+            List<String> aktualneVerzia = FileVersionsUtil.getContent(file);
+            List<String> staraVerzia = FileVersionsUtil.getContentAncestor(file);
+
+            Patch patch = DiffUtils.diff(staraVerzia, aktualneVerzia);
+            for (Delta delta : patch.getDeltas()) {
+                LOGGER.info("Diff\n" + delta);
+            }
+
+        } catch (AstRcsWcfService.NotFoundException e) {
+            LOGGER.warn("Nemozem stiahnut subor, lebo:" + e.getMessage());
+        }
+    }
 }

@@ -9,6 +9,8 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -22,24 +24,59 @@ public final class FileVersionsUtil {
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");
 
     public static String getName(FileVersionDto file) {
-        return FILE_NAME_PATTERN.matcher(file.getUrl().getValue()).replaceAll("_") + '-' + file.getId();
+        return getName(file, file.getId());
     }
 
-    public static void save(FileVersionDto file) {
-        String name = getName(file);
-        File cacheFile = new File(CACHE_FOLDER, name);
-        if (!cacheFile.exists()) {
-            String content = AstRcsWcfService.getInstance().getFileContent(file.getId());
-            if (content == null) {
-                LOGGER.error("Content not found for:" + name + " because " + file.getContentNotIncludedReason().value());
-                return;
-            }
-            try {
+    public static String getName(FileVersionDto file, Integer versionID) {
+        return FILE_NAME_PATTERN.matcher(file.getUrl().getValue()).replaceAll("_") + '-' + versionID;
+    }
+
+    private static List<String> saveContent(FileVersionDto file, Integer id) throws AstRcsWcfService.NotFoundException {
+        File cacheFile = new File(CACHE_FOLDER, getName(file, id));
+        try {
+            if (!cacheFile.exists()) {
+                // Udaje prichdzaju zo specialnymi znakmy
+                String content = AstRcsWcfService.getInstance().getFileContent(id);
                 Files.write(content, cacheFile, Charset.defaultCharset());
                 LOGGER.info("Ulozene do cache:" + cacheFile);
-            } catch (IOException e) {
-                LOGGER.error("saveFileVersion", e);
             }
+
+            // Udaje vychadzaju bez specialnyzch znakov
+            return Collections.unmodifiableList(Files.readLines(cacheFile, Charset.defaultCharset()));
+        } catch (IOException e) {
+            LOGGER.error("Nemozem precitat / zapisat zo suboru.", e);
+            throw new AstRcsWcfService.NotFoundException();
+        }
+    }
+
+    /**
+     * Download content of FileVersionDto with automatic caching.
+     *
+     * @param file FileVersionDto
+     * @return list of lines
+     * @throws AstRcsWcfService.NotFoundException when file cannot be downloaded or saved or do not exist
+     */
+    public static List<String> getContent(FileVersionDto file) throws AstRcsWcfService.NotFoundException {
+        String name = getName(file);
+        try {
+            return saveContent(file, file.getId());
+        } catch (AstRcsWcfService.NotFoundException e) {
+            LOGGER.warn("Content probably not found for:" + name + " because " + file.getContentNotIncludedReason().value());
+            throw e;
+        }
+    }
+
+    public static List<String> getContentAncestor(FileVersionDto file) throws AstRcsWcfService.NotFoundException {
+        Integer ancestor = file.getAncestor1Id().getValue();
+        String name = getName(file, ancestor);
+        if (ancestor == null) {
+            throw new AstRcsWcfService.NotFoundException("Ancestor is null");
+        }
+        try {
+            return saveContent(file, ancestor);
+        } catch (AstRcsWcfService.NotFoundException e) {
+            LOGGER.warn("Content probably not found for:" + name + " because " + file.getContentNotIncludedReason().value());
+            throw e;
         }
     }
 }

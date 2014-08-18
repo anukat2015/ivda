@@ -86,8 +86,12 @@ public final class AstRcsWcfService {
      * @param url
      * @return
      */
-    public RcsServerDto getNearestRcsServerDto(URI url) {
-        return Strings.findLongestPrefix(servers, url.toString(), input -> input.getUrl().getValue());
+    public RcsServerDto getNearestRcsServerDto(URI url) throws NotFoundException {
+        RcsServerDto server = Strings.findLongestPrefix(servers, url.toString(), input -> input.getUrl().getValue());
+        if (server == null) {
+            throw new NotFoundException("getNearestRcsServerDto");
+        }
+        return server;
     }
 
     public RcsServerDto getRcsServerDto(URI url) throws NotFoundException {
@@ -172,11 +176,15 @@ public final class AstRcsWcfService {
         return response.getFileVersions().getValue().getFileVersionDto();
     }
 
-    public String getFileContent(Integer fileVersion) {
+    public String getFileContent(Integer fileVersion) throws NotFoundException {
         GetFileContentRequest req = new GetFileContentRequest();
         req.setVersionId(fileVersion);
         GetFileContentResponse response = service.getFileContent(req);
-        return response.getContent().getValue();
+        String value = response.getContent().getValue();
+        if (value == null) {
+            throw new NotFoundException();
+        }
+        return value;
     }
 
     public FileVersionDto getFile(Integer versionID) {
