@@ -99,7 +99,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      * @param content
      * @throws TypeMismatchException
      */
-    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content)  {
+    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) {
         add(group, start, end, className, content, null);
     }
 

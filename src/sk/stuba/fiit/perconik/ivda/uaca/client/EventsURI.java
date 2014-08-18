@@ -3,9 +3,9 @@ package sk.stuba.fiit.perconik.ivda.uaca.client;
 import java.io.Serializable;
 
 /**
- * <p/>
+ * <p>
  * EventsURI bean. Attributes:
- * <p/>
+ * <p>
  * Page [int]
  * Zero based index of the results page
  * PageSize [int]

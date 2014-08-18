@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * Created by Seky on 23. 7. 2014.
- * <p/>
+ * <p>
  * Pomocna trieda na formatovanie datumov.
  * Javascript posiela ISO 8601, sluzba si to pyta.
  * Vytvorene na zaklade:

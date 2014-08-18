@@ -5,7 +5,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p/>
+ * <p>
  * Odpoved vratena z UACA sluzby.
  */
 public final class EventsResponse extends PagedResponse<EventDto> {

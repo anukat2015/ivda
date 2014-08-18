@@ -7,7 +7,7 @@ import java.util.Collection;
 
 /**
  * Created by Seky on 16. 8. 2014.
- * <p/>
+ * <p>
  * Pomocna trieda pre retazce.
  */
 public final class Strings {

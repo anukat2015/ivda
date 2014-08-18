@@ -7,7 +7,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p/>
+ * <p>
  * Pomocou nasho modulu povieme Jacksonu aby pouzil nas vlastny deserializer.
  */
 public final class EventDeserializerModule extends SimpleModule {

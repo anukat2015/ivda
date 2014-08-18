@@ -16,10 +16,10 @@ import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
- * <p/>
+ * <p>
  * HTTP client pre sluzbu UACA. Ktory stahnie prvu stranku, poskytne udaje, stiahne druhu stranu atd.
  * Client cachuje odpovede do CACHE_FOLDER zlozky.
- * <p/>
+ * <p>
  */
 public abstract class DownloadAll<T extends Serializable> implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(DownloadAll.class.getName());

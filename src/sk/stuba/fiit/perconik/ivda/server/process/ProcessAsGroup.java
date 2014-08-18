@@ -28,11 +28,10 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * napriklad pzoera film
      */
     private static final int PROCESS_MIN_INTERVAL = 1000 * 60 * 5;
+    private final BlackListedProcesses blacklist;
     private EventDto firstEvent = null;  // potrebne a urcenie zaciatocnej pozicie
     private EventDto lastEvent = null;  // potrebne pre meranie podla casu
     private Integer inGroup = 0;
-
-    private final BlackListedProcesses blacklist;
 
     public ProcessAsGroup(EventsRequest request) {
         super(request);
@@ -102,7 +101,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
      * @return
      * @throws TypeMismatchException
      */
-    protected boolean divideByTime(EventDto actual)  {
+    protected boolean divideByTime(EventDto actual) {
         long actualTimestamp = actual.getTimestamp().getTimeInMillis();
         long lastTimestamp = getLastEvent().getTimestamp().getTimeInMillis();
         long diff = actualTimestamp - lastTimestamp;

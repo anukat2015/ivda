@@ -51,6 +51,20 @@ public final class AstRcsWcfService {
         return items.get(0);
     }
 
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+    private static void checkResponse(@Nullable PagedResponse res, String message) throws NotFoundException {
+        if (res == null) {
+            throw new RuntimeException("PagedResponse is null");
+        }
+        if (res.getPageCount() == 0) {
+            throw new NotFoundException("PagedResponse have no items at:" + message);
+        }
+        if (res.getPageCount() > 1) {
+            // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
+            LOGGER.warn("Response have more pages, ignoring next pages.");
+        }
+    }
+
     @SuppressWarnings("MethodMayBeStatic")
     private void authenticate() {
         String username = Configuration.getInstance().getAstRcs().get("username");
@@ -85,20 +99,6 @@ public final class AstRcsWcfService {
         SearchRcsServersResponse response = service.searchRcsServers(req);
         checkResponse(response, "getRcsServersDto");
         return response.getRcsServers().getValue().getRcsServerDto();
-    }
-
-    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-    private static void checkResponse(@Nullable PagedResponse res, String message) throws NotFoundException {
-        if (res == null) {
-            throw new RuntimeException("PagedResponse is null");
-        }
-        if (res.getPageCount() == 0) {
-            throw new NotFoundException("PagedResponse have no items at:" + message);
-        }
-        if (res.getPageCount() > 1) {
-            // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
-            LOGGER.warn("Response have more pages, ignoring next pages.");
-        }
     }
 
     public RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {

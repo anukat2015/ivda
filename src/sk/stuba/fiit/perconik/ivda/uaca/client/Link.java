@@ -7,7 +7,7 @@ import java.net.URI;
 
 /**
  * Created by Seky on 19. 7. 2014.
- * <p/>
+ * <p>
  * Datova entita pre Link vrateny v UACA klientovi.
  */
 public final class Link implements Serializable {

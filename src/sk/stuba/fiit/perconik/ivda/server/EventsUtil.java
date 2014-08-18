@@ -10,14 +10,13 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Created by Seky on 16. 8. 2014.
- *
+ * <p>
  * Pomocna trieda pre pracovanie s EventDto
  */
 public final class EventsUtil {
 
     @NotNull
-    public static
-    MyDataTable.ClassName event2Classname(EventDto event) {
+    public static MyDataTable.ClassName event2Classname(EventDto event) {
         //noinspection IfStatementWithTooManyBranches
         if (event instanceof WebEventDto) {
             return MyDataTable.ClassName.AVAILABLE;
@@ -31,8 +30,7 @@ public final class EventsUtil {
     }
 
     @NotNull
-    public static
-    String event2name(EventDto event) {
+    public static String event2name(EventDto event) {
         //noinspection IfStatementWithTooManyBranches
         if (event instanceof WebEventDto) {
             return "Web";

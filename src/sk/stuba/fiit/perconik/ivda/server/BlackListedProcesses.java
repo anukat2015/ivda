@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Created by Seky on 10. 8. 2014.
- * <p/>
+ * <p>
  * Trieda ktora nacitava a stara sa o black-list zoznam procesov.
  */
 public final class BlackListedProcesses implements Serializable {

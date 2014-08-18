@@ -7,10 +7,10 @@ import java.util.List;
 
 /**
  * Created by Seky on 19. 7. 2014.
- * <p/>
+ * <p>
  * Vseobecna datova entita, ktora reprezentuje odpoved z UACA sluzby.
  * Odpoved ma v JSONe tvar:
- * <p/>
+ * <p>
  * {
  * "resultSet":[],
  * "pageIndex":1,

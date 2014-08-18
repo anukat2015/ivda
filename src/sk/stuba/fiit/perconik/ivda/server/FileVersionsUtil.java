@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 
 /**
  * Created by Seky on 18. 8. 2014.
- *
+ * <p>
  * Pomocne utilitky pre praci s roznymi verziami suborov.
  */
 public final class FileVersionsUtil {

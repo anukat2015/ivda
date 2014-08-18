@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 /**
  * Created by Seky on 9. 8. 2014.
- *
+ * <p>
  * Deserializer pre triedu GregorianCalendar.
  */
 public final class GregorianCalendarDeserializer extends JsonDeserializer<GregorianCalendar> {

@@ -17,43 +17,12 @@ import javax.ws.rs.core.Response;
 
 /**
  * Created by Seky on 17. 7. 2014.
- * <p/>
+ * <p>
  * Servlet pre TImeline.
  */
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
     private static final long serialVersionUID = 4252962999830460395L;
-
-    /**
-     * Spracuj parametre ziadosti. Nasledne generuj tabulku.
-     *
-     * @param query
-     * @param req
-     * @return
-     */
-    @Override
-    public DataTable generateDataTable(Query query, HttpServletRequest request) {
-        // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
-        // Vplyv na rozsah ma jedine  zoom
-        // Cize musime vypocitat sirku okna a poslat to sem
-        GregorianCalendar start;
-        GregorianCalendar end;
-        Integer width;
-        //noinspection OverlyBroadCatchBlock
-        try {
-            start = DateUtils.fromString(request.getParameter("start"));
-            end = DateUtils.fromString(request.getParameter("end"));
-            width = Integer.valueOf(request.getParameter("width"));
-            //start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
-            //end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
-            start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
-            end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
-            width = 1012;
-        } catch (Exception e) {
-            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
-        }
-        return generateDataTable(start, end, width);
-    }
 
     /**
      * Generuj datovu tabulku pre klienta na zaklade ziadosti.
@@ -106,6 +75,37 @@ public final class TimelineServlet extends DataSourceServlet {
                 " width:" + width);
         process.start();
         return process.getDataTable();
+    }
+
+    /**
+     * Spracuj parametre ziadosti. Nasledne generuj tabulku.
+     *
+     * @param query
+     * @param req
+     * @return
+     */
+    @Override
+    public DataTable generateDataTable(Query query, HttpServletRequest request) {
+        // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
+        // Vplyv na rozsah ma jedine  zoom
+        // Cize musime vypocitat sirku okna a poslat to sem
+        GregorianCalendar start;
+        GregorianCalendar end;
+        Integer width;
+        //noinspection OverlyBroadCatchBlock
+        try {
+            start = DateUtils.fromString(request.getParameter("start"));
+            end = DateUtils.fromString(request.getParameter("end"));
+            width = Integer.valueOf(request.getParameter("width"));
+            //start = DateUtils.fromString("2014-03-01T08:00:00.000Z");
+            //end = DateUtils.fromString("2014-10-30T16:00:00.000Z");
+            start = DateUtils.fromString("2013-03-01T08:00:00.000Z");
+            end = DateUtils.fromString("2014-10-03T16:00:00.000Z");
+            width = 1012;
+        } catch (Exception e) {
+            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
+        }
+        return generateDataTable(start, end, width);
     }
 
     @Override

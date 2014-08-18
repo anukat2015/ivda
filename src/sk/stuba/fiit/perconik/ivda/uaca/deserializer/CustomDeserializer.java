@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p/>
+ * <p>
  * Vlastny deserializer. Ktory priradi objekt z jsonu na zaklade specifickeho kluca.
  */
 public class CustomDeserializer<T> extends JsonDeserializer<T> {

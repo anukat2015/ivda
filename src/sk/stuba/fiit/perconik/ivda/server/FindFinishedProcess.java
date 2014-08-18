@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * Created by Seky on 7. 8. 2014.
- * <p/>
+ * <p>
  * Trieda sa pozera na vytvorene a ukoncene procesy.
  * Pomocou PID procesu hlada zaciatok a ukoncenie procesu.
  * Nasledne danemu procesu priradi aproximovane casi zaciatku a ukoncenia.

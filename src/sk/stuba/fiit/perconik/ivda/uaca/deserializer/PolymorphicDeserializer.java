@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p/>
+ * <p>
  * Deserialize polymorfed objects by specific keys. Like a URI
  */
 public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
@@ -66,7 +66,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
      */
     public void pushSubTypesOf(String packageName) {
         try {
-            Method getter = Objects.getGetter(baseClass, getWatchedAttribute() );
+            Method getter = Objects.getGetter(baseClass, getWatchedAttribute());
             pushSubTypesOf(packageName, getter);
         } catch (Exception e) {
             throw new RuntimeException("I cant find getter", e);

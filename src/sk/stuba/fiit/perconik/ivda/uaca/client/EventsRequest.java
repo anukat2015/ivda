@@ -16,7 +16,8 @@ import java.net.URI;
 public final class EventsRequest extends EventsURI {
     private static final long serialVersionUID = 1794091480392084768L;
 
-    public EventsRequest() {}
+    public EventsRequest() {
+    }
 
     @SuppressWarnings("OverlyBroadThrowsClause")
     public URI getURI() throws Exception {
