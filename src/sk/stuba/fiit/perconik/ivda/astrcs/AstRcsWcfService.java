@@ -83,21 +83,21 @@ public final class AstRcsWcfService {
             req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
         }
         SearchRcsServersResponse response = service.searchRcsServers(req);
-        checkResponse(response);
+        checkResponse(response, "getRcsServersDto");
         return response.getRcsServers().getValue().getRcsServerDto();
     }
 
     @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-    private static void checkResponse(@Nullable PagedResponse res) throws NotFoundException {
+    private static void checkResponse(@Nullable PagedResponse res, String message) throws NotFoundException {
         if (res == null) {
-            throw new NotFoundException("PagedResponse is null");
+            throw new RuntimeException("PagedResponse is null");
         }
         if (res.getPageCount() == 0) {
-            throw new NotFoundException("PagedResponse have no items.");
+            throw new NotFoundException("PagedResponse have no items at:" + message);
         }
         if (res.getPageCount() > 1) {
             // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
-            LOGGER.warn("Response have more pages.");
+            LOGGER.warn("Response have more pages, ignoring next pages.");
         }
     }
 
@@ -107,7 +107,7 @@ public final class AstRcsWcfService {
         //req.setUrl();  // nazov projektu $/PerConIK
         // dokument $/PerConIK/ITGenerator/ITGenerator.Lib/Entities/ActivitySubjectOrObject.cs
         SearchRcsProjectsResponse response = service.searchRcsProjects(req);
-        checkResponse(response);
+        checkResponse(response, "getRcsProjectDto");
         return returnOne(response.getRcsProjects().getValue().getRcsProjectDto());
     }
 
@@ -117,7 +117,7 @@ public final class AstRcsWcfService {
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
         req.setRcsProjectId(project.getId());
         SearchChangesetsResponse response = service.searchChangesets(req);
-        checkResponse(response);
+        checkResponse(response, "getChangesetDto");
         return returnOne(response.getChangesets().getValue().getChangesetDto());
     }
 
@@ -144,7 +144,7 @@ public final class AstRcsWcfService {
             req.setUrlStart(factory.createSearchFilesRequestUrlStart(startUrl));
         }
         SearchFilesResponse response = service.searchFiles(req);
-        checkResponse(response);
+        checkResponse(response, "getFileVersionsDto");
         return response.getFileVersions().getValue().getFileVersionDto();
     }
 
