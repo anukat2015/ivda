@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.uaca.client;
 
 import com.google.common.cache.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.log4j.Logger;
 
@@ -21,8 +22,8 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
     private final LoadingCache<Key, Value> cache;
 
     @SuppressWarnings({"AbstractMethodCallInConstructor", "OverridableMethodCallDuringObjectConstruction", "OverriddenMethodCallDuringObjectConstruction"})
-    protected GuavaFilesCache() {
-        cacheFolder = getCacheFolder();
+    protected GuavaFilesCache(File cacheDir) {
+        cacheFolder = cacheDir;
         cache = buildCache();
     }
 
@@ -52,7 +53,9 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
         return cache;
     }
 
-    protected abstract File getCacheFolder();
+    public File getCacheFolder() {
+        return cacheFolder;
+    }
 
     protected final Value loadFromFile(Key key) {
         Value response;
@@ -76,7 +79,9 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
      * @param key
      * @return
      */
-    protected abstract File computeFilePath(File folder, Key key);
+    protected File computeFilePath(File folder, Key key) {
+        return new File(folder, new String(DigestUtils.sha(key.toString())) );
+    }
 
     @SuppressWarnings("unchecked")
     protected Value deserialize(File cacheFile) throws FileNotFoundException {

@@ -9,9 +9,7 @@ import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -100,18 +98,8 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
     private final class MyGuavaFilesCache extends GuavaFilesCache<URI, PagedResponse<T>> {
         private static final long serialVersionUID = -2771011404900728777L;
 
-        @Override
-        protected File getCacheFolder() {
-            return CACHE_FOLDER;
-        }
-
-        @Override
-        protected File computeFilePath(File folder, URI uri) {
-            try {
-                return new File(CACHE_FOLDER, URLEncoder.encode(uri.toString(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("UTF-8 encoding not supported.");
-            }
+        protected MyGuavaFilesCache() {
+            super(CACHE_FOLDER);
         }
 
         @Override
