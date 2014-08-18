@@ -44,7 +44,7 @@ public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
         try {
             downloadedNonRecursive(request.getURI());
         } catch (Exception e) {
-            LOGGER.error("Nemozem vygenerovat adresu.", e);
+            LOGGER.error("Nemozem vygenerovat adresu alebo doslo k chybe pri stahovani.", e);
         }
     }
 }

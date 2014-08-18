@@ -40,10 +40,10 @@ public final class AstRcsWcfService {
         return SingletonHolder.INSTANCE;
     }
 
-    private static <T> T returnOne(List<T> items) {
+    private static <T> T returnOne(List<T> items) throws NotFoundException {
         int size = items.size();
         if (size == 0) {
-            throw new RuntimeException("List is empty");
+            throw new NotFoundException("List is empty");
         }
         if (size > 1) {
             throw new RuntimeException("List have more than one items.");
@@ -92,8 +92,12 @@ public final class AstRcsWcfService {
         if (res == null) {
             throw new NotFoundException("PagedResponse is null");
         }
-        if (res.getPageCount() != 1) {
-            throw new NotFoundException("PagedResponse have more or less than one items.");
+        if (res.getPageCount() == 0) {
+            throw new NotFoundException("PagedResponse have no items.");
+        }
+        if (res.getPageCount() > 1) {
+            // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
+            LOGGER.warn("Response have more pages.");
         }
     }
 

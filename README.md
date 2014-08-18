@@ -23,7 +23,8 @@ Developer's action are stored at REST services:
 
 ## Setup
 
-1. Clone repository into workspace
+0. Clone this repository into workspace
+1. Clone [perconik-uaca-dto](https://github.com/sekys/perconik-uaca-dto) repository into workspace
 2. Download external maven libraries
 3. Build project
 4. Edit project's configuration properties at file 'conf/configuration.xml'

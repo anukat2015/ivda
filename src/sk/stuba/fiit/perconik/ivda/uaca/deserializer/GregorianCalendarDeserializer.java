@@ -23,7 +23,7 @@ public final class GregorianCalendarDeserializer extends JsonDeserializer<Gregor
         }
         String tzPart = text.substring(text.length() - 5, text.length());
         if (!"0000Z".equals(tzPart)) {
-            throw new IOException("Zase zmenili format datumu ....");
+            throw new RuntimeException("Zase zmenili format datumu ....");
         }
         try {
             return DateUtils.fromString(text.substring(0, text.length() - 5));

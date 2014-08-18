@@ -11,7 +11,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
  * Pomocou nasho modulu povieme Jacksonu aby pouzil nas vlastny deserializer.
  */
 public final class EventDeserializerModule extends SimpleModule {
-    private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.uaca.dto.ide";
+    private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.uaca.dto";
     private static final String GROUP_ID = "sk.stuba.fiit.perconik.ivda"; // alias adresa projektu
     private static final long serialVersionUID = -4285741198907663688L;
 
