@@ -3,6 +3,25 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+
+    <servlet>
+        <servlet-name>REST service</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>sk.stuba.fiit.perconik.ivda.server</param-value>
+        </init-param>
+        <init-param>
+            <param-name>unit:WidgetPU</param-name>
+            <param-value>persistence/widget</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>REST service</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>Datatable servlet</servlet-name>
         <servlet-class>sk.stuba.fiit.perconik.ivda.server.TimelineServlet</servlet-class>
