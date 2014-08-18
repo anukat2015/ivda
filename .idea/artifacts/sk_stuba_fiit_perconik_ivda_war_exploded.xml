@@ -52,6 +52,7 @@
           <element id="library" level="project" name="Maven: com.google.guava:guava:17.0" />
           <element id="library" level="application" name="org.osgi.core-5.0.0" />
           <element id="library" level="project" name="Maven: com.ibm.icu:icu4j:53.1" />
+          <element id="library" level="project" name="Maven: com.googlecode.java-diff-utils:diffutils:1.2.1" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="sk.stuba.fiit.perconik.ivda/web/Web" />

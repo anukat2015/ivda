@@ -1,12 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
-import org.apache.commons.io.FileUtils;
+import com.google.common.io.Files;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,7 @@ public final class BlackListedProcesses implements Serializable {
     private void loadBlackList() {
         try {
             File file = new File(Configuration.CONFIG_DIR, FILE_NAME);
-            processList = new HashSet<>(FileUtils.readLines(file));
+            processList = new HashSet<>(Files.readLines(file, Charset.defaultCharset()));
         } catch (IOException e) {
             throw new RuntimeException("BlackListedProcesses error reading from file:" + FILE_NAME);
         }
