@@ -79,6 +79,13 @@ public final class AstRcsWcfService {
         return response.getUser().getValue();
     }
 
+    /**
+     * Hladaj server, ktory je najblizssi k nasmu.
+     * Hladas https://github.com/perconik/perconik.git a najde  https://github.com.
+     *
+     * @param url
+     * @return
+     */
     public RcsServerDto getNearestRcsServerDto(URI url) {
         return Strings.findLongestPrefix(servers, url.toString(), input -> input.getUrl().getValue());
     }
@@ -111,7 +118,15 @@ public final class AstRcsWcfService {
         return returnOne(response.getRcsProjects().getValue().getRcsProjectDto());
     }
 
-    // ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
+    /**
+     * ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
+     * Prekonvertuj changesetIdInRcs na takzvane ChangesetDto, ktore bude obsahovat Changeset ID.
+     *
+     * @param changesetIdInRcs
+     * @param project
+     * @return
+     * @throws NotFoundException
+     */
     public ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) throws NotFoundException {
         SearchChangesetsRequest req = new SearchChangesetsRequest();
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
@@ -130,14 +145,23 @@ public final class AstRcsWcfService {
             throw new RuntimeException("Prefix zadanej cedzy a projektu nesedi.");
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
-        return returnOne(getFileVersionsDto(chs, project, startUrl));
+        return returnOne(getFileVersionsDto(chs, startUrl));
     }
 
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project) throws NotFoundException {
-        return getFileVersionsDto(chs, project, null);
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs) throws NotFoundException {
+        return getFileVersionsDto(chs, null);
     }
 
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, RcsProjectDto project, @Nullable String startUrl) throws NotFoundException {
+    /**
+     * Gets all file versions in the specified changeset matching given filter
+     * Vrati zoznam vsetkych suborov zmenenych ci nezmenenych pre dany changeset.
+     *
+     * @param chs
+     * @param startUrl
+     * @return
+     * @throws NotFoundException
+     */
+    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, @Nullable String startUrl) throws NotFoundException {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
         if (startUrl != null) {
@@ -162,11 +186,30 @@ public final class AstRcsWcfService {
         return response.getVersion().getValue();
     }
 
+    /**
+     * Pre dany subor vypis zoznam changesetov.
+     *
+     * @param entityID
+     * @return
+     */
     public List<ChangesetDto> getChangeset(Integer entityID) {
         GetFileChangesetsRequest req = new GetFileChangesetsRequest();
         req.setEntityId(entityID);
         GetFileChangesetsResponse response = service.getFileChangesets(req);
         return response.getChangesets().getValue().getChangesetDto();
+    }
+
+    /**
+     * Ukaze, ktore subory sa zmenili v danom changesete.
+     *
+     * @param chs
+     * @return
+     */
+    public List<FileVersionDto> getChangedFiles(ChangesetDto chs) {
+        GetChangedFilesRequest req = new GetChangedFilesRequest();
+        req.setChangesetId(chs.getId());
+        GetChangedFilesResponse response = service.getChangedFiles(req);
+        return response.getFileVersions().getValue().getFileVersionDto();
     }
 
     private static class SingletonHolder {
