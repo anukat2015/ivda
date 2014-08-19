@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.util;
 
+import com.google.common.base.Preconditions;
 import com.ibm.icu.util.GregorianCalendar;
 import com.ibm.icu.util.TimeZone;
 
@@ -23,6 +24,7 @@ public final class DateUtils {
     private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
 
     public static GregorianCalendar fromString(String dateString) throws ParseException {
+        Preconditions.checkNotNull(dateString);
         GregorianCalendar gc = new GregorianCalendar(TIME_ZONE);
         Date datum = FORMAT.parse(dateString);
         gc.setTimeInMillis(datum.getTime());
