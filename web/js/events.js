@@ -1,20 +1,3 @@
-function getSelectedRow() {
-    var row = undefined;
-    var sel = gTimeline.getSelection();
-    if (sel.length) {
-        if (sel[0].row != undefined) {
-            row = sel[0].row;
-        }
-    }
-    return row;
-}
-
-function onSelect() {
-    var row = getSelectedRow();
-    if (row == undefined) return;
-    var item = gData.getValue(row, 2);
-    console.log("item " + item + " selected");
-}
 
 function onRangeChange() {
     var range = gTimeline.getVisibleChartRange();

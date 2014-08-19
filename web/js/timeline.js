@@ -25,12 +25,8 @@ function inicializeTimeline(nowDate) {
 
     // Instantiate our timeline object.
     gTimeline = new links.Timeline(document.getElementById('mytimeline'), options);
-    //google.visualization.events.addListener(gTimeline, 'rangechange', onRangeChange);
-    //google.visualization.events.addListener(gTimeline, 'rangechanged', onRangeChanged);
-    google.visualization.events.addListener(gTimeline, 'select', onSelect);
 
     // Nastav hlavny cas odkedy budeme hladat eventy
-    //var start = new Date(nowDate.getTime() - 5 * 60 * 60 * 1000); // poslednych 5 min
     var start = new Date(nowDate.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
     var end = nowDate;
     gTimeline.draw();
@@ -41,55 +37,18 @@ function inicializeTimeline(nowDate) {
     loadRange(start, end, gTimeline.size.contentWidth);
 }
 
-function initializeTooltip() {
-    $(document).tooltip({
-        items: ".timeline-event-dot-container",
-        content: function () {
-            var element = $(this);
-            if (element.is("div")) {
-                return element.children().text();
-            }
+function getSelectedRow() {
+    var row = undefined;
+    var sel = gTimeline.getSelection();
+    if (sel.length) {
+        if (sel[0].row != undefined) {
+            row = sel[0].row;
         }
-    });
-}
-
-function handleServiceResponse(response) {
-    if (response.isError()) {
-        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-        return;
     }
-    gData = response.getDataTable();
-    /*var dateFormatter = new google.visualization.DateFormat(
-     {timeZone: 4}
-     );
-     dateFormatter.format(gData, 0);
-     dateFormatter.format(gData, 1); */
-    //console.log(gData);
-    drawChart(gData);
-    gTimeline.draw(gData);
-    gDataTable.draw(gData, {
-        allowHtml: true,
-        showRowNumber: true,
-        page: "enable",
-        pageSize: 20
-    });
+    return row;
 }
-
-
-function loadRange(start, end, width) {
-    var parameters = $.param({
-        start: gDateFormater.format(start),
-        end: gDateFormater.format(end),
-        width: width
-    });
-    var query = new google.visualization.Query("datatable?" + parameters);
-    query.send(handleServiceResponse);
+function getSelectedValue(column) {
+    var row = getSelectedRow();
+    if (row == undefined) return;
+    return gData.getValue(row, column);
 }
-/*
- $.ajax({
- url: 'http://example.com/',
- type: 'PUT',
- data: 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
- success: function() { alert('PUT completed'); }
- });
- */
