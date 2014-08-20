@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.google.visualization.datasource.DataSourceServlet;
 import com.google.visualization.datasource.datatable.DataTable;

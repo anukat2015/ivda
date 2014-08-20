@@ -1,9 +1,10 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import difflib.Delta;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.ivda.uaca.client.WebClient;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;

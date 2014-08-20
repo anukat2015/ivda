@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;

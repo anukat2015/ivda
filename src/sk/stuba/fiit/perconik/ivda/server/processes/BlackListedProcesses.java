@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.google.common.io.Files;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;

@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
-import sk.stuba.fiit.perconik.ivda.server.FindFinishedProcess;
+import sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;

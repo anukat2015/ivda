@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.ibm.icu.util.GregorianCalendar;
-import sk.stuba.fiit.perconik.ivda.server.BlackListedProcesses;
+import sk.stuba.fiit.perconik.ivda.server.processes.BlackListedProcesses;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
