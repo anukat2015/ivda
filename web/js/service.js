@@ -10,7 +10,7 @@ function getDatatableURL(start, end, width) {
 }
 
 function getEventEntityURL(eventID) {
-    var restURL = "rest/timeline/event?";
+    var restURL = "faces/event.xhtml?";
     var parameters = $.param({
         id: eventID
     });
@@ -41,6 +41,7 @@ function handleServiceResponse(response) {
         page: "enable",
         pageSize: 20
     });
+    initializeTooltip();
 }
 
 

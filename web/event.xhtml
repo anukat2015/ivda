@@ -11,19 +11,25 @@
 
 <ui:component>
     <div class="container">
-        <h:form prependId="false" id="detail">
+        <h:form prependId="false" id="detailEvent">
             <t:dataList id="data2"
                         styleClass="standardList"
                         var="file"
                         value="#{event.files}"
                         layout="unorderedList" forceId="true">
-                <t:commandLink value="#{file.name}">
-                    <f:ajax event="click" update=":detail" render=":detail" execute="firmaEnomic"
+                <t:commandLink value="#{file.url.value}">
+                    <f:setPropertyActionListener
+                            value="#{file}"
+                            target="#{event.choosedFile}"
+                            />
+                    <f:ajax event="click" update=":detailEvent" render=":detailEvent" execute="detailEvent"
                             listener="#{event.chooseFile}"/>
                 </t:commandLink>
             </t:dataList>
         </h:form>
     </div>
+
+    <h:messages styleClass="error"/>
 
 </ui:component>
 </html>

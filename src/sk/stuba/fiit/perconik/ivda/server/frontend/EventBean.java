@@ -18,10 +18,13 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Seky on 19. 8. 2014.
- *
+ * <p>
  * Beana pre events.xhtml stranku.
  */
 @ManagedBean(name = "event")
@@ -29,7 +32,8 @@ import java.util.Collection;
 public class EventBean implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(EventBean.class);
 
-    private Collection<FileVersionDto> files;
+    private List<FileVersionDto> files;
+    private FileVersionDto choosedFile;
 
     public EventBean() {
         LOGGER.info("constr");
@@ -73,6 +77,13 @@ public class EventBean implements Serializable {
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(changesetIdInRcs, project);
             files = AstRcsWcfService.getInstance().getChangedFiles(changeset);
+            Comparator<FileVersionDto> comparator = new Comparator<FileVersionDto>() {
+                @Override
+                public int compare(FileVersionDto o1, FileVersionDto o2) {
+                    return o1.getUrl().getValue().compareTo(o2.getUrl().getValue());
+                }
+            };
+            Collections.sort(files, comparator);
         } catch (AstRcsWcfService.NotFoundException e) {
             LOGGER.info("Chybaju nejake udaje:" + e.getMessage());
         }
@@ -82,7 +93,7 @@ public class EventBean implements Serializable {
         return files;
     }
 
-    public void setFiles(Collection<FileVersionDto> files) {
+    public void setFiles(List<FileVersionDto> files) {
         LOGGER.info("setFiles");
         this.files = files;
     }
@@ -90,5 +101,13 @@ public class EventBean implements Serializable {
     public boolean chooseFile(AjaxBehaviorEvent event) {
         LOGGER.info("chooseFile");
         return true;
+    }
+
+    public FileVersionDto getChoosedFile() {
+        return choosedFile;
+    }
+
+    public void setChoosedFile(FileVersionDto choosedFile) {
+        this.choosedFile = choosedFile;
     }
 }
