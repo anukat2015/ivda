@@ -1,12 +1,15 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 
+import sk.stuba.fiit.perconik.ivda.uaca.client.WebClient;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
 
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.UriBuilder;
 
 /**
  * Created by Seky on 16. 8. 2014.
@@ -41,5 +44,12 @@ public final class EventsUtil {
         } else {
             return "Unknown";
         }
+    }
+
+    public static EventDto download(String id) {
+        WebClient client = new WebClient();
+        UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
+        builder.path(id);
+        return (EventDto) client.synchronizedRequest(builder.build(), EventDto.class);
     }
 }

@@ -77,10 +77,6 @@
         <url-pattern>*.faces</url-pattern>
     </servlet-mapping>
 
-    <listener>
-        <listener-class>sk.stuba.fiit.perconik.ivda.server.servlets.AppInitializer</listener-class>
-    </listener>
-
     <welcome-file-list>
         <welcome-file>faces/index.xhtml</welcome-file>
     </welcome-file-list>

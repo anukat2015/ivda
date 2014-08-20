@@ -4,15 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import difflib.Delta;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
-import sk.stuba.fiit.perconik.ivda.uaca.client.WebClient;
-import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.HttpURLConnection;
 import java.util.List;
 
@@ -63,11 +61,7 @@ public class TimelineRequest {
             );
         }
 
-        WebClient client = new WebClient();
-        UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
-        builder.path(id);
-        EventDto event;
-        event = (EventDto) client.synchronizedRequest(builder.build(), EventDto.class);
+        EventDto event = EventsUtil.download(id);
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(event);
