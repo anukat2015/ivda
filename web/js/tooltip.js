@@ -12,7 +12,7 @@ function initializeTooltip() {
                     url: getEventEntityURL(entityID)
                 }).then(function (content) {
                     // Set the tooltip content upon successful retrieval
-                    api.set('content.text', getSelectedRow());
+                    api.set('content.text', content);
                 }, function (xhr, status, error) {
                     // Upon failure... set the tooltip content to error
                     api.set('content.text', status + ': ' + error);

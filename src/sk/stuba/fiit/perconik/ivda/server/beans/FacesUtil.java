@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.frontend;
+package sk.stuba.fiit.perconik.ivda.server.beans;
 
 import org.apache.log4j.Logger;
 

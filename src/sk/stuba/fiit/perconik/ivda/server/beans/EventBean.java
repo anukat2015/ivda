@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.frontend;
+package sk.stuba.fiit.perconik.ivda.server.beans;
 
 
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
@@ -14,6 +14,7 @@ import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
 import java.io.Serializable;
@@ -31,6 +32,10 @@ import java.util.List;
 @ViewScoped
 public class EventBean implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(EventBean.class);
+    private static final long serialVersionUID = 2563906954713653265L;
+
+    @ManagedProperty(value = "#{viewState}")
+    private ViewStateBean viewStateBean;
 
     private List<FileVersionDto> files;
     private FileVersionDto choosedFile;
@@ -42,6 +47,7 @@ public class EventBean implements Serializable {
     @PostConstruct
     public void init() {
         LOGGER.info("init");
+        viewStateBean.setState(ViewStateBean.ViewState.CHANGED_FILES);
 
         String sid = FacesUtil.getQueryParam("id");
         if (sid == null) {
@@ -100,6 +106,7 @@ public class EventBean implements Serializable {
 
     public boolean chooseFile(AjaxBehaviorEvent event) {
         LOGGER.info("chooseFile");
+        viewStateBean.setState(ViewStateBean.ViewState.DIFF_FILES);
         return true;
     }
 
@@ -109,5 +116,13 @@ public class EventBean implements Serializable {
 
     public void setChoosedFile(FileVersionDto choosedFile) {
         this.choosedFile = choosedFile;
+    }
+
+    public ViewStateBean getViewStateBean() {
+        return viewStateBean;
+    }
+
+    public void setViewStateBean(ViewStateBean viewStateBean) {
+        this.viewStateBean = viewStateBean;
     }
 }
