@@ -22,11 +22,11 @@ public abstract class FindFinishedProcess {
     private static final Logger LOGGER = Logger.getLogger(FindFinishedProcess.class.getName());
 
     private final Map<Integer, FinishedProcess> startedApps;
-    private final BlackListedProcesses appBlackList;
+    private final ListOfProcesses appBlackList;
 
     protected FindFinishedProcess() {
         startedApps = new HashMap<>(200);
-        appBlackList = new BlackListedProcesses();
+        appBlackList = ListOfProcesses.Type.BLACK_LIST.getList();
     }
 
     /**
