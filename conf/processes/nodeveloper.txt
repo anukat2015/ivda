@@ -3,3 +3,4 @@ wmpnetwk
 vlc
 WinCDEmu
 mediacoder
+PinballFX2
