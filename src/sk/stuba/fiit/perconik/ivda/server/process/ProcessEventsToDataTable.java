@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Created by Seky on 22. 7. 2014.
+ * <p>
  * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
 public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {

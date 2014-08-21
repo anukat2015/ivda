@@ -7,8 +7,10 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 /**
  * Created by Seky on 7. 8. 2014.
+ * <p>
+ * Vypis vsetky eventy tak ako pridu.
  */
-public class ProcessAllEvents extends ProcessEventsToDataTable {
+public final class ProcessAllEvents extends ProcessEventsToDataTable {
     public ProcessAllEvents(EventsRequest request) {
         super(request);
     }

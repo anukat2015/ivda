@@ -14,8 +14,10 @@ import java.util.List;
 
 /**
  * Created by Seky on 15. 8. 2014.
+ * <p>
+ * Vypis file verziu specifickeho suboru.
  */
-public class ProcessChangesets extends ProcessEventsToDataTable {
+public final class ProcessChangesets extends ProcessEventsToDataTable {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
 
     public ProcessChangesets(EventsRequest request) {
@@ -33,7 +35,6 @@ public class ProcessChangesets extends ProcessEventsToDataTable {
     @Override
     protected void proccessItem(EventDto event) {
         if (!(event instanceof IdeCheckinEventDto)) return;
-        String action = event.getActionName();
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
         sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();

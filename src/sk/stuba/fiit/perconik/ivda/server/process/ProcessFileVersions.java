@@ -14,8 +14,10 @@ import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
 
 /**
  * Created by Seky on 7. 8. 2014.
+ * <p>
+ * Stiahni file verziu suboru ktory pride v evente..
  */
-public class ProcessFileVersions extends ProcessEventsToDataTable {
+public final class ProcessFileVersions extends ProcessEventsToDataTable {
     public ProcessFileVersions(EventsRequest request) {
         super(request);
     }
