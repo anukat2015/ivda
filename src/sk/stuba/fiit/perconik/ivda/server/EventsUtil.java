@@ -52,4 +52,10 @@ public final class EventsUtil {
         builder.path(id);
         return (EventDto) client.synchronizedRequest(builder.build(), EventDto.class);
     }
+
+    public static long diffTime(EventDto actual, EventDto last) {
+        long actualTimestamp = actual.getTimestamp().getTimeInMillis();
+        long lastTimestamp = last.getTimestamp().getTimeInMillis();
+        return actualTimestamp - lastTimestamp;
+    }
 }
