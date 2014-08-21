@@ -81,7 +81,7 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
      * @return
      */
     protected File computeFilePath(File folder, Key key) {
-        return new File(folder, Hex.encodeHexString(DigestUtils.sha(key.toString())) );
+        return new File(folder, Hex.encodeHexString(DigestUtils.sha1(key.toString())) );
     }
 
     @SuppressWarnings("unchecked")
