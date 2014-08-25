@@ -3,8 +3,8 @@ function inicializeTimeline(nowDate) {
     var options = {
         width: "100%",
         height: "60%",
-        layout: "dot",
-        style: 'dot',
+        layout: "circle",
+        style: 'circle',
         axisOnTop: true,
         eventMargin: 2,  // minimal margin between events
         eventMarginAxis: 0, // minimal margin beteen events and the axis
