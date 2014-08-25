@@ -95,18 +95,20 @@ div.available {
 }
 
 div.maybe {
-    /*background-color: #FFA500;*/
-    border-color: #cc8100;
+    background-color: #FFA500;
+    /*border-color: #cc8100;   */
 }
 
 
 /* Circle layout */
-div.timeline-event-circle {
+.timeline-event-circle {
     border-radius: 50%;
 }
 
-div.timeline-event-circle-container {
-
+.timeline-event-circle .timeline-event-content {
+    text-align: center;
+    padding: 0px;
+    vertical-align: middle;
 }
 
 div.timeline-event-cluster div.timeline-event-dot {
