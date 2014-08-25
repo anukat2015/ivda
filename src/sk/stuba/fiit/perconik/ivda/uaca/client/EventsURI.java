@@ -45,6 +45,7 @@ public class EventsURI implements Serializable {
         page = 0;
         pageSize = 100;
         ascending = true;
+        exactType = false;
     }
 
     public Integer getPage() {

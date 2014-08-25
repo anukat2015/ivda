@@ -33,7 +33,6 @@ public final class EventsRequest extends EventsURI {
 
     public void setType(URI type) {
         eventTypeUri = type.toString();
-        exactType = true;
     }
 
     public void setType(EventDto event) {
