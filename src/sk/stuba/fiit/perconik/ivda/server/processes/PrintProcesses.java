@@ -26,9 +26,12 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
 
     public void checkLists(ListOfProcesses.Type a, ListOfProcesses.Type b) {
         Set<String> same = a.getList().getSameProcesses(b.getList());
-        System.out.println(a.getList().getFileName() + " == " + b.getList().getFileName() + " => ");
+        if (same.isEmpty()) {
+            return;
+        }
+        LOGGER.warn(a.getList().getFileName() + " == " + b.getList().getFileName() + " => ");
         for (String name : same) {
-            System.out.println(name);
+            LOGGER.warn(name);
         }
     }
 
@@ -62,7 +65,7 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
                     !ListOfProcesses.Type.NODEVELOPER.getList().contains(name) &&
                     !ListOfProcesses.Type.COMMUNICATION.getList().contains(name) &&
                     !ListOfProcesses.Type.TYPICAL.getList().contains(name)) {
-                System.out.println(name);
+                LOGGER.warn(name);
             }
         }
     }

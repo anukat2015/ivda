@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
+import com.google.common.base.Strings;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
@@ -38,11 +39,19 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         );
     }
 
+    /**
+     * Spocitaj na zaklade poctu riadkov :)
+     * Alebo na zaklade poctu znakov?
+     *
+     * @param cevent
+     * @return
+     */
     private int computeSize(IdeCodeEventDto cevent) {
         String txt = cevent.getText();
-        if (txt == null) {
+        if (Strings.isNullOrEmpty(txt)) {
             return 0;
         }
+
         int count = 0;
         Scanner scanner = new Scanner(txt);
         while (scanner.hasNextLine()) {

@@ -113,7 +113,7 @@ public final class MyDataTable extends DataTable implements Serializable {
     ) {
         // Uloz vysledok
         try {
-            super.addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+            addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
         } catch (TypeMismatchException e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }

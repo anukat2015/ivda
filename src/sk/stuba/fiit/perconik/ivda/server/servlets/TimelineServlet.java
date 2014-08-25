@@ -5,8 +5,8 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessCodeWritten;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.ivda.server.processes.PrintProcesses;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
@@ -39,7 +39,7 @@ public final class TimelineServlet extends DataSourceServlet {
 
         request.setUser("steltecia\\pzbell");
         request.setType(new IdeCodeEventDto());
-        process = new PrintProcesses(request);
+        process = new ProcessCodeWritten(request);
 
         LOGGER.info("Start: " + DateUtils.toString(start) +
                 " end:" + DateUtils.toString(end) +

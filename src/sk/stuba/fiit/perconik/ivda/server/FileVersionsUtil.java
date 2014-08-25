@@ -84,7 +84,6 @@ public final class FileVersionsUtil {
     public static class DiffStats {
         Integer additions = 0;
         Integer deletions = 0;
-
     }
 
     /**
