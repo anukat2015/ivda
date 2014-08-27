@@ -27,11 +27,10 @@ html, body {
 }
 */
 
-#piechart {
+#rightBar {
     display: block;
     float: right;
     width: 25%;
-    /*height: 100%;*/
 }
 
 .more {
@@ -43,7 +42,6 @@ html, body {
 }
 
 /* Custom styles for the Timeline */
-
 
 div.timeline-frame {
     border-color: #5D99C3;
@@ -95,22 +93,28 @@ div.available {
 }
 
 div.maybe {
-    background-color: #FFA500;
+    /*background-color: #FFA500;  */
     /*border-color: #cc8100;   */
 }
 
-
 /* Circle layout */
 .timeline-event-circle {
-    border-radius: 50%;
+
 }
 
 .timeline-event-circle .timeline-event-content {
-    text-align: center;
     padding: 0px;
-    vertical-align: middle;
+    margin: 0px;
 }
 
 div.timeline-event-cluster div.timeline-event-dot {
-    border-color: #d5ddf6;
+
+}
+
+#piechart1 {
+
+}
+
+#piechart2 {
+
 }

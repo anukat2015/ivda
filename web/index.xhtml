@@ -12,13 +12,16 @@
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
     <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="libs/qtip2/jquery.qtip.js"></script>
+
+    <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
     <script type="text/javascript" src="js/timeline/ItemDot.js"></script>
     <script type="text/javascript" src="js/timeline/ItemCircle.js"></script>
     <script type="text/javascript" src="js/timeline/ItemBox.js"></script>
     <script type="text/javascript" src="js/timeline/ClusterGenerator.js"></script>
+    <script type="text/javascript" src="js/timeline/StepDate.js"></script>
+
     <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
     <script type="text/javascript" src="js/toolbar.js"></script>
@@ -28,7 +31,6 @@
     <script type="text/javascript">
         var gToolbar = undefined;
         var gTimeline = undefined;
-        var gData = undefined;
         var gDataTable = undefined;
         var gDateFormater = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
@@ -46,7 +48,10 @@
 </p>
 
 <div id="mytimeline"></div>
-<div id="piechart"></div>
+<div id="rightBar">
+    <div id="pieChart1"></div>
+    <div id="pieChart2"></div>
+</div>
 <div class="clear"></div>
 <div id="datatable"></div>
 

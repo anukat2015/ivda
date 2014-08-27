@@ -50,5 +50,19 @@ function getSelectedRow() {
 function getSelectedValue(column) {
     var row = getSelectedRow();
     if (row == undefined) return;
-    return gData.getValue(row, column);
+    return gTimeline.getData().getValue(row, column);
 }
+
+function getItems(start, end, columnIndex) {
+    var rows = gTimeline.getVisibleItems(start, end);
+    return rows.map(function (row) {
+        return gTimeline.getData().getValue(row.row, columnIndex);
+    });
+}
+
+
+function getVisibleItems(columnIndex) {
+    var range = gTimeline.getVisibleChartRange();
+    return getItems(range.start, range.end, columnIndex);
+}
+
