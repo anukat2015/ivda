@@ -3,7 +3,8 @@ function getTimeline() {
     var windowHeight = $(window).height();
     var options = {
         width: "100%",
-        minHeight: windowHeight * 0.8,
+        height: "90%",
+        //minHeight: windowHeight * 0.8,
         layout: "circle",
         style: 'circle',
         axisOnTop: true,
