@@ -25,15 +25,11 @@
     <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
     <script type="text/javascript" src="js/toolbar.js"></script>
-    <script type="text/javascript" src="js/chart.js"></script>
+    <script type="text/javascript" src="js/chartPanel.js"></script>
     <script type="text/javascript" src="js/tooltip.js"></script>
-    <script type="text/javascript" src="js/service.js"></script>
+    <script type="text/javascript" src="js/globals.js"></script>
     <script type="text/javascript">
-        var gToolbar = undefined;
-        var gTimeline = undefined;
-        var gDataTable = undefined;
-        var gDateFormater = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
+        var gGlobals = undefined;
         google.load("visualization", "1", {packages: ["corechart", 'table']});
         google.setOnLoadCallback(onLoad);
     </script>

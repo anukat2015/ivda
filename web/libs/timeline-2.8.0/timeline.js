@@ -602,9 +602,8 @@ links.Timeline.prototype.getItemIndex = function(element) {
  * @param end time
  * @return Array itemsInRange
  */
-links.Timeline.prototype.getVisibleItems = function  (start, end) {
+links.Timeline.prototype.getVisibleItems = function  (start, end, supplier) {
     var items = this.items;
-    var itemsInRange = [];
 
     if (items) {
         for (var i = 0, iMax = items.length; i < iMax; i++) {
@@ -612,24 +611,16 @@ links.Timeline.prototype.getVisibleItems = function  (start, end) {
             if (item.end) {
                 // Time range object // NH use getLeft and getRight here
                 if (start <= item.start && item.end <= end) {
-                    itemsInRange.push({"row": i});
+                    supplier(i);
                 }
             } else {
                 // Point object
                 if (start <= item.start && item.start <= end) {
-                    itemsInRange.push({"row": i});
+                    supplier(i);
                 }
             }
         }
     }
-
-    //     var sel = [];
-    // if (this.selection) {
-    //     sel.push({"row": this.selection.index});
-    // }
-    // return sel;
-
-    return itemsInRange;
 };
 
 

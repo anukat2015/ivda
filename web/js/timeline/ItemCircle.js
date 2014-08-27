@@ -65,6 +65,30 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divBox.appendChild(divContent);
     divBox.content = divContent;
 
+    // Pridaj chart
+    var changedLines = parseInt(gGlobals.timeline.getData().getValue(this.row, 5));
+    var metric = (changedLines + 1) * 30;
+    var radius = metric + "px";
+    divContent.style.width = radius;
+    divContent.style.height = radius;
+    divContent.style.lineHeight = radius;
+
+    var data = google.visualization.arrayToDataTable([
+        ['Changes', 'LOC'],
+        ['Changed lines', changedLines]
+    ]);
+
+    var options = {
+        legend: 'none',
+        // pieSliceText: 'label', TODO: zapni az ked je velky
+        backgroundColor: 'transparent',
+        chartArea: {width: metric, height: metric, left: 0, top: 0, bottom: 0, right: 0},
+        width: metric,
+        height: metric
+    };
+    var chart = new google.visualization.PieChart(divContent);
+    chart.draw(data, options);
+
     this.dom = divBox;
     this.updateDOM();
     return divBox;
@@ -78,31 +102,8 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
  */
 links.Timeline.ItemCircle.prototype.showDOM = function (container) {
     var dom = this.dom;
-    var changedLines = parseInt(gTimeline.getData().getValue(this.row, 5));
-    var metric = (changedLines + 1) * 30;
-    var radius = metric + "px";
     if (!dom) {
         dom = this.createDOM();
-        dom.content.style.width = radius;
-        dom.content.style.height = radius;
-        dom.content.style.lineHeight = radius;
-
-        var data = google.visualization.arrayToDataTable([
-            ['Changes', 'LOC'],
-            ['Changed lines', changedLines]
-        ]);
-
-        var options = {
-            legend: 'none',
-//            pieSliceText: 'label',
-            backgroundColor: 'transparent',
-            chartArea: {width: metric, height: metric, left: 0, top: 0, bottom: 0, right: 0},
-            width: metric,
-            height: metric
-        };
-
-        dom.chart = new google.visualization.PieChart(dom.content);
-        dom.chart.draw(data, options);
     }
 
     if (dom.parentNode != container) {
