@@ -32,10 +32,10 @@ function handleServiceResponse(response) {
         alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
         return;
     }
-    gData = response.getDataTable();
-    drawChart(gData);
-    gTimeline.draw(gData);
-    gDataTable.draw(gData, {
+    var data = response.getDataTable();
+    drawChart1(data);
+    gTimeline.draw(data);
+    gDataTable.draw(data, {
         allowHtml: true,
         showRowNumber: true,
         page: "enable",
