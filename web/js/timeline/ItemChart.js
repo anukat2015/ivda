@@ -1,5 +1,5 @@
 /**
- * @constructor links.Timeline.ItemCircle
+ * @constructor links.Timeline.ItemChart
  * @extends links.Timeline.Item
  * @param {Object} data       Object containing parameters start, end
  *                            content, group, type, className, editable.
@@ -9,18 +9,18 @@
  *                                {Number} width
  *                                {Number} height
  */
-links.Timeline.ItemCircle = function (data, options) {
+links.Timeline.ItemChart = function (data, options) {
     links.Timeline.Item.call(this, data, options);
 };
 
-links.Timeline.ItemCircle.prototype = new links.Timeline.Item();
+links.Timeline.ItemChart.prototype = new links.Timeline.Item();
 
 /**
  * Reflow the Item: retrieve its actual size from the DOM
  * @return {boolean} resized    returns true if the axis is resized
  * @override
  */
-links.Timeline.ItemCircle.prototype.reflow = function () {
+links.Timeline.ItemChart.prototype.reflow = function () {
     var dom = this.dom,
         contentHeight = dom.content.offsetHeight,
         resized = (
@@ -35,7 +35,7 @@ links.Timeline.ItemCircle.prototype.reflow = function () {
  * Select the item
  * @override
  */
-links.Timeline.ItemCircle.prototype.select = function () {
+links.Timeline.ItemChart.prototype.select = function () {
     var dom = this.dom;
     links.Timeline.addClassName(dom, 'timeline-event-selected ui-state-active');
 };
@@ -44,7 +44,7 @@ links.Timeline.ItemCircle.prototype.select = function () {
  * Unselect the item
  * @override
  */
-links.Timeline.ItemCircle.prototype.unselect = function () {
+links.Timeline.ItemChart.prototype.unselect = function () {
     var dom = this.dom;
     links.Timeline.removeClassName(dom, 'timeline-event-selected ui-state-active');
 };
@@ -54,7 +54,7 @@ links.Timeline.ItemCircle.prototype.unselect = function () {
  * @return {Element | undefined}
  * @override
  */
-links.Timeline.ItemCircle.prototype.createDOM = function () {
+links.Timeline.ItemChart.prototype.createDOM = function () {
     // background box
     var divBox = document.createElement("DIV");
     divBox.style.position = "absolute";
@@ -73,6 +73,22 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divContent.style.height = radius;
     divContent.style.lineHeight = radius;
 
+    var data = google.visualization.arrayToDataTable([
+        ['Changes', 'LOC'],
+        ['Changed lines', changedLines]
+    ]);
+
+    var options = {
+        legend: 'none',
+        // pieSliceText: 'label', TODO: zapni az ked je velky
+        backgroundColor: 'transparent',
+        chartArea: {width: metric, height: metric, left: 0, top: 0, bottom: 0, right: 0},
+        width: metric,
+        height: metric
+    };
+    var chart = new google.visualization.PieChart(divContent);
+    chart.draw(data, options);
+
     this.dom = divBox;
     this.updateDOM();
     return divBox;
@@ -84,7 +100,7 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
  * @param {Element} container
  * @override
  */
-links.Timeline.ItemCircle.prototype.showDOM = function (container) {
+links.Timeline.ItemChart.prototype.showDOM = function (container) {
     var dom = this.dom;
     if (!dom) {
         dom = this.createDOM();
@@ -106,7 +122,7 @@ links.Timeline.ItemCircle.prototype.showDOM = function (container) {
  * Remove the items DOM from the current HTML container
  * @override
  */
-links.Timeline.ItemCircle.prototype.hideDOM = function () {
+links.Timeline.ItemChart.prototype.hideDOM = function () {
     var dom = this.dom;
     if (dom) {
         if (dom.parentNode) {
@@ -121,7 +137,7 @@ links.Timeline.ItemCircle.prototype.hideDOM = function () {
  * of the item
  * @override
  */
-links.Timeline.ItemCircle.prototype.updateDOM = function () {
+links.Timeline.ItemChart.prototype.updateDOM = function () {
     if (this.dom) {
         var divBox = this.dom;
 
@@ -129,7 +145,7 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
         divBox.firstChild.innerHTML = this.content;
 
         // update classes
-        divBox.className = "timeline-event-circle";
+        divBox.className = "timeline-event-chart";
 
         if (this.isCluster) {
             links.Timeline.addClassName(divBox, 'timeline-event-cluster ui-widget-header');
@@ -148,7 +164,7 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
  * @param {links.Timeline} timeline
  * @override
  */
-links.Timeline.ItemCircle.prototype.updatePosition = function (timeline) {
+links.Timeline.ItemChart.prototype.updatePosition = function (timeline) {
     var dom = this.dom;
     if (dom) {
         var left = timeline.timeToScreen(this.start);
@@ -168,7 +184,7 @@ links.Timeline.ItemCircle.prototype.updatePosition = function (timeline) {
  * @return {boolean} visible
  * @override
  */
-links.Timeline.ItemCircle.prototype.isVisible = function (start, end) {
+links.Timeline.ItemChart.prototype.isVisible = function (start, end) {
     if (this.cluster) {
         return false;   // TODO: ked je to cluster scitaj deti a zobraz jeden velky kruh
     }
@@ -183,7 +199,7 @@ links.Timeline.ItemCircle.prototype.isVisible = function (start, end) {
  * @param {Number} right
  * @override
  */
-links.Timeline.ItemCircle.prototype.setPosition = function (left, right) {
+links.Timeline.ItemChart.prototype.setPosition = function (left, right) {
     var dom = this.dom;
 
     dom.style.left = (left - this.contentHeight / 2) + "px";
@@ -200,7 +216,7 @@ links.Timeline.ItemCircle.prototype.setPosition = function (left, right) {
  * @return {Number} left
  * @override
  */
-links.Timeline.ItemCircle.prototype.getLeft = function (timeline) {
+links.Timeline.ItemChart.prototype.getLeft = function (timeline) {
     return timeline.timeToScreen(this.start);
 };
 
@@ -210,6 +226,6 @@ links.Timeline.ItemCircle.prototype.getLeft = function (timeline) {
  * @return {Number} right
  * @override
  */
-links.Timeline.ItemCircle.prototype.getRight = function (timeline) {
+links.Timeline.ItemChart.prototype.getRight = function (timeline) {
     return timeline.timeToScreen(this.start) + this.width;
 };

@@ -5,10 +5,13 @@ links.ChartPanel = function () {
     this.activityOptions = {
         title: 'Developer Activities'
     };
+
+
     this.visibleChart = new google.visualization.PieChart(document.getElementById('pieChart2'));
     this.visibleOptions = {
         title: 'Histogram of visible objects'
     }
+    this.asynTask = undefined;
 };
 
 links.ChartPanel.prototype.computeActivityHistogram = function (columnIndex, data) {
@@ -24,8 +27,8 @@ links.ChartPanel.prototype.computeActivityHistogram = function (columnIndex, dat
     return map;
 };
 
-links.ChartPanel.prototype.drawActivityChart = function(data) {
-    var histogram = computeHistogram(2, data);
+links.ChartPanel.prototype.drawActivityChart = function (data) {
+    var histogram = this.computeActivityHistogram(2, data);
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('string', 'Name');
     chartData.addColumn('number', 'Count');
@@ -39,24 +42,25 @@ links.ChartPanel.prototype.drawActivityChart = function(data) {
 links.ChartPanel.prototype.computeSum = function (cur, next) {
     var sum = 0;
     gGlobals.timeline.getVisibleItems(cur, next, function (row) {
-        sum += parseInt(gTimeline.getData().getValue(row, 5));
+        sum += parseInt(gGlobals.timeline.getData().getValue(row, 5));
     });
     return sum;
 };
 
 links.ChartPanel.prototype.computeVisibleHistogram = function (supplier) {
     var options = gGlobals.timeline.options; // nastavenia neupravuj
-    var step = jQuery.extend(true, {}, gTimeline.step); // deep copy celeho objektu
+    var step = jQuery.extend(true, {}, gGlobals.timeline.step); // deep copy celeho objektu
     step.start();
     var max = 0;
     while (!step.end() && max < 100) {
         max++;
-        var text = step.getLabelMajor(options) + ":" + step.getLabelMinor(options);
+        var text = step.getLabelMinor(options) + " of " + step.getLabelMajor(options);
         var cur = new Date(step.getCurrent().getTime());   // musime klonovat objekt
         step.next();
         var next = new Date(step.getCurrent().getTime());
         supplier(text, this.computeSum(cur, next));
     }
+    this.shouldReload = false;
 };
 
 links.ChartPanel.prototype.drawVisibleChart = function () {
@@ -64,7 +68,20 @@ links.ChartPanel.prototype.drawVisibleChart = function () {
     chartData.addColumn('string', 'Date');
     chartData.addColumn('number', 'Changed lines');
     this.computeVisibleHistogram(function (key, value) {
-        chartData.addRow(key, value);
+        chartData.addRow([key, value]);
     });
-    this.visibleChart.draw(chartData, this.visibleOptions);
+    if (chartData.getNumberOfRows() > 0) {
+        this.visibleChart.draw(chartData, this.visibleOptions);
+    }
+};
+
+links.ChartPanel.prototype.redrawVisibleChart = function () {
+    if (this.asynTask) {
+        clearTimeout(this.asynTask);
+        delete this.asynTask;
+    }
+    this.asynTask = setTimeout(function () {
+        // Run asynchronous task
+        gGlobals.charts.drawVisibleChart();
+    }, 500);
 };

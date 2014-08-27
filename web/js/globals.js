@@ -1,7 +1,7 @@
 function Globals() {
     this.table = new google.visualization.Table(document.getElementById('datatable'));
     this.dateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-    this.charts = new ChartPanel();
+    this.charts = new links.ChartPanel();
     this.timeline = getTimeline();
     this.startInput = document.getElementById('startDate');
     this.endInput = document.getElementById('endDate');

@@ -1,8 +1,6 @@
 function getTimeline() {
     // Nastavenia timeline
     var options = {
-        width: "100%",
-        height: "60%",
         layout: "circle",
         style: 'circle',
         axisOnTop: true,

@@ -5,10 +5,10 @@ function onLoad() {
     var start = new Date(nowDate.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
 
     // Inicializuj data
-    gGlobals.setTime(start, end);
+    gGlobals.setTime(start, nowDate);
     gGlobals.timeline.draw();
     gGlobals.timeline.setVisibleChartRange(start, nowDate);
-    gGlobals.loadRange(start, end);
+    gGlobals.loadRange(start, nowDate);
 }
 
 function onRangeChange() {
@@ -17,12 +17,9 @@ function onRangeChange() {
 }
 function onRangeChanged() {
     var range = gGlobals.timeline.getVisibleChartRange();
-    console.log("onRangeChanged " + gGlobals.dateFormatter.format(range.start) + " " + gGlobals.dateFormatter.format(range.end));
-    //loadRange(range.start, range.end, gTimeline.size.contentWidth);
-    setTimeout(function () {
-        // Run asynchronous task
-        gGlobals.charts.drawVisibleChart();
-    }, 0);
+    // console.log("onRangeChanged " + gGlobals.dateFormatter.format(range.start) + " " + gGlobals.dateFormatter.format(range.end));
+    //loadRange(range.start, range.end, gGlobals.timeline.size.contentWidth);
+    gGlobals.charts.redrawVisibleChart();
 }
 
 function onReSize() {
@@ -53,13 +50,15 @@ function handleServiceResponse(response) {
         return;
     }
     var data = response.getDataTable();
-    gGlobals.charts.drawActivityChart(data);
+    /*gGlobals.table.draw(data, {
+     allowHtml: true,
+     showRowNumber: true,
+     page: "enable",
+     pageSize: 20
+     });*/
     gGlobals.timeline.draw(data);
-    gGlobals.timeline.table.draw(data, {
-        allowHtml: true,
-        showRowNumber: true,
-        page: "enable",
-        pageSize: 20
-    });
+    setTimeout(function () {
+        gGlobals.charts.drawActivityChart(data);
+    }, 0);
     registerTooltips();
 }
