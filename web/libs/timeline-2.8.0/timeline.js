@@ -133,9 +133,7 @@ links.Timeline = function(container, options) {
     };
     this.renderedItems = [];  // Items currently rendered in the DOM
     this.clusterGenerator = new links.Timeline.ClusterGenerator(this);
-    this.currentClusters = [];
     this.selection = undefined; // stores index and item which is currently selected
-
     this.listeners = {}; // event listener callbacks
 
     // Initialize sizes.

@@ -18,16 +18,16 @@
     <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
     <script type="text/javascript" src="js/timeline/ItemDot.js"></script>
     <script type="text/javascript" src="js/timeline/ItemCircle.js"></script>
+    <script type="text/javascript" src="js/timeline/ItemChart.js"></script>
     <script type="text/javascript" src="js/timeline/ItemBox.js"></script>
     <script type="text/javascript" src="js/timeline/ClusterGenerator.js"></script>
     <script type="text/javascript" src="js/timeline/StepDate.js"></script>
 
     <script type="text/javascript" src="js/events.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
-    <script type="text/javascript" src="js/toolbar.js"></script>
     <script type="text/javascript" src="js/chartPanel.js"></script>
-    <script type="text/javascript" src="js/tooltip.js"></script>
     <script type="text/javascript" src="js/globals.js"></script>
+
     <script type="text/javascript">
         var gGlobals = undefined;
         google.load("visualization", "1", {packages: ["corechart", 'table']});
@@ -36,12 +36,12 @@
 </head>
 
 <body onresize="onReSize();">
-<p>
+<div id="toolbar">
     Start time: <input type="text" id="startDate" value=""/>
     End time: <input type="text" id="endDate" value=""/>
     <input type="button" id="setRange" value="Set" onclick="onSetTime();"/>
     <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();"/>
-</p>
+</div>
 
 <div id="mytimeline"></div>
 <div id="rightBar">

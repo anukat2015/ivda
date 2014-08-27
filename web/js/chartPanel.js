@@ -3,13 +3,15 @@
 links.ChartPanel = function () {
     this.activityChart = new google.visualization.PieChart(document.getElementById('pieChart1'));
     this.activityOptions = {
-        title: 'Developer Activities'
+        title: 'Developer Activities',
+        chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     };
 
 
     this.visibleChart = new google.visualization.PieChart(document.getElementById('pieChart2'));
     this.visibleOptions = {
-        title: 'Histogram of visible objects'
+        title: 'Histogram of visible objects',
+        chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     }
     this.asynTask = undefined;
 };
@@ -58,7 +60,10 @@ links.ChartPanel.prototype.computeVisibleHistogram = function (supplier) {
         var cur = new Date(step.getCurrent().getTime());   // musime klonovat objekt
         step.next();
         var next = new Date(step.getCurrent().getTime());
-        supplier(text, this.computeSum(cur, next));
+        var value = this.computeSum(cur, next);
+        if (value != 0) {
+            supplier(text, value);
+        }
     }
     this.shouldReload = false;
 };
@@ -83,5 +88,5 @@ links.ChartPanel.prototype.redrawVisibleChart = function () {
     this.asynTask = setTimeout(function () {
         // Run asynchronous task
         gGlobals.charts.drawVisibleChart();
-    }, 500);
+    }, 1000);
 };

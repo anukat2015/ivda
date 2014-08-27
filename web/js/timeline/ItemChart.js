@@ -82,7 +82,7 @@ links.Timeline.ItemChart.prototype.createDOM = function () {
         legend: 'none',
         // pieSliceText: 'label', TODO: zapni az ked je velky
         backgroundColor: 'transparent',
-        chartArea: {width: metric, height: metric, left: 0, top: 0, bottom: 0, right: 0},
+        chartArea: {width: '90%', height: '90%', left: '0%', top: '0%'},
         width: metric,
         height: metric
     };

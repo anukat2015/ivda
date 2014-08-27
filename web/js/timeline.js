@@ -1,6 +1,9 @@
 function getTimeline() {
     // Nastavenia timeline
+    var windowHeight = $(window).height();
     var options = {
+        width: "100%",
+        minHeight: windowHeight * 0.8,
         layout: "circle",
         style: 'circle',
         axisOnTop: true,
@@ -18,7 +21,7 @@ function getTimeline() {
         //stackEvents: false,
         //cluster: true,
         snapEvents: true,
-        groupMinHeight: 70
+        groupMinHeight: windowHeight * 0.1
     };
 
     // Instantiate our timeline object.

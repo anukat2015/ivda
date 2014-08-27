@@ -1,6 +1,13 @@
 /* Styles for the page */
 html, body {
     font: 10pt arial;
+    margin: 4px;
+    padding: 0px;
+}
+
+#toolbar {
+    margin-bottom: 1%;
+    padding: 0px;
 }
 
 #mytimeline {
@@ -93,16 +100,16 @@ div.available {
 }
 
 div.maybe {
-    /*background-color: #FFA500;  */
+    background-color: #FFA500;
     /*border-color: #cc8100;   */
 }
 
 /* Circle layout */
-.timeline-event-circle {
+.timeline-event-chart {
 
 }
 
-.timeline-event-circle .timeline-event-content {
+.timeline-event-chart .timeline-event-content {
     padding: 0px;
     margin: 0px;
 }
@@ -117,4 +124,14 @@ div.timeline-event-cluster div.timeline-event-dot {
 
 #pieChart2 {
 
+}
+
+.timeline-event-circle {
+    border-radius: 50%;
+}
+
+.timeline-event-circle .timeline-event-content {
+    text-align: center;
+    padding: 0px;
+    vertical-align: middle;
 }
