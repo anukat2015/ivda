@@ -25,7 +25,7 @@ public final class DateUtils {
 
     public static GregorianCalendar fromString(String dateString) throws ParseException {
         Preconditions.checkNotNull(dateString);
-        GregorianCalendar gc = new GregorianCalendar(TIME_ZONE);
+        GregorianCalendar gc = getNow();
         Date datum = FORMAT.parse(dateString);
         gc.setTimeInMillis(datum.getTime());
         gc.setLenient(false);
@@ -36,4 +36,7 @@ public final class DateUtils {
         return FORMAT.format(calender.getTime());
     }
 
+    public static GregorianCalendar getNow() {
+        return new GregorianCalendar(TIME_ZONE);
+    }
 }

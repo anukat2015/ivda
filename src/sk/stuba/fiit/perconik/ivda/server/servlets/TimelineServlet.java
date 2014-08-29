@@ -25,7 +25,7 @@ import java.io.IOException;
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
     private static final long serialVersionUID = 4252962999830460395L;
-    private static final int CACHE_DURATION_IN_SECOND = 60 * 60 * 24 * 2; // 2 days
+    private static final int CACHE_DURATION_IN_SECOND = 0; // 60 * 60 * 24 * 2; // 2 days
 
     /**
      * Generuj datovu tabulku pre klienta na zaklade ziadosti.
@@ -65,15 +65,20 @@ public final class TimelineServlet extends DataSourceServlet {
         // Cize musime vypocitat sirku okna a poslat to sem
         GregorianCalendar start;
         GregorianCalendar end;
-        Integer width;
+        Integer width, step, scale;
         //noinspection OverlyBroadCatchBlock
         try {
             start = DateUtils.fromString(request.getParameter("start"));
             end = DateUtils.fromString(request.getParameter("end"));
             width = Integer.valueOf(request.getParameter("width"));
+            step = Integer.valueOf(request.getParameter("step"));
+            scale = Integer.valueOf(request.getParameter("scale"));
             start = DateUtils.fromString("2014-07-21T08:00:00.000Z");
             end = DateUtils.fromString("2014-07-21T16:00:00.000Z");
-            width = 1012;
+
+            if (!start.before(end)) {
+                throw new WebApplicationException("Start date is not before end.", Response.Status.BAD_REQUEST);
+            }
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
@@ -83,14 +88,31 @@ public final class TimelineServlet extends DataSourceServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         super.doGet(req, resp);
-        /*
-        // Set cache response
-        long now = System.currentTimeMillis();
-        resp.setHeader("Cache-Control", "max-age=" + Long.toString(CACHE_DURATION_IN_SECOND)); //HTTP 1.1
-        resp.setHeader("Cache-Control", "must-revalidate");
-        resp.setHeader("Last-Modified", Long.toString(now)); //HTTP 1.0
-        resp.setDateHeader("Expires", now + CACHE_DURATION_IN_SECOND * 1000);
-        */
+        setCacheHeaders(req, resp);
+    }
+
+    protected void setCacheHeaders(HttpServletRequest req, HttpServletResponse resp) {
+        // Set cache for response
+        if (CACHE_DURATION_IN_SECOND == 0) {
+            // Cachovanie je vypnute
+            return;
+        }
+        GregorianCalendar end;
+        try {
+            end = DateUtils.fromString(req.getParameter("end"));
+        } catch (Exception e) {
+            return; // Ak zadal hlupost necachuj
+        }
+        long offset = DateUtils.getNow().getTimeInMillis() - end.getTimeInMillis();
+        if (offset > 1000 * 60 * 60) {
+            // Suradnica END je v minulosti, minimalne o 1 hodinu posunut
+            // tzv buducnost necachujeme a ani eventy za poslednu hodinu, lebo tie sa mozu spracovavat este
+            long now = System.currentTimeMillis();
+            resp.setHeader("Cache-Control", "max-age=" + Long.toString(CACHE_DURATION_IN_SECOND)); //HTTP 1.1
+            resp.setHeader("Cache-Control", "must-revalidate");
+            resp.setHeader("Last-Modified", Long.toString(now)); //HTTP 1.0
+            resp.setDateHeader("Expires", now + CACHE_DURATION_IN_SECOND * 1000);
+        }
     }
 
     @Override
