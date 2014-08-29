@@ -33,23 +33,6 @@ function getTimeline() {
     return timeline;
 };
 
-function getSelectedRow() {
-    var row = undefined;
-    var sel = gGlobals.timeline.getSelection();
-    if (sel.length) {
-        if (sel[0].row != undefined) {
-            row = sel[0].row;
-        }
-    }
-    return row;
-};
-
-function getSelectedValue(column) {
-    var row = this.getSelectedRow();
-    if (row == undefined) return;
-    return gGlobals.timeline.getData().getValue(row, column);
-};
-
 function registerTooltips() {
     $(".timeline-event-dot-container").qtip({
         show: 'click',

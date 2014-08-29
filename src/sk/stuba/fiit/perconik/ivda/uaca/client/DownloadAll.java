@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.uaca.client;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.uaca.cache.GuavaFilesCache;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import javax.annotation.Nullable;
@@ -22,6 +23,7 @@ import java.util.List;
 public abstract class DownloadAll<T extends Serializable> implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(DownloadAll.class.getName());
     private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
+
     private static final long serialVersionUID = -8441631869020848898L;
 
     private final WebClient client;
@@ -108,5 +110,4 @@ public abstract class DownloadAll<T extends Serializable> implements Serializabl
             return (PagedResponse<T>) client.synchronizedRequest(uri, mClass);
         }
     }
-
 }

@@ -32,7 +32,7 @@ public final class MyDataTable extends DataTable implements Serializable {
                     new ColumnDescription("content", ValueType.TEXT, "Content"),
                     new ColumnDescription("group", ValueType.TEXT, "Group"),
                     new ColumnDescription("className", ValueType.TEXT, "ClassName"),
-                    new ColumnDescription("description", ValueType.TEXT, "Description")
+                    new ColumnDescription("metadata", ValueType.TEXT, "Metadata")
             });
 
     /**
@@ -44,7 +44,7 @@ public final class MyDataTable extends DataTable implements Serializable {
 
     public MyDataTable() {
         super();
-        replaceGroup = new HashMap<>(16);
+        replaceGroup = new HashMap<String, String>(16);
         addColumns(COLUMN_DESCRIPTIONS);
     }
 

@@ -16,77 +16,90 @@ links.ChartPanel = function () {
     this.asynTask = undefined;
 };
 
-links.ChartPanel.prototype.computeActivityHistogram = function (columnIndex, data) {
-    var map = {};
-    for (var rowIndex = 0; rowIndex < data.getNumberOfRows(); rowIndex++) {
-        var row = data.getValue(rowIndex, columnIndex);
-        if (map[row] === undefined) {
-            map[row] = 1;
-        } else {
-            map[row]++;
+links.ChartPanel.prototype.computeStats = function () {
+    var labels = this.computeLabels();
+    var data = gGlobals.timeline.getData();
+    var labelMap = {};
+    var typesMap = {};
+    gGlobals.timeline.getItemsByInterval(function (item) {
+        // Vypocitaj statistiky pre Label
+        for (var i = 0; i < labels.length; i++) {
+            var label = labels[i];
+            if (gGlobals.timeline.checkIntersection(label.start, label.end)) {
+                var value = parseInt(data.getValue(item.content, 5));
+                if (labelMap[label.label] === undefined) {
+                    labelMap[label.label] = value;
+                } else {
+                    labelMap[label.label] += value;
+                }
+                break;
+            }
         }
-    }
-    return map;
-};
 
-links.ChartPanel.prototype.drawActivityChart = function (data) {
-    var histogram = this.computeActivityHistogram(2, data);
-    var chartData = new google.visualization.DataTable();
-    chartData.addColumn('string', 'Name');
-    chartData.addColumn('number', 'Count');
-    chartData.addRows(Object.keys(histogram).map(function (key) {
-        return [ key, histogram[key] ]
-    }));
-    this.activityChart.draw(chartData, this.activityOptions);
-};
-
-
-links.ChartPanel.prototype.computeSum = function (cur, next) {
-    var sum = 0;
-    gGlobals.timeline.getVisibleItems(cur, next, function (row) {
-        sum += parseInt(gGlobals.timeline.getData().getValue(row, 5));
+        // Activity histogram
+        var row = item.content;
+        if (typesMap[row] === undefined) {
+            typesMap[row] = 1;
+        } else {
+            typesMap[row]++;
+        }
     });
-    return sum;
+
+    return {label: labelMap, types: typesMap};
 };
 
-links.ChartPanel.prototype.computeVisibleHistogram = function (supplier) {
+links.ChartPanel.prototype.computeLabels = function () {
     var options = gGlobals.timeline.options; // nastavenia neupravuj
     var step = jQuery.extend(true, {}, gGlobals.timeline.step); // deep copy celeho objektu
     step.start();
     var max = 0;
+    var dates = [];
     while (!step.end() && max < 100) {
         max++;
         var text = step.getLabelMinor(options) + " of " + step.getLabelMajor(options);
-        var cur = new Date(step.getCurrent().getTime());   // musime klonovat objekt
+        var cur = new Date(step.getCurrent().getTime());
         step.next();
         var next = new Date(step.getCurrent().getTime());
-        var value = this.computeSum(cur, next);
-        if (value != 0) {
-            supplier(text, value);
-        }
+        dates.push({
+            start: cur,
+            end: next,
+            label: text
+        });
     }
-    this.shouldReload = false;
+    return dates;
 };
 
-links.ChartPanel.prototype.drawVisibleChart = function () {
-    var chartData = new google.visualization.DataTable();
-    chartData.addColumn('string', 'Date');
-    chartData.addColumn('number', 'Changed lines');
-    this.computeVisibleHistogram(function (key, value) {
-        chartData.addRow([key, value]);
+links.ChartPanel.prototype.drawCharts = function () {
+    var stats = this.computeStats();
+
+    // Activity
+    var activityData = new google.visualization.DataTable();
+    activityData.addColumn('string', 'Name');
+    activityData.addColumn('number', 'Count');
+    Object.keys(stats.label).forEach(function (key) {
+        activityData.addRow([ key, stats.label[key]]);
     });
-    if (chartData.getNumberOfRows() > 0) {
-        this.visibleChart.draw(chartData, this.visibleOptions);
+    this.activityChart.draw(activityData, this.activityOptions);
+
+    // Label
+    var linesData = new google.visualization.DataTable();
+    linesData.addColumn('string', 'Date');
+    linesData.addColumn('number', 'Changed lines');
+    Object.keys(stats.types).forEach(function (key) {
+        linesData.addRow([ key, stats.types[key]]);
+    });
+    if (linesData.getNumberOfRows() > 0) {
+        this.visibleChart.draw(linesData, this.visibleOptions);
     }
 };
 
-links.ChartPanel.prototype.redrawVisibleChart = function () {
+links.ChartPanel.prototype.redraw = function () {
     if (this.asynTask) {
         clearTimeout(this.asynTask);
         delete this.asynTask;
     }
     this.asynTask = setTimeout(function () {
         // Run asynchronous task
-        gGlobals.charts.drawVisibleChart();
+        gGlobals.charts.drawCharts();
     }, 1000);
 };

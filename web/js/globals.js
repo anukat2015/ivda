@@ -5,6 +5,7 @@ function Globals() {
     this.timeline = getTimeline();
     this.startInput = document.getElementById('startDate');
     this.endInput = document.getElementById('endDate');
+    this.chunks = new Chunks();
 
     this.setTime = function (start, end) {
         this.startInput.value = this.dateFormatter.format(start);
@@ -50,8 +51,4 @@ function Globals() {
         return restURL + parameters;
     }
 
-    this.loadRange = function (start, end) {
-        var query = new google.visualization.Query(this.getServiceURL(start, end));
-        query.send(handleServiceResponse);
-    }
 }

@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.client;
+package sk.stuba.fiit.perconik.ivda.uaca.cache;
 
 import com.google.common.cache.*;
 import org.apache.commons.codec.binary.Hex;
