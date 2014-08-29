@@ -12,8 +12,10 @@ import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 /**
  * Created by Seky on 17. 7. 2014.
@@ -23,6 +25,7 @@ import javax.ws.rs.core.Response;
 public final class TimelineServlet extends DataSourceServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
     private static final long serialVersionUID = 4252962999830460395L;
+    private static final int CACHE_DURATION_IN_SECOND = 60 * 60 * 24 * 2; // 2 days
 
     /**
      * Generuj datovu tabulku pre klienta na zaklade ziadosti.
@@ -75,6 +78,19 @@ public final class TimelineServlet extends DataSourceServlet {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
         return generateDataTable(start, end, width);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        super.doGet(req, resp);
+        /*
+        // Set cache response
+        long now = System.currentTimeMillis();
+        resp.setHeader("Cache-Control", "max-age=" + Long.toString(CACHE_DURATION_IN_SECOND)); //HTTP 1.1
+        resp.setHeader("Cache-Control", "must-revalidate");
+        resp.setHeader("Last-Modified", Long.toString(now)); //HTTP 1.0
+        resp.setDateHeader("Expires", now + CACHE_DURATION_IN_SECOND * 1000);
+        */
     }
 
     @Override
