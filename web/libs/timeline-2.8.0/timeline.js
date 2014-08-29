@@ -631,15 +631,19 @@ links.Timeline.prototype.getItemsByInterval = function (start, end, supplier) {
         for (var i = 0, iMax = items.length; i < iMax; i++) {
             var item = items[i];
             if (this.checkIntersection(start, end, item)) {
-                supplier(item);
+                supplier(i, item);
             }
         }
     }
 };
 
+/**
+ * Get selected index or undefined.
+ * @returns {undefined}
+ */
 links.Timeline.prototype.getSelectedRow = function () {
     var row = undefined;
-    var sel = gGlobals.timeline.getSelection();
+    var sel = this.getSelection();
     if (sel.length) {
         if (sel[0].row != undefined) {
             row = sel[0].row;
@@ -648,6 +652,11 @@ links.Timeline.prototype.getSelectedRow = function () {
     return row;
 };
 
+/**
+ * Gete selected value by column specification or undefined.
+ * @param column
+ * @returns {*}
+ */
 links.Timeline.prototype.getSelectedValue = function (column) {
     var row = this.getSelectedRow();
     if (row == undefined) return undefined;
@@ -3459,9 +3468,13 @@ links.Timeline.prototype.deleteItem = function (index, preventRender) {
     }
 };
 
-
-links.Timeline.prototype.deleteItems = function (start, end, preventRender) {
-
+/**
+ * Delete all items in range scope
+ */
+links.Timeline.prototype.deleteItems = function (start, end) {
+    this.getItemsByInterval(start, end, function (index, item) {
+        this.deleteItem(index, true);
+    });
 }
 
 /**

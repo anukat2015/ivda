@@ -22,7 +22,7 @@ function Chunks() {
         if (chunked > 0) { // Nepohli sme sa o zanedbatelny kusok
             if (newMin > this.actualMin) {
                 // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
-                gGlobals.timeline.removeItems(this.actualMin, newMin, true);
+                gGlobals.timeline.deleteItems(this.actualMin, newMin);
             } else {
                 this.loadChunks(newMin, this.actualMin);
             }
@@ -35,14 +35,14 @@ function Chunks() {
         if (chunked > 0) {
             if (newMax < this.actualMax) {
                 // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
-                gGlobals.timeline.removeItems(this.actualMax, newMax, true);
+                gGlobals.timeline.deleteItems(this.actualMax, newMax);
             } else {
                 this.loadChunks(newMax, this.actualMax);
             }
         }
 
         this.actualMin = newMin;
-        this.actualMin = newMax;
+        this.actualMax = newMax;
     }
 
     this.loadChunks = function (min, max) {
@@ -57,15 +57,17 @@ function Chunks() {
     this.loadChunk = function (start, end) {
         var url = this.getServiceURL(new Date(start), new Date(end));
         var query = new google.visualization.Query(url);
-        query.send(this.handleChunk);
+        query.send(function (response) {
+            if (response.isError()) {
+                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+                return;
+            }
+            var data = response.getDataTable();
+            this.addData(data);
+        });
     }
 
-    this.handleChunk = function (response) {
-        if (response.isError()) {
-            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-            return;
-        }
-        var data = response.getDataTable();
+    this.addData = function (data) {
         // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
         // Alebo prisla neskoro a hranice uz su zmenene ..
         gGlobals.timeline.addItems(data, true);

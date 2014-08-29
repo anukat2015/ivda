@@ -21,12 +21,12 @@ links.ChartPanel.prototype.computeStats = function () {
     var data = gGlobals.timeline.getData();
     var labelMap = {};
     var typesMap = {};
-    gGlobals.timeline.getItemsByInterval(function (item) {
+    gGlobals.timeline.getItemsByInterval(function (index, item) {
         // Vypocitaj statistiky pre Label
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
             if (gGlobals.timeline.checkIntersection(label.start, label.end)) {
-                var value = parseInt(data.getValue(item.content, 5));
+                var value = parseInt(item.metadata);
                 if (labelMap[label.label] === undefined) {
                     labelMap[label.label] = value;
                 } else {
