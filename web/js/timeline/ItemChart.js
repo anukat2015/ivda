@@ -66,7 +66,7 @@ links.Timeline.ItemChart.prototype.createDOM = function () {
     divBox.content = divContent;
 
     // Pridaj chart
-    var changedLines = parseInt(gGlobals.timeline.getData().getValue(this.row, 5));
+    var changedLines = parseInt(this.metadata);
     var metric = (changedLines + 1) * 30;
     var radius = metric + "px";
     divContent.style.width = radius;
