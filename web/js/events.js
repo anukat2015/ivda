@@ -46,7 +46,7 @@ function onSetCurrentTime() {
 
 function onRangeChanged() {
     var range = gGlobals.timeline.getVisibleChartRange();
-    // console.log("onRangeChanged " + gGlobals.dateFormatter.format(range.start) + " " + gGlobals.dateFormatter.format(range.end));
+    console.log("onRangeChanged " + gGlobals.dateFormatter.format(range.start) + " " + gGlobals.dateFormatter.format(range.end));
     gGlobals.chunks.onRangeChanged(range.start, range.end);
     gGlobals.charts.redraw();
 }

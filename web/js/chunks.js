@@ -22,6 +22,7 @@ function Chunks() {
         if (chunked > 0) { // Nepohli sme sa o zanedbatelny kusok
             if (newMin > this.actualMin) {
                 // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
+                console.log("deleteItems " + new Date(this.actualMin).toString() + " " + new Date(newMin).toString());
                 gGlobals.timeline.deleteItems(this.actualMin, newMin);
             } else {
                 this.loadChunks(newMin, this.actualMin);
@@ -35,6 +36,7 @@ function Chunks() {
         if (chunked > 0) {
             if (newMax < this.actualMax) {
                 // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
+                console.log("deleteItems " + new Date(this.actualMax).toString() + " " + new Date(newMax).toString());
                 gGlobals.timeline.deleteItems(this.actualMax, newMax);
             } else {
                 this.loadChunks(newMax, this.actualMax);
@@ -43,6 +45,7 @@ function Chunks() {
 
         this.actualMin = newMin;
         this.actualMax = newMax;
+        console.log("Nove hranice " + new Date(this.actualMin).toString() + " " + new Date(this.actualMax).toString());
     }
 
     this.loadChunks = function (min, max) {
@@ -55,6 +58,7 @@ function Chunks() {
     }
 
     this.loadChunk = function (start, end) {
+        console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
         var url = this.getServiceURL(new Date(start), new Date(end));
         var query = new google.visualization.Query(url);
         query.send(function (response) {
@@ -70,6 +74,8 @@ function Chunks() {
     this.addData = function (data) {
         // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
         // Alebo prisla neskoro a hranice uz su zmenene ..
+        // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
+        console.log("addData " + data);
         gGlobals.timeline.addItems(data, true);
     }
 

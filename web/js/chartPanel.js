@@ -71,6 +71,7 @@ links.ChartPanel.prototype.computeLabels = function () {
 
 links.ChartPanel.prototype.drawCharts = function () {
     var stats = this.computeStats();
+    console.log(stats);
 
     // Activity
     var activityData = new google.visualization.DataTable();
