@@ -28,7 +28,7 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
             throw new IllegalArgumentException("Prisiel zly event.");
         }
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
-        LOGGER.info(cevent);
+        //LOGGER.info(cevent);
 
         dataTable.add(
                 event.getUser(),
@@ -56,7 +56,7 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         Scanner scanner = new Scanner(txt);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            LOGGER.info(line);
+            //LOGGER.info(line);
             count++;
         }
         scanner.close();

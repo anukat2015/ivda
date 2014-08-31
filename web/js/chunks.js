@@ -2,6 +2,7 @@ function Chunks() {
     this.actualMin = undefined;
     this.actualMax = undefined;
     this.chunkSize = (20 * 1000 * 60); // tzv 30min/20/10 teda kde zvysok 60%30= 0
+    this.showError = true;
 
     this.loadRange = function (start, end) {
         // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
@@ -59,15 +60,21 @@ function Chunks() {
 
     this.loadChunk = function (start, end) {
         console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
-        var url = this.getServiceURL(new Date(start), new Date(end));
+        var url = gGlobals.getServiceURL(new Date(start), new Date(end));
+        console.log(url);
         var query = new google.visualization.Query(url);
+        var chunks = this;
         query.send(function (response) {
             if (response.isError()) {
-                alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-                return;
+                var msg = "Error in query: " + response.getMessage() + " " + response.getDetailedMessage();
+                console.log(msg);
+                if (chunks.showError) {
+                    alert(msg);
+                    chunks.showError = false;
+                }
+            } else {
+                chunks.addData(response.getDataTable());
             }
-            var data = response.getDataTable();
-            this.addData(data);
         });
     }
 

@@ -434,6 +434,19 @@ links.Timeline.mapColumnIds = function (dataTable) {
     return cols;
 };
 
+links.Timeline.prototype.buildItemFromDataTable = function (data, row, cols) {
+    return {
+        'start': ((cols.start != undefined) ? data.getValue(row, cols.start) : undefined),
+        'end': ((cols.end != undefined) ? data.getValue(row, cols.end) : undefined),
+        'content': ((cols.content != undefined) ? data.getValue(row, cols.content) : undefined),
+        'group': ((cols.group != undefined) ? data.getValue(row, cols.group) : undefined),
+        'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
+        'editable': ((cols.editable != undefined) ? data.getValue(row, cols.editable) : undefined),
+        'type': ((cols.type != undefined) ? data.getValue(row, cols.type) : undefined),
+        'metadata': ((cols.metadata != undefined) ? data.getValue(row, cols.metadata) : undefined)
+    };
+};
+
 /**
  * Set data for the timeline
  * @param {google.visualization.DataTable | Array} data
@@ -460,16 +473,7 @@ links.Timeline.prototype.setData = function (data) {
 
         // read DataTable
         for (var row = 0, rows = data.getNumberOfRows(); row < rows; row++) {
-            items.push(this.createItem({
-                'start': ((cols.start != undefined) ? data.getValue(row, cols.start) : undefined),
-                'end': ((cols.end != undefined) ? data.getValue(row, cols.end) : undefined),
-                'content': ((cols.content != undefined) ? data.getValue(row, cols.content) : undefined),
-                'group': ((cols.group != undefined) ? data.getValue(row, cols.group) : undefined),
-                'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
-                'editable': ((cols.editable != undefined) ? data.getValue(row, cols.editable) : undefined),
-                'type': ((cols.type != undefined) ? data.getValue(row, cols.type) : undefined),
-                'metadata': ((cols.metadata != undefined) ? data.getValue(row, cols.metadata) : undefined)
-            }));
+            items.push(this.createItem(this.buildItemFromDataTable(data, row, cols)));
         }
     }
     else if (links.Timeline.isArray(data)) {
@@ -3472,8 +3476,9 @@ links.Timeline.prototype.deleteItem = function (index, preventRender) {
  * Delete all items in range scope
  */
 links.Timeline.prototype.deleteItems = function (start, end) {
+    var timeline = this;
     this.getItemsByInterval(start, end, function (index, item) {
-        this.deleteItem(index, true);
+        timeline.deleteItem(index, true);
     });
 }
 
@@ -3644,12 +3649,11 @@ links.Timeline.prototype.addItem = function (itemData, preventRender) {
  *                            {String} type (optional)
  * @param {boolean} [preventRender=false]   Do not re-render timeline if true
  */
-links.Timeline.prototype.addItems = function (itemsData, preventRender) {
+links.Timeline.prototype.addItems = function (data, preventRender) {
     var timeline = this,
         items = this.items;
 
-    // append the items
-    itemsData.forEach(function (itemData) {
+    function addDataItem(itemData) {
         var index = items.length;
         items.push(timeline.createItem(itemData));
         timeline.updateData(index, itemData);
@@ -3657,7 +3661,20 @@ links.Timeline.prototype.addItems = function (itemsData, preventRender) {
         // note: there is no need to add the item to the renderQueue, that
         // will be done when this.render() is executed and all items are
         // filtered again.
-    });
+    }
+
+    // append the items
+    if (google && google.visualization && data instanceof google.visualization.DataTable) {
+        // map the datatable columns
+        var cols = links.Timeline.mapColumnIds(data);
+        for (var row = 0, rows = data.getNumberOfRows(); row < rows; row++) {
+            addDataItem(this.buildItemFromDataTable(data, row, cols));
+        }
+    } else if (links.Timeline.isArray(data)) {
+        data.forEach(addDataItem);
+    } else {
+        throw "Unknown data type. DataTable or Array expected.";
+    }
 
     // prepare data for clustering, by filtering and sorting by type
     if (this.options.cluster) {
