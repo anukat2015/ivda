@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
  * Nasledne danemu procesu priradi aproximovane casi zaciatku a ukoncenia.
  * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
  */
+@NotThreadSafe
 public abstract class FindFinishedProcess {
     private static final Logger LOGGER = Logger.getLogger(FindFinishedProcess.class.getName());
 

@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * <p>
  * Skupina reprezentovana akzdym jednym prvkom.
  */
+@NotThreadSafe
 public class FullGroup implements IGrouping, Serializable {
     private static final long serialVersionUID = 8640052504548837517L;
     private final List<EventDto> list;

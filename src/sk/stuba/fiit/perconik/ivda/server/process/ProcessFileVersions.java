@@ -12,11 +12,14 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 /**
  * Created by Seky on 7. 8. 2014.
  * <p>
  * Stiahni file verziu suboru ktory pride v evente..
  */
+@NotThreadSafe
 public final class ProcessFileVersions extends ProcessEventsToDataTable {
     public ProcessFileVersions(EventsRequest request) {
         super(request);

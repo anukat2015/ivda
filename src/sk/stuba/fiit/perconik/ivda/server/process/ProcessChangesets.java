@@ -10,6 +10,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ import java.util.List;
  * <p>
  * Vypis file verziu specifickeho suboru.
  */
+@NotThreadSafe
 public final class ProcessChangesets extends ProcessEventsToDataTable {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
 

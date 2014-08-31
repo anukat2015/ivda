@@ -6,6 +6,7 @@ import org.reflections.Reflections;
 import sk.stuba.fiit.perconik.ivda.util.Objects;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -14,8 +15,9 @@ import java.util.Set;
  * <p>
  * Deserialize polymorfed objects by specific keys. Like a URI
  */
+@ThreadSafe
 public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
-    private static final Logger logger = Logger.getLogger(PolymorphicDeserializer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PolymorphicDeserializer.class.getName());
 
     private final Class<T> baseClass;
     private final boolean mTryLongestSubsequence;
@@ -46,10 +48,11 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
      * @param callMethod
      */
     public void pushSubTypesOf(String packageName, Method callMethod) throws Exception {
+        LOGGER.debug("Package exploring: " + packageName);
         Reflections reflections = new Reflections(packageName);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(baseClass);
         if (subTypes.isEmpty()) {
-            logger.warn("Package '" + packageName + "' is empty.");
+            LOGGER.warn("Package '" + packageName + "' is empty.");
         }
 
         for (Class<? extends T> aClass : subTypes) {
@@ -79,18 +82,20 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
 
     @Override
     protected Class<? extends T> searchForClass(String key) {
+        // Toto synchronizovat netreba, pretoze ak by doslo k pristupu ku zdielanemu zdroju = registry
+        // Tak by sa zapisala pre dany kluc ta ista hodnota co nie je chyba
         Class<? extends T> aClass = super.searchForClass(key);
         if (!mTryLongestSubsequence) {
             return aClass;
         }
         if (aClass == null) {
-            logger.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
+            LOGGER.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
             //noinspection NullableProblems
-            String longestString = Strings.findLongestPrefix(registry.keySet(), key, input -> input);
+            String longestString = Strings.findLongestPrefix(keySet(), key, input -> input);
             if (longestString != null) {
                 aClass = super.searchForClass(longestString);
                 register(key, aClass);
-                logger.info("Finded longest subsequnce for '" + key + "' as '" + longestString + "'. Registering to class '" + aClass.getName());
+                LOGGER.info("Finded longest subsequnce for '" + key + "' as '" + longestString + "'. Registering to class '" + aClass.getName());
             }
         }
         return aClass;

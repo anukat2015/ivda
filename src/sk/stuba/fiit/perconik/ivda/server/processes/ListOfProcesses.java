@@ -6,17 +6,22 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Seky on 10. 8. 2014.
  * <p>
  * Trieda ktora nacitava a stara sa o black-list zoznam procesov.
  */
+@ThreadSafe
 public final class ListOfProcesses implements Serializable {
     private static final long serialVersionUID = -5261716921783440593L;
     private final Set<String> processes;

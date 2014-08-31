@@ -8,8 +8,10 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.net.Authenticator;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ import java.util.List;
  * Pomocna trieda sluzbu AstRcsWcf.
  * document.ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
  */
+@ThreadSafe
 public final class AstRcsWcfService {
     private static final Logger LOGGER = Logger.getLogger(AstRcsWcfService.class.getName());
     private final IAstRcsWcfSvc service;
@@ -28,7 +31,7 @@ public final class AstRcsWcfService {
         service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
         factory = new ObjectFactory();
         try {
-            servers = getRcsServersDto();
+            servers = Collections.unmodifiableList(getRcsServersDto());
             LOGGER.info("Logged in.");
         } catch (NotFoundException e) {
             throw new RuntimeException("No servers found. Connected?");
@@ -72,7 +75,7 @@ public final class AstRcsWcfService {
         Authenticator.setDefault(new NtlmAuthenticator(username, password));
     }
 
-    public UserDto getUser(Integer id) {
+    public synchronized UserDto getUser(Integer id) {
         GetUserRequest req = new GetUserRequest();
         req.setUserId(id);
         GetUserResponse response = service.getUser(req);
@@ -102,7 +105,7 @@ public final class AstRcsWcfService {
         return getRcsServersDto(null);
     }
 
-    public List<RcsServerDto> getRcsServersDto(@Nullable URI url) throws NotFoundException {
+    public synchronized List<RcsServerDto> getRcsServersDto(@Nullable URI url) throws NotFoundException {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
         if (url != null) {
             req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
@@ -112,7 +115,7 @@ public final class AstRcsWcfService {
         return response.getRcsServers().getValue().getRcsServerDto();
     }
 
-    public RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
+    public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
         //req.setUrl();  // nazov projektu $/PerConIK
@@ -131,7 +134,7 @@ public final class AstRcsWcfService {
      * @return
      * @throws NotFoundException
      */
-    public ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) throws NotFoundException {
+    public synchronized ChangesetDto getChangesetDto(String changesetIdInRcs, RcsProjectDto project) throws NotFoundException {
         SearchChangesetsRequest req = new SearchChangesetsRequest();
         req.setChangesetIdInRcs(factory.createSearchChangesetsRequestChangesetIdInRcs(changesetIdInRcs));
         req.setRcsProjectId(project.getId());
@@ -165,7 +168,7 @@ public final class AstRcsWcfService {
      * @return
      * @throws NotFoundException
      */
-    public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, @Nullable String startUrl) throws NotFoundException {
+    public synchronized List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, @Nullable String startUrl) throws NotFoundException {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
         if (startUrl != null) {
@@ -176,7 +179,7 @@ public final class AstRcsWcfService {
         return response.getFileVersions().getValue().getFileVersionDto();
     }
 
-    public String getFileContent(Integer fileVersion) throws NotFoundException {
+    public synchronized String getFileContent(Integer fileVersion) throws NotFoundException {
         GetFileContentRequest req = new GetFileContentRequest();
         req.setVersionId(fileVersion);
         GetFileContentResponse response = service.getFileContent(req);
@@ -187,7 +190,7 @@ public final class AstRcsWcfService {
         return value;
     }
 
-    public FileVersionDto getFile(Integer versionID) {
+    public synchronized FileVersionDto getFile(Integer versionID) {
         GetFileRequest req = new GetFileRequest();
         req.setVersionId(versionID);
         GetFileResponse response = service.getFile(req);
@@ -200,7 +203,7 @@ public final class AstRcsWcfService {
      * @param entityID
      * @return
      */
-    public List<ChangesetDto> getChangeset(Integer entityID) {
+    public synchronized List<ChangesetDto> getChangeset(Integer entityID) {
         GetFileChangesetsRequest req = new GetFileChangesetsRequest();
         req.setEntityId(entityID);
         GetFileChangesetsResponse response = service.getFileChangesets(req);
@@ -213,7 +216,7 @@ public final class AstRcsWcfService {
      * @param chs
      * @return
      */
-    public List<FileVersionDto> getChangedFiles(ChangesetDto chs) {
+    public synchronized List<FileVersionDto> getChangedFiles(ChangesetDto chs) {
         GetChangedFilesRequest req = new GetChangedFilesRequest();
         req.setChangesetId(chs.getId());
         GetChangedFilesResponse response = service.getChangedFiles(req);

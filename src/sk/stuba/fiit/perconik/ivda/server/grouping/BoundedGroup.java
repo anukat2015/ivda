@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
 
 /**
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * <p>
  * Skupina reprezentovana len 2 hranicnymi bodmi.
  */
+@NotThreadSafe
 public class BoundedGroup implements IGrouping, Serializable {
     private static final long serialVersionUID = 2522657623315850131L;
 

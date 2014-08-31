@@ -44,9 +44,6 @@ public final class TimelineServlet extends DataSourceServlet {
         request.setType(new IdeCodeEventDto());
         process = new ProcessCodeWritten(request);
 
-        LOGGER.info("Start: " + DateUtils.toString(start) +
-                " end:" + DateUtils.toString(end) +
-                " width:" + width);
         process.start();
         return process.getDataTable();
     }
@@ -65,7 +62,9 @@ public final class TimelineServlet extends DataSourceServlet {
         // Cize musime vypocitat sirku okna a poslat to sem
         GregorianCalendar start;
         GregorianCalendar end;
-        Integer width, step, scale;
+        Integer width;
+        Integer step;
+        Integer scale;
         //noinspection OverlyBroadCatchBlock
         try {
             start = DateUtils.fromString(request.getParameter("start"));
@@ -73,8 +72,8 @@ public final class TimelineServlet extends DataSourceServlet {
             width = Integer.valueOf(request.getParameter("width"));
             step = Integer.valueOf(request.getParameter("step"));
             scale = Integer.valueOf(request.getParameter("scale"));
-            start = DateUtils.fromString("2014-07-21T08:00:00.000Z");
-            end = DateUtils.fromString("2014-07-21T16:00:00.000Z");
+            //start = DateUtils.fromString("2014-07-21T08:00:00.000Z");
+            //end = DateUtils.fromString("2014-07-21T16:00:00.000Z");
 
             if (!start.before(end)) {
                 throw new WebApplicationException("Start date is not before end.", Response.Status.BAD_REQUEST);
@@ -82,6 +81,12 @@ public final class TimelineServlet extends DataSourceServlet {
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
+
+        LOGGER.info("Start: " + DateUtils.toString(start) +
+                " end:" + DateUtils.toString(end) +
+                " step:" + step +
+                " scale:" + scale +
+                " width:" + width);
         return generateDataTable(start, end, width);
     }
 

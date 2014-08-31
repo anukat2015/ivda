@@ -8,6 +8,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.uaca.client.PagedResponse;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
  * <p>
  * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
+@NotThreadSafe
 public abstract class ProcessEventsToDataTable extends DownloadAll<EventDto> {
     protected static final Logger LOGGER = Logger.getLogger(ProcessEventsToDataTable.class.getName());
     private static final long serialVersionUID = 6600835762437333632L;

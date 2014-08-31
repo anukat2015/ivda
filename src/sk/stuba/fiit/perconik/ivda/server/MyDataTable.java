@@ -10,6 +10,7 @@ import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
  * Created by Seky on 22. 7. 2014.
  * Trieda MyDataTable definuje stlpce, ktore pouzivame v klientovi.
  */
+@NotThreadSafe
 public final class MyDataTable extends DataTable implements Serializable {
     protected static final Logger LOGGER = Logger.getLogger(MyDataTable.class.getName());
     private static final long serialVersionUID = 2235473137254607516L;

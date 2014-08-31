@@ -7,6 +7,7 @@ import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Scanner;
 
 /**
@@ -14,6 +15,7 @@ import java.util.Scanner;
  * <p>
  * Vypis event, kde pouzivatel upravoval kod.
  */
+@NotThreadSafe
 public final class ProcessCodeWritten extends ProcessEventsToDataTable {
     protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
     private static final long serialVersionUID = -1342729375850378231L;

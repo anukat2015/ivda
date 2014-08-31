@@ -4,6 +4,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.uaca.deserializer.JacksonContextResolver;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -18,6 +19,7 @@ import java.net.URI;
  * <p>
  * HTTP jednoduchy client na stahovanie odpovedi zo sluzieb.
  */
+@NotThreadSafe
 public class WebClient implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(WebClient.class.getName());
     private static final long serialVersionUID = -7510866714791572678L;
@@ -30,7 +32,11 @@ public class WebClient implements Serializable {
         client = ClientBuilder.newBuilder().register(JacksonJsonProvider.class).register(JacksonContextResolver.class).build();
     }
 
-    public final Object synchronizedRequest(URI uri, Class<?> aClass) {
+    public void close() {
+        client.close();
+    }
+
+    public final Object download(URI uri, Class<?> aClass) {
         WebTarget fullTarget = client.target(uri);
         Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
 

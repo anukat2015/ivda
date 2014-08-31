@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.astrcs;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
@@ -7,6 +8,7 @@ import java.net.PasswordAuthentication;
  * Created by Seky on 2. 8. 2014.
  * Trieda na prihlasenie do NTLM protokolu.
  */
+@ThreadSafe
 public final class NtlmAuthenticator extends Authenticator {
 
     private final String m_username;

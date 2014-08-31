@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
  * <p>
  * Pomocne utilitky pre praci s roznymi verziami suborov.
  */
+@ThreadSafe
 public final class FileVersionsUtil {
     private static final Logger LOGGER = Logger.getLogger(FileVersionsUtil.class.getName());
     private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
@@ -80,12 +82,6 @@ public final class FileVersionsUtil {
         return getContent(file.getUrl().getValue(), ancestor);
     }
 
-
-    public static class DiffStats {
-        Integer additions = 0;
-        Integer deletions = 0;
-    }
-
     /**
      * Dany subor sme nasli, zachyt ID, vypis hodnotu
      *
@@ -124,7 +120,7 @@ public final class FileVersionsUtil {
             }
             LOGGER.info("additions\t" + additions + "\tdeletions\t" + deletions);
             return patch.getDeltas();
-        } catch (AstRcsWcfService.NotFoundException|IllegalArgumentException e) {
+        } catch (AstRcsWcfService.NotFoundException | IllegalArgumentException e) {
             LOGGER.warn("Nemozem stiahnut subor, lebo:" + e.getMessage());
         }
         return Collections.emptyList();
@@ -138,5 +134,10 @@ public final class FileVersionsUtil {
             builder.append(o).append('\n');
         }
         return builder.toString();
+    }
+
+    public static class DiffStats {
+        Integer additions = 0;
+        Integer deletions = 0;
     }
 }

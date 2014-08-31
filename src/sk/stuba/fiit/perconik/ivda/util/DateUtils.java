@@ -20,23 +20,28 @@ import java.util.Date;
  * Oni to prerobili zase na iny FORMAT, ach !
  */
 public final class DateUtils {
-    private static final DateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
-    private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
+    private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
+        }
+    };
 
     public static GregorianCalendar fromString(String dateString) throws ParseException {
         Preconditions.checkNotNull(dateString);
-        GregorianCalendar gc = getNow();
-        Date datum = FORMAT.parse(dateString);
+        GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        Date datum = FORMATTER.get().parse(dateString);
         gc.setTimeInMillis(datum.getTime());
         gc.setLenient(false);
         return gc;
     }
 
     public static String toString(GregorianCalendar calender) {
-        return FORMAT.format(calender.getTime());
+        return FORMATTER.get().format(calender.getTime());
     }
 
     public static GregorianCalendar getNow() {
-        return new GregorianCalendar(TIME_ZONE);
+        return new GregorianCalendar(TimeZone.getTimeZone("GMT"));
     }
+
 }

@@ -26,7 +26,7 @@ public class ViewStateBean implements Serializable {
     }
 
     public String getViewName() {
-        return this.state.getViewName();
+        return state.getViewName();
     }
 
     public enum ViewState implements Serializable {

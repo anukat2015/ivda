@@ -1,20 +1,22 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+
+import javax.annotation.concurrent.NotThreadSafe;
 
 
 /**
  * Created by Seky on 7. 8. 2014.
  */
-public class ProcessAllProcess extends ProcessEventsToDataTable {
+@NotThreadSafe
+public class ProcessAllFinishedProcesses extends ProcessEventsToDataTable {
     private final FindFinishedProcess finishedProcess;
 
-    public ProcessAllProcess(EventsRequest request) {
+    public ProcessAllFinishedProcesses(EventsRequest request) {
         super(request);
         finishedProcess = new FindFinishedProcess() {
             @Override

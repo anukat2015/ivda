@@ -53,7 +53,7 @@ public final class Configuration implements Serializable {
         return ConfigurationHolder.INSTANCE;
     }
 
-    private static Configuration read() {
+    private synchronized static Configuration read() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
             LOGGER.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());

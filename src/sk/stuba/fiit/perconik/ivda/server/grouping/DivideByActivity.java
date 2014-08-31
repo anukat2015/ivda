@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * Skupiny rozdelujeme na zaklade casu alebo typu.
  */
+@ThreadSafe
 public class DivideByActivity implements IDividing {
     /**
      * tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny

@@ -8,6 +8,7 @@ import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriBuilder;
 
@@ -16,6 +17,7 @@ import javax.ws.rs.core.UriBuilder;
  * <p>
  * Pomocna trieda pre pracovanie s EventDto
  */
+@ThreadSafe
 public final class EventsUtil {
 
     @NotNull

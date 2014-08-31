@@ -17,12 +17,16 @@ import java.util.List;
  * Created by Seky on 22. 7. 2014.
  * <p>
  * HTTP client pre sluzbu UACA. Ktory stahnie prvu stranku, poskytne udaje, stiahne druhu stranu atd.
+ * Client cachuje odpovede do CACHE_FOLDER zlozky.
  * <p>
  */
 public abstract class DownloadAll<T extends Serializable>  {
     private static final Logger LOGGER = Logger.getLogger(DownloadAll.class.getName());
     private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
+
+    private static final long serialVersionUID = -8441631869020848898L;
     private final Class<? extends PagedResponse<T>> mClass;
+    private final MyGuavaFilesCache cache;
 
     protected DownloadAll(Class<? extends PagedResponse<T>> aClass) {
         mClass = aClass;

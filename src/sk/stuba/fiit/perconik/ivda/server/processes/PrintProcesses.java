@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
  * <p>
  * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
  */
+@NotThreadSafe
 public final class PrintProcesses extends ProcessEventsToDataTable {
     private final Set<String> processes = new HashSet<>(1000);
 

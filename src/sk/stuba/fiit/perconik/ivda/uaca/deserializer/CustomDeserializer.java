@@ -6,18 +6,24 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Seky on 20. 7. 2014.
  * <p>
  * Vlastny deserializer. Ktory priradi objekt z jsonu na zaklade specifickeho kluca.
  */
+@ThreadSafe
 public class CustomDeserializer<T> extends JsonDeserializer<T> {
-    protected final Map<String, Class<? extends T>> registry;
+    private static final Logger LOGGER = Logger.getLogger(CustomDeserializer.class.getName());
+    private final Map<String, Class<? extends T>> registry;
     private final String watchedAttribute;
 
     /**
@@ -25,7 +31,7 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
      */
     public CustomDeserializer(String attribute) {
         watchedAttribute = attribute;
-        registry = new HashMap<>(100);
+        registry = new ConcurrentHashMap<>(100);
     }
 
     /**
@@ -35,15 +41,19 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
      * @param aClass
      */
     public void register(String key, Class<? extends T> aClass) {
-        if (registry.containsKey(key)) {
-            throw new RuntimeException("Key '" + key + "'already exist");
+        Class<? extends T> previous = registry.put(key, aClass);
+        if (previous != null && !previous.equals(aClass)) {
+            throw new RuntimeException("Key '" + key + "'already exist as:" + previous + ", new value:" + aClass);
         }
-        registry.put(key, aClass);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("registry", registry).append("watchedAttribute", watchedAttribute).toString();
+    }
+
+    public Set<String> keySet() {
+        return Collections.unmodifiableSet(registry.keySet());
     }
 
     @Override

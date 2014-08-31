@@ -4,12 +4,15 @@ import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
+import javax.annotation.concurrent.NotThreadSafe;
+
 
 /**
  * Created by Seky on 7. 8. 2014.
  * <p>
  * Vypis vsetky eventy tak ako pridu.
  */
+@NotThreadSafe
 public final class ProcessAllEvents extends ProcessEventsToDataTable {
     public ProcessAllEvents(EventsRequest request) {
         super(request);
