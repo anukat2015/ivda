@@ -8,7 +8,13 @@ function onLoad() {
     gGlobals.setTime(start, nowDate);
     gGlobals.timeline.draw();
     gGlobals.timeline.setVisibleChartRange(start, nowDate);
-    gGlobals.chunks.loadRange(start, nowDate);
+    gGlobals.chunks.loadRange(start, nowDate, function () {
+        console.log("finished loadRange");
+        gGlobals.charts.redraw();
+        gGlobals.timeline.render({
+            animate: false
+        });
+    });
     /*gGlobals.table.draw(data, {
      allowHtml: true,
      showRowNumber: true,
