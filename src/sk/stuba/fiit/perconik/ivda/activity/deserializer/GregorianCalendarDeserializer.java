@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.deserializer;
+package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

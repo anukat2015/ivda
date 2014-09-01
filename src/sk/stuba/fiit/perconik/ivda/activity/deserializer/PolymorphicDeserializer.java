@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.deserializer;
+package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;

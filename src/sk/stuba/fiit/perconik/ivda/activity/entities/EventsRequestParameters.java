@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.client;
+package sk.stuba.fiit.perconik.ivda.activity.entities;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ import java.io.Serializable;
  * Default is false, which means results are ordered descending or from the newest to the oldest events
  * If true, results are ordered ascending or from the oldest to the newest events
  */
-public class EventsURI implements Serializable {
+public class EventsRequestParameters implements Serializable {
     private static final long serialVersionUID = -402296428944403239L;
 
     protected Integer page;
@@ -40,7 +40,7 @@ public class EventsURI implements Serializable {
     protected String workstation;
     protected Boolean ascending;
 
-    public EventsURI() {
+    public EventsRequestParameters() {
         // Defaultne hodnoty ktoreme chceme
         page = 0;
         pageSize = 100;

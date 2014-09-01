@@ -1,17 +1,16 @@
-package sk.stuba.fiit.perconik.ivda.uaca.client;
+package sk.stuba.fiit.perconik.ivda.activity.client;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.uaca.deserializer.JacksonContextResolver;
+import sk.stuba.fiit.perconik.ivda.activity.deserializer.JacksonContextResolver;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.Serializable;
 import java.net.URI;
 
 /**
@@ -19,12 +18,9 @@ import java.net.URI;
  * <p>
  * HTTP jednoduchy client na stahovanie odpovedi zo sluzieb.
  */
-@NotThreadSafe
-public class WebClient implements Serializable {
+@ThreadSafe
+public class WebClient {
     private static final Logger LOGGER = Logger.getLogger(WebClient.class.getName());
-    private static final long serialVersionUID = -7510866714791572678L;
-
-    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private final Client client;
 
     public WebClient() {
@@ -36,10 +32,11 @@ public class WebClient implements Serializable {
         client.close();
     }
 
-    public final Object download(URI uri, Class<?> aClass) {
+    public final Object synchronizedRequest(URI uri, Class<?> aClass) {
         WebTarget fullTarget = client.target(uri);
-        Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
 
+
+        Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
         LOGGER.info("synchronizedRequest start " + uri);
         Response response = invocation.invoke();
         LOGGER.info("synchronizedRequest end ");

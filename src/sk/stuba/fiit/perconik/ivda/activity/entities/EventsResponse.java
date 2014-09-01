@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.client;
+package sk.stuba.fiit.perconik.ivda.activity.entities;
 
 
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;

@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.uaca.client;
+package sk.stuba.fiit.perconik.ivda.activity.entities;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
