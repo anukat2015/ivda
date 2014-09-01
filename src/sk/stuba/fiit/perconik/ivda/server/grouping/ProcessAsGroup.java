@@ -3,7 +3,6 @@ package sk.stuba.fiit.perconik.ivda.server.grouping;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 
@@ -14,12 +13,8 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     private final IDividing divide;
     private IGrouping group;
 
-    public ProcessAsGroup(EventsRequest request) {
-        super(request);
+    public ProcessAsGroup() {
         divide = new DivideByOnline();
-        if (!request.getAscending()) {
-            throw new IllegalArgumentException("Ascening should be true");
-        }
     }
 
     /**
@@ -68,7 +63,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
     }
 
     @Override
-    protected void finished() {
+    public void finished() {
         if (group == null || group.isEmpty()) {
             return; // ked ziadny prvok nebol v odpovedi
         }

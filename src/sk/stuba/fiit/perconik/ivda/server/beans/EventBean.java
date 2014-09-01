@@ -6,8 +6,8 @@ import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.activity.entities.ActivityService;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
@@ -55,7 +55,7 @@ public class EventBean implements Serializable {
             return;
         }
 
-        EventDto event = EventsUtil.download(sid);
+        EventDto event = ActivityService.getInstance().getEvent(sid);
         if (event == null) {
             FacesUtil.addMessage("Event not found", FacesMessage.SEVERITY_INFO);
             return;

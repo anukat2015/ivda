@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -20,8 +19,7 @@ import java.util.Set;
 public final class PrintProcesses extends ProcessEventsToDataTable {
     private final Set<String> processes = new HashSet<>(1000);
 
-    public PrintProcesses(EventsRequest request) {
-        super(request);
+    public PrintProcesses() {
         checkFiles();
     }
 
@@ -60,7 +58,7 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
         }
     }
 
-    protected void finished() {
+    public void finished() {
         System.out.println("New processes:");
         for (String name : processes) {
             if (!ListOfProcesses.Type.BLACK_LIST.getList().contains(name) &&

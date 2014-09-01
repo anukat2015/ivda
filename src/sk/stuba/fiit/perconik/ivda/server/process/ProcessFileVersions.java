@@ -7,7 +7,6 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
@@ -21,10 +20,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public final class ProcessFileVersions extends ProcessEventsToDataTable {
-    public ProcessFileVersions(EventsRequest request) {
-        super(request);
-    }
-
     @Override
     protected void proccessItem(EventDto event) {
         if (!(event instanceof IdeCodeEventDto)) return;

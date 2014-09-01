@@ -116,6 +116,7 @@ public final class AstRcsWcfService {
     }
 
     public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
+        // TODO: caching
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
         //req.setUrl();  // nazov projektu $/PerConIK

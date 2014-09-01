@@ -5,7 +5,6 @@ import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 
@@ -55,14 +54,14 @@ public final class MyDataTable extends DataTable implements Serializable {
      *
      * @param time
      */
-    private static GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
+    /*private static GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
         if (time != null) {
             time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
             time.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
             time.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
         }
         return time;
-    }
+    } */
 
     /**
      * Pridaj riadok.
@@ -115,7 +114,7 @@ public final class MyDataTable extends DataTable implements Serializable {
     ) {
         // Uloz vysledok
         try {
-            addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+            addRowFromValues(start, end, content, blackoutName(group), className.toString(), description);
         } catch (TypeMismatchException e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }

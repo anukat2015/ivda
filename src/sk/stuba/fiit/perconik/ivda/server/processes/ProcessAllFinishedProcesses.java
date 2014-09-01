@@ -2,7 +2,6 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
 
@@ -16,8 +15,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 public class ProcessAllFinishedProcesses extends ProcessEventsToDataTable {
     private final FindFinishedProcess finishedProcess;
 
-    public ProcessAllFinishedProcesses(EventsRequest request) {
-        super(request);
+    public ProcessAllFinishedProcesses() {
         finishedProcess = new FindFinishedProcess() {
             @Override
             protected void found(FinishedProcess process) {
@@ -33,7 +31,7 @@ public class ProcessAllFinishedProcesses extends ProcessEventsToDataTable {
         finishedProcess.handle(cevent);
     }
 
-    protected void finished() {
+    public void finished() {
         finishedProcess.flushUnfinished();
     }
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import difflib.Delta;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.activity.entities.ActivityService;
 import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
@@ -61,7 +61,7 @@ public class TimelineRequest {
             );
         }
 
-        EventDto event = EventsUtil.download(id);
+        EventDto event = ActivityService.getInstance().getEvent(id);
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(event);

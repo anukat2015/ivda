@@ -6,7 +6,6 @@ import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
@@ -21,10 +20,6 @@ import java.util.List;
 @NotThreadSafe
 public final class ProcessChangesets extends ProcessEventsToDataTable {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
-
-    public ProcessChangesets(EventsRequest request) {
-        super(request);
-    }
 
     /**
      * Prechadzaj vsetky commity.

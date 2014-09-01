@@ -3,7 +3,6 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 import com.google.common.base.Strings;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.uaca.client.EventsRequest;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 
@@ -18,11 +17,6 @@ import java.util.Scanner;
 @NotThreadSafe
 public final class ProcessCodeWritten extends ProcessEventsToDataTable {
     protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
-    private static final long serialVersionUID = -1342729375850378231L;
-
-    public ProcessCodeWritten(EventsRequest request) {
-        super(request);
-    }
 
     @Override
     protected void proccessItem(EventDto event) {
