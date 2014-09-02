@@ -406,7 +406,7 @@ links.Timeline.mapColumnIds = function (dataTable) {
         var id = dataTable.getColumnId(col) || dataTable.getColumnLabel(col);
         cols[id] = col;
         if (id == 'start' || id == 'end' || id == 'content' || id == 'group' ||
-            id == 'className' || id == 'editable' || id == 'type' || id == 'metadata') {
+            id == 'className' || id == 'editable' || id == 'type' || id == 'metadata' || id == 'uid') {
             allUndefined = false;
         }
     }
@@ -443,7 +443,8 @@ links.Timeline.prototype.buildItemFromDataTable = function (data, row, cols) {
         'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
         'editable': ((cols.editable != undefined) ? data.getValue(row, cols.editable) : undefined),
         'type': ((cols.type != undefined) ? data.getValue(row, cols.type) : undefined),
-        'metadata': ((cols.metadata != undefined) ? data.getValue(row, cols.metadata) : undefined)
+        'metadata': ((cols.metadata != undefined) ? data.getValue(row, cols.metadata) : undefined),
+        'uid': ((cols.uid != undefined) ? data.getValue(row, cols.uid) : undefined)
     };
 };
 
@@ -612,7 +613,7 @@ links.Timeline.prototype.getItemIndex = function (element) {
 };
 
 links.Timeline.prototype.checkIntersection = function (start, end, item) {
-    if(item == undefined) {
+    if (item == undefined) {
         console.log("echo");
     }
     if (item.end) {
@@ -3752,7 +3753,8 @@ links.Timeline.prototype.changeItem = function (index, itemData, preventRender) 
         'className': itemData.hasOwnProperty('className') ? itemData.className : oldItem.className,
         'editable': itemData.hasOwnProperty('editable') ? itemData.editable : oldItem.editable,
         'type': itemData.hasOwnProperty('type') ? itemData.type : oldItem.type,
-        'metadata': itemData.hasOwnProperty('metadata') ? itemData.metadata : oldItem.metadata
+        'metadata': itemData.hasOwnProperty('metadata') ? itemData.metadata : oldItem.metadata,
+        'uid': itemData.hasOwnProperty('uid') ? itemData.uid : oldItem.uid
     });
     this.items[index] = newItem;
 

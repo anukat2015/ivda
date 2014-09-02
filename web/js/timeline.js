@@ -34,12 +34,12 @@ function getTimeline() {
 }
 
 function registerTooltips() {
-    $(".timeline-event-dot-container").qtip({
+    $(".timeline-event-circle").qtip({
         show: 'click',
         hide: 'unfocus',
         content: {
             text: function (event, api) {
-                var entityID = gGlobals.timeline.getSelectedValue(5);
+                var entityID = gGlobals.timeline.getSelectedValue(0);
                 if (entityID === undefined) {
                     api.set('content.text', "Undefined entity.");
                 } else {
