@@ -16,11 +16,10 @@ function getTimeline() {
         zoomMax: 1000 * 60 * 60 * 24 * 7,     // tyzden
         animate: false,   // TODO: vypnut pri velkom pocte prvkov
         animateZoom: false,
-        //cluster: true,
         showMajorLabels: true,
-        stackEvents: true,
-        //stackEvents: false,
-        //cluster: true,
+        //stackEvents: true,
+        stackEvents: false,
+        cluster: true,
         snapEvents: true,
         groupMinHeight: windowHeight * 0.1
     };
@@ -30,9 +29,9 @@ function getTimeline() {
     google.visualization.events.addListener(timeline, 'rangechange', onRangeChange);
     google.visualization.events.addListener(timeline, 'rangechanged', onRangeChanged);
     google.visualization.events.addListener(timeline, 'select', onSelect);
-    timeline.setCurrentTime(new Date().getTime() - 2 * 60 * 60 * 1000);
+    timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
     return timeline;
-};
+}
 
 function registerTooltips() {
     $(".timeline-event-dot-container").qtip({
@@ -41,20 +40,21 @@ function registerTooltips() {
         content: {
             text: function (event, api) {
                 var entityID = gGlobals.timeline.getSelectedValue(5);
-                if (entityID == undefined) {
-                    return;
+                if (entityID === undefined) {
+                    api.set('content.text', "Undefined entity.");
+                } else {
+                    $.ajax({
+                        url: gGlobals.getEventEntityURL(entityID)
+                    }).then(function (content) {
+                        // Set the tooltip content upon successful retrieval
+                        api.set('content.text', content);
+                    }, function (xhr, status, error) {
+                        // Upon failure... set the tooltip content to error
+                        api.set('content.text', status + ': ' + error);
+                    });
                 }
-                $.ajax({
-                    url: gGlobals.getEventEntityURL(entityID)
-                }).then(function (content) {
-                    // Set the tooltip content upon successful retrieval
-                    api.set('content.text', content);
-                }, function (xhr, status, error) {
-                    // Upon failure... set the tooltip content to error
-                    api.set('content.text', status + ': ' + error);
-                });
                 return 'Loading...'; // Set some initial text
             }
         }
     });
-};
+}

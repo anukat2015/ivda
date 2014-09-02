@@ -12,20 +12,19 @@ links.ChartPanel = function () {
     this.visibleOptions = {
         title: 'Histogram of visible objects',
         chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
-    }
+    };
     this.asynTask = undefined;
 };
 
 links.ChartPanel.prototype.computeStats = function () {
     var labels = this.computeLabels();
-    var data = gGlobals.timeline.getData();
     var labelMap = {};
     var typesMap = {};
-    gGlobals.timeline.getItemsByInterval(function (index, item) {
+    gGlobals.timeline.getVisibleChartItems(function (index, item) {
         // Vypocitaj statistiky pre Label
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
-            if (gGlobals.timeline.checkIntersection(label.start, label.end)) {
+            if (gGlobals.timeline.checkIntersection(label.start, label.end, item)) {
                 var value = parseInt(item.metadata);
                 if (labelMap[label.label] === undefined) {
                     labelMap[label.label] = value;

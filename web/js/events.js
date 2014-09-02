@@ -37,17 +37,19 @@ function onSelect() {
 }
 
 function onSetTime() {
-    if (!gGlobals) return;
-    gGlobals.timeline.setVisibleChartRange(gGlobals.getStart(), gGlobals.getEnd());
-    onRangeChange();
-    onRangeChanged();
+    if (gGlobals) {
+        gGlobals.timeline.setVisibleChartRange(gGlobals.getStart(), gGlobals.getEnd(), true);
+        onRangeChange();
+        onRangeChanged();
+    }
 }
 
 function onSetCurrentTime() {
-    if (!gGlobals) return;
-    gGlobals.timeline.setVisibleChartRangeNow();
-    onRangeChange();
-    onRangeChanged();
+    if (gGlobals) {
+        gGlobals.timeline.setVisibleChartRangeNow();
+        onRangeChange();
+        onRangeChanged();
+    }
 }
 
 function onRangeChanged() {

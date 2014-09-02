@@ -27,7 +27,7 @@ function Globals() {
             id: eventID
         });
         return restURL + parameters;
-    }
+    };
 
     this.getDiffURL = function () {
         var restURL = "rest/timeline/filediff?";
@@ -37,7 +37,7 @@ function Globals() {
             path: "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java"
         });
         return restURL + parameters;
-    }
+    };
 
     this.getServiceURL = function (start, end) {
         var restURL = "datatable?";
@@ -49,6 +49,6 @@ function Globals() {
             scale: this.timeline.step.scale
         });
         return restURL + parameters;
-    }
+    };
 
 }

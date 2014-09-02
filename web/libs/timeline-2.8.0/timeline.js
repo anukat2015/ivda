@@ -619,7 +619,7 @@ links.Timeline.prototype.checkIntersection = function (start, end, item) {
         // Point object
         return (start <= item.start && item.start <= end);
     }
-}
+};
 
 /**
  * Find all elements within the start and end range
@@ -669,7 +669,7 @@ links.Timeline.prototype.getSelectedValue = function (column) {
 
 links.Timeline.prototype.getVisibleChartItems = function (supplier) {
     return this.getItemsByInterval(new Date(this.start.valueOf()), new Date(this.end.valueOf()), supplier);
-}
+};
 
 /**
  * Set a new size for the timeline
@@ -3477,10 +3477,13 @@ links.Timeline.prototype.deleteItem = function (index, preventRender) {
  */
 links.Timeline.prototype.deleteItems = function (start, end) {
     var timeline = this;
+    var count = 0;
     this.getItemsByInterval(start, end, function (index, item) {
         timeline.deleteItem(index, true);
+        count++;
     });
-}
+    return count;
+};
 
 /**
  * Delete all items
