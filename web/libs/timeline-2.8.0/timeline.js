@@ -665,10 +665,10 @@ links.Timeline.prototype.getSelectedRow = function () {
  * @param column
  * @returns {*}
  */
-links.Timeline.prototype.getSelectedValue = function (column) {
+links.Timeline.prototype.getSelected = function (column) {
     var row = this.getSelectedRow();
     if (row == undefined) return undefined;
-    return this.data.getValue(row, column);
+    return this.items[row];
 };
 
 links.Timeline.prototype.getVisibleChartItems = function (supplier) {

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @NotThreadSafe
 public final class ProcessCodeWritten extends ProcessEventsToDataTable {
     protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
-    private static final Pattern EMPTY_LINE_PATTERN = Pattern.compile("\\s*");
+    private static final Pattern FULL_LINE_PATTERN = Pattern.compile("[^\\s]+");
 
     @Override
     protected void proccessItem(EventDto event) {
@@ -54,11 +54,11 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
             // TRIM sa pouzit nemoze, lebo to meni charakteristiku kodu ...
             String line = scanner.nextLine();
             //LOGGER.info(line);
-            Matcher m = EMPTY_LINE_PATTERN.matcher(line);
+            Matcher m = FULL_LINE_PATTERN.matcher(line);
             if (m.find()) {
-                emptyLines++;
-            } else {
                 count++;
+            } else {
+                emptyLines++;
             }
         }
         scanner.close();

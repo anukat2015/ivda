@@ -32,29 +32,3 @@ function getTimeline() {
     //timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
     return timeline;
 }
-
-function registerTooltips() {
-    $(".timeline-event-circle").qtip({
-        show: 'click',
-        hide: 'unfocus',
-        content: {
-            text: function (event, api) {
-                var entityID = gGlobals.timeline.getSelectedValue(0);
-                if (entityID === undefined) {
-                    api.set('content.text', "Undefined entity.");
-                } else {
-                    $.ajax({
-                        url: gGlobals.getEventEntityURL(entityID)
-                    }).then(function (content) {
-                        // Set the tooltip content upon successful retrieval
-                        api.set('content.text', content);
-                    }, function (xhr, status, error) {
-                        // Upon failure... set the tooltip content to error
-                        api.set('content.text', status + ': ' + error);
-                    });
-                }
-                return 'Loading...'; // Set some initial text
-            }
-        }
-    });
-}
