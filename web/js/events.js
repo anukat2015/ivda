@@ -15,6 +15,7 @@ function onLoad() {
             animate: false
         });
     });
+    registerQTip();
     /*gGlobals.table.draw(data, {
      allowHtml: true,
      showRowNumber: true,
@@ -32,33 +33,40 @@ function onReSize() {
     gGlobals.timeline.redraw();
 }
 
-function onSelect() {
-    $(this).qtip({
-        overwrite: false,
-        hide: 'unfocus',
-        show: {
-            ready: true // Needed to make it show on first mouseover event
-        },
-        content: {
-            text: function (event, api) {
-                var entityID = gGlobals.timeline.getSelected();
-                if (entityID === undefined) {
-                    api.set('content.text', "Undefined entity.");
-                } else {
-                    $.ajax({
-                        url: gGlobals.getEventEntityURL(entityID.uid)
-                    }).then(function (content) {
-                        // Set the tooltip content upon successful retrieval
-                        api.set('content.text', content);
-                    }, function (xhr, status, error) {
-                        // Upon failure... set the tooltip content to error
-                        api.set('content.text', status + ': ' + error);
-                    });
+function registerQTip() {
+    $(document).on("click", '.timeline-event-circle', function ($e) {
+        $(this).qtip({
+            overwrite: false,
+            hide: 'unfocus',
+            show: 'click',
+            /*show: {
+                ready: true // Needed to make it show on first mouseover event
+            }, */
+            content: {
+                text: function (event, api) {
+                    var entityID = gGlobals.timeline.getSelected();
+                    if (entityID === undefined) {
+                        api.set('content.text', "Undefined entity.");
+                    } else {
+                        $.ajax({
+                            url: gGlobals.getEventEntityURL(entityID.uid)
+                        }).then(function (content) {
+                            // Set the tooltip content upon successful retrieval
+                            api.set('content.text', content);
+                        }, function (xhr, status, error) {
+                            // Upon failure... set the tooltip content to error
+                            api.set('content.text', status + ': ' + error);
+                        });
+                    }
+                    return 'Loading...'; // Set some initial text
                 }
-                return 'Loading...'; // Set some initial text
             }
-        }
+        });
     });
+}
+
+function onSelect() {
+
 }
 
 function onSetTime() {

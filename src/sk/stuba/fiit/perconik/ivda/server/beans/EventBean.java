@@ -1,6 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.server.beans;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Strings;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
@@ -39,6 +43,8 @@ public class EventBean implements Serializable {
 
     private List<FileVersionDto> files;
     private FileVersionDto choosedFile;
+    private EventDto event;
+    private String text;
 
     public EventBean() {
         LOGGER.info("constr");
@@ -50,20 +56,30 @@ public class EventBean implements Serializable {
         viewStateBean.setState(ViewStateBean.ViewState.CHANGED_FILES);
 
         String sid = FacesUtil.getQueryParam("id");
-        if (sid == null) {
+        if (Strings.isNullOrEmpty(sid)) {
             FacesUtil.addMessage("sid query parameter is empty", FacesMessage.SEVERITY_ERROR);
             return;
         }
 
-        EventDto event = ActivityService.getInstance().getEvent(sid);
+        event = ActivityService.getInstance().getEvent(sid);
         if (event == null) {
             FacesUtil.addMessage("Event not found", FacesMessage.SEVERITY_INFO);
             return;
         }
 
         if (!(event instanceof IdeCheckinEventDto)) {
+            viewStateBean.setState(ViewStateBean.ViewState.EVENT);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            try {
+                text = mapper.writeValueAsString(event);
+            } catch (JsonProcessingException e) {
+                LOGGER.error("json serialize", e);
+                text = "error";
+            }
             return;
         }
+        viewStateBean.setState(ViewStateBean.ViewState.DIFF_FILES);
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
         try {
@@ -124,5 +140,21 @@ public class EventBean implements Serializable {
 
     public void setViewStateBean(ViewStateBean viewStateBean) {
         this.viewStateBean = viewStateBean;
+    }
+
+    public EventDto getEvent() {
+        return event;
+    }
+
+    public void setEvent(EventDto event) {
+        this.event = event;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

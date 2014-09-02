@@ -30,9 +30,9 @@ public class ViewStateBean implements Serializable {
     }
 
     public enum ViewState implements Serializable {
-        EVENT("event.xhtml"),
-        CHANGED_FILES("changedFiles.xhtml"),
-        DIFF_FILES("diffFiles.xhtml");
+        EVENT("ajax/event.xhtml"),
+        CHANGED_FILES("ajax/changedFiles.xhtml"),
+        DIFF_FILES("ajax/diffFiles.xhtml");
 
         String viewName;
 

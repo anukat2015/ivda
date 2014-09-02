@@ -23,6 +23,7 @@ links.Timeline.Item = function (data, options) {
         this.group = data.group;
         this.type = data.type;
         this.metadata = data.metadata;
+        this.uid = data.uid;
     }
     this.top = 0;
     this.left = 0;

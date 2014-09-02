@@ -5,29 +5,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:t="http://myfaces.apache.org/tomahawk"
         >
 <body>
 
 <ui:component>
     <div class="container">
-        <h:form prependId="false" id="detailEvent">
-            <t:dataList id="data2"
-                        styleClass="standardList"
-                        var="file"
-                        value="#{event.files}"
-                        layout="unorderedList" forceId="true">
-                <t:commandLink value="#{file.url.value}">
-                    <f:setPropertyActionListener
-                            value="#{file}"
-                            target="#{event.choosedFile}"
-                            />
-                    <f:ajax event="click" update=":detailEvent" render=":detailEvent" execute="detailEvent"
-                            listener="#{event.chooseFile}"/>
-                </t:commandLink>
-            </t:dataList>
-        </h:form>
+        <pre>
+            <h:outputText value="#{event.text}"/>
+        </pre>
     </div>
 
 </ui:component>

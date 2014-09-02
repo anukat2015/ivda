@@ -22,7 +22,7 @@ function Globals() {
     };
 
     this.getEventEntityURL = function (eventID) {
-        var restURL = "faces/event.xhtml?";
+        var restURL = "faces/ajax.xhtml?";
         var parameters = $.param({
             id: eventID
         });

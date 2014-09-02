@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -25,7 +24,6 @@ public final class JacksonContextResolver implements ContextResolver<ObjectMappe
     public JacksonContextResolver() {
         mapper = new ObjectMapper();
         mapper.registerModule(new EventDeserializerModule());
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 
     @Override
