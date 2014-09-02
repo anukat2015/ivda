@@ -42,11 +42,11 @@ function Chunks() {
         if (chunked !== 0) {
             if (newMax < this.actualMax) {
                 // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
-                console.log("deleteItems " + new Date(this.actualMax).toString() + " " + new Date(newMax).toString());
-                changed = gGlobals.timeline.deleteItems(this.actualMax, newMax);
+                console.log("deleteItems " + new Date(newMax).toString() + " " + new Date(this.actualMax).toString());
+                changed = gGlobals.timeline.deleteItems(newMax, this.actualMax);
                 console.log("deleted " + changed);
             } else {
-                this.loadChunks(newMax, chunked);
+                this.loadChunks(this.actualMax, chunked);
             }
             this.actualMax = newMax;
         }

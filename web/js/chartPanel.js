@@ -76,8 +76,8 @@ links.ChartPanel.prototype.drawCharts = function () {
     var activityData = new google.visualization.DataTable();
     activityData.addColumn('string', 'Name');
     activityData.addColumn('number', 'Count');
-    Object.keys(stats.label).forEach(function (key) {
-        activityData.addRow([ key, stats.label[key]]);
+    Object.keys(stats.types).forEach(function (key) {
+        activityData.addRow([ key, stats.types[key]]);
     });
     this.activityChart.draw(activityData, this.activityOptions);
 
@@ -85,8 +85,8 @@ links.ChartPanel.prototype.drawCharts = function () {
     var linesData = new google.visualization.DataTable();
     linesData.addColumn('string', 'Date');
     linesData.addColumn('number', 'Changed lines');
-    Object.keys(stats.types).forEach(function (key) {
-        linesData.addRow([ key, stats.types[key]]);
+    Object.keys(stats.label).forEach(function (key) {
+        linesData.addRow([ key, stats.label[key]]);
     });
     if (linesData.getNumberOfRows() > 0) {
         this.visibleChart.draw(linesData, this.visibleOptions);

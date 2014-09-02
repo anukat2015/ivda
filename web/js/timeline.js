@@ -29,7 +29,7 @@ function getTimeline() {
     google.visualization.events.addListener(timeline, 'rangechange', onRangeChange);
     google.visualization.events.addListener(timeline, 'rangechanged', onRangeChanged);
     google.visualization.events.addListener(timeline, 'select', onSelect);
-    timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
+    //timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
     return timeline;
 }
 

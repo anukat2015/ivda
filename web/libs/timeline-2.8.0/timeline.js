@@ -612,6 +612,9 @@ links.Timeline.prototype.getItemIndex = function (element) {
 };
 
 links.Timeline.prototype.checkIntersection = function (start, end, item) {
+    if(item == undefined) {
+        console.log("echo");
+    }
     if (item.end) {
         // Time range object // NH use getLeft and getRight here
         return (start <= item.start && item.end <= end);
@@ -632,7 +635,7 @@ links.Timeline.prototype.getItemsByInterval = function (start, end, supplier) {
     var items = this.items;
 
     if (items) {
-        for (var i = 0, iMax = items.length; i < iMax; i++) {
+        for (var i = 0; i < items.length; i++) {
             var item = items[i];
             if (this.checkIntersection(start, end, item)) {
                 supplier(i, item);
