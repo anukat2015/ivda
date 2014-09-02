@@ -53,6 +53,7 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         EventDto first = group.getFirstEvent();
         EventDto last = group.getLastEvent();
         dataTable.add(
+                null,
                 first.getUser(),
                 first.getTimestamp(),
                 last.getTimestamp(),

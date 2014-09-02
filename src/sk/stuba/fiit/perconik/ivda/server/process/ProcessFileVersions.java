@@ -72,6 +72,6 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
                 + "</pre></span>";
 
 
-        dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "pastefromweb", description);
+        dataTable.add(event.getEventId(), event.getUser(), event.getTimestamp(), null, MyDataTable.ClassName.AVAILABLE, "pastefromweb", description);
     }
 }

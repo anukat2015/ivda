@@ -41,7 +41,7 @@ public final class TimelineServlet extends DataSourceServlet {
         request.setTime(start, end);
         ProcessEventsToDataTable process;
 
-        request.setUser("steltecia\\pzbell");
+        request.setUser("steltecia\\krastocny");
         request.setType(new IdeCodeEventDto());
         process = new ProcessCodeWritten();
 

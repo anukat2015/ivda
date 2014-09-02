@@ -19,6 +19,6 @@ public final class ProcessAllEvents extends ProcessEventsToDataTable {
         String description = "<span class=\"more\"><pre>"
                 + event + "<br/>"
                 + "</pre></span>";
-        dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, action, description);
+        dataTable.add(event.getEventId(), event.getUser(), event.getTimestamp(), null, MyDataTable.ClassName.AVAILABLE, action, description);
     }
 }

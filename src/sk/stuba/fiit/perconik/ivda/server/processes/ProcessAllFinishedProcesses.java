@@ -19,7 +19,7 @@ public class ProcessAllFinishedProcesses extends ProcessEventsToDataTable {
         finishedProcess = new FindFinishedProcess() {
             @Override
             protected void found(FinishedProcess process) {
-                dataTable.add("A", process.start, process.end, MyDataTable.ClassName.AVAILABLE, process.process.getName());
+                dataTable.add(null, "A", process.start, process.end, MyDataTable.ClassName.AVAILABLE, process.process.getName(), null);
             }
         };
     }

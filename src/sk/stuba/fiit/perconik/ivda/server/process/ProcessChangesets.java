@@ -56,7 +56,7 @@ public final class ProcessChangesets extends ProcessEventsToDataTable {
                 if (file.getUrl().getValue().equals(ZAUJIMAVY_SUBOR)) {
                     LOGGER.info(changesetIdInRcs);
                     //FileVersionsUtil.printDiff(file.getUrl().getValue(), file.getId(), file.getAncestor1Id().getValue());
-                    dataTable.add(event.getUser(), event.getTimestamp(), MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", event.getEventId());
+                    dataTable.add(event.getEventId(), event.getUser(), event.getTimestamp(), null, MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", null);
                     return; // ignoruj ostatne
                 }
             }

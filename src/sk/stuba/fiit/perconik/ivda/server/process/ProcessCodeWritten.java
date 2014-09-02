@@ -2,12 +2,13 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.common.base.Strings;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Seky on 21. 8. 2014.
@@ -17,6 +18,7 @@ import java.util.Scanner;
 @NotThreadSafe
 public final class ProcessCodeWritten extends ProcessEventsToDataTable {
     protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
+    private static final Pattern EMPTY_LINE_PATTERN = Pattern.compile("\\s*");
 
     @Override
     protected void proccessItem(EventDto event) {
@@ -25,14 +27,11 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         }
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         //LOGGER.info(cevent);
-
-        dataTable.add(
-                event.getUser(),
-                event.getTimestamp(),
-                EventsUtil.event2Classname(event),
-                EventsUtil.event2name(event),
-                Integer.toString(computeSize(cevent))
-        );
+        int size = computeSize(cevent);
+        if (size > 0) {
+            // Ignorujeme ziadne zmeny v kode
+            dataTable.addEvent(event, Integer.toString(size));
+        }
     }
 
     /**
@@ -49,13 +48,24 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         }
 
         int count = 0;
+        int emptyLines = 0;
         Scanner scanner = new Scanner(txt);
         while (scanner.hasNextLine()) {
+            // TRIM sa pouzit nemoze, lebo to meni charakteristiku kodu ...
             String line = scanner.nextLine();
             //LOGGER.info(line);
-            count++;
+            Matcher m = EMPTY_LINE_PATTERN.matcher(line);
+            if (m.find()) {
+                emptyLines++;
+            } else {
+                count++;
+            }
         }
         scanner.close();
-        return count;
+        if (count == 0) {
+            // Zmena neobsahuje aspon jeden normalny riadok
+            return 0;
+        }
+        return count + emptyLines;
     }
 }

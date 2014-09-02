@@ -8,6 +8,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -29,6 +30,7 @@ public final class MyDataTable extends DataTable implements Serializable {
      */
     private static final List<ColumnDescription> COLUMN_DESCRIPTIONS = ImmutableList.copyOf(
             new ColumnDescription[]{
+                    new ColumnDescription("uid", ValueType.TEXT, "Event id"),
                     new ColumnDescription("start", ValueType.DATETIME, "Start date"),
                     new ColumnDescription("end", ValueType.DATETIME, "End date"),
                     new ColumnDescription("content", ValueType.TEXT, "Content"),
@@ -64,61 +66,25 @@ public final class MyDataTable extends DataTable implements Serializable {
         return time;
     }
 
-    /**
-     * Pridaj riadok.
-     *
-     * @param group
-     * @param start
-     * @param className
-     * @param content
-     * @throws TypeMismatchException
-     */
-    public void add(String group, GregorianCalendar start, ClassName className, String content) {
-        add(group, start, null, className, content, null);
-    }
-
-    /**
-     * Pridaj riadok.
-     *
-     * @param group
-     * @param start
-     * @param className
-     * @param content
-     * @param description
-     * @throws TypeMismatchException
-     */
-    public void add(String group, GregorianCalendar start, ClassName className, String content, String description) {
-        add(group, start, null, className, content, description);
-    }
-
-    /**
-     * Pridaj riadok.
-     *
-     * @param group
-     * @param start
-     * @param end
-     * @param className
-     * @param content
-     * @throws TypeMismatchException
-     */
-    public void add(String group, GregorianCalendar start, GregorianCalendar end, ClassName className, String content) {
-        add(group, start, end, className, content, null);
-    }
-
     @SuppressWarnings("MethodWithTooManyParameters")
-    public void add(String group,
+    public void add(@Nullable String uid,
+                    String group,
                     GregorianCalendar start,
                     @Nullable GregorianCalendar end,
                     ClassName className,
                     @Nullable String content,
-                    @Nullable String description
+                    @Nullable String metadata
     ) {
         // Uloz vysledok
         try {
-            addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), description);
+            addRowFromValues(uid, rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), metadata);
         } catch (TypeMismatchException e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }
+    }
+
+    public void addEvent(EventDto event, String description) {
+        add(event.getEventId(), event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), description);
     }
 
     private String blackoutName(@Nullable String name) {
