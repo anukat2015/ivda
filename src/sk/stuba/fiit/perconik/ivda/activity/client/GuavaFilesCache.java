@@ -66,8 +66,9 @@ public abstract class GuavaFilesCache<Key, Value extends Serializable> implement
             FileChannel channel = raf.getChannel();
             lock = channel.lock();
             try {
+                response = (Value) SerializationUtils.deserialize(new BufferedInputStream(new FileInputStream(raf.getFD())));
                 LOGGER.info("Deserializing from " + cacheFile);
-                return (Value) SerializationUtils.deserialize(new BufferedInputStream(new FileInputStream(raf.getFD())));
+                return response;
             } catch (Exception e) {
                 // Chyba pri deserializacii, vymaz teda objekt a uloz ho znova
                 cacheFile.delete();

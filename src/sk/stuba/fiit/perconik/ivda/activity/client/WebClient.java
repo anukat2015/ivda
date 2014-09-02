@@ -37,9 +37,8 @@ public class WebClient {
 
 
         Invocation invocation = fullTarget.request(MediaType.APPLICATION_JSON_TYPE).buildGet();
-        LOGGER.info("synchronizedRequest start " + uri);
+        LOGGER.info("synchronizedRequest " + uri);
         Response response = invocation.invoke();
-        LOGGER.info("synchronizedRequest end ");
 
         try {
             Response.Status.Family status = response.getStatusInfo().getFamily();
