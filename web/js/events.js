@@ -40,16 +40,16 @@ function registerQTip() {
             hide: 'unfocus',
             show: 'click',
             /*show: {
-                ready: true // Needed to make it show on first mouseover event
-            }, */
+             ready: true // Needed to make it show on first mouseover event
+             }, */
             content: {
                 text: function (event, api) {
-                    var entityID = gGlobals.timeline.getSelected();
-                    if (entityID === undefined) {
-                        api.set('content.text', "Undefined entity.");
+                    var item = gGlobals.timeline.getSelected();
+                    if (item === undefined) {
+                        api.set('content.text', "Not selected entity.");
                     } else {
-                        $.ajax({
-                            url: gGlobals.getEventEntityURL(entityID.uid)
+                        $.ajax({        // {id: entityID.uid}
+                            url: gGlobals.getAjaxURL(item.metadata)
                         }).then(function (content) {
                             // Set the tooltip content upon successful retrieval
                             api.set('content.text', content);

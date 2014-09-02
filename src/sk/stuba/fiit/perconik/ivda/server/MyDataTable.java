@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
@@ -38,7 +40,7 @@ public final class MyDataTable extends DataTable implements Serializable {
                     new ColumnDescription("className", ValueType.TEXT, "ClassName"),
                     new ColumnDescription("metadata", ValueType.TEXT, "Metadata")
             });
-
+    private static ObjectMapper mapper = new ObjectMapper();
     /**
      * Udaje dodavene do group sa nahradzuju inym retazcom.
      * Ochrana sukromia.
@@ -83,8 +85,14 @@ public final class MyDataTable extends DataTable implements Serializable {
         }
     }
 
-    public void addEvent(EventDto event, String description) {
-        add(event.getEventId(), event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), description);
+    public void addEvent(EventDto event, Object metadata) {
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(metadata);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("cannot serialize", e);
+        }
+        add(event.getEventId(), event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), json);
     }
 
     private String blackoutName(@Nullable String name) {

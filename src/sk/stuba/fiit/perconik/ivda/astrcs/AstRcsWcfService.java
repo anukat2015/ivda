@@ -119,7 +119,7 @@ public final class AstRcsWcfService {
         // TODO: caching
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
-        //req.setUrl();  // nazov projektu $/PerConIK
+        // TODO: req.setUrl();  // nazov projektu $/PerConIK
         // dokument $/PerConIK/ITGenerator/ITGenerator.Lib/Entities/ActivitySubjectOrObject.cs
         SearchRcsProjectsResponse response = service.searchRcsProjects(req);
         checkResponse(response, "getRcsProjectDto");

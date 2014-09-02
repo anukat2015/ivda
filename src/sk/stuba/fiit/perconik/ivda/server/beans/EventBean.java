@@ -9,19 +9,23 @@ import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
+import difflib.Delta;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.entities.ActivityService;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +41,7 @@ import java.util.List;
 public class EventBean implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(EventBean.class);
     private static final long serialVersionUID = 2563906954713653265L;
+    private static final ObjectMapper MAPPER;
 
     @ManagedProperty(value = "#{viewState}")
     private ViewStateBean viewStateBean;
@@ -46,39 +51,63 @@ public class EventBean implements Serializable {
     private EventDto event;
     private String text;
 
+    static {
+        MAPPER = new ObjectMapper();
+        MAPPER.configure(SerializationFeature.INDENT_OUTPUT, true);
+    }
+
     public EventBean() {
         LOGGER.info("constr");
     }
 
-    @PostConstruct
-    public void init() {
-        LOGGER.info("init");
-        viewStateBean.setState(ViewStateBean.ViewState.CHANGED_FILES);
+    public void fileDiff(String id, String ancestor, String path) {
+        if (Strings.isNullOrEmpty(id) || Strings.isNullOrEmpty(ancestor) || Strings.isNullOrEmpty(path)) {
+            throw new WebApplicationException(
+                    Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
+                            .entity("path / version / old parameter is mandatory")
+                            .build()
+            );
+        }
+        viewStateBean.setState(ViewStateBean.ViewState.EVENT);
+        try {
+            List<Delta> deltas = FileVersionsUtil.printDiff(path, Integer.valueOf(id), Integer.valueOf(ancestor));
+            text = MAPPER.writeValueAsString(deltas);
+        } catch (Exception e) {
+            LOGGER.error("json serialize", e);
+            text = "error";
+        }
+    }
 
-        String sid = FacesUtil.getQueryParam("id");
-        if (Strings.isNullOrEmpty(sid)) {
-            FacesUtil.addMessage("sid query parameter is empty", FacesMessage.SEVERITY_ERROR);
-            return;
+    public void eventDownload(String id) {
+        if (Strings.isNullOrEmpty(id)) {
+            throw new WebApplicationException(
+                    Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
+                            .entity("sid query parameter is empt")
+                            .build()
+            );
         }
 
-        event = ActivityService.getInstance().getEvent(sid);
+        event = ActivityService.getInstance().getEvent(id);
         if (event == null) {
-            FacesUtil.addMessage("Event not found", FacesMessage.SEVERITY_INFO);
-            return;
+            throw new WebApplicationException(
+                    Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
+                            .entity("Event not found")
+                            .build()
+            );
         }
+    }
 
-        if (!(event instanceof IdeCheckinEventDto)) {
-            viewStateBean.setState(ViewStateBean.ViewState.EVENT);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            try {
-                text = mapper.writeValueAsString(event);
-            } catch (JsonProcessingException e) {
-                LOGGER.error("json serialize", e);
-                text = "error";
-            }
-            return;
+    public void eventDetail() {
+        viewStateBean.setState(ViewStateBean.ViewState.EVENT);
+        try {
+            text = MAPPER.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("json serialize", e);
+            text = "error";
         }
+    }
+
+    public void checkIn() {
         viewStateBean.setState(ViewStateBean.ViewState.DIFF_FILES);
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
@@ -109,6 +138,27 @@ public class EventBean implements Serializable {
         } catch (AstRcsWcfService.NotFoundException e) {
             LOGGER.info("Chybaju nejake udaje:" + e.getMessage());
         }
+    }
+
+    @PostConstruct
+    public void init() {
+        LOGGER.info("init");
+
+        String id = FacesUtil.getQueryParam("id");
+        String ancestor = FacesUtil.getQueryParam("ancestor");
+        String path = FacesUtil.getQueryParam("path");
+
+        if (!Strings.isNullOrEmpty(ancestor)) {
+            fileDiff(id, ancestor, path);
+            return;
+        }
+        eventDownload(id);
+        if (!(event instanceof IdeCheckinEventDto)) {
+            eventDetail();
+            return;
+        }
+
+        checkIn();
     }
 
     public Collection<FileVersionDto> getFiles() {

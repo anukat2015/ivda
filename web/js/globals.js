@@ -21,22 +21,8 @@ function Globals() {
         return this.dateFormatter.parse(this.endInput.value);
     };
 
-    this.getEventEntityURL = function (eventID) {
-        var restURL = "faces/ajax.xhtml?";
-        var parameters = $.param({
-            id: eventID
-        });
-        return restURL + parameters;
-    };
-
-    this.getDiffURL = function () {
-        var restURL = "rest/timeline/filediff?";
-        var parameters = $.param({
-            version: 31517,
-            old: 33408,
-            path: "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java"
-        });
-        return restURL + parameters;
+    this.getAjaxURL = function (parameters) {
+        return "faces/ajax.xhtml?" + $.param(parameters);
     };
 
     this.getServiceURL = function (start, end) {

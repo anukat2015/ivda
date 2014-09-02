@@ -22,7 +22,7 @@ links.Timeline.Item = function (data, options) {
         this.editable = data.editable;
         this.group = data.group;
         this.type = data.type;
-        this.metadata = data.metadata;
+        this.metadata = JSON.parse(data.metadata);
         this.uid = data.uid;
     }
     this.top = 0;

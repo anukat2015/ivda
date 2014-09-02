@@ -35,20 +35,22 @@ public final class FileVersionsUtil {
     }
 
     private static List<String> saveContent(String path, Integer id) throws AstRcsWcfService.NotFoundException {
-        File cacheFile = new File(CACHE_FOLDER, getName(path, id));
-        try {
-            if (!cacheFile.exists()) {
-                // Udaje prichdzaju zo specialnymi znakmy
-                String content = AstRcsWcfService.getInstance().getFileContent(id);
-                Files.write(content, cacheFile, Charset.defaultCharset());
-                LOGGER.info("Ulozene do cache:" + cacheFile);
-            }
+        synchronized (CACHE_FOLDER) {
+            File cacheFile = new File(CACHE_FOLDER, getName(path, id));
+            try {
+                if (!cacheFile.exists()) {
+                    // Udaje prichdzaju zo specialnymi znakmy
+                    String content = AstRcsWcfService.getInstance().getFileContent(id);
+                    Files.write(content, cacheFile, Charset.defaultCharset());
+                    LOGGER.info("Ulozene do cache:" + cacheFile);
+                }
 
-            // Udaje vychadzaju bez specialnyzch znakov
-            return Collections.unmodifiableList(Files.readLines(cacheFile, Charset.defaultCharset()));
-        } catch (IOException e) {
-            LOGGER.error("Nemozem precitat / zapisat zo suboru.", e);
-            throw new AstRcsWcfService.NotFoundException();
+                // Udaje vychadzaju bez specialnyzch znakov
+                return Collections.unmodifiableList(Files.readLines(cacheFile, Charset.defaultCharset()));
+            } catch (IOException e) {
+                LOGGER.error("Nemozem precitat / zapisat zo suboru.", e);
+                throw new AstRcsWcfService.NotFoundException();
+            }
         }
     }
 

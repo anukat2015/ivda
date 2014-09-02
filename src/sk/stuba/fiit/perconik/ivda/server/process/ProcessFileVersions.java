@@ -1,12 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
+import com.google.common.base.Strings;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
-import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
@@ -23,19 +23,18 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
     @Override
     protected void proccessItem(EventDto event) {
         if (!(event instanceof IdeCodeEventDto)) return;
-        if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
-        String action = event.getActionName();
+        //if (!event.getEventTypeUri().toString().contains("code/pastefromweb")) return;
 
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
         IdeDocumentDto dokument = cevent.getDocument();
         if (cevent.getStartColumnIndex() != null) {
-            LOGGER.info("ZAUJIMAVE getStartColumnIndex nieje null");
+            LOGGER.warn("ZAUJIMAVE getStartColumnIndex nieje null");
         }
         if (cevent.getEndColumnIndex() != null) {
-            LOGGER.info("ZAUJIMAVE getEndColumnIndex nieje null");
+            LOGGER.warn("ZAUJIMAVE getEndColumnIndex nieje null");
         }
         if (dokument.getBranch() != null) {
-            LOGGER.info("ZAUJIMAVE getBranch nieje null");
+            LOGGER.warn("ZAUJIMAVE getBranch nieje null");
         }
 
         sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
@@ -45,33 +44,39 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
         }
 
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
-        if (changesetIdInRcs.isEmpty() || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
+        if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
             LOGGER.info("changesetIdInRcs empty");
             return;
         }
 
         try {
-            LOGGER.info("Skopiroval:" + cevent.getText());
-            RcsServerDto server = AstRcsWcfService.getInstance().getRcsServerDto(dokument.getRcsServer().getUrl());
+            LOGGER.info("Skopiroval:\\n" + cevent.getText());
+            RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-            FileVersionsUtil.getContent(fileVersion);
-            // List<ChangesetDto> vysledok = AstRcsWcfService.getChangeset(fileVersion.getEntityId());
+            int size = EventsUtil.codeWritten(cevent.getText());
+            if (size > 0) {
+                dataTable.addEvent(event, new FileInfo(fileVersion));
+            } else {
+                LOGGER.warn("Prazdne riadky!");
+            }
+        } catch (AstRcsWcfService.NotFoundException e) {
+            LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
         } catch (Exception e) {
-            LOGGER.info("proccessItem", e);
+            LOGGER.error("proccessItem", e);
         }
+    }
 
-        String description = action
-                + "<span class=\"more\"><pre>"
-                + cevent.getText() + "<br/>"
-                + cevent.getStartRowIndex() + "," + cevent.getEndRowIndex() + "<br/>"
-                + dokument.getChangesetIdInRcs() + "<br/>"
-                + dokument.getServerPath() + "<br/>"
-                + rcsServer + "<br/>"
-                + "</pre></span>";
+    public static class FileInfo {
+        String path;
+        Integer id;
+        Integer ancestor;
 
-
-        dataTable.add(event.getEventId(), event.getUser(), event.getTimestamp(), null, MyDataTable.ClassName.AVAILABLE, "pastefromweb", description);
+        public FileInfo(FileVersionDto file) {
+            path = file.getUrl().getValue();
+            id = file.getId();
+            ancestor = file.getAncestor1Id().getValue();
+        }
     }
 }
