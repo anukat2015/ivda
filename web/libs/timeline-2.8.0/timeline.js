@@ -443,7 +443,7 @@ links.Timeline.prototype.buildItemFromDataTable = function (data, row, cols) {
         'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
         'editable': ((cols.editable != undefined) ? data.getValue(row, cols.editable) : undefined),
         'type': ((cols.type != undefined) ? data.getValue(row, cols.type) : undefined),
-        'metadata': ((cols.metadata != undefined) ? data.getValue(row, cols.metadata) : undefined),
+        'metadata': ((cols.metadata != undefined) ? JSON.parse(data.getValue(row, cols.metadata)) : undefined),
         'uid': ((cols.uid != undefined) ? data.getValue(row, cols.uid) : undefined)
     };
 };

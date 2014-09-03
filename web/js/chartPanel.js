@@ -13,23 +13,39 @@ links.ChartPanel = function () {
         title: 'Histogram of visible objects',
         chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     };
+
+    this.metadataChart = new google.visualization.PieChart(document.getElementById('pieChart3'));
+    this.metadataOptions = {
+        title: 'Chart of changed lines',
+        chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
+    };
+
     this.asynTask = undefined;
 };
 
 links.ChartPanel.prototype.computeStats = function () {
     var labels = this.computeLabels();
-    var labelMap = {};
+    var visibleMap = {};
     var typesMap = {};
+    var linesMap = {};
     gGlobals.timeline.getVisibleChartItems(function (index, item) {
-        // Vypocitaj statistiky pre Label
+
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
             if (gGlobals.timeline.checkIntersection(label.start, label.end, item)) {
-                var value = parseInt(item.metadata);
-                if (labelMap[label.label] === undefined) {
-                    labelMap[label.label] = value;
+                // Vypocitaj statistiky pre Label
+                if (visibleMap[label.label] === undefined) {
+                    visibleMap[label.label] = 1;
                 } else {
-                    labelMap[label.label] += value;
+                    visibleMap[label.label]++;
+                }
+
+                // Statistiky pre pocet zmenenych riadkov
+                var value = parseInt(item.metadata.changedLines);
+                if (linesMap[label.label] === undefined) {
+                    linesMap[label.label] = value;
+                } else {
+                    linesMap[label.label] += value;
                 }
                 break;
             }
@@ -44,7 +60,7 @@ links.ChartPanel.prototype.computeStats = function () {
         }
     });
 
-    return {label: labelMap, types: typesMap};
+    return {visible: visibleMap, types: typesMap, lines: linesMap};
 };
 
 links.ChartPanel.prototype.computeLabels = function () {
@@ -69,28 +85,36 @@ links.ChartPanel.prototype.computeLabels = function () {
 };
 
 links.ChartPanel.prototype.drawCharts = function () {
+    var data;
     var stats = this.computeStats();
     console.log(stats);
 
     // Activity
-    var activityData = new google.visualization.DataTable();
-    activityData.addColumn('string', 'Name');
-    activityData.addColumn('number', 'Count');
+    data = new google.visualization.DataTable();
+    data.addColumn('string', 'Name');
+    data.addColumn('number', 'Count');
     Object.keys(stats.types).forEach(function (key) {
-        activityData.addRow([ key, stats.types[key]]);
+        data.addRow([ key, stats.types[key]]);
     });
-    this.activityChart.draw(activityData, this.activityOptions);
+    this.activityChart.draw(data, this.activityOptions);
 
     // Label
-    var linesData = new google.visualization.DataTable();
-    linesData.addColumn('string', 'Date');
-    linesData.addColumn('number', 'Changed lines');
-    Object.keys(stats.label).forEach(function (key) {
-        linesData.addRow([ key, stats.label[key]]);
+    data = new google.visualization.DataTable();
+    data.addColumn('string', 'Date');
+    data.addColumn('number', 'Count');
+    Object.keys(stats.visible).forEach(function (key) {
+        data.addRow([ key, stats.visible[key]]);
     });
-    if (linesData.getNumberOfRows() > 0) {
-        this.visibleChart.draw(linesData, this.visibleOptions);
-    }
+    this.visibleChart.draw(data, this.visibleOptions);
+
+    // Changed lines
+    data = new google.visualization.DataTable();
+    data.addColumn('string', 'Date');
+    data.addColumn('number', 'Changed lines');
+    Object.keys(stats.lines).forEach(function (key) {
+        data.addRow([ key, stats.lines[key]]);
+    });
+    this.metadataChart.draw(data, this.metadataOptions);
 };
 
 links.ChartPanel.prototype.redraw = function () {
