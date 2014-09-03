@@ -55,9 +55,9 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-            int size = EventsUtil.codeWritten(cevent.getText());
-            if (size > 0) {
-                dataTable.addEvent(event, new FileInfo(fileVersion));
+            int changedLines = EventsUtil.codeWritten(cevent.getText());
+            if (changedLines > 0) {
+                dataTable.addEvent(event, new Description(fileVersion, changedLines));
             } else {
                 LOGGER.warn("Prazdne riadky!");
             }
@@ -68,15 +68,33 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
         }
     }
 
-    public static class FileInfo {
-        String path;
-        Integer id;
-        Integer ancestor;
+    public static class Description {
+        private String path;
+        private Integer id;
+        private Integer ancestor;
+        private Integer changedLines;
 
-        public FileInfo(FileVersionDto file) {
+        public Description(FileVersionDto file, Integer changedLines) {
             path = file.getUrl().getValue();
             id = file.getId();
             ancestor = file.getAncestor1Id().getValue();
+            this.changedLines = changedLines;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public Integer getAncestor() {
+            return ancestor;
+        }
+
+        public Integer getChangedLines() {
+            return changedLines;
         }
     }
 }

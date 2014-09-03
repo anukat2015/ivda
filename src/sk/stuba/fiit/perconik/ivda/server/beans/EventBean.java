@@ -148,7 +148,7 @@ public class EventBean implements Serializable {
         String ancestor = FacesUtil.getQueryParam("ancestor");
         String path = FacesUtil.getQueryParam("path");
 
-        if (!Strings.isNullOrEmpty(ancestor)) {
+        if (!Strings.isNullOrEmpty(path)) {
             fileDiff(id, ancestor, path);
             return;
         }
