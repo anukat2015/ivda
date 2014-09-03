@@ -1,9 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.google.visualization.datasource.base.TypeMismatchException;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
@@ -32,7 +30,6 @@ public final class MyDataTable extends DataTable implements Serializable {
      */
     private static final List<ColumnDescription> COLUMN_DESCRIPTIONS = ImmutableList.copyOf(
             new ColumnDescription[]{
-                    new ColumnDescription("uid", ValueType.TEXT, "Event id"),
                     new ColumnDescription("start", ValueType.DATETIME, "Start date"),
                     new ColumnDescription("end", ValueType.DATETIME, "End date"),
                     new ColumnDescription("content", ValueType.TEXT, "Content"),
@@ -69,30 +66,24 @@ public final class MyDataTable extends DataTable implements Serializable {
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    public void add(@Nullable String uid,
-                    String group,
+    public void add(String group,
                     GregorianCalendar start,
                     @Nullable GregorianCalendar end,
                     ClassName className,
                     @Nullable String content,
-                    @Nullable String metadata
+                    @Nullable Object metadata
     ) {
         // Uloz vysledok
         try {
-            addRowFromValues(uid, rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), metadata);
-        } catch (TypeMismatchException e) {
+            String json = mapper.writeValueAsString(metadata);
+            addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), json);
+        } catch (Exception e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }
     }
 
     public void addEvent(EventDto event, Object metadata) {
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(metadata);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("cannot serialize", e);
-        }
-        add(event.getEventId(), event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), json);
+        add(event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), metadata);
     }
 
     private String blackoutName(@Nullable String name) {

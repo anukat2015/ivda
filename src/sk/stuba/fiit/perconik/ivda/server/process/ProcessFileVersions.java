@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
@@ -57,7 +58,13 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
             int changedLines = EventsUtil.codeWritten(cevent.getText());
             if (changedLines > 0) {
-                dataTable.addEvent(event, new Description(fileVersion, changedLines));
+                dataTable.addEvent(event, ImmutableMap.of(
+                        "uid", event.getEventId(),
+                        "path", fileVersion.getUrl().getValue(),
+                        "id", fileVersion.getId(),
+                        "ancestor", fileVersion.getAncestor1Id().getValue(),
+                        "changedLines", changedLines
+                ));
             } else {
                 LOGGER.warn("Prazdne riadky!");
             }
@@ -65,36 +72,6 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
         } catch (Exception e) {
             LOGGER.error("proccessItem", e);
-        }
-    }
-
-    public static class Description {
-        private String path;
-        private Integer id;
-        private Integer ancestor;
-        private Integer changedLines;
-
-        public Description(FileVersionDto file, Integer changedLines) {
-            path = file.getUrl().getValue();
-            id = file.getId();
-            ancestor = file.getAncestor1Id().getValue();
-            this.changedLines = changedLines;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public Integer getAncestor() {
-            return ancestor;
-        }
-
-        public Integer getChangedLines() {
-            return changedLines;
         }
     }
 }

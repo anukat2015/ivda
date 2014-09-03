@@ -41,7 +41,7 @@ links.ChartPanel.prototype.computeStats = function () {
                 }
 
                 // Statistiky pre pocet zmenenych riadkov
-                var value = parseInt(item.metadata.changedLines);
+                var value = item.metadata.changedLines;
                 if (linesMap[label.label] === undefined) {
                     linesMap[label.label] = value;
                 } else {

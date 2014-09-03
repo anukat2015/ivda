@@ -27,7 +27,7 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         int size = EventsUtil.codeWritten(cevent.getText());
         if (size > 0) {
             // Ignorujeme ziadne zmeny v kode
-            dataTable.addEvent(event, Integer.toString(size));
+            dataTable.addEvent(event, Integer.valueOf(size));
         }
     }
 

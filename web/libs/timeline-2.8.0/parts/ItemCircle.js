@@ -66,7 +66,7 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divBox.content = divContent;
 
     // Pridaj chart
-    var changedLines = parseInt(this.metadata.changedLines);
+    var changedLines = this.metadata.changedLines;
     var metric = (changedLines) * 8;
     var radius = metric + "px";
     divContent.style.width = radius;
