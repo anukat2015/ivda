@@ -251,8 +251,7 @@ links.Timeline = function (container, options) {
         range: links.Timeline.ItemRange,
         floatingRange: links.Timeline.ItemFloatingRange,
         dot: links.Timeline.ItemDot,
-        circle: links.Timeline.ItemCircle,
-        bar: links.Timeline.ItemBar
+        circle: links.Timeline.ItemCircle
     };
 
     // initialize data
@@ -406,7 +405,7 @@ links.Timeline.mapColumnIds = function (dataTable) {
         var id = dataTable.getColumnId(col) || dataTable.getColumnLabel(col);
         cols[id] = col;
         if (id == 'start' || id == 'end' || id == 'content' || id == 'group' ||
-            id == 'className' || id == 'editable' || id == 'type' || id == 'metadata' || id == 'uid') {
+            id == 'className' || id == 'editable' || id == 'type' || id == 'metadata') {
             allUndefined = false;
         }
     }
@@ -443,8 +442,7 @@ links.Timeline.prototype.buildItemFromDataTable = function (data, row, cols) {
         'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
         'editable': ((cols.editable != undefined) ? data.getValue(row, cols.editable) : undefined),
         'type': ((cols.type != undefined) ? data.getValue(row, cols.type) : undefined),
-        'metadata': ((cols.metadata != undefined) ? JSON.parse(data.getValue(row, cols.metadata)) : undefined),
-        'uid': ((cols.uid != undefined) ? data.getValue(row, cols.uid) : undefined)
+        'metadata': ((cols.metadata != undefined) ? JSON.parse(data.getValue(row, cols.metadata)) : undefined)
     };
 };
 
@@ -3753,8 +3751,7 @@ links.Timeline.prototype.changeItem = function (index, itemData, preventRender) 
         'className': itemData.hasOwnProperty('className') ? itemData.className : oldItem.className,
         'editable': itemData.hasOwnProperty('editable') ? itemData.editable : oldItem.editable,
         'type': itemData.hasOwnProperty('type') ? itemData.type : oldItem.type,
-        'metadata': itemData.hasOwnProperty('metadata') ? itemData.metadata : oldItem.metadata,
-        'uid': itemData.hasOwnProperty('uid') ? itemData.uid : oldItem.uid
+        'metadata': itemData.hasOwnProperty('metadata') ? itemData.metadata : oldItem.metadata
     });
     this.items[index] = newItem;
 

@@ -45,10 +45,10 @@ function registerQTip() {
             content: {
                 text: function (event, api) {
                     var item = gGlobals.timeline.getSelected();
-                    if (item === undefined) {
+                    if (item === undefined || item.metadata === undefined) {
                         api.set('content.text', "Not selected entity.");
                     } else {
-                        $.ajax({        // {id: entityID.uid}
+                        $.ajax({
                             url: gGlobals.getAjaxURL(item.metadata)
                         }).then(function (content) {
                             // Set the tooltip content upon successful retrieval

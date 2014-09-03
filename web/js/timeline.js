@@ -4,23 +4,16 @@ function getTimeline() {
     var options = {
         width: "100%",
         height: "90%",
-        //minHeight: windowHeight * 0.8,
         layout: "circle",
         style: 'circle',
         axisOnTop: true,
-        eventMargin: 2,  // minimal margin between events
-        eventMarginAxis: 0, // minimal margin beteen events and the axis
         editable: false,
         showNavigation: true,
         zoomMin: 1000 * 60 * 1,             // 5 min
         zoomMax: 1000 * 60 * 60 * 24 * 7,     // tyzden
-        animate: false,   // TODO: vypnut pri velkom pocte prvkov
-        animateZoom: false,
         showMajorLabels: true,
         //stackEvents: true,
-        stackEvents: false,
         cluster: true,
-        snapEvents: true,
         groupMinHeight: windowHeight * 0.1
     };
 

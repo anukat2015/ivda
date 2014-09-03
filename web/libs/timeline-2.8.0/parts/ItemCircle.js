@@ -58,6 +58,8 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     // background box
     var divBox = document.createElement("DIV");
     divBox.style.position = "absolute";
+    divBox.style.left = this.left + "px";
+    divBox.style.top = this.top + "px";
 
     // contents box, right from the dot
     var divContent = document.createElement("DIV");
@@ -66,12 +68,14 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divBox.content = divContent;
 
     // Pridaj chart
-    var changedLines = this.metadata.changedLines;
-    var metric = (changedLines) * 8;
-    var radius = metric + "px";
-    divContent.style.width = radius;
-    divContent.style.height = radius;
-    divContent.style.lineHeight = radius;
+    var radius = 10;
+    if (this.metadata != undefined && this.metadata.changedLines != undefined) {
+        radius = Math.min(radius, this.metadata.changedLines) * 2;
+    }
+    var size = radius + "px";
+    divContent.style.width = size;
+    divContent.style.height = size;
+    divContent.style.lineHeight = size;
 
     this.dom = divBox;
     this.updateDOM();
@@ -129,7 +133,7 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
         divBox.firstChild.innerHTML = this.content;
 
         // update classes
-        divBox.className = "timeline-event-circle";
+        divBox.className = "timeline-event timeline-event-circle";
 
         if (this.isCluster) {
             links.Timeline.addClassName(divBox, 'timeline-event-cluster ui-widget-header');
@@ -151,10 +155,10 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
 links.Timeline.ItemCircle.prototype.updatePosition = function (timeline) {
     var dom = this.dom;
     if (dom) {
-        var left = timeline.timeToScreen(this.start);
+        var center = timeline.timeToScreen(this.start);
 
         dom.style.top = this.top + "px";
-        dom.style.left = (left - this.contentHeight / 2) + "px";
+        dom.style.left = (center - this.width / 2) + "px";
 
         //dom.content.style.marginLeft = (1.5 * this.dotWidth) + "px";
         //dom.content.style.marginTop = (0.5 * this.dotWidth) + "px";
@@ -170,7 +174,7 @@ links.Timeline.ItemCircle.prototype.updatePosition = function (timeline) {
  */
 links.Timeline.ItemCircle.prototype.isVisible = function (start, end) {
     if (this.cluster) {
-        return false;   // TODO: ked je to cluster scitaj deti a zobraz jeden velky kruh
+        return false;
     }
 
     return (this.start > start)
@@ -186,7 +190,8 @@ links.Timeline.ItemCircle.prototype.isVisible = function (start, end) {
 links.Timeline.ItemCircle.prototype.setPosition = function (left, right) {
     var dom = this.dom;
 
-    dom.style.left = (left - this.contentHeight / 2) + "px";
+    dom.style.top = this.top + "px";
+    dom.style.left = (left - this.width / 2) + "px";
 
     if (this.group) {
         this.top = this.group.top;
@@ -201,7 +206,8 @@ links.Timeline.ItemCircle.prototype.setPosition = function (left, right) {
  * @override
  */
 links.Timeline.ItemCircle.prototype.getLeft = function (timeline) {
-    return timeline.timeToScreen(this.start);
+    var center = timeline.timeToScreen(this.start);
+    return (center - this.width / 2);
 };
 
 /**
@@ -211,5 +217,6 @@ links.Timeline.ItemCircle.prototype.getLeft = function (timeline) {
  * @override
  */
 links.Timeline.ItemCircle.prototype.getRight = function (timeline) {
-    return timeline.timeToScreen(this.start) + this.width;
+    var center = timeline.timeToScreen(this.start);
+    return (center + this.width / 2);
 };
