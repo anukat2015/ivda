@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
@@ -24,8 +25,8 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
     }
 
 
-    public void checkLists(ListOfProcesses.Type a, ListOfProcesses.Type b) {
-        Set<String> same = a.getList().getSameProcesses(b.getList());
+    public void checkLists(Catalog.Processes a, Catalog.Processes b) {
+        Set<String> same = a.getList().getSameValues(b.getList());
         if (same.isEmpty()) {
             return;
         }
@@ -36,12 +37,12 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
     }
 
     public void checkFiles() {
-        checkLists(ListOfProcesses.Type.BLACK_LIST, ListOfProcesses.Type.COMMUNICATION);
-        checkLists(ListOfProcesses.Type.BLACK_LIST, ListOfProcesses.Type.NODEVELOPER);
-        checkLists(ListOfProcesses.Type.BLACK_LIST, ListOfProcesses.Type.TYPICAL);
-        checkLists(ListOfProcesses.Type.COMMUNICATION, ListOfProcesses.Type.NODEVELOPER);
-        checkLists(ListOfProcesses.Type.COMMUNICATION, ListOfProcesses.Type.TYPICAL);
-        checkLists(ListOfProcesses.Type.NODEVELOPER, ListOfProcesses.Type.TYPICAL);
+        checkLists(Catalog.Processes.BANNED, Catalog.Processes.COMMUNICATION);
+        checkLists(Catalog.Processes.BANNED, Catalog.Processes.NODEVELOPER);
+        checkLists(Catalog.Processes.BANNED, Catalog.Processes.TYPICAL);
+        checkLists(Catalog.Processes.COMMUNICATION, Catalog.Processes.NODEVELOPER);
+        checkLists(Catalog.Processes.COMMUNICATION, Catalog.Processes.TYPICAL);
+        checkLists(Catalog.Processes.NODEVELOPER, Catalog.Processes.TYPICAL);
     }
 
     @Override
@@ -61,10 +62,10 @@ public final class PrintProcesses extends ProcessEventsToDataTable {
     public void finished() {
         System.out.println("New processes:");
         for (String name : processes) {
-            if (!ListOfProcesses.Type.BLACK_LIST.getList().contains(name) &&
-                    !ListOfProcesses.Type.NODEVELOPER.getList().contains(name) &&
-                    !ListOfProcesses.Type.COMMUNICATION.getList().contains(name) &&
-                    !ListOfProcesses.Type.TYPICAL.getList().contains(name)) {
+            if (!Catalog.Processes.BANNED.getList().contains(name) &&
+                    !Catalog.Processes.NODEVELOPER.getList().contains(name) &&
+                    !Catalog.Processes.COMMUNICATION.getList().contains(name) &&
+                    !Catalog.Processes.TYPICAL.getList().contains(name)) {
                 LOGGER.warn(name);
             }
         }

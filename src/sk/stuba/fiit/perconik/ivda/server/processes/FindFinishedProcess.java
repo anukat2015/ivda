@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -24,11 +25,11 @@ public abstract class FindFinishedProcess {
     private static final Logger LOGGER = Logger.getLogger(FindFinishedProcess.class.getName());
 
     private final Map<Integer, FinishedProcess> startedApps;
-    private final ListOfProcesses appBlackList;
+    private final Catalog appBlackList;
 
     protected FindFinishedProcess() {
         startedApps = new HashMap<>(200);
-        appBlackList = ListOfProcesses.Type.BLACK_LIST.getList();
+        appBlackList = Catalog.Processes.BANNED.getList();
     }
 
     /**
@@ -43,7 +44,7 @@ public abstract class FindFinishedProcess {
 
     private void handleStarted(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto started : event.getStartedProcesses()) {
-            if (appBlackList.contains(started)) {
+            if (appBlackList.exist(started)) {
                 continue;
             }
 

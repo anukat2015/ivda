@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.processes.ListOfProcesses;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -21,10 +21,10 @@ public class DivideByActivity implements IDividing {
      */
     private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(1L);
 
-    private final ListOfProcesses blacklist;
+    private final Catalog blacklist;
 
     public DivideByActivity() {
-        blacklist = ListOfProcesses.Type.BLACK_LIST.getList();
+        blacklist = Catalog.Processes.BANNED.getList();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DivideByActivity implements IDividing {
 
         // Dalsie entity znamenaju aktivitu, ProcessesChangedSinceCheckEventDto sa miesa spolu s ostatynmi aktivitamy preto ich ignorujeme
         if (event instanceof ProcessesChangedSinceCheckEventDto) {
-            if (!blacklist.checkAtLeastOneDontContain(((ProcessesChangedSinceCheckEventDto) event).getStartedProcesses())) {
+            if (!blacklist.checkAtLeastOneDontExist(((ProcessesChangedSinceCheckEventDto) event).getStartedProcesses())) {
                 // Nejde o zaujimavy proces, pravdepodobne nic nerobil
                 return true;
             }
