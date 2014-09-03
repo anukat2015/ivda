@@ -41,6 +41,7 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
      * @param aClass
      */
     public void register(String key, Class<? extends T> aClass) {
+        key = key.toLowerCase();
         Class<? extends T> previous = registry.put(key, aClass);
         if (previous != null && !previous.equals(aClass)) {
             throw new RuntimeException("Key '" + key + "'already exist as:" + previous + ", new value:" + aClass);
@@ -64,9 +65,10 @@ public class CustomDeserializer<T> extends JsonDeserializer<T> {
         if (attribute == null) {
             throw new IOException("Attribute '" + watchedAttribute + "' not found !");
         }
-        Class<? extends T> aClass = searchForClass(attribute.asText());
+        String key = attribute.asText().toLowerCase();
+        Class<? extends T> aClass = searchForClass(key);
         if (aClass == null) {
-            throw new IOException("Class not found for '" + attribute.asText() + "'.");
+            throw new IOException("Class not found for '" + key + "'.");
         }
         return mapper.readValue(root.traverse(), aClass);
     }

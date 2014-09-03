@@ -90,7 +90,7 @@ public final class AstRcsWcfService {
      * @return
      */
     public RcsServerDto getNearestRcsServerDto(URI url) throws NotFoundException {
-        RcsServerDto server = Strings.findLongestPrefix(servers, url.toString(), input -> input.getUrl().getValue());
+        RcsServerDto server = Strings.findLongestPrefix(servers, url.toString().toLowerCase(), input -> input.getUrl().getValue());
         if (server == null) {
             throw new NotFoundException("getNearestRcsServerDto");
         }
@@ -112,7 +112,12 @@ public final class AstRcsWcfService {
         }
         SearchRcsServersResponse response = service.searchRcsServers(req);
         checkResponse(response, "getRcsServersDto");
-        return response.getRcsServers().getValue().getRcsServerDto();
+        List<RcsServerDto> ret = response.getRcsServers().getValue().getRcsServerDto();
+        ret.forEach(server ->           // Fixni nekonzistentne mena
+                server.getUrl().setValue(
+                        server.getUrl().getValue().toLowerCase()
+                ));
+        return ret;
     }
 
     public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
