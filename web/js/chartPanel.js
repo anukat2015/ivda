@@ -41,11 +41,13 @@ links.ChartPanel.prototype.computeStats = function () {
                 }
 
                 // Statistiky pre pocet zmenenych riadkov
-                var value = item.metadata.changedLines;
-                if (linesMap[label.label] === undefined) {
-                    linesMap[label.label] = value;
-                } else {
-                    linesMap[label.label] += value;
+                if(item.metadata.changedLines != undefined) {
+                    var value = item.metadata.changedLines;
+                    if (linesMap[label.label] === undefined) {
+                        linesMap[label.label] = value;
+                    } else {
+                        linesMap[label.label] += value;
+                    }
                 }
                 break;
             }

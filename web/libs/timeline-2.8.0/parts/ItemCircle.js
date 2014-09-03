@@ -68,9 +68,9 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divBox.content = divContent;
 
     // Pridaj chart
-    var radius = 10;
+    var radius = 12;
     if (this.metadata != undefined && this.metadata.changedLines != undefined) {
-        radius = Math.min(radius, this.metadata.changedLines) * 2;
+        radius = Math.max(radius, this.metadata.changedLines) * 2;
     }
     var size = radius + "px";
     divContent.style.width = size;

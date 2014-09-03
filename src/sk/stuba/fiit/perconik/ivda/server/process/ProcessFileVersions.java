@@ -12,7 +12,7 @@ import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
-import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
+import sk.stuba.fiit.perconik.uaca.dto.web.WebNavigateEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -36,25 +36,24 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             return;
         }
 
-        if (event instanceof WebEventDto) {
-            webEvent((WebEventDto) event);
+        if (event instanceof WebNavigateEventDto) {
+            webEvent((WebNavigateEventDto) event);
             return;
         }
     }
 
-    private void webEvent(WebEventDto event) {
+    private void webEvent(WebNavigateEventDto event) {
         String link = event.getUrl();
         //if (!developerLinks.contains(link)) {
          //   return;
         //}
-        int changedLines = 20;
-        if (changedLines > 0) {
+        //int changedLines = 20;
+        //if (changedLines > 0) {
             dataTable.addEvent(event, ImmutableMap.of(
                     "uid", event.getEventId(),
-                    "changedLines", changedLines,
                     "ajax", event
             ));
-        }
+        //}
     }
 
     private void ideEvent(IdeCodeEventDto event) {
