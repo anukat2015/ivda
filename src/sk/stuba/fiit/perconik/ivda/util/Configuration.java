@@ -28,6 +28,7 @@ public final class Configuration implements Serializable {
     private static JAXBContext context;
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
+    private URI cordLink;
     private File cacheFolder;
 
     static {
@@ -108,5 +109,13 @@ public final class Configuration implements Serializable {
 
     private static class ConfigurationHolder {
         private static final Configuration INSTANCE = read();
+    }
+
+    public URI getCordLink() {
+        return cordLink;
+    }
+
+    public void setCordLink(URI cordLink) {
+        this.cordLink = cordLink;
     }
 }

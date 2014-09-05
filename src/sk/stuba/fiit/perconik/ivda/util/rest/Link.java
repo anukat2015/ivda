@@ -1,9 +1,9 @@
-package sk.stuba.fiit.perconik.ivda.activity.entities;
+package sk.stuba.fiit.perconik.ivda.util.rest;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.net.URI;
+import java.net.URL;
 
 /**
  * Created by Seky on 19. 7. 2014.
@@ -13,7 +13,7 @@ import java.net.URI;
 public final class Link implements Serializable {
     private static final long serialVersionUID = -8976006536157835573L;
     private String rel;
-    private URI href;
+    private URL href;
 
     public String getRel() {
         return rel;
@@ -23,11 +23,11 @@ public final class Link implements Serializable {
         this.rel = rel;
     }
 
-    public URI getHref() {
+    public URL getHref() {
         return href;
     }
 
-    public void setHref(URI href) {
+    public void setHref(URL href) {
         this.href = href;
     }
 

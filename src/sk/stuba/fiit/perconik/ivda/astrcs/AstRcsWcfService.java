@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.astrcs;
 
+import com.google.common.base.Preconditions;
+import com.google.common.io.Files;
 import com.gratex.perconik.services.AstRcsWcfSvc;
 import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
@@ -9,10 +11,14 @@ import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.IOException;
 import java.net.Authenticator;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by Seky on 6. 8. 2014.
@@ -22,6 +28,9 @@ import java.util.List;
 @ThreadSafe
 public final class AstRcsWcfService {
     private static final Logger LOGGER = Logger.getLogger(AstRcsWcfService.class.getName());
+    private static final File CACHE_FOLDER = new File(Configuration.getInstance().getCacheFolder(), "astrcs");
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");
+
     private final IAstRcsWcfSvc service;
     private final ObjectFactory factory;
     private final List<RcsServerDto> servers;
@@ -66,6 +75,60 @@ public final class AstRcsWcfService {
             // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
             LOGGER.warn("Response have more pages, ignoring next pages.");
         }
+    }
+
+    private static String getName(String path, Integer versionID) {
+        return FILE_NAME_PATTERN.matcher(path).replaceAll("_") + '-' + versionID;
+    }
+
+    private List<String> saveContent(String path, Integer id) throws NotFoundException {
+        synchronized (CACHE_FOLDER) {
+            File cacheFile = new File(CACHE_FOLDER, getName(path, id));
+            try {
+                if (!cacheFile.exists()) {
+                    // Udaje prichdzaju zo specialnymi znakmy
+                    String content = getFileContent(id);
+                    Files.write(content, cacheFile, Charset.defaultCharset());
+                    LOGGER.info("Ulozene do cache:" + cacheFile);
+                }
+
+                // Udaje vychadzaju bez specialnyzch znakov
+                return Collections.unmodifiableList(Files.readLines(cacheFile, Charset.defaultCharset()));
+            } catch (IOException e) {
+                LOGGER.error("Nemozem precitat / zapisat zo suboru.", e);
+                throw new NotFoundException();
+            }
+        }
+    }
+
+    /**
+     * Download content of FileVersionDto with automatic caching.
+     *
+     * @param file FileVersionDto
+     * @return list of lines
+     * @throws NotFoundException when file cannot be downloaded or saved or do not exist
+     */
+    public List<String> getContent(FileVersionDto file) throws NotFoundException {
+        try {
+            return getContent(file.getUrl().getValue(), file.getId());
+        } catch (NotFoundException e) {
+            LOGGER.warn("Content probably not found for:" + file.getId() + " because " + file.getContentNotIncludedReason().value());
+            throw e;
+        }
+    }
+
+    public List<String> getContent(String path, Integer id) throws NotFoundException {
+        Preconditions.checkArgument(path != null);
+        Preconditions.checkArgument(id != null);
+        return saveContent(path, id);
+    }
+
+    public List<String> getContentAncestor(FileVersionDto file) throws NotFoundException {
+        Integer ancestor = file.getAncestor1Id().getValue();
+        if (ancestor == null) {
+            throw new NotFoundException("Ancestor is null");
+        }
+        return getContent(file.getUrl().getValue(), ancestor);
     }
 
     @SuppressWarnings("MethodMayBeStatic")

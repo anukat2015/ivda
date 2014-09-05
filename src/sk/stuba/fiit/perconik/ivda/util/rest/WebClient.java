@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.activity.client;
+package sk.stuba.fiit.perconik.ivda.util.rest;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.log4j.Logger;

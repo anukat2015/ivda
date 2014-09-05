@@ -1,6 +1,12 @@
-package sk.stuba.fiit.perconik.ivda.activity.entities;
+package sk.stuba.fiit.perconik.ivda.activity.client;
 
+import com.ibm.icu.util.GregorianCalendar;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+
+import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
+import java.net.URI;
 
 /**
  * <p>
@@ -27,7 +33,7 @@ import java.io.Serializable;
  * Default is false, which means results are ordered descending or from the newest to the oldest events
  * If true, results are ordered ascending or from the oldest to the newest events
  */
-public class EventsRequestParameters implements Serializable {
+public class EventsRequest implements Serializable {
     private static final long serialVersionUID = -402296428944403239L;
 
     protected Integer page;
@@ -40,7 +46,7 @@ public class EventsRequestParameters implements Serializable {
     protected String workstation;
     protected Boolean ascending;
 
-    public EventsRequestParameters() {
+    public EventsRequest() {
         // Defaultne hodnoty ktoreme chceme
         page = 0;
         pageSize = 100;
@@ -102,5 +108,22 @@ public class EventsRequestParameters implements Serializable {
 
     public void setAscending(Boolean ascending) {
         this.ascending = ascending;
+    }
+
+    public void setTime(GregorianCalendar from, GregorianCalendar to) {
+        timeFrom = DateUtils.toString(from);
+        timeTo = DateUtils.toString(to);
+    }
+
+    public void setType(URI type) {
+        eventTypeUri = type.toString();
+    }
+
+    public void setType(EventDto event) {
+        setType(event.getEventTypeUri());
+    }
+
+    public void setType(EventDto event, String subtype) {
+        setType(UriBuilder.fromUri(event.getEventTypeUri()).path(subtype).build());
     }
 }

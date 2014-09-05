@@ -11,9 +11,9 @@ import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import difflib.Delta;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.activity.entities.ActivityService;
+import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.FileVersionsUtil;
+import sk.stuba.fiit.perconik.ivda.util.Diff;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
 
@@ -70,7 +70,9 @@ public class EventBean implements Serializable {
         }
         viewStateBean.setState(ViewStateBean.ViewState.EVENT);
         try {
-            List<Delta> deltas = FileVersionsUtil.printDiff(path, Integer.valueOf(id), Integer.valueOf(ancestor));
+            List<String> aktualneVerzia = AstRcsWcfService.getInstance().getContent(path, Integer.valueOf(id));
+            List<String> staraVerzia = AstRcsWcfService.getInstance().getContent(path, Integer.valueOf(ancestor));
+            List<Delta> deltas = Diff.printDiff(aktualneVerzia, staraVerzia);
             text = MAPPER.writeValueAsString(deltas);
         } catch (Exception e) {
             LOGGER.error("json serialize", e);

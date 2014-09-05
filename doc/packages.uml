@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>sk.stuba.fiit.perconik.ivda.activity</OriginalElement>
+  <nodes>
+    <node x="30.0" y="142.0">sk.stuba.fiit.perconik.ivda.server.grouping</node>
+    <node x="151.0" y="255.0">sk.stuba.fiit.perconik.ivda.activity.deserializer</node>
+    <node x="0.0" y="405.9130859375">sk.stuba.fiit.perconik.ivda.util</node>
+    <node x="371.60416666666663" y="-12.0">sk.stuba.fiit.perconik.ivda.activity.client</node>
+    <node x="200.0" y="54.0">sk.stuba.fiit.perconik.ivda.server.process</node>
+    <node x="358.5" y="54.0">sk.stuba.fiit.perconik.ivda.activity.entities</node>
+    <node x="282.0" y="395.0">sk.stuba.fiit.perconik.uaca.dto</node>
+    <node x="356.25" y="142.0">sk.stuba.fiit.perconik.ivda.server.servlets</node>
+    <node x="0.0" y="321.0">sk.stuba.fiit.perconik.ivda.server.beans</node>
+    <node x="198.99999999999997" y="142.0">sk.stuba.fiit.perconik.ivda.server.processes</node>
+    <node x="0.0" y="255.0">sk.stuba.fiit.perconik.ivda.astrcs</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets" target="sk.stuba.fiit.perconik.ivda.activity.entities">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets" target="sk.stuba.fiit.perconik.ivda.server.process">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.entities" target="sk.stuba.fiit.perconik.ivda.activity.entities">
+      <point x="0.0" y="0.0" />
+      <point x="414.5" y="30.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.beans" target="sk.stuba.fiit.perconik.ivda.astrcs">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.beans" target="sk.stuba.fiit.perconik.ivda.server.beans">
+      <point x="0.0" y="0.0" />
+      <point x="53.0" y="297.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes" target="sk.stuba.fiit.perconik.ivda.server.processes">
+      <point x="0.0" y="0.0" />
+      <point x="261.5" y="118.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.uaca.dto" target="sk.stuba.fiit.perconik.uaca.dto">
+      <point x="0.0" y="0.0" />
+      <point x="328.5" y="371.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.beans" target="sk.stuba.fiit.perconik.uaca.dto">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping" target="sk.stuba.fiit.perconik.ivda.server.process">
+      <point x="0.0" y="-14.0" />
+      <point x="89.5" y="122.0" />
+      <point x="219.0" y="122.0" />
+      <point x="-38.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes" target="sk.stuba.fiit.perconik.ivda.server.process">
+      <point x="0.0" y="-14.0" />
+      <point x="261.5" y="122.0" />
+      <point x="257.0" y="122.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.entities" target="sk.stuba.fiit.perconik.ivda.activity.client">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping" target="sk.stuba.fiit.perconik.uaca.dto">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping" target="sk.stuba.fiit.perconik.ivda.server.grouping">
+      <point x="0.0" y="0.0" />
+      <point x="89.5" y="118.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes" target="sk.stuba.fiit.perconik.uaca.dto">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="236.0" y="217.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

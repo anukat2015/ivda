@@ -30,7 +30,23 @@ public final class UriUtils {
         return qpairs;
     }
 
-    public static UriBuilder addBeanProperties(UriBuilder builder, Class<?> beanClass, Object object) throws IntrospectionException, InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
+    public static UriBuilder addBeanProperties(UriBuilder builder, Object object) throws IntrospectionException, InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
+        return addBeanProperties(builder, object.getClass());
+    }
+
+    /**
+     * You can specifi bean.
+     *
+     * @param builder
+     * @param object
+     * @param beanClass
+     * @return
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws UnsupportedEncodingException
+     * @throws IllegalAccessException
+     */
+    public static UriBuilder addBeanProperties(UriBuilder builder, Object object, Class<?> beanClass) throws IntrospectionException, InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
         BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
         for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
             if ("class".equals(pd.getName())) {
@@ -43,6 +59,5 @@ public final class UriUtils {
         }
         return builder;
     }
-
 
 }
