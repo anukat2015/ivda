@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by Seky on 5. 9. 2014.
  */
-public class Commit implements Serializable {
+public final class Commit implements Serializable {
     private String hash;
     private String message;
     private GregorianCalendar commitDate;

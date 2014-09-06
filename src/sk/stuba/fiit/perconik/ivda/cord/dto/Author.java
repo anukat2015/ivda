@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Seky on 5. 9. 2014.
  */
-public class Author implements Serializable {
+public final class Author implements Serializable {
     private String mail;
     private String name;
 

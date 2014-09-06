@@ -13,9 +13,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -38,16 +36,9 @@ public final class MyDataTable extends DataTable implements Serializable {
                     new ColumnDescription("metadata", ValueType.TEXT, "Metadata")
             });
     private static ObjectMapper mapper = new ObjectMapper();
-    /**
-     * Udaje dodavene do group sa nahradzuju inym retazcom.
-     * Ochrana sukromia.
-     */
-    private final Map<String, String> replaceGroup;
-    private char alphabetCurrent = 'A';
 
     public MyDataTable() {
         super();
-        replaceGroup = new HashMap<String, String>(16);
         addColumns(COLUMN_DESCRIPTIONS);
     }
 
@@ -76,7 +67,7 @@ public final class MyDataTable extends DataTable implements Serializable {
         // Uloz vysledok
         try {
             String json = mapper.writeValueAsString(metadata);
-            addRowFromValues(rollTheTime(start), rollTheTime(end), content, blackoutName(group), className.toString(), json);
+            addRowFromValues(rollTheTime(start), rollTheTime(end), content, Developers.blackoutName(group), className.toString(), json);
         } catch (Exception e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }
@@ -84,20 +75,6 @@ public final class MyDataTable extends DataTable implements Serializable {
 
     public void addEvent(EventDto event, Object metadata) {
         add(event.getUser(), event.getTimestamp(), null, EventsUtil.event2Classname(event), EventsUtil.event2name(event), metadata);
-    }
-
-    private String blackoutName(@Nullable String name) {
-        if (name == null) {
-            //noinspection ReturnOfNull
-            return null;
-        }
-        String groupnew = replaceGroup.get(name);
-        if (groupnew == null) {
-            groupnew = String.valueOf(alphabetCurrent);
-            replaceGroup.put(name, groupnew);
-            alphabetCurrent++;
-        }
-        return groupnew;
     }
 
     /**

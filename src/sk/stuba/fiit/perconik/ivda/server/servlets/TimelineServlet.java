@@ -28,26 +28,6 @@ public final class TimelineServlet extends DataSourceServlet {
     private static final int CACHE_DURATION_IN_SECOND = 0; // 60 * 60 * 24 * 2; // 2 days
 
     /**
-     * Generuj datovu tabulku pre klienta na zaklade ziadosti.
-     *
-     * @param start
-     * @param end
-     * @param width
-     * @return
-     */
-    private static DataTable generateDataTable(GregorianCalendar start, GregorianCalendar end, Integer width) {
-        EventsRequest request = new EventsRequest();
-        request.setTime(start, end);
-        ProcessEventsToDataTable process;
-
-        request.setUser("steltecia\\krastocny");
-        process = new ProcessFileVersions();
-
-        ActivityService.getInstance().getEvents(request, process);
-        return process.getDataTable();
-    }
-
-    /**
      * Spracuj parametre ziadosti. Nasledne generuj tabulku.
      *
      * @param query
@@ -55,38 +35,23 @@ public final class TimelineServlet extends DataSourceServlet {
      * @return
      */
     @Override
-    public DataTable generateDataTable(Query query, HttpServletRequest request) {
-        // Pohyb okna nema vplyv na zmenu datumu, cize tensie okno zobrazuje to iste len ide o responzivny dizajn
-        // Vplyv na rozsah ma jedine  zoom
-        // Cize musime vypocitat sirku okna a poslat to sem
-        GregorianCalendar start;
-        GregorianCalendar end;
-        Integer width;
-        Integer step;
-        Integer scale;
-        //noinspection OverlyBroadCatchBlock
+    public DataTable generateDataTable(Query query, HttpServletRequest req) {
+        TimelineRequest request;
         try {
-            start = DateUtils.fromString(request.getParameter("start"));
-            end = DateUtils.fromString(request.getParameter("end"));
-            width = Integer.valueOf(request.getParameter("width"));
-            step = Integer.valueOf(request.getParameter("step"));
-            scale = Integer.valueOf(request.getParameter("scale"));
-            //start = DateUtils.fromString("2014-07-21T08:00:00.000Z");
-            //end = DateUtils.fromString("2014-07-21T16:00:00.000Z");
-
-            if (!start.before(end)) {
-                throw new WebApplicationException("Start date is not before end.", Response.Status.BAD_REQUEST);
-            }
+            request = new TimelineRequest(req);
+            LOGGER.info("Request: " + request);
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
 
-        LOGGER.info("Start: " + DateUtils.toString(start) +
-                " end:" + DateUtils.toString(end) +
-                " step:" + step +
-                " scale:" + scale +
-                " width:" + width);
-        return generateDataTable(start, end, width);
+        EventsRequest activityRequest = new EventsRequest();
+        activityRequest.setTime(request.getStart(), request.getEnd());
+
+        ProcessEventsToDataTable process = new ProcessFileVersions();
+        process.setFilter(request);
+
+        ActivityService.getInstance().getEvents(activityRequest, process);
+        return process.getDataTable();
     }
 
     @Override

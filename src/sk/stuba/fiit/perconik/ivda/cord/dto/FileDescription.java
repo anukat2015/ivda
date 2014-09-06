@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  * Pomocna trieda pre opis cesty a verzie suboru.
  */
-public class FileDescription implements Serializable {
+public final class FileDescription implements Serializable {
     private String repo;
     private String commit;
     private String path;

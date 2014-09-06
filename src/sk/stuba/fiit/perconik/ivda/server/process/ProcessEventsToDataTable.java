@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
+import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
@@ -18,21 +19,37 @@ import javax.validation.constraints.NotNull;
 public abstract class ProcessEventsToDataTable implements RestClient.IProcessPage<EventsResponse> {
     protected static final Logger LOGGER = Logger.getLogger(ProcessEventsToDataTable.class.getName());
     protected final MyDataTable dataTable;
+    protected TimelineRequest filter;
 
     protected ProcessEventsToDataTable() {
         dataTable = new MyDataTable();
+        filter = null;
     }
 
     @Override
     public void downloaded(EventsResponse response) {
-        response.getResultSet().forEach(this::proccessItem);
+        response.getResultSet().forEach(this::filterItem);
     }
 
     protected abstract void proccessItem(EventDto event);
 
+    protected void filterItem(EventDto event) {
+        if (filter != null) {
+            // Filter pre developerov
+            if (!filter.containDeveloper(event.getUser())) {
+                return;
+            }
+        }
+        proccessItem(event);
+    }
+
     @NotNull
     public MyDataTable getDataTable() {
         return dataTable;
+    }
+
+    public void setFilter(TimelineRequest filter) {
+        this.filter = filter;
     }
 }
 

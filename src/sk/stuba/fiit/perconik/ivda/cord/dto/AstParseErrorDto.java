@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  * Contains informatio nabout AST parseerror
  */
-public class AstParseErrorDto implements Serializable {
+public final class AstParseErrorDto implements Serializable {
     private String message;
     private String level;
     private Integer startLine;
