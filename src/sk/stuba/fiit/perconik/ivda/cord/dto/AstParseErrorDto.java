@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Created by Seky on 5. 9. 2014.
- * Containsinformationabout AST parseerror
+ * Contains informatio nabout AST parseerror
  */
 public class AstParseErrorDto implements Serializable {
     private String message;
@@ -13,6 +13,9 @@ public class AstParseErrorDto implements Serializable {
     private Integer endLine;
     private Integer startColumn;
     private Integer endColumn;
+
+    public AstParseErrorDto() {
+    }
 
     public String getMessage() {
         return message;
@@ -60,5 +63,33 @@ public class AstParseErrorDto implements Serializable {
 
     public void setEndColumn(Integer endColumn) {
         this.endColumn = endColumn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AstParseErrorDto that = (AstParseErrorDto) o;
+
+        if (endColumn != null ? !endColumn.equals(that.endColumn) : that.endColumn != null) return false;
+        if (endLine != null ? !endLine.equals(that.endLine) : that.endLine != null) return false;
+        if (level != null ? !level.equals(that.level) : that.level != null) return false;
+        if (message != null ? !message.equals(that.message) : that.message != null) return false;
+        if (startColumn != null ? !startColumn.equals(that.startColumn) : that.startColumn != null) return false;
+        if (startLine != null ? !startLine.equals(that.startLine) : that.startLine != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = message != null ? message.hashCode() : 0;
+        result = 31 * result + (level != null ? level.hashCode() : 0);
+        result = 31 * result + (startLine != null ? startLine.hashCode() : 0);
+        result = 31 * result + (endLine != null ? endLine.hashCode() : 0);
+        result = 31 * result + (startColumn != null ? startColumn.hashCode() : 0);
+        result = 31 * result + (endColumn != null ? endColumn.hashCode() : 0);
+        return result;
     }
 }

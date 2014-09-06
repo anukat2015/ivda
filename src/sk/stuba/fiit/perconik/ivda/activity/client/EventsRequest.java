@@ -82,6 +82,10 @@ public class EventsRequest implements Serializable {
         return eventTypeUri;
     }
 
+    public void setEventTypeUri(EventDto event) {
+        setEventTypeUri(event.getEventTypeUri());
+    }
+
     public Boolean getExactType() {
         return exactType;
     }
@@ -115,15 +119,11 @@ public class EventsRequest implements Serializable {
         timeTo = DateUtils.toString(to);
     }
 
-    public void setType(URI type) {
+    public void setEventTypeUri(URI type) {
         eventTypeUri = type.toString();
     }
 
-    public void setType(EventDto event) {
-        setType(event.getEventTypeUri());
-    }
-
-    public void setType(EventDto event, String subtype) {
-        setType(UriBuilder.fromUri(event.getEventTypeUri()).path(subtype).build());
+    public void setEventTypeUri(EventDto event, String subtype) {
+        setEventTypeUri(UriBuilder.fromUri(event.getEventTypeUri()).path(subtype).build());
     }
 }

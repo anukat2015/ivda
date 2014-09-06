@@ -13,6 +13,9 @@ public class File implements Serializable {
     private URI versionUri;
     private File ancestor1;
 
+    public File() {
+    }
+
     public URL getUrl() {
         return url;
     }
@@ -43,5 +46,25 @@ public class File implements Serializable {
 
     public void setAncestor1(File ancestor1) {
         this.ancestor1 = ancestor1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        File file = (File) o;
+
+        if (url != null ? !url.equals(file.url) : file.url != null) return false;
+        if (versionUri != null ? !versionUri.equals(file.versionUri) : file.versionUri != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = url != null ? url.hashCode() : 0;
+        result = 31 * result + (versionUri != null ? versionUri.hashCode() : 0);
+        return result;
     }
 }

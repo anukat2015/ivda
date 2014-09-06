@@ -7,13 +7,16 @@ import java.io.Serializable;
 /**
  * Created by Seky on 5. 9. 2014.
  */
-public class Commit implements Serializable{
+public class Commit implements Serializable {
     private String hash;
     private String message;
     private GregorianCalendar commitDate;
     private String ancestor1;
     private String ancestor2;
     private Author author;
+
+    public Commit() {
+    }
 
     public String getHash() {
         return hash;
@@ -61,5 +64,22 @@ public class Commit implements Serializable{
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Commit commit = (Commit) o;
+
+        if (hash != null ? !hash.equals(commit.hash) : commit.hash != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return hash != null ? hash.hashCode() : 0;
     }
 }

@@ -22,6 +22,53 @@ public class AstNodeDto implements Serializable {
     private List<BaseType> baseTypes;
     private List<AstNodeDto> childNodes;
 
+    public AstNodeDto() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AstNodeDto that = (AstNodeDto) o;
+
+        if (baseTypes != null ? !baseTypes.equals(that.baseTypes) : that.baseTypes != null) return false;
+        if (childNodes != null ? !childNodes.equals(that.childNodes) : that.childNodes != null) return false;
+        if (commentEndLine != null ? !commentEndLine.equals(that.commentEndLine) : that.commentEndLine != null)
+            return false;
+        if (commentStartLine != null ? !commentStartLine.equals(that.commentStartLine) : that.commentStartLine != null)
+            return false;
+        if (endIndex != null ? !endIndex.equals(that.endIndex) : that.endIndex != null) return false;
+        if (endLine != null ? !endLine.equals(that.endLine) : that.endLine != null) return false;
+        if (modifier != null ? !modifier.equals(that.modifier) : that.modifier != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (nodeType != null ? !nodeType.equals(that.nodeType) : that.nodeType != null) return false;
+        if (parameters != null ? !parameters.equals(that.parameters) : that.parameters != null) return false;
+        if (returnType != null ? !returnType.equals(that.returnType) : that.returnType != null) return false;
+        if (startIndex != null ? !startIndex.equals(that.startIndex) : that.startIndex != null) return false;
+        if (startLine != null ? !startLine.equals(that.startLine) : that.startLine != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = nodeType != null ? nodeType.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (startLine != null ? startLine.hashCode() : 0);
+        result = 31 * result + (endLine != null ? endLine.hashCode() : 0);
+        result = 31 * result + (startIndex != null ? startIndex.hashCode() : 0);
+        result = 31 * result + (endIndex != null ? endIndex.hashCode() : 0);
+        result = 31 * result + (commentStartLine != null ? commentStartLine.hashCode() : 0);
+        result = 31 * result + (commentEndLine != null ? commentEndLine.hashCode() : 0);
+        result = 31 * result + (modifier != null ? modifier.hashCode() : 0);
+        result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        result = 31 * result + (baseTypes != null ? baseTypes.hashCode() : 0);
+        result = 31 * result + (childNodes != null ? childNodes.hashCode() : 0);
+        return result;
+    }
+
     public String getNodeType() {
         return nodeType;
     }

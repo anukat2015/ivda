@@ -107,15 +107,15 @@ public final class Configuration implements Serializable {
         this.cacheFolder = cacheFolder;
     }
 
-    private static class ConfigurationHolder {
-        private static final Configuration INSTANCE = read();
-    }
-
     public URI getCordLink() {
         return cordLink;
     }
 
     public void setCordLink(URI cordLink) {
         this.cordLink = cordLink;
+    }
+
+    private static class ConfigurationHolder {
+        private static final Configuration INSTANCE = read();
     }
 }

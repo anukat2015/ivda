@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;

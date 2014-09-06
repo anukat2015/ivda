@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Seky on 22. 7. 2014.
  * <p>
- * Sluzba Cord
+ * Sluzba Cord. Pozri popis CordUserManual.docx.
  * <p>
  */
 public class CordService extends RestClient {
@@ -91,6 +91,13 @@ public class CordService extends RestClient {
         return callApi(apiLink().path("commit").path(repo).path(commit), Commit.class);
     }
 
+    /**
+     * Get information about head commit (the latest commit in the repository branch)
+     *
+     * @param repo
+     * @param branch
+     * @return
+     */
     public Commit getHeadCommit(String repo, String branch) {
         return callApi(apiLink().path("commit").path(repo).path(branch).path("head"), Commit.class);
     }
@@ -103,6 +110,13 @@ public class CordService extends RestClient {
         return callApi(builder, CommitSearchResult.class, filter);
     }
 
+    /**
+     * Get list offiles changed in given commit
+     *
+     * @param repo
+     * @param commit
+     * @return
+     */
     public ChangeSearchResult getChanges(String repo, String commit) {
         return callApi(apiLink().path("changes").path(repo).path(commit), ChangeSearchResult.class);
     }

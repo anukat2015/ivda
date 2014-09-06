@@ -31,7 +31,7 @@ public final class UriUtils {
     }
 
     public static UriBuilder addBeanProperties(UriBuilder builder, Object object) throws IntrospectionException, InvocationTargetException, UnsupportedEncodingException, IllegalAccessException {
-        return addBeanProperties(builder, object.getClass());
+        return addBeanProperties(builder, object, object.getClass());
     }
 
     /**

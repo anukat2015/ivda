@@ -45,14 +45,14 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
     private void webEvent(WebNavigateEventDto event) {
         String link = event.getUrl();
         //if (!developerLinks.contains(link)) {
-         //   return;
+        //   return;
         //}
         //int changedLines = 20;
         //if (changedLines > 0) {
-            dataTable.addEvent(event, ImmutableMap.of(
-                    "uid", event.getEventId(),
-                    "ajax", event
-            ));
+        dataTable.addEvent(event, ImmutableMap.of(
+                "uid", event.getEventId(),
+                "ajax", event
+        ));
         //}
     }
 
