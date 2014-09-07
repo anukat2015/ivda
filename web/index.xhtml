@@ -8,12 +8,17 @@
 
     <link rel="stylesheet" type="text/css" href="libs/timeline-2.8.0/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
+    <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
+    <link rel="stylesheet" type="text/css" href="libs/selectize.js/dist/css/selectize.legacy.css"/>
     <link rel="stylesheet" type="text/css" href="style.css"/>
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="libs/qtip2/jquery.qtip.js"></script>
+
+    <script type="text/javascript" src="libs/datetimepicker/jquery.datetimepicker.js"></script>
+    <script type="text/javascript" src="libs/selectize.js/dist/js/standalone/selectize.js"></script>
 
     <script type="text/javascript" src="libs/timeline-2.8.0/timeline.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/Item.js"></script>
@@ -34,6 +39,16 @@
     <script type="text/javascript" src="js/globals.js"></script>
 
     <script type="text/javascript">
+        Date.parseDate = function( input, format ){
+            // you code for convert string to date object
+            // simplest variant - use native Date.parse, not given format parametr
+            return gGlobals.dateFormatter.parse(input);
+        };
+        Date.prototype.dateFormat = function( format ){
+            //you code for convert date object to format string
+            return gGlobals.dateFormatter.format( this.getDate() );
+        };
+
         var gGlobals = undefined;
         google.load("visualization", "1", {packages: ["corechart", 'table']});
         google.setOnLoadCallback(onLoad);
@@ -46,6 +61,7 @@
     End time: <input type="text" id="endDate" value=""/>
     <input type="button" id="setRange" value="Set" onclick="onSetTime();"/>
     <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();"/>
+    <select id="select-links" placeholder="Výber nejakého vývojara..."></select>
 </div>
 
 <div id="mytimeline"></div>

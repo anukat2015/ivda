@@ -6,19 +6,27 @@ links.ChartPanel = function () {
         title: 'Developer Activities',
         chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     };
-
+    $('#pieChart1').qtip({content: {
+        text: 'AAAAAAAAAAAAAAAAAAA'
+    }});
 
     this.visibleChart = new google.visualization.PieChart(document.getElementById('pieChart2'));
     this.visibleOptions = {
         title: 'Histogram of visible objects',
         chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     };
+    $('#pieChart2').qtip({content: {
+        text: 'AAAAAAAAAAAAAAAAAAA'
+    }});
 
     this.metadataChart = new google.visualization.PieChart(document.getElementById('pieChart3'));
     this.metadataOptions = {
         title: 'Chart of changed lines',
         chartArea: {width: '100%', height: '100%', left: '5%', top: '15%'}
     };
+    $('#pieChart3').qtip({content: {
+        text: 'AAAAAAAAAAAAAAAAAAA'
+    }});
 
     this.asynTask = undefined;
 };

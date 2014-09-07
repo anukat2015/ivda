@@ -16,6 +16,42 @@ function onLoad() {
         });
     });
     registerQTip();
+    $('#startDate').datetimepicker({
+        format:"yyyy-MM-dd'T'HH:mm:ss.SSS"
+    });
+    $('#endDate').datetimepicker({
+        format:"yyyy-MM-dd'T'HH:mm:ss.SSS"
+    });
+
+    $('#startDate').qtip({content: {
+        text: 'SSSSSSSSSSSSSSS'
+    }});
+    $('#endDate').qtip({content: {
+        text: 'SSSSSSSSSSSSSSS'
+    }});
+
+    $('#select-links').selectize({
+        plugins: ['remove_button', 'drag_drop'],
+        delimiter: ',',
+        persist: false,
+        valueField: 'name',
+        labelField: 'name',
+        searchField: 'name',
+        createOnBlur: true,
+        create: true,
+        options: [
+            {name: 'Developer A'},
+            {name: 'Developer B'},
+            {name: 'Developer C'}
+        ],
+        onChange: function(value) {
+            console.log(value);
+            console.log( JSON.stringify($('#select-links').val()) );
+        }
+    });
+    $('#select-links').qtip({content: {
+        text: 'SSSSSSSSSSSSSSS'
+    }});
     /*gGlobals.table.draw(data, {
      allowHtml: true,
      showRowNumber: true,
