@@ -3,7 +3,7 @@ function getTimeline() {
     var windowHeight = $(window).height();
     var options = {
         width: "100%",
-        height: "90%",
+        height: "94%",
         layout: "circle",
         style: 'circle',
         axisOnTop: true,
@@ -14,7 +14,8 @@ function getTimeline() {
         showMajorLabels: true,
         //stackEvents: true,
         cluster: true,
-        groupMinHeight: windowHeight * 0.1
+        groupMinHeight: windowHeight * 0.1,
+        groupWidth: '20px'
     };
 
     // Instantiate our timeline object.

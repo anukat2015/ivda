@@ -81,6 +81,11 @@ div.timeline-groups-text {
     color: #4D4D4D;
 }
 
+div.timeline-groups-text span {
+    display: block;
+    min-height: 10px;
+    text-align: center;
+}
 div.timeline-event {
     color: white;
 }
@@ -136,6 +141,22 @@ div.timeline-event-cluster div.timeline-event-dot {
 
 .timeline-event-circle .timeline-event-content {
     text-align: center;
-    padding: 0px;
+    padding: 0;
     vertical-align: middle;
+}
+
+.selectize-control {
+    min-width: 25%;
+    display: inline-flex;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.selectize-input {
+    padding: 0;
+}
+.selectize-control.multi .selectize-input.has-items {
+    padding: 0;
+}
+.selectize-control.multi .selectize-input > div {
+    margin-bottom: 0;
 }

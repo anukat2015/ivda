@@ -33,7 +33,7 @@ public final class TimelineRequest {
         //scale = Integer.valueOf(req.getParameter("scale"));
 
         // Spracuj developerov
-        List<String> parsedUsers = Splitter.on('|').splitToList(req.getParameter("users"));
+        List<String> parsedUsers = Splitter.on(',').splitToList(req.getParameter("developers"));
         ArrayList<String> users = new ArrayList<>();
         for (String user : parsedUsers) {
             users.add(Developers.getRealName(user));

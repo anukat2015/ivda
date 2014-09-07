@@ -27,9 +27,9 @@ function Chunks() {
         if (chunked !== 0) { // Nepohli sme sa o zanedbatelny kusok
             if (newMin > this.actualMin) {
                 // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
-                console.log("deleteItems " + new Date(this.actualMin).toString() + " " + new Date(newMin).toString());
+                //console.log("deleteItems " + new Date(this.actualMin).toString() + " " + new Date(newMin).toString());
                 changed = gGlobals.timeline.deleteItems(this.actualMin, newMin);
-                console.log("deleted " + changed);
+                //console.log("deleted " + changed);
             } else {
                 this.loadChunks(newMin, chunked);
             }
@@ -42,9 +42,9 @@ function Chunks() {
         if (chunked !== 0) {
             if (newMax < this.actualMax) {
                 // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
-                console.log("deleteItems " + new Date(newMax).toString() + " " + new Date(this.actualMax).toString());
+                //console.log("deleteItems " + new Date(newMax).toString() + " " + new Date(this.actualMax).toString());
                 changed = gGlobals.timeline.deleteItems(newMax, this.actualMax);
-                console.log("deleted " + changed);
+                //console.log("deleted " + changed);
             } else {
                 this.loadChunks(this.actualMax, chunked);
             }
@@ -94,7 +94,7 @@ function Chunks() {
         // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
         // Alebo prisla neskoro a hranice uz su zmenene ..
         // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
-        console.log("addItems " + data.getNumberOfRows());
+        //console.log("addItems " + data.getNumberOfRows());
         gGlobals.timeline.addItems(data, true);
     };
 

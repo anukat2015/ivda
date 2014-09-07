@@ -1924,7 +1924,7 @@ links.Timeline.prototype.repaintGroups = function () {
     for (var i = 0, iMax = Math.min(current, needed); i < iMax; i++) {
         var group = groups[i];
         var label = labels[i];
-        label.innerHTML = this.getGroupName(group);
+        label.innerHTML = '<span>' + this.getGroupName(group).split('').join('</span><span>') + '</span>';
         label.style.display = '';
     }
 
@@ -1939,7 +1939,7 @@ links.Timeline.prototype.repaintGroups = function () {
         if (options.groupsWidth === undefined) {
             label.style.whiteSpace = "nowrap";
         }
-        label.innerHTML = this.getGroupName(group);
+        label.innerHTML = '<span>' + this.getGroupName(group).split('').join('</span><span>') + '</span>';
         frame.appendChild(label);
         labels[i] = label;
 
@@ -1989,7 +1989,7 @@ links.Timeline.prototype.repaintGroups = function () {
             labelLine = labelLines[i],
             itemLine = itemLines[i];
 
-        label.style.top = group.labelTop + "px";
+        label.style.top = (group.lineTop - 200) + "px";
         labelLine.style.top = group.lineTop + "px";
         itemLine.style.top = group.lineTop + "px";
         itemLine.style.width = size.contentWidth + "px";

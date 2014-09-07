@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Seky on 5. 9. 2014.
  * SearchResult of something.
  */
-public final class SearchResult<T extends Serializable> extends Paged {
+public class SearchResult<T extends Serializable> extends Paged {
     private static final long serialVersionUID = 3892748839161178943L;
 
     private List<T> items;

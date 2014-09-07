@@ -1,6 +1,6 @@
 function onLoad() {
     gGlobals = new Globals();
-    var nowDate = gGlobals.dateFormatter.parse("2014-08-06T12:00:00.000");    // debug
+    var nowDate = gGlobals.serverDateFormatter.parse("2014-08-06T12:00:00.000");    // debug
     //var nowDate = new Date();
     var start = new Date(nowDate.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
 
@@ -17,21 +17,21 @@ function onLoad() {
     });
     registerQTip();
     $('#startDate').datetimepicker({
-        format:"yyyy-MM-dd'T'HH:mm:ss.SSS"
+        format:"d.m.Y H:i"
     });
     $('#endDate').datetimepicker({
-        format:"yyyy-MM-dd'T'HH:mm:ss.SSS"
+        format:"d.m.Y H:i"
     });
-
+    /*
     $('#startDate').qtip({content: {
         text: 'SSSSSSSSSSSSSSS'
     }});
     $('#endDate').qtip({content: {
         text: 'SSSSSSSSSSSSSSS'
     }});
-
+    */
     $('#select-links').selectize({
-        plugins: ['remove_button', 'drag_drop'],
+        plugins: ['remove_button'], // , 'drag_drop'
         delimiter: ',',
         persist: false,
         valueField: 'name',
@@ -46,12 +46,12 @@ function onLoad() {
         ],
         onChange: function(value) {
             console.log(value);
-            console.log( JSON.stringify($('#select-links').val()) );
         }
     });
-    $('#select-links').qtip({content: {
+    /*$('#select-links').qtip({content: {
         text: 'SSSSSSSSSSSSSSS'
     }});
+    */
     /*gGlobals.table.draw(data, {
      allowHtml: true,
      showRowNumber: true,
@@ -67,6 +67,7 @@ function onRangeChange() {
 
 function onReSize() {
     gGlobals.timeline.redraw();
+    gGlobals.charts.drawCharts();
 }
 
 function registerQTip() {
@@ -127,7 +128,7 @@ function onSetCurrentTime() {
 
 function onRangeChanged() {
     var range = gGlobals.timeline.getVisibleChartRange();
-    console.log("onRangeChanged " + gGlobals.dateFormatter.format(range.start) + " " + gGlobals.dateFormatter.format(range.end));
+    console.log("onRangeChanged " + gGlobals.serverDateFormatter.format(range.start) + " " + gGlobals.serverDateFormatter.format(range.end));
     gGlobals.chunks.onRangeChanged(range.start, range.end);
     gGlobals.charts.redraw();
 }

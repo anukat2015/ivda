@@ -1,24 +1,24 @@
 function Globals() {
     this.table = new google.visualization.Table(document.getElementById('datatable'));
-    this.dateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    this.serverDateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     this.charts = new links.ChartPanel();
     this.timeline = getTimeline();
-    this.startInput = document.getElementById('startDate');
-    this.endInput = document.getElementById('endDate');
+    this.startInput = $('#startDate');
+    this.endInput = $('#endDate');
     this.chunks = new Chunks();
+    this.dateFormat = 'd.m.Y H:i';
 
     this.setTime = function (start, end) {
-        this.startInput.value = this.dateFormatter.format(start);
-        this.endInput.value = this.dateFormatter.format(end);
+        this.startInput.val(start.dateFormat(this.dateFormat));
+        this.endInput.val( end.dateFormat(this.dateFormat));
     };
 
     this.getStart = function () {
-        return this.dateFormatter.parse(this.startInput.value);
-
+        return Date.parseDate(this.startInput.val(), this.dateFormat);
     };
 
     this.getEnd = function () {
-        return this.dateFormatter.parse(this.endInput.value);
+        return Date.parseDate(this.startInput.val(), this.dateFormat);
     };
 
     this.getAjaxURL = function (parameters) {
@@ -28,11 +28,12 @@ function Globals() {
     this.getServiceURL = function (start, end) {
         var restURL = "datatable?";
         var parameters = $.param({
-            start: this.dateFormatter.format(start),
-            end: this.dateFormatter.format(end),
-            width: this.timeline.size.contentWidth,
-            step: this.timeline.step.step,
-            scale: this.timeline.step.scale
+            start: this.serverDateFormatter.format(start),
+            end: this.serverDateFormatter.format(end),
+            developers: $('#select-links').val()
+            //width: this.timeline.size.contentWidth,
+            //step: this.timeline.step.step,
+            //scale: this.timeline.step.scale
         });
         return restURL + parameters;
     };
