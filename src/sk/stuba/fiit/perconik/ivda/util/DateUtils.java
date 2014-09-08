@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 23. 7. 2014.
@@ -42,6 +43,18 @@ public final class DateUtils {
 
     public static GregorianCalendar getNow() {
         return new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+    }
+
+    public static long diff(GregorianCalendar actual, GregorianCalendar last) {
+        return actual.getTimeInMillis() - last.getTimeInMillis();
+    }
+
+    public static boolean diff(GregorianCalendar actual, GregorianCalendar last, TimeUnit unit) {
+        return diff(actual, last) == unit.toMicros(1);
+    }
+
+    public static boolean isRounded(GregorianCalendar actual, TimeUnit unit) {
+        return actual.getTimeInMillis() % unit.toMicros(1) == 0;
     }
 
 }

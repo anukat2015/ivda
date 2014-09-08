@@ -50,12 +50,6 @@ public final class EventsUtil {
         }
     }
 
-    public static long diffTime(EventDto actual, EventDto last) {
-        long actualTimestamp = actual.getTimestamp().getTimeInMillis();
-        long lastTimestamp = last.getTimestamp().getTimeInMillis();
-        return actualTimestamp - lastTimestamp;
-    }
-
     /**
      * Spocitaj na zaklade poctu riadkov :)
      * Alebo na zaklade poctu znakov?

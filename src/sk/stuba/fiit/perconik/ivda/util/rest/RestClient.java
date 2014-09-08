@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.util.rest;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.log4j.Logger;
@@ -7,6 +8,7 @@ import org.apache.log4j.Logger;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,11 +40,11 @@ public abstract class RestClient {
         return null;
     }
 
-    protected void getAllPages(URI uri, Class<?> type, String nameOfPageParamter, IProcessPage process) {
+    protected void getAllPages(URI uri, Class<?> resulType, String nameOfPageParamter, IProcessPage process) {
         try {
             LOGGER.info("Starting downloading.");
             while (uri != null) {
-                Paged response = (Paged) downloadUri(uri, type);
+                Paged response = (Paged) downloadUri(uri, resulType);
                 if (response.isEmpty()) {
                     LOGGER.warn("Resultset is empty! Bad request?");
                     break;
@@ -59,6 +61,17 @@ public abstract class RestClient {
         } catch (Exception e) {
             LOGGER.error("Nemozem vygenerovat adresu alebo doslo k chybe pri stahovani.", e);
         }
+    }
+
+    protected ImmutableList downloadAll(URI uri, Class resulType, String nameOfPageParamter) {
+        final List result = new ArrayList<>(150);
+        getAllPages(uri, resulType, nameOfPageParamter, new IProcessPage() {
+            @Override
+            public void downloaded(Paged response) {
+                result.addAll(response.getItems());
+            }
+        });
+        return ImmutableList.copyOf(result);
     }
 
     protected Object downloadUri(URI uri, Class<?> type) {

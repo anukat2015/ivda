@@ -7,6 +7,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -20,9 +21,17 @@ import java.util.Map;
  */
 public final class UriUtils {
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
+        return splitQuery(url.getQuery());
+    }
+
+    public static Map<String, String> splitQuery(URI url) throws UnsupportedEncodingException {
+        return splitQuery(url.getQuery());
+    }
+
+    protected static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
         Map<String, String> qpairs = new LinkedHashMap<>(16);
         @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
-        String[] pairs = url.getQuery().split("&");
+        String[] pairs = query.split("&");
         for (String pair : pairs) {
             int part = pair.indexOf('=');
             qpairs.put(URLDecoder.decode(pair.substring(0, part), "UTF-8"), URLDecoder.decode(pair.substring(part + 1), "UTF-8"));
@@ -59,5 +68,4 @@ public final class UriUtils {
         }
         return builder;
     }
-
 }

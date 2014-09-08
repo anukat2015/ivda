@@ -49,8 +49,7 @@ public final class TimelineServlet extends DataSourceServlet {
 
         ProcessEventsToDataTable process = new ProcessFileVersions();
         process.setFilter(request);
-
-        ActivityService.getInstance().getEvents(activityRequest, process);
+        process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
         return process.getDataTable();
     }
 

@@ -1,7 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.client;
 
+import com.google.common.collect.ImmutableList;
+import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 import sk.stuba.fiit.perconik.ivda.util.cache.GuavaFilesCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
@@ -11,6 +14,9 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -22,6 +28,7 @@ import java.net.URI;
 public class ActivityService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(ActivityService.class.getName());
     private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
+    private static final TimeUnit IGNORE_CACHE_TIME = TimeUnit.HOURS;
 
     private final ActivityCache cache;
     private final WebClient client;
@@ -46,38 +53,41 @@ public class ActivityService extends RestClient {
     }
 
     /**
-     * TODO: Neskor metoda moze pracovat asynchronne ...
+     * Stiahni zoznam vsetkych eventov.
      *
      * @param uri adresa ktora sa ma stiahnut
      */
-    public void getEvents(EventsRequest request, IProcessPage<EventsResponse> process) {
+    public List<EventDto> getEvents(EventsRequest request) {
         try {
-            UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
-            URI uri = UriUtils.addBeanProperties(builder, request).build();
-            getAllPages(uri, EventsResponse.class, "page", process);
+            // Vrat prazdny vysledok ked:
+            // poziadavka smeruje na vyber eventov z buducnosti
+            // poziadavka smeruje na vyber eventov za poslednu hodinu
+            GregorianCalendar timeTo = DateUtils.fromString(request.getTimeTo());
+            GregorianCalendar now = DateUtils.getNow();
+            long diff = DateUtils.diff(timeTo, now);
+            if (diff >= IGNORE_CACHE_TIME.toMicros(1)) {
+                UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
+                URI uri = UriUtils.addBeanProperties(builder, request).build();
+                return cache.getCache().getUnchecked(uri);
+            }
         } catch (Exception e) {
             LOGGER.error("Nemozem vygenerovat adresu alebo doslo k chybe pri stahovani.", e);
         }
-    }
-
-    @Override
-    protected Object downloadUri(URI uri, Class<?> type) {
-        return cache.getCache().getUnchecked(uri);
+        return Collections.emptyList();
     }
 
     private static class SingletonHolder {
         public static final ActivityService INSTANCE = new ActivityService();
     }
 
-    private final class ActivityCache extends GuavaFilesCache<URI, EventsResponse> {
+    private final class ActivityCache extends GuavaFilesCache<URI, ImmutableList<EventDto>> {
         protected ActivityCache() {
             super(new File(CACHE_FOLDER, "activity"));
         }
 
         @Override
-        protected EventsResponse fileNotFound(URI key) {
-            //noinspection unchecked
-            return (EventsResponse) client.synchronizedRequest(key, EventsResponse.class);
+        protected ImmutableList<EventDto> fileNotFound(URI key) {
+            return (ImmutableList<EventDto>) downloadAll(key, EventsResponse.class, "page");
         }
     }
 }

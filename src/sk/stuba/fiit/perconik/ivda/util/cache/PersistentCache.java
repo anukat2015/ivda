@@ -30,7 +30,17 @@ public abstract class PersistentCache<Key, Value extends Serializable> {
         return cacheFolder;
     }
 
+    protected boolean isCacheAllowed(Key key) {
+        return true;
+    }
+
     public final Value get(Key key) {
+        // Cache nie je povolena pre specificky kluc
+        if (!isCacheAllowed(key)) {
+            return fileNotFound(key);
+        }
+
+        // Pokracuj dalej pokusom sa nacitat cache
         Value response = null;
         FileLock lock = null;
         File cacheFile = computeFilePath(cacheFolder, key);

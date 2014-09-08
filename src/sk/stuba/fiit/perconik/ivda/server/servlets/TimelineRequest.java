@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 6. 9. 2014.
@@ -20,6 +21,7 @@ public final class TimelineRequest {
     //private final Integer width;
     //private final Integer step;
     //private final Integer scale;
+    private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.HOURS;
     private final GregorianCalendar start;
     private final GregorianCalendar end;
     private final List<String> developers;
@@ -44,8 +46,14 @@ public final class TimelineRequest {
         developers = Collections.unmodifiableList(users);
 
         // Skontroluj datumy
-        if (!start.before(end)) {
-            throw new WebApplicationException("Start date is not before end.", Response.Status.BAD_REQUEST);
+        if (!DateUtils.isRounded(start, SIZE_OF_CHUNK)) {
+            throw new WebApplicationException("Start datum nie je zaokruhleny na velkost chunku.", Response.Status.BAD_REQUEST);
+        }
+        if (!DateUtils.isRounded(end, SIZE_OF_CHUNK)) {
+            throw new WebApplicationException("End datum nie je zaokruhleny na velkost chunku.", Response.Status.BAD_REQUEST);
+        }
+        if (!DateUtils.diff(start, end, TimeUnit.HOURS)) {
+            throw new WebApplicationException("Rozdiel datumov je vacsi ako velkost chunku.", Response.Status.BAD_REQUEST);
         }
     }
 

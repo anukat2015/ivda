@@ -63,4 +63,9 @@ public class PagedResponse<T extends Serializable> extends Paged {
     public boolean isEmpty() {
         return getResultSet().isEmpty();
     }
+
+    @Override
+    public List getItems() {
+        return resultSet;
+    }
 }

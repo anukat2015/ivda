@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
@@ -62,7 +62,7 @@ public class DivideByActivity implements IDividing {
      * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
     protected boolean divideByTime(IGrouping group, EventDto actual) {
-        return (EventsUtil.diffTime(actual, group.getLastEvent()) > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
+        return (DateUtils.diff(actual.getTimestamp(), group.getLastEvent().getTimestamp()) > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
     }
 
     /**

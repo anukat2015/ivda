@@ -46,6 +46,8 @@ public abstract class Paged implements Serializable {
 
     public abstract boolean isEmpty();
 
+    public abstract List getItems();
+
     public void nextPage() {
         if (isHasNextPage()) {
             pageIndex++;

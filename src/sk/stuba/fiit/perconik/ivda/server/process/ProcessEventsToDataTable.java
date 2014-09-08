@@ -1,14 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.server.process;
 
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.activity.client.EventsResponse;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest;
-import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -16,7 +15,7 @@ import javax.validation.constraints.NotNull;
  * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
 @NotThreadSafe
-public abstract class ProcessEventsToDataTable implements RestClient.IProcessPage<EventsResponse> {
+public abstract class ProcessEventsToDataTable {
     protected static final Logger LOGGER = Logger.getLogger(ProcessEventsToDataTable.class.getName());
     protected final MyDataTable dataTable;
     protected TimelineRequest filter;
@@ -26,9 +25,9 @@ public abstract class ProcessEventsToDataTable implements RestClient.IProcessPag
         filter = null;
     }
 
-    @Override
-    public void downloaded(EventsResponse response) {
-        response.getResultSet().forEach(this::filterItem);
+    public void downloaded(List<EventDto> list) {
+        list.forEach(this::filterItem);
+        finished();
     }
 
     protected abstract void proccessItem(EventDto event);
@@ -50,6 +49,9 @@ public abstract class ProcessEventsToDataTable implements RestClient.IProcessPag
 
     public void setFilter(TimelineRequest filter) {
         this.filter = filter;
+    }
+
+    public void finished() {
     }
 }
 
