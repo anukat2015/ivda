@@ -3837,6 +3837,55 @@ links.Timeline.prototype.getGroup = function (groupName) {
 };
 
 /**
+ * Delete group and items by group name.
+ * @param groupName
+ */
+links.Timeline.prototype.deleteGroup = function (groupName) {
+    var groups = this.groups,
+        groupIndexes = this.groupIndexes,
+        items = this.items;
+
+    // Find group
+    var groupIndex = groupIndexes[groupName];
+    if (groupIndex == undefined) {
+        console.log("not found");
+        return; // error
+    }
+
+    // Remove items
+    if (items) {
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].group.content == groupName) {
+                this.removeItem(i, true);
+            }
+        }
+    }
+
+    // Remove group
+    var groupObject = this.groups.splice(groupIndex, 1)[0];
+
+    // sort the groups
+    if (this.options.groupsOrder == true) {
+        groups = groups.sort(function (a, b) {
+            if (a.content > b.content) {
+                return 1;
+            }
+            if (a.content < b.content) {
+                return -1;
+            }
+            return 0;
+        });
+    } else if (typeof(this.options.groupsOrder) == "function") {
+        groups = groups.sort(this.options.groupsOrder)
+    }
+
+    // rebuilt the groupIndexes
+    for (var i = 0, iMax = groups.length; i < iMax; i++) {
+        groupIndexes[groups[i].content] = i;
+    }
+};
+
+/**
  * Get the group name from a group object.
  * @param {Object} groupObj
  * @return {String} groupName   the name of the group, or undefined when group
@@ -4473,11 +4522,6 @@ links.Timeline.prototype.filterItems = function () {
 };
 
 
-links.Timeline.prototype.preloadData = function () {
-    var window = (this.end - this.start);
-    var loadStart = new Date(this.start.valueOf() - 2 * window);
-    var loadEnd = new Date(this.end.valueOf() + 2 * window);
-}
 /** ------------------------------------------------------------------------ **/
 
 

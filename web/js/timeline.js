@@ -26,3 +26,39 @@ function getTimeline() {
     //timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
     return timeline;
 }
+
+function registerQTip() {
+    $(document).on("click", '.timeline-event-circle', function ($e) {
+        $(this).qtip({
+            overwrite: false,
+            hide: 'unfocus',
+            show: 'click',
+            /*show: {
+             ready: true // Needed to make it show on first mouseover event
+             }, */
+            content: {
+                text: function (event, api) {
+                    var item = gGlobals.timeline.getSelected();
+                    if (item === undefined || item.metadata === undefined) {
+                        api.set('content.text', "Not selected entity.");
+                    } else {
+                        if (item.metadata.ajax != undefined) {
+                            console.log(item.metadata.ajax);
+                        } else {
+                            $.ajax({
+                                url: gGlobals.getAjaxURL(item.metadata)
+                            }).then(function (content) {
+                                // Set the tooltip content upon successful retrieval
+                                api.set('content.text', content);
+                            }, function (xhr, status, error) {
+                                // Upon failure... set the tooltip content to error
+                                api.set('content.text', status + ': ' + error);
+                            });
+                        }
+                    }
+                    return 'Loading...'; // Set some initial text
+                }
+            }
+        });
+    });
+}

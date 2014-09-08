@@ -36,7 +36,10 @@ public final class TimelineRequest {
         List<String> parsedUsers = Splitter.on(',').splitToList(req.getParameter("developers"));
         ArrayList<String> users = new ArrayList<>();
         for (String user : parsedUsers) {
-            users.add(Developers.getRealName(user));
+            String realName = Developers.getRealName(user);
+            if (realName != null) {
+                users.add(realName);
+            }
         }
         developers = Collections.unmodifiableList(users);
 
