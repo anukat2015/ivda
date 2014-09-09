@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Created by Seky on 8. 8. 2014.
- * <p>
+ * <p/>
  * Pomocna trieda pre rpacovanie s URI.
  */
 public final class UriUtils {

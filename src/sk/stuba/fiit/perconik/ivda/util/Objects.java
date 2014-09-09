@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 /**
  * Created by Seky on 16. 8. 2014.
- * <p>
+ * <p/>
  * Pomocna trieda pre pracu s reflection API.
  */
 public final class Objects {

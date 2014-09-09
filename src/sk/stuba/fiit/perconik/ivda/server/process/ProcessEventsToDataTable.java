@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 22. 7. 2014.
- * <p>
+ * <p/>
  * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
 @NotThreadSafe
@@ -26,7 +26,9 @@ public abstract class ProcessEventsToDataTable {
     }
 
     public void downloaded(List<EventDto> list) {
-        list.forEach(this::filterItem);
+        for (EventDto event : list) {
+            filterItem(event);
+        }
         finished();
     }
 

@@ -33,7 +33,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 19. 8. 2014.
- * <p>
+ * <p/>
  * Beana pre events.xhtml stranku.
  */
 @ManagedBean(name = "event")

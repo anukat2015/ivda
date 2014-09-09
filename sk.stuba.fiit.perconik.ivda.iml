@@ -12,6 +12,11 @@
         <sourceRoots />
       </configuration>
     </facet>
+    <facet type="google-app-engine" name="Google App Engine">
+      <configuration>
+        <sdk-home-path>$MODULE_DIR$/../appengine-java-sdk-1.9.10</sdk-home-path>
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
@@ -86,7 +91,10 @@
     <orderEntry type="library" name="Maven: batik:batik-gui-util:1.6-1" level="project" />
     <orderEntry type="library" name="Maven: batik:batik-ext:1.6-1" level="project" />
     <orderEntry type="library" name="Maven: xml-apis:xmlParserAPIs:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.objectify:objectify:5.0.3" level="project" />
     <orderEntry type="module" module-name="sk.stuba.fiit.perconik.uaca.dto" />
+    <orderEntry type="library" scope="PROVIDED" name="AppEngine Dev 1.9.10" level="application_server_libraries" />
+    <orderEntry type="library" name="AppEngine API" level="project" />
     <orderEntry type="module" module-name="com.gratex.perconik.services" />
   </component>
 </module>

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Seky on 16. 8. 2014.
- * <p>
+ * <p/>
  * Pomocna trieda pre pracovanie s EventDto
  */
 @ThreadSafe

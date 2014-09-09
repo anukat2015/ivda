@@ -9,7 +9,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Vypis event, kde pouzivatel upravoval kod.
  */
 @NotThreadSafe

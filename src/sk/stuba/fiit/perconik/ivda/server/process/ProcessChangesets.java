@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 15. 8. 2014.
- * <p>
+ * <p/>
  * Vypis file verziu specifickeho suboru.
  */
 @NotThreadSafe

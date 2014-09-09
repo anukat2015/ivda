@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Skupina reprezentovana akzdym jednym prvkom.
  */
 @NotThreadSafe
@@ -43,5 +43,10 @@ public class FullGroup implements IGrouping, Serializable {
     @Override
     public int size() {
         return list.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getFirstEvent() == null;
     }
 }

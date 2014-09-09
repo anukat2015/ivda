@@ -10,7 +10,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p>
+ * <p/>
  * Upraveny JacksonContextResolver, kde registrujeme pre Jackson vlastny modul.
  * Zaroven sa tu nastavuju nastavenia Jacksonu.
  */

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * Created by Seky on 20. 8. 2014.
- * <p>
+ * <p/>
  * V nasom webe sa mozu nachadzat rozne stranky. Kazdu stranku definujeme ako stav.
  * Tieto stavy mozme prepinat.
  */

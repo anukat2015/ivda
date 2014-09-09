@@ -9,9 +9,9 @@ import java.io.Serializable;
 import java.net.URI;
 
 /**
- * <p>
+ * <p/>
  * EventsURI bean. Attributes:
- * <p>
+ * <p/>
  * Page [int]
  * Zero based index of the results page
  * PageSize [int]
@@ -82,6 +82,10 @@ public class EventsRequest implements Serializable {
         return eventTypeUri;
     }
 
+    public void setEventTypeUri(URI type) {
+        eventTypeUri = type.toString();
+    }
+
     public void setEventTypeUri(EventDto event) {
         setEventTypeUri(event.getEventTypeUri());
     }
@@ -117,10 +121,6 @@ public class EventsRequest implements Serializable {
     public void setTime(GregorianCalendar from, GregorianCalendar to) {
         timeFrom = DateUtils.toString(from);
         timeTo = DateUtils.toString(to);
-    }
-
-    public void setEventTypeUri(URI type) {
-        eventTypeUri = type.toString();
     }
 
     public void setEventTypeUri(EventDto event, String subtype) {

@@ -70,6 +70,7 @@
           <element id="library" level="project" name="Maven: org.apache.myfaces.tomahawk:tomahawk20:1.1.14" />
           <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpclient:4.3.5" />
           <element id="library" level="project" name="Maven: org.apache.httpcomponents:httpcore:4.3.2" />
+          <element id="library" level="project" name="AppEngine API" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="sk.stuba.fiit.perconik.ivda/web/Web" />

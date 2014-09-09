@@ -4,7 +4,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * IGroup reprezentuje spravanie skupiny.
  */
 public interface IGrouping {
@@ -14,9 +14,7 @@ public interface IGrouping {
 
     EventDto getFirstEvent();
 
-    default boolean isEmpty() {
-        return getFirstEvent() == null;
-    }
+    boolean isEmpty();
 
     int size();
 }

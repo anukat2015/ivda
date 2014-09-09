@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Skupina reprezentovana len 2 hranicnymi bodmi.
  */
 @NotThreadSafe
@@ -40,7 +40,14 @@ public class BoundedGroup implements IGrouping, Serializable {
     }
 
     @Override
+    public boolean isEmpty() {
+        return getFirstEvent() == null;
+    }
+
+    @Override
     public int size() {
         return inGroup;
     }
+
+
 }

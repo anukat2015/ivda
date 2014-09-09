@@ -37,7 +37,7 @@ public abstract class PersistentCache<Key, Value extends Serializable> {
     public final Value get(Key key) {
         // Cache nie je povolena pre specificky kluc
         if (!isCacheAllowed(key)) {
-            return fileNotFound(key);
+            return valueNotFound(key);
         }
 
         // Pokracuj dalej pokusom sa nacitat cache
@@ -57,7 +57,7 @@ public abstract class PersistentCache<Key, Value extends Serializable> {
                 // Chyba pri deserializacii, vymaz teda objekt a uloz ho znova
                 cacheFile.delete();
             }
-            response = fileNotFound(key);
+            response = valueNotFound(key);
             serialize(raf.getFD(), response);
         } catch (FileNotFoundException e) {
             LOGGER.error("Nemozem vytvorit subor s nazvom: " + cacheFile);
@@ -94,7 +94,7 @@ public abstract class PersistentCache<Key, Value extends Serializable> {
         SerializationUtils.serialize(v, new FileOutputStream(fd));
     }
 
-    protected abstract Value fileNotFound(Key key);
+    protected abstract Value valueNotFound(Key key);
 
     /**
      * Ked proces prevodu kluca na cestu k suboru je dlhy, moze tu byt pouzity cache.

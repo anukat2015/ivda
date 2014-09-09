@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Seky on 22. 7. 2014.
- * <p>
+ * <p/>
  * Sluzba Cord. Pozri popis CordUserManual.docx.
- * <p>
+ * <p/>
  */
 public final class CordService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(CordService.class.getName());
@@ -133,7 +133,7 @@ public final class CordService extends RestClient {
         // Iba zoznamy cachujeme
         try {
             URI link = UriUtils.addBeanProperties(path, filter).build();
-            return (ImmutableList<T>) cache.getCache().get(new Pair<>(link, type));
+            return (ImmutableList<T>) cache.getCache().get(new Pair<URI, Class>(link, type));
         } catch (Exception e) {
             LOGGER.error("Error", e);
             return Collections.emptyList();
@@ -166,7 +166,7 @@ public final class CordService extends RestClient {
         }
 
         @Override
-        protected ImmutableList fileNotFound(Pair<URI, Class> key) {
+        protected ImmutableList valueNotFound(Pair<URI, Class> key) {
             return downloadAll(key.getKey(), key.getValue(), "pageIndex");
         }
 
@@ -185,7 +185,7 @@ public final class CordService extends RestClient {
         }
 
         @Override
-        protected ImmutableList<String> fileNotFound(FileDescription fd) {
+        protected ImmutableList<String> valueNotFound(FileDescription fd) {
             UriBuilder link = apiLink();
             link.path("blob").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()).queryParam("format", "text");
             String content = callApi(link, String.class);

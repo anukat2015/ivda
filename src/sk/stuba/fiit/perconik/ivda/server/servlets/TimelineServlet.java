@@ -19,7 +19,7 @@ import java.io.IOException;
 
 /**
  * Created by Seky on 17. 7. 2014.
- * <p>
+ * <p/>
  * Servlet pre TImeline.
  */
 public final class TimelineServlet extends DataSourceServlet {

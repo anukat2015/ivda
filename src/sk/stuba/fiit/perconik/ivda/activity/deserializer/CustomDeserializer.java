@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p>
+ * <p/>
  * Vlastny deserializer. Ktory priradi objekt z jsonu na zaklade specifickeho kluca.
  */
 @ThreadSafe

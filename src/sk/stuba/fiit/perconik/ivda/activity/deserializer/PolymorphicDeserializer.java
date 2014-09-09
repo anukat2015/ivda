@@ -1,18 +1,20 @@
 package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 
+import com.google.common.base.Function;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import sk.stuba.fiit.perconik.ivda.util.Objects;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
  * Created by Seky on 20. 7. 2014.
- * <p>
+ * <p/>
  * Deserialize polymorfed objects by specific keys. Like a URI
  */
 @ThreadSafe
@@ -91,7 +93,13 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         if (aClass == null) {
             LOGGER.info("Cannot find class for key '" + key + "', trying longest subsequnce.");
             //noinspection NullableProblems
-            String longestString = Strings.findLongestPrefix(keySet(), key, input -> input);
+            String longestString = Strings.findLongestPrefix(keySet(), key, new Function<String, String>() {
+                @Nullable
+                @Override
+                public String apply(@Nullable String input) {
+                    return input;
+                }
+            });
             if (longestString != null) {
                 aClass = super.searchForClass(longestString);
                 register(key, aClass);

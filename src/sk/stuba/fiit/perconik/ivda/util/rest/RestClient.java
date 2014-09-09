@@ -70,6 +70,11 @@ public abstract class RestClient {
             public void downloaded(Paged response) {
                 result.addAll(response.getItems());
             }
+
+            @Override
+            public void finished() {
+
+            }
         });
         return ImmutableList.copyOf(result);
     }
@@ -87,7 +92,6 @@ public abstract class RestClient {
          */
         public void downloaded(T response);
 
-        public default void finished() {
-        }
+        public void finished();
     }
 }

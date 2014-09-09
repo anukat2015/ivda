@@ -15,7 +15,7 @@ import java.net.URI;
 
 /**
  * Created by Seky on 18. 7. 2014.
- * <p>
+ * <p/>
  * HTTP jednoduchy client na stahovanie odpovedi zo sluzieb.
  */
 @ThreadSafe

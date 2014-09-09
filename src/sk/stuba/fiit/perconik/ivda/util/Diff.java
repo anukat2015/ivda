@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 18. 8. 2014.
- * <p>
+ * <p/>
  * Pomocne utilitky pre praci s roznymi verziami suborov.
  */
 @ThreadSafe

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 9. 8. 2014.
- * <p>
+ * <p/>
  * Cachuj informacie pomocou Guava kniznice. Pricom perzistentne uloz hodnoty na zaklade klucov.
  */
 

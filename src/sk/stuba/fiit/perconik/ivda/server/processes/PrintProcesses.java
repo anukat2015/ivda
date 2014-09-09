@@ -13,7 +13,7 @@ import java.util.Set;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
  */
 @NotThreadSafe

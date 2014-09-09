@@ -4,7 +4,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Interaface urcuje sposob spravania ako sa skupiny maju rozdelovat.
  */
 public interface IDividing {

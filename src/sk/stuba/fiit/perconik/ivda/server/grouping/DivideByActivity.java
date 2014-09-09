@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 21. 8. 2014.
- * <p>
+ * <p/>
  * Skupiny rozdelujeme na zaklade casu alebo typu.
  */
 @ThreadSafe
