@@ -1,12 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-public class ApplicationEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.EventDto {
+public class ApplicationEventDto extends EventDto {
+    private static final long serialVersionUID = 984795989632643746L;
     private String appName;
     private String appVersion;
     private String sessionId;
-
-    public ApplicationEventDto() {
-    }
 
     public String getAppName() {
         return appName;
@@ -32,9 +30,9 @@ public class ApplicationEventDto extends sk.stuba.fiit.perconik.ivda.activity.dt
         this.sessionId = sessionId;
     }
 
-    /* Nepouziva sa ...
-    @Override
-    protected UriBuilder getDefaultEventTypeUri() {
-		return super.getDefaultEventTypeUri().path("application");
-	}*/
+/* Nepouziva sa ...
+@Override
+protected UriBuilder getDefaultEventTypeUri() {
+return super.getDefaultEventTypeUri().path("application");
+}*/
 }

@@ -1,16 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeProjectEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
-    public IdeProjectEventDto() {
-    }
+public class IdeProjectEventDto extends IdeEventDto {
 
-    public void setEventType(String eventType) {
-        setEventTypeUri(UriBuilder.fromUri(getEventTypeUri()).path(eventType).build());
-    }
+    private static final long serialVersionUID = 4711138246462652338L;
 
     @Override
     protected UriBuilder getDefaultEventTypeUri() {

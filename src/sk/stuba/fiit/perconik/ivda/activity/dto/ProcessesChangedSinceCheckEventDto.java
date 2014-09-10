@@ -1,36 +1,31 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.*;
-import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
-
 import javax.ws.rs.core.UriBuilder;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ProcessesChangedSinceCheckEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.SystemEventDto {
-    private List<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto> startedProcesses;
-    private List<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto> killedProcesses;
+public class ProcessesChangedSinceCheckEventDto extends SystemEventDto {
+    private static final long serialVersionUID = -7574345404251439398L;
+    private List<ProcessDto> startedProcesses;
+    private List<ProcessDto> killedProcesses;
 
-    public ProcessesChangedSinceCheckEventDto() {
-    }
-
-    public List<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto> getStartedProcesses() {
-        if (this.startedProcesses != null) {
-            return this.startedProcesses;
+    public List<ProcessDto> getStartedProcesses() {
+        if (startedProcesses != null) {
+            return startedProcesses;
         }
-        return new ArrayList<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto>();
+        return Collections.emptyList();
     }
 
-    public void setStartedProcesses(List<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto> startedProcesses) {
+    public void setStartedProcesses(List<ProcessDto> startedProcesses) {
         this.startedProcesses = startedProcesses;
     }
 
-    public List<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto> getKilledProcesses() {
-        if (this.killedProcesses != null) {
-            return this.killedProcesses;
+    public List<ProcessDto> getKilledProcesses() {
+        if (killedProcesses != null) {
+            return killedProcesses;
         }
 
-        return new ArrayList<sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto>();
+        return Collections.emptyList();
     }
 
     public void setKilledProcesses(List<ProcessDto> killedProcesses) {

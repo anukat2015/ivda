@@ -1,14 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class WebSaveDocumentEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
+public class WebSaveDocumentEventDto extends WebEventDto {
+    private static final long serialVersionUID = 6739705374264580583L;
     private String name;
-
-    public WebSaveDocumentEventDto() {
-    }
 
     public String getName() {
         return name;

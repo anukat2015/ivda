@@ -1,10 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeStateChangeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeStateChangeEventDto extends IdeEventDto {
+    private static final long serialVersionUID = 210950510505706347L;
     /**
      * Uri specifying state/perspective to which has been IDE switched.
      * It should be in form of:
@@ -12,9 +11,6 @@ public class IdeStateChangeEventDto extends sk.stuba.fiit.perconik.ivda.activity
      * and ideName is "eclipse", "vs",
      */
     private String stateTypeUri;
-
-    public IdeStateChangeEventDto() {
-    }
 
     /**
      * @return the {@link #stateTypeUri}

@@ -2,7 +2,8 @@ package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeCheckinEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeCheckinEventDto extends IdeEventDto {
+    private static final long serialVersionUID = 2496251196507844251L;
     /**
      * Changeset id as specified in a RCS
      */
@@ -11,10 +12,7 @@ public class IdeCheckinEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto
     /**
      * Target rcs server or remote repository
      */
-    private sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer;
-
-    public IdeCheckinEventDto() {
-    }
+    private RcsServerDto rcsServer;
 
     /**
      * @return the {@link #changesetIdInRcs}
@@ -33,7 +31,7 @@ public class IdeCheckinEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto
     /**
      * @return the {@link #rcsServer}
      */
-    public sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto getRcsServer() {
+    public RcsServerDto getRcsServer() {
         return rcsServer;
     }
 

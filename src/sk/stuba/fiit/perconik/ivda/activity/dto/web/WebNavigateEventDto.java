@@ -1,22 +1,18 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class WebNavigateEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
+public class WebNavigateEventDto extends WebEventDto {
+    private static final long serialVersionUID = -9152982068522928478L;
     private String transitionTypeUri;
     private String tabId;
-
-    public WebNavigateEventDto() {
-    }
 
     public String getTransitionTypeUri() {
         return transitionTypeUri;
     }
 
     public void setTransitionTypeUri(String type) {
-        this.transitionTypeUri = type;
+        transitionTypeUri = type;
     }
 
     public String getTabId() {

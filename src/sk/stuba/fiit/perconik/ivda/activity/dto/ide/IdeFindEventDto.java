@@ -1,12 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
-
 import javax.ws.rs.core.UriBuilder;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class IdeFindEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeFindEventDto extends IdeEventDto {
+    private static final long serialVersionUID = 7794838251773401089L;
     /**
      * Search query
      */
@@ -57,9 +56,6 @@ public class IdeFindEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.id
      * search results per matched file
      */
     private List<IdeFindFileResultDto> resultsPerFiles;
-
-    public IdeFindEventDto() {
-    }
 
     /**
      * @return the {@link #queryText}
@@ -192,7 +188,7 @@ public class IdeFindEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.id
      */
     public List<IdeFindFileResultDto> getResultsPerFiles() {
         if (resultsPerFiles == null) {
-            resultsPerFiles = new ArrayList<IdeFindFileResultDto>();
+            resultsPerFiles = Collections.emptyList();
         }
         return resultsPerFiles;
     }

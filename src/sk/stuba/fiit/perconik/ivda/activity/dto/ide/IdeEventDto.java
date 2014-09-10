@@ -5,6 +5,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ApplicationEventDto;
 import javax.ws.rs.core.UriBuilder;
 
 public class IdeEventDto extends ApplicationEventDto {
+    private static final long serialVersionUID = -6256629269034699823L;
     /**
      * Name of the current project
      */
@@ -13,9 +14,6 @@ public class IdeEventDto extends ApplicationEventDto {
      * Name of the current solution/workspace
      */
     private String solutionName;
-
-    public IdeEventDto() {
-    }
 
     /**
      * @return the {@link #projectName}
@@ -29,7 +27,6 @@ public class IdeEventDto extends ApplicationEventDto {
      */
     public void setProjectName(String projectName) {
         this.projectName = projectName;
-
     }
 
     /**

@@ -1,43 +1,41 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 
 public class EventDto implements Serializable {
-    public static final String BASE_URI = "http://perconik.gratex.com/useractivity";
+    private static final String BASE_URI = "http://perconik.gratex.com/useractivity";
+    private static final long serialVersionUID = 6501705290672225644L;
 
-    private GregorianCalendar timestamp;
+    private Date timestamp;
     private String eventId;
     private String user;
     private String workstation;
     private URI eventTypeUri = getDefaultEventTypeUri().build();
-    private boolean wasCommitForcedByUser = false; //true - commit forced by 'send now' button
-
-    public EventDto() {
-    }
+    private boolean wasCommitForcedByUser; //true - commit forced by 'send now' button
 
     public String getEventId() {
-        return this.eventId;
+        return eventId;
     }
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
-    public GregorianCalendar getTimestamp() {
-        return this.timestamp;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimestamp(GregorianCalendar timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
     public String getUser() {
-        return this.user;
+        return user;
     }
 
     public void setUser(String user) {
@@ -45,7 +43,7 @@ public class EventDto implements Serializable {
     }
 
     public String getWorkstation() {
-        return this.workstation;
+        return workstation;
     }
 
     public void setWorkstation(String workstation) {
@@ -53,7 +51,7 @@ public class EventDto implements Serializable {
     }
 
     public URI getEventTypeUri() {
-        return this.eventTypeUri;
+        return eventTypeUri;
     }
 
     public void setEventTypeUri(URI eventTypeUri) {
@@ -88,12 +86,18 @@ public class EventDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         EventDto eventDto = (EventDto) o;
 
-        if (eventId != null ? !eventId.equals(eventDto.eventId) : eventDto.eventId != null) return false;
+        if (eventId != null ? !eventId.equals(eventDto.eventId) : eventDto.eventId != null) {
+            return false;
+        }
 
         return true;
     }

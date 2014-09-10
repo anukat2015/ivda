@@ -1,15 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class BashCommandEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ApplicationEventDto {
+public class BashCommandEventDto extends ApplicationEventDto {
+    private static final long serialVersionUID = -2729468962973458909L;
     private String commandLine;
     private int commandId;
-
-    public BashCommandEventDto() {
-    }
 
     public String getCommandLine() {
         return commandLine;

@@ -1,15 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class WebCopyEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
+public class WebCopyEventDto extends WebEventDto {
+    private static final long serialVersionUID = -3599193333584765740L;
     private String tabId;
     private String content;
-
-    public WebCopyEventDto() {
-    }
 
     public String getContent() {
         return content;

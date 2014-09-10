@@ -1,24 +1,19 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeDocumentEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeDocumentEventDto extends IdeEventDto {
+    private static final long serialVersionUID = -1950941763338557186L;
     /**
      * Document that has been subject of this event
      */
 
-    private sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto document;
-
-    public IdeDocumentEventDto() {
-    }
+    private IdeDocumentDto document;
 
     /**
      * @return the {@link #document}
      */
-    public sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto getDocument() {
+    public IdeDocumentDto getDocument() {
         return document;
     }
 
@@ -27,10 +22,6 @@ public class IdeDocumentEventDto extends sk.stuba.fiit.perconik.ivda.activity.dt
      */
     public void setDocument(IdeDocumentDto document) {
         this.document = document;
-    }
-
-    public void setEventType(String eventType) {
-        setEventTypeUri(UriBuilder.fromUri(getEventTypeUri()).path(eventType).build());
     }
 
     @Override

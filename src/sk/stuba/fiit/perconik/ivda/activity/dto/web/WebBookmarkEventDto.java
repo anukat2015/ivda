@@ -1,14 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class WebBookmarkEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
+public class WebBookmarkEventDto extends WebEventDto {
+    private static final long serialVersionUID = -1254467614619473017L;
     private String name;
-
-    public WebBookmarkEventDto() {
-    }
 
     public String getName() {
         return name;

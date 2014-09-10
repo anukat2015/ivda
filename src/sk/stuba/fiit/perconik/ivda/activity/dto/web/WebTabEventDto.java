@@ -1,14 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class WebTabEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
+public class WebTabEventDto extends WebEventDto {
+    private static final long serialVersionUID = -4492079323415022629L;
     private String tabId;
-
-    public WebTabEventDto() {
-    }
 
     public String getTabId() {
         return tabId;
@@ -18,12 +14,7 @@ public class WebTabEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web
         this.tabId = tabId;
     }
 
-    public void setEventType(String eventType) {
-        setEventTypeUri(UriBuilder.fromUri(getEventTypeUri()).path(eventType).build());
-    }
-
     @Override
-
     protected UriBuilder getDefaultEventTypeUri() {
         return super.getDefaultEventTypeUri().path("tab");
     }

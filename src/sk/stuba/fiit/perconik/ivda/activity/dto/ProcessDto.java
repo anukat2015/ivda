@@ -5,14 +5,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 public class ProcessDto implements Serializable {
+    private static final long serialVersionUID = 1844954611978415458L;
     private String name;
     private int pid;
 
-    public ProcessDto() {
-    }
-
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setName(String name) {
@@ -20,7 +18,7 @@ public class ProcessDto implements Serializable {
     }
 
     public int getPid() {
-        return this.pid;
+        return pid;
     }
 
     public void setPid(int pid) {

@@ -1,10 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeCodeElementEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeCodeElementEventDto extends IdeEventDto {
+    private static final long serialVersionUID = -3080849544898075703L;
     /**
      * Type of code element.
      * It should be in form of:
@@ -17,9 +16,6 @@ public class IdeCodeElementEventDto extends sk.stuba.fiit.perconik.ivda.activity
      * Full name of the code element
      */
     private String elementFullName;
-
-    public IdeCodeElementEventDto() {
-    }
 
     /**
      * @return the {@link #codeElementTypeUri}
@@ -47,10 +43,6 @@ public class IdeCodeElementEventDto extends sk.stuba.fiit.perconik.ivda.activity
      */
     public void setElementFullName(String elementFullName) {
         this.elementFullName = elementFullName;
-    }
-
-    public void setEventType(String eventType) {
-        setEventTypeUri(UriBuilder.fromUri(getEventTypeUri()).path(eventType).build());
     }
 
     @Override

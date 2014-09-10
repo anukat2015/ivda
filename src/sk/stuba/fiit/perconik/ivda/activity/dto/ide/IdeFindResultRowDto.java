@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 public class IdeFindResultRowDto implements Serializable {
+    private static final long serialVersionUID = -1161120658435336651L;
     /**
      * Zero based index of a row where the match has been found or null if it has not been determined
      */

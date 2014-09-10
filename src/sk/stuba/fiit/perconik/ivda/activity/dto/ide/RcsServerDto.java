@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 public class RcsServerDto implements Serializable {
+    private static final long serialVersionUID = -6135389534993466305L;
     /**
      * Server url
      */

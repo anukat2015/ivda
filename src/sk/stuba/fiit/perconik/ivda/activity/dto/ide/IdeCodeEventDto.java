@@ -1,15 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
-import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
-
 import javax.ws.rs.core.UriBuilder;
 
 /**
  * Common request used for events: PasteFromWeb, SelectionChanged, Paste, Copy,
  * Cut
  */
-public class IdeCodeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
+public class IdeCodeEventDto extends IdeEventDto {
+    private static final long serialVersionUID = 7320387704598820475L;
     /**
      * Text that was subject of a given event. For instance text that was pasted from the web.
      */
@@ -38,10 +36,7 @@ public class IdeCodeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.id
     /**
      * Document for which has been this event generated
      */
-    private sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto document;
-
-    public IdeCodeEventDto() {
-    }
+    private IdeDocumentDto document;
 
     /**
      * @return the {@link #text}
@@ -130,7 +125,7 @@ public class IdeCodeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.id
     /**
      * @return the {@link #document}
      */
-    public sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto getDocument() {
+    public IdeDocumentDto getDocument() {
         return document;
     }
 
@@ -139,10 +134,6 @@ public class IdeCodeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.id
      */
     public void setDocument(IdeDocumentDto document) {
         this.document = document;
-    }
-
-    public void setEventType(String eventType) {
-        setEventTypeUri(UriBuilder.fromUri(getEventTypeUri()).path(eventType).build());
     }
 
     @Override
