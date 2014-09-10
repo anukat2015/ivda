@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.web;
 
-import sk.stuba.fiit.perconik.uaca.dto.web.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.web.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class WebSaveDocumentEventDto extends sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto {
+public class WebSaveDocumentEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto {
     private String name;
 
     public WebSaveDocumentEventDto() {

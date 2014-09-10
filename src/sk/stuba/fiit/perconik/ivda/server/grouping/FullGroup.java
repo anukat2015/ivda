@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;

@@ -2,9 +2,9 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashSet;

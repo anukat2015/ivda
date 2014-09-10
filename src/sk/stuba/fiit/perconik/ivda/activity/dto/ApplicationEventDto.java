@@ -1,8 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-import sk.stuba.fiit.perconik.uaca.dto.*;
-
-public class ApplicationEventDto extends sk.stuba.fiit.perconik.uaca.dto.EventDto {
+public class ApplicationEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.EventDto {
     private String appName;
     private String appVersion;
     private String sessionId;

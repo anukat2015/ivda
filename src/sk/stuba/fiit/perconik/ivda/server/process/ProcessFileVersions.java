@@ -9,10 +9,10 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
-import sk.stuba.fiit.perconik.uaca.dto.web.WebNavigateEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -68,7 +68,7 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             LOGGER.warn("ZAUJIMAVE getBranch nieje null");
         }
 
-        sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
+        sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             LOGGER.info("Lokalny subor");
             return;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.
@@ -13,7 +13,7 @@ import sk.stuba.fiit.perconik.uaca.dto.EventDto;
  */
 public final class EventDeserializerModule extends SimpleModule {
     private static final Logger LOGGER = Logger.getLogger(EventDeserializerModule.class.getName());
-    private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.uaca.dto";
+    private static final String ENTITIES_PACKAGE = "sk.stuba.fiit.perconik.ivda.activity.dto";
     private static final String GROUP_ID = "sk.stuba.fiit.perconik.ivda"; // alias adresa projektu
     private static final long serialVersionUID = -4285741198907663688L;
 

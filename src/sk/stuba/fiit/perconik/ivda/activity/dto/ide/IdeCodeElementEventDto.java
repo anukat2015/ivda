@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeCodeElementEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto {
+public class IdeCodeElementEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
     /**
      * Type of code element.
      * It should be in form of:

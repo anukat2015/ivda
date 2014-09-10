@@ -10,9 +10,9 @@ Step-by-step approach enables visualisation of various actions taken during the 
 
 ## Requirements
 
-- Java 1.8
+- Java 1.7
 - Maven 3.2
-- Apache Tomcat 7.0.54 (to run)
+- Java EE server (to run, like a Apache Tomcat 7.0.54)
 
 ## Service dependencies
 This solution is vizualization of caught developer's action.
@@ -20,22 +20,23 @@ Developer's action are stored at REST services:
 
 * http://perconik.fiit.stuba.sk/UserActivity/
 * http://perconik.fiit.stuba.sk/AstRcs/AstRcsWcfSvc.svc
+* http://perconik.fiit.stuba.sk/cord/api/
 
 ## Setup
 
-0. Clone this repository into workspace
-1. Clone [perconik-uaca-dto](https://github.com/sekys/perconik-uaca-dto) repository into workspace
+1. Clone this repository into workspace
 2. Download external maven libraries
 3. Build project
 4. Edit project's configuration properties at file 'conf/configuration.xml'
 4. Deploy artifact to server
-5. Set VM option Dconfig.dir to configuration directory.
-    Example: -Dconfig.dir=D:\workspace\sk.stuba.fiit.perconik.ivda\conf
 
 ## Configuration directory content
 - configuration.xml - Project configuration file  
-- processBlackList.txt - List of black-listed/ignored processes  
 - log4j.properties - Log4j configuration file
+- catalog/web and catalog/processes - Whitelists or blacklists for specific topics.
+
+You can specify configuration directory with VM option Dconfig.dir
+Example: -Dconfig.dir=D:\workspace\sk.stuba.fiit.perconik.ivda\conf  
   
 ## Acknowledgement
 

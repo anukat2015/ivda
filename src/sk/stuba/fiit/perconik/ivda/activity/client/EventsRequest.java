@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.activity.client;
 
 import com.ibm.icu.util.GregorianCalendar;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;

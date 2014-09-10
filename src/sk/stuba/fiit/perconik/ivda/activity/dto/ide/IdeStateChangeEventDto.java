@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeStateChangeEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto {
+public class IdeStateChangeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
     /**
      * Uri specifying state/perspective to which has been IDE switched.
      * It should be in form of:

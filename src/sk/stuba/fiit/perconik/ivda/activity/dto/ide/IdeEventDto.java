@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ApplicationEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ApplicationEventDto;
 
 import javax.ws.rs.core.UriBuilder;
 

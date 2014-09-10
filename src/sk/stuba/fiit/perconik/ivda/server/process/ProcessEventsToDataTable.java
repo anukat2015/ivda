@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.validation.constraints.NotNull;

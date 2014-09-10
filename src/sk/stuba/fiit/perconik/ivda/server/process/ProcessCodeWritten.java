@@ -2,8 +2,8 @@ package sk.stuba.fiit.perconik.ivda.server.process;
 
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 

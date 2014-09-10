@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server.grouping;
 import com.google.visualization.datasource.base.TypeMismatchException;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 
 /**

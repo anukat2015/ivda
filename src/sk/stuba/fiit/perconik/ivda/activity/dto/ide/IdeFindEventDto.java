@@ -1,12 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
 
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdeFindEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto {
+public class IdeFindEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
     /**
      * Search query
      */

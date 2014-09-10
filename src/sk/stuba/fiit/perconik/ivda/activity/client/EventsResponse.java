@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.activity.client;
 
 
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.

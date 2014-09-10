@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.util.Diff;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCheckinEventDto;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -114,7 +114,7 @@ public class EventBean implements Serializable {
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
         try {
-            sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
+            sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
             if (rcsServer == null) {
                 // tzv ide o lokalny subor bez riadenia verzii
                 throw new AstRcsWcfService.NotFoundException("rcsServer is empty");

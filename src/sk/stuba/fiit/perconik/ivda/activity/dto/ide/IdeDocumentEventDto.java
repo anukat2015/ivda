@@ -1,16 +1,16 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class IdeDocumentEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto {
+public class IdeDocumentEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
     /**
      * Document that has been subject of this event
      */
 
-    private sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto document;
+    private sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto document;
 
     public IdeDocumentEventDto() {
     }
@@ -18,7 +18,7 @@ public class IdeDocumentEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.Ide
     /**
      * @return the {@link #document}
      */
-    public sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto getDocument() {
+    public sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto getDocument() {
         return document;
     }
 

@@ -4,8 +4,8 @@ import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;

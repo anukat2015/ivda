@@ -2,8 +2,8 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 

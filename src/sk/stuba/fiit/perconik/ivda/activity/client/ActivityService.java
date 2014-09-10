@@ -11,7 +11,7 @@ import sk.stuba.fiit.perconik.ivda.util.cache.OfyBlob;
 import sk.stuba.fiit.perconik.ivda.util.cache.OfyCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;

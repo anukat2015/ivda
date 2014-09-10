@@ -7,8 +7,8 @@ import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCheckinEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
@@ -35,7 +35,7 @@ public final class ProcessChangesets extends ProcessEventsToDataTable {
         if (!(event instanceof IdeCheckinEventDto)) return;
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
-        sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
+        sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = cevent.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             LOGGER.info("rcsServer empty");
             return;

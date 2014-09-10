@@ -2,9 +2,9 @@ package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.MonitoringStartedEventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.MonitoringStartedEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.TimeUnit;

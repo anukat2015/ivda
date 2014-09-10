@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ public class IdeDocumentDto implements Serializable  {
 	/**
 	 * Rcs server to which this file version belongs. Null if not determined or in case of local file.
 	 */
-	private sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer;
+	private sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer;
 	
 	/**
 	 * Rcs branch name. Null if not determined or in case of local file. 
@@ -35,7 +35,7 @@ public class IdeDocumentDto implements Serializable  {
 	}
 
 	public IdeDocumentDto(String changesetIdInRcs, String localPath,
-			String serverPath, sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer, String branch) {
+			String serverPath, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer, String branch) {
 		super();
 		this.changesetIdInRcs = changesetIdInRcs;
 		this.localPath = localPath;
@@ -89,14 +89,14 @@ public class IdeDocumentDto implements Serializable  {
 	/**
 	 * @return the {@link #rcsServer}
 	 */
-	public sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto getRcsServer() {
+	public sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto getRcsServer() {
 		return rcsServer;
 	}
 	
 	/**
 	 * @param {@link #rcsServer}
 	 */
-	public void setRcsServer(sk.stuba.fiit.perconik.uaca.dto.ide.RcsServerDto rcsServer) {
+	public void setRcsServer(sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {
 		this.rcsServer = rcsServer;
 	}
 	

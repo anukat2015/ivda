@@ -8,7 +8,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;

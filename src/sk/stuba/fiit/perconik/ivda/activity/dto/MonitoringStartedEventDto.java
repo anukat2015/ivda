@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
-import sk.stuba.fiit.perconik.uaca.dto.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.*;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class MonitoringStartedEventDto extends sk.stuba.fiit.perconik.uaca.dto.SystemEventDto {
+public class MonitoringStartedEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.SystemEventDto {
     private String appName;
     private String appVersion;
     private String sessionId;

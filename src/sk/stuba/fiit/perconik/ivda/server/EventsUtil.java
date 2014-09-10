@@ -2,10 +2,10 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 
 import com.google.common.base.Strings;
-import sk.stuba.fiit.perconik.uaca.dto.EventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto;
-import sk.stuba.fiit.perconik.uaca.dto.web.WebEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.validation.constraints.NotNull;

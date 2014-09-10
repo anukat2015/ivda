@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.uaca.dto.ProcessDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;

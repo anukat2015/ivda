@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
-import sk.stuba.fiit.perconik.uaca.dto.ide.*;
-import sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.*;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 
 import javax.ws.rs.core.UriBuilder;
 
@@ -9,7 +9,7 @@ import javax.ws.rs.core.UriBuilder;
  * Common request used for events: PasteFromWeb, SelectionChanged, Paste, Copy,
  * Cut
  */
-public class IdeCodeEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEventDto {
+public class IdeCodeEventDto extends sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto {
     /**
      * Text that was subject of a given event. For instance text that was pasted from the web.
      */
@@ -38,7 +38,7 @@ public class IdeCodeEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEven
     /**
      * Document for which has been this event generated
      */
-    private sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto document;
+    private sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto document;
 
     public IdeCodeEventDto() {
     }
@@ -130,7 +130,7 @@ public class IdeCodeEventDto extends sk.stuba.fiit.perconik.uaca.dto.ide.IdeEven
     /**
      * @return the {@link #document}
      */
-    public sk.stuba.fiit.perconik.uaca.dto.ide.IdeDocumentDto getDocument() {
+    public sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto getDocument() {
         return document;
     }
 
