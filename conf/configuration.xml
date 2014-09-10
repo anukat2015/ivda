@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration>
+    <cacheFolder>C:/cache/</cacheFolder>
+    <uacaLink>http://perconik.fiit.stuba.sk/UserActivity/api/useractivity</uacaLink>
+    <cordLink>http://perconik.fiit.stuba.sk/cord/api/</cordLink>
+
+    <astRcs>
+        <entry>
+            <key>xxx</key>
+            <value>ccc</value>
+        </entry>
+        <entry>
+            <key>xxx</key>
+            <value>ccc</value>
+        </entry>
+    </astRcs>
+
+</configuration>
