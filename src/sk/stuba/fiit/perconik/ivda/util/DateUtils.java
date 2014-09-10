@@ -28,33 +28,29 @@ public final class DateUtils {
         }
     };
 
-    public static GregorianCalendar fromString(String dateString) throws ParseException {
+    public static Date fromString(String dateString) throws ParseException {
         Preconditions.checkNotNull(dateString);
-        GregorianCalendar gc = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        Date datum = FORMATTER.get().parse(dateString);
-        gc.setTimeInMillis(datum.getTime());
-        gc.setLenient(false);
-        return gc;
+        return FORMATTER.get().parse(dateString);
     }
 
-    public static String toString(GregorianCalendar calender) {
+    public static String toString(Date calender) {
         return FORMATTER.get().format(calender.getTime());
     }
 
-    public static GregorianCalendar getNow() {
-        return new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+    public static Date getNow() {
+        return new GregorianCalendar(TimeZone.getTimeZone("GMT")).getTime();
     }
 
-    public static long diff(GregorianCalendar actual, GregorianCalendar last) {
-        return last.getTimeInMillis() - actual.getTimeInMillis();
+    public static long diff(Date actual, Date last) {
+        return last.getTime() - actual.getTime();
     }
 
-    public static boolean diff(GregorianCalendar actual, GregorianCalendar last, TimeUnit unit) {
+    public static boolean diff(Date actual, Date last, TimeUnit unit) {
         return diff(actual, last) == unit.toMillis(1);
     }
 
-    public static boolean isRounded(GregorianCalendar actual, TimeUnit unit) {
-        return actual.getTimeInMillis() % unit.toMillis(1) == 0;
+    public static boolean isRounded(Date actual, TimeUnit unit) {
+        return actual.getTime() % unit.toMillis(1) == 0;
     }
 
 }

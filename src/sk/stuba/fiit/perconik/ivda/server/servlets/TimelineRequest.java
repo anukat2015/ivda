@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.google.common.base.Splitter;
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
@@ -11,6 +10,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,8 +22,8 @@ public final class TimelineRequest {
     //private final Integer step;
     //private final Integer scale;
     private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.HOURS;
-    private final GregorianCalendar start;
-    private final GregorianCalendar end;
+    private final Date start;
+    private final Date end;
     private final List<String> developers;
 
     public TimelineRequest(HttpServletRequest req) throws Exception {
@@ -62,16 +62,16 @@ public final class TimelineRequest {
         return new ToStringBuilder(this).append("developers", developers).append("end", end).append("start", start).toString();
     }
 
-    public GregorianCalendar getStart() {
+    public Date getStart() {
         return start;
     }
 
-    public GregorianCalendar getEnd() {
+    public Date getEnd() {
         return end;
     }
 
     public long diffTime() {
-        return end.getTimeInMillis() - start.getTimeInMillis();
+        return DateUtils.diff(start, end);
     }
 
     public boolean containDeveloper(String name) {

@@ -1,12 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.activity.client;
 
-import com.ibm.icu.util.GregorianCalendar;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 
 /**
  * <p/>
@@ -118,7 +118,7 @@ public class EventsRequest implements Serializable {
         this.ascending = ascending;
     }
 
-    public void setTime(GregorianCalendar from, GregorianCalendar to) {
+    public void setTime(Date from, Date to) {
         timeFrom = DateUtils.toString(from);
         timeTo = DateUtils.toString(to);
     }

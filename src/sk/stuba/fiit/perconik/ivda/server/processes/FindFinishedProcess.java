@@ -1,13 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -87,8 +87,8 @@ public abstract class FindFinishedProcess {
     }
 
     protected static final class FinishedProcess {
-        public GregorianCalendar start;
-        public GregorianCalendar end;
+        public Date start;
+        public Date end;
         public ProcessDto process;
 
         @Override

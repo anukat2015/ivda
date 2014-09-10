@@ -2,7 +2,6 @@ package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
@@ -22,7 +21,6 @@ public final class EventDeserializerModule extends SimpleModule {
         PolymorphicDeserializer<EventDto> deserializer = new PolymorphicDeserializer<>(EventDto.class, "eventTypeUri");
         deserializer.pushSubTypesOf(ENTITIES_PACKAGE);
         addDeserializer(EventDto.class, deserializer);
-        addDeserializer(GregorianCalendar.class, new GregorianCalendarDeserializer());
         LOGGER.debug("PolymorphicDeserializerModule loaded");
     }
 }

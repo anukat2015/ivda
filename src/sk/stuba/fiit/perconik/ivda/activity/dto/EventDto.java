@@ -1,6 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import sk.stuba.fiit.perconik.ivda.activity.deserializer.DateDeserializer;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
@@ -11,6 +13,7 @@ public class EventDto implements Serializable {
     private static final String BASE_URI = "http://perconik.gratex.com/useractivity";
     private static final long serialVersionUID = 6501705290672225644L;
 
+    @JsonDeserialize(using = DateDeserializer.class)
     private Date timestamp;
     private String eventId;
     private String user;

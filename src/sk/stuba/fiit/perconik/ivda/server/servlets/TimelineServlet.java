@@ -3,7 +3,6 @@ package sk.stuba.fiit.perconik.ivda.server.servlets;
 import com.google.visualization.datasource.DataSourceServlet;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.query.Query;
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
@@ -16,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Created by Seky on 17. 7. 2014.
@@ -65,13 +65,13 @@ public final class TimelineServlet extends DataSourceServlet {
             // Cachovanie je vypnute
             return;
         }
-        GregorianCalendar end;
+        Date end;
         try {
             end = DateUtils.fromString(req.getParameter("end"));
         } catch (Exception e) {
             return; // Ak zadal hlupost necachuj
         }
-        long offset = DateUtils.getNow().getTimeInMillis() - end.getTimeInMillis();
+        long offset = DateUtils.getNow().getTime() - end.getTime();
         if (offset > 1000 * 60 * 60) {
             // Suradnica END je v minulosti, minimalne o 1 hodinu posunut
             // tzv buducnost necachujeme a ani eventy za poslednu hodinu, lebo tie sa mozu spracovavat este

@@ -2,8 +2,8 @@ package sk.stuba.fiit.perconik.ivda.activity.client;
 
 import com.google.common.collect.ImmutableList;
 import com.googlecode.objectify.Key;
-import com.ibm.icu.util.GregorianCalendar;
 import org.apache.log4j.Logger;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
@@ -11,13 +11,13 @@ import sk.stuba.fiit.perconik.ivda.util.cache.OfyBlob;
 import sk.stuba.fiit.perconik.ivda.util.cache.OfyCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
-import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -65,8 +65,8 @@ public class ActivityService extends RestClient {
             // Vrat prazdny vysledok ked:
             // poziadavka smeruje na vyber eventov z buducnosti
             // poziadavka smeruje na vyber eventov za poslednu hodinu
-            GregorianCalendar timeTo = DateUtils.fromString(request.getTimeTo());
-            GregorianCalendar now = DateUtils.getNow();
+            Date timeTo = DateUtils.fromString(request.getTimeTo());
+            Date now = DateUtils.getNow();
             long diff = DateUtils.diff(timeTo, now);
             if (diff >= IGNORE_CACHE_TIME.toMillis(1)) {
                 UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());

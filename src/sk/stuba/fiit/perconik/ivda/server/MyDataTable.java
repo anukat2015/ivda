@@ -13,6 +13,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,19 +48,22 @@ public final class MyDataTable extends DataTable implements Serializable {
      *
      * @param time
      */
-    private static GregorianCalendar rollTheTime(@Nullable GregorianCalendar time) {
-        if (time != null) {
-            time = (GregorianCalendar) time.clone(); // GregorianCalendar asi nie je immutable
-            time.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
-            time.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
+    private static GregorianCalendar rollTheTime(@Nullable Date time) {
+        if (time == null) {
+            return null;
         }
-        return time;
+
+        GregorianCalendar calendar = new GregorianCalendar(); // GregorianCalendar asi nie je immutable
+        calendar.setTime(time);
+        calendar.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+        calendar.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
+        return calendar;
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
     public void add(String group,
-                    GregorianCalendar start,
-                    @Nullable GregorianCalendar end,
+                    Date start,
+                    @Nullable Date end,
                     ClassName className,
                     @Nullable String content,
                     @Nullable Object metadata
