@@ -27,7 +27,7 @@ public final class Developers {
     }
 
     private static class DevelopersHolder {
-        private static final Developers INSTANCE = getInstance();
+        private static final Developers INSTANCE = new Developers();
     }
 
     public static Developers getInstance() {

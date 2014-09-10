@@ -94,17 +94,17 @@ div.timeline-event-content {
     padding: 5px;
 }
 
-div.unavailable {
+div.UNAVAILABLE {
     background-color: #F03030;
     border-color: #bd2828;
 }
 
-div.available {
+div.AVAILABLE {
     /*background-color: #1AA11A;*/
     border-color: #136e13;
 }
 
-div.maybe {
+div.MAYBE {
     background-color: #FFA500;
     /*border-color: #cc8100;   */
 }

@@ -1,15 +1,16 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
+import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
 
 
 /**
  * Created by Seky on 8. 8. 2014.
  */
-public class ProcessAsGroup extends ProcessEventsToDataTable {
+public class ProcessAsGroup extends ProcessEvents2TimelineEvents {
     private final IDividing divide;
     private IGrouping group;
 
@@ -52,14 +53,15 @@ public class ProcessAsGroup extends ProcessEventsToDataTable {
         // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
         EventDto first = group.getFirstEvent();
         EventDto last = group.getLastEvent();
-        dataTable.add(
-                first.getUser(),
+        TimelineEvent event = new TimelineEvent(
                 first.getTimestamp(),
-                last.getTimestamp(),
+                first.getUser(),
                 EventsUtil.event2Classname(first),
                 EventsUtil.event2name(first),
-                group.size()
-        );
+                last.getTimestamp(),
+                group.size());
+
+        add(event);
     }
 
     @Override

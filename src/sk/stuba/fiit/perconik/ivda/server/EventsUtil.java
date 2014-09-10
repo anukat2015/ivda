@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
+import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
 
 import javax.annotation.concurrent.ThreadSafe;
 import javax.validation.constraints.NotNull;
@@ -23,16 +24,16 @@ public final class EventsUtil {
     private static final Pattern FULL_LINE_PATTERN = Pattern.compile("[^\\s]+");
 
     @NotNull
-    public static MyDataTable.ClassName event2Classname(EventDto event) {
+    public static TimelineEvent.ClassName event2Classname(EventDto event) {
         //noinspection IfStatementWithTooManyBranches
         if (event instanceof WebEventDto) {
-            return MyDataTable.ClassName.AVAILABLE;
+            return TimelineEvent.ClassName.AVAILABLE;
         } else if (event instanceof IdeEventDto) {
-            return MyDataTable.ClassName.MAYBE;
+            return TimelineEvent.ClassName.MAYBE;
         } else if (event instanceof ProcessesChangedSinceCheckEventDto) {
-            return MyDataTable.ClassName.AVAILABLE;
+            return TimelineEvent.ClassName.AVAILABLE;
         } else {
-            return MyDataTable.ClassName.UNAVAILABLE; // tzv nezanmy typ entity prisiel
+            return TimelineEvent.ClassName.UNAVAILABLE; // tzv nezanmy typ entity prisiel
         }
     }
 

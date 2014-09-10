@@ -22,7 +22,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Stiahni file verziu suboru ktory pride v evente..
  */
 @NotThreadSafe
-public final class ProcessFileVersions extends ProcessEventsToDataTable {
+public final class ProcessFileVersions extends ProcessEvents2TimelineEvents {
     private final Catalog developerLinks;
 
     public ProcessFileVersions() {
@@ -49,7 +49,7 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
         //}
         //int changedLines = 20;
         //if (changedLines > 0) {
-        dataTable.addEvent(event, ImmutableMap.of(
+        add(event, ImmutableMap.of(
                 "uid", event.getEventId(),
                 "ajax", event
         ));
@@ -89,7 +89,7 @@ public final class ProcessFileVersions extends ProcessEventsToDataTable {
             int changedLines = EventsUtil.codeWritten(event.getText());
             if (changedLines > 0) {
                 Integer ancestor = fileVersion.getAncestor1Id().getValue();
-                dataTable.addEvent(event, ImmutableMap.of(
+                add(event, ImmutableMap.of(
                         "uid", event.getEventId(),
                         "path", fileVersion.getUrl().getValue(),
                         "id", fileVersion.getId(),

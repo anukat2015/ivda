@@ -5,10 +5,11 @@ import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
-import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.MyDataTable;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  * Vypis file verziu specifickeho suboru.
  */
 @NotThreadSafe
-public final class ProcessChangesets extends ProcessEventsToDataTable {
+public final class ProcessChangesets extends ProcessEvents2TimelineEvents {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
 
     /**
@@ -56,11 +57,17 @@ public final class ProcessChangesets extends ProcessEventsToDataTable {
             for (FileVersionDto file : fileVersion) {
                 if (file.getUrl().getValue().equals(ZAUJIMAVY_SUBOR)) {
                     LOGGER.info(changesetIdInRcs);
-                    //FileVersionsUtil.printDiff(file.getUrl().getValue(), file.getId(), file.getAncestor1Id().getValue());
-                    dataTable.add(event.getUser(), event.getTimestamp(), null, MyDataTable.ClassName.AVAILABLE, "IdeCheckinEventDto", ImmutableMap.of(
+                    TimelineEvent e = new TimelineEvent(
+                            event.getTimestamp(),
+                            event.getUser(),
+                            EventsUtil.event2Classname(event),
+                            "IdeCheckinEventDto",
+                            null,
+                            ImmutableMap.of(
                                     "uid", event.getEventId()
                             )
                     );
+                    add(e);
                     return; // ignoruj ostatne
                 }
             }

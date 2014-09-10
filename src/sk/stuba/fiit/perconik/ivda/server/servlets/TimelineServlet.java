@@ -1,77 +1,71 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
-import com.google.visualization.datasource.DataSourceServlet;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.query.Query;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.Date;
+import java.net.HttpURLConnection;
 
 /**
  * Created by Seky on 17. 7. 2014.
  * <p/>
  * Servlet pre TImeline.
  */
-public final class TimelineServlet extends DataSourceServlet {
+public class TimelineServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
-    private static final long serialVersionUID = 4252962999830460395L;
     private static final int CACHE_DURATION_IN_SECOND = 0; // 60 * 60 * 24 * 2; // 2 days
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    /**
-     * Spracuj parametre ziadosti. Nasledne generuj tabulku.
-     *
-     * @param query
-     * @param req
-     * @return
-     */
-    @Override
-    public DataTable generateDataTable(Query query, HttpServletRequest req) {
-        TimelineRequest request;
-        try {
-            request = new TimelineRequest(req);
-            LOGGER.info("Request: " + request);
-        } catch (Exception e) {
-            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
-        }
 
-        EventsRequest activityRequest = new EventsRequest();
-        activityRequest.setTime(request.getStart(), request.getEnd());
-
-        ProcessEventsToDataTable process = new ProcessFileVersions();
-        process.setFilter(request);
-        process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
-        return process.getDataTable();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        super.doGet(req, resp);
-        setCacheHeaders(req, resp);
+        TimelineResponse response = new TimelineResponse();
+        resp.setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            TimelineRequest request = new TimelineRequest(req);
+            LOGGER.info("Request: " + request);
+
+            EventsRequest activityRequest = new EventsRequest();
+            activityRequest.setTime(request.getStart(), request.getEnd());
+
+            ProcessEvents2TimelineEvents process = new ProcessFileVersions();
+            process.setFilter(request);
+            process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
+            response.setEvents(process.getList());
+
+            ServletOutputStream stream = resp.getOutputStream();
+            MAPPER.writeValue(stream, response);
+            setCacheHeaders(request, resp);
+        } catch (Exception e) {
+            response.setStatus(e.getMessage());;
+            throw new WebApplicationException(
+                    Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
+                            .entity(response)
+                            .build());
+        }
     }
 
-    protected void setCacheHeaders(HttpServletRequest req, HttpServletResponse resp) {
+    protected void setCacheHeaders(TimelineRequest req, HttpServletResponse resp) {
         // Set cache for response
         if (CACHE_DURATION_IN_SECOND == 0) {
             // Cachovanie je vypnute
             return;
         }
-        Date end;
-        try {
-            end = DateUtils.fromString(req.getParameter("end"));
-        } catch (Exception e) {
-            return; // Ak zadal hlupost necachuj
-        }
-        long offset = DateUtils.getNow().getTime() - end.getTime();
+        long offset = DateUtils.getNow().getTime() - req.getEnd().getTime();
         if (offset > 1000 * 60 * 60) {
             // Suradnica END je v minulosti, minimalne o 1 hodinu posunut
             // tzv buducnost necachujeme a ani eventy za poslednu hodinu, lebo tie sa mozu spracovavat este
@@ -83,8 +77,4 @@ public final class TimelineServlet extends DataSourceServlet {
         }
     }
 
-    @Override
-    protected boolean isRestrictedAccessMode() {
-        return false;
-    }
 }

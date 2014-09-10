@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEventsToDataTable;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashSet;
@@ -17,7 +17,7 @@ import java.util.Set;
  * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
  */
 @NotThreadSafe
-public final class PrintProcesses extends ProcessEventsToDataTable {
+public final class PrintProcesses extends ProcessEvents2TimelineEvents {
     private final Set<String> processes = new HashSet<>(1000);
 
     public PrintProcesses() {

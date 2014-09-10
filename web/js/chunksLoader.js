@@ -66,38 +66,54 @@ links.ChunksLoader.prototype.loadChunks = function (min, chunks) {
     }
 };
 
+links.ChunksLoader.prototype.alertError = function (error) {
+    var msg = "Error in request: " + error;
+    console.log(msg);
+    if (this.showError) {
+        alert(msg);
+        this.showError = false;
+    }
+};
+
 links.ChunksLoader.prototype.loadChunk = function (start, end) {
     //console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
     var url = gGlobals.getServiceURL(new Date(start), new Date(end));
     //console.log(url);
-    var query = new google.visualization.Query(url);
     var instance = this;
-    query.send(function (response) {
-        if (response.isError()) {
-            var msg = "Error in query: " + response.getMessage() + " " + response.getDetailedMessage();
-            console.log(msg);
-            if (instance.showError) {
-                alert(msg);
-                instance.showError = false;
+    $.ajax({
+        dataType: "json",
+        url: url,
+        cache: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            instance.alertError("I get error:" + textStatus);
+        },
+        success: function (data, textStatus, jqXHR) {
+            // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
+            // Alebo prisla neskoro a hranice uz su zmenene ..
+            // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
+            //console.log("addItems " + data.getNumberOfRows());
+            if (data.status != "ok") {
+                instance.alertError("I get error:" + data.status);
+            } else {
+                for (var i = 0; i < data.events.length; i++) {
+                    var item = data.events[i];
+                    if (item.start != null) {
+                        item.start = new Date(parseInt(item.start));
+                    }
+                    if (item.end != null) {
+                        item.end = new Date(parseInt(item.end));
+                    }
+                }
+                gGlobals.timeline.addItems(data.events, true);
+                gGlobals.redraw();
             }
-        } else {
-            instance.addData(response.getDataTable());
         }
-
+    }).always(function () {
         instance.finisherCounts--;
         if (instance.finisherCounts === 0) {
             instance.finisherCallback();
         }
     });
-};
-
-links.ChunksLoader.prototype.addData = function (data) {
-    // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
-    // Alebo prisla neskoro a hranice uz su zmenene ..
-    // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
-    //console.log("addItems " + data.getNumberOfRows());
-    gGlobals.timeline.addItems(data, true);
-    gGlobals.redraw();
 };
 
 links.ChunksLoader.prototype.chunkRound2Left = function (date) {

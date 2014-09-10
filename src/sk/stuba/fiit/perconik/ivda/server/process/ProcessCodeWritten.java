@@ -13,7 +13,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Vypis event, kde pouzivatel upravoval kod.
  */
 @NotThreadSafe
-public final class ProcessCodeWritten extends ProcessEventsToDataTable {
+public final class ProcessCodeWritten extends ProcessEvents2TimelineEvents {
     protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
 
 
@@ -27,7 +27,7 @@ public final class ProcessCodeWritten extends ProcessEventsToDataTable {
         int size = EventsUtil.codeWritten(cevent.getText());
         if (size > 0) {
             // Ignorujeme ziadne zmeny v kode
-            dataTable.addEvent(event, Integer.valueOf(size));
+            add(event, Integer.valueOf(size));
         }
     }
 
