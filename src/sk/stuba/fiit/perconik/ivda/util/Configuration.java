@@ -8,12 +8,15 @@ import org.apache.log4j.PropertyConfigurator;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -30,6 +33,7 @@ public final class Configuration implements Serializable {
     private URI uacaLink;
     private URI cordLink;
     private File cacheFolder;
+    private Developers developers;
 
     static {
         // Load conf dir
@@ -116,7 +120,32 @@ public final class Configuration implements Serializable {
         this.cordLink = cordLink;
     }
 
+    public Developers getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(Developers developers) {
+        this.developers = developers;
+    }
+
     private static class ConfigurationHolder {
         private static final Configuration INSTANCE = read();
     }
+
+    public static class Developers {
+        @XmlElement(name = "name")
+        protected List<String> list = new ArrayList<>();
+
+        public Developers() {
+        }
+
+        public Developers(List<String> list) {
+            this.list = list;
+        }
+
+        public List<String> getList() {
+            return list;
+        }
+    }
+
 }
