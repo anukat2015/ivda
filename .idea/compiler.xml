@@ -25,9 +25,6 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="com.gratex.perconik.services" />
-        <module name="diplomovka" />
-        <module name="sk.stuba.fiit.perconik.uaca.dto" />
-        <module name="sk.stuba.fiit.perconik.visualize" />
       </profile>
       <profile default="false" name="Annotation profile for perconik.update" enabled="true">
         <sourceOutputDir name="update\generated-sources\annotations" />

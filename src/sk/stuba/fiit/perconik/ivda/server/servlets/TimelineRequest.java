@@ -36,9 +36,12 @@ public final class TimelineRequest {
 
         // Spracuj developerov
         List<String> parsedUsers = Splitter.on(',').splitToList(req.getParameter("developers"));
+        if (parsedUsers.isEmpty()) {
+            throw new WebApplicationException("Specifikuj aspon jedneho vyvojara.", Response.Status.BAD_REQUEST);
+        }
         ArrayList<String> users = new ArrayList<>();
         for (String user : parsedUsers) {
-            String realName = Developers.getRealName(user);
+            String realName = Developers.getInstance().getRealName(user);
             if (realName != null) {
                 users.add(realName);
             }

@@ -6,7 +6,6 @@
         <element id="directory" name="classes">
           <element id="module-output" name="sk.stuba.fiit.perconik.ivda" />
           <element id="module-output" name="com.gratex.perconik.services" />
-          <element id="module-output" name="sk.stuba.fiit.perconik.uaca.dto" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: log4j:log4j:1.2.16" />

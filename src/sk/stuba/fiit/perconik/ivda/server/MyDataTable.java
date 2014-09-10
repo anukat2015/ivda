@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
+import com.ibm.icu.util.TimeZone;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 
@@ -53,10 +53,10 @@ public final class MyDataTable extends DataTable implements Serializable {
             return null;
         }
 
-        GregorianCalendar calendar = new GregorianCalendar(); // GregorianCalendar asi nie je immutable
+        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT")); // GregorianCalendar asi nie je immutable
         calendar.setTime(time);
-        calendar.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
-        calendar.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
+        //calendar.roll(Calendar.HOUR, true); // Java bug http://www.programering.com/a/MTM2ATNwATk.html
+        //calendar.roll(Calendar.HOUR, true); // klasicky roll sa sprava tiez inac a add() sa sprava tiez inac
         return calendar;
     }
 
@@ -71,7 +71,7 @@ public final class MyDataTable extends DataTable implements Serializable {
         // Uloz vysledok
         try {
             String json = mapper.writeValueAsString(metadata);
-            addRowFromValues(rollTheTime(start), rollTheTime(end), content, Developers.blackoutName(group), className.toString(), json);
+            addRowFromValues(rollTheTime(start), rollTheTime(end), content, Developers.getInstance().blackoutName(group), className.toString(), json);
         } catch (Exception e) {
             LOGGER.error("TypeMismatchException error at MyDataTable.", e);
         }
