@@ -23,7 +23,7 @@
 
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
+        <param-value>Production</param-value>
     </context-param>
 
     <context-param>
@@ -61,4 +61,7 @@
         <welcome-file>faces/index.xhtml</welcome-file>
     </welcome-file-list>
 
+    <listener>
+        <listener-class>sk.stuba.fiit.perconik.ivda.server.servlets.AppInitializer</listener-class>
+    </listener>
 </web-app>

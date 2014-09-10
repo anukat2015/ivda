@@ -5,7 +5,7 @@ function Globals() {
     this.timeline = getTimeline();
     this.startInput = $('#startDate');
     this.endInput = $('#endDate');
-    this.chunks = new Chunks();
+    this.chunks = new links.ChunksLoader();
     this.dateFormat = 'd.m.Y H:i';
     this.developers = [];
 
@@ -13,8 +13,8 @@ function Globals() {
         this.developers = this.getDevelopers();
         this.setTime(start, end);
         this.timeline.draw();
-        this.timeline.setVisibleChartRange(start, nowDate);
-        this.chunks.loadRange(start, nowDate, function () {
+        this.timeline.setVisibleChartRange(start, end);
+        this.chunks.loadRange(start, end, function () {
             console.log("finished loadRange");
             gGlobals.charts.redraw();
             gGlobals.timeline.render({

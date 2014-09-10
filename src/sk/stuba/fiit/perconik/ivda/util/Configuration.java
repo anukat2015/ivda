@@ -34,7 +34,8 @@ public final class Configuration implements Serializable {
     static {
         // Load conf dir
         //noinspection AccessOfSystemProperties
-        CONFIG_DIR = System.getProperty("config.dir", System.getProperty("user.dir") + File.separator + "conf");
+        String defaultDir = System.getProperty("user.dir") + File.separator + "WEB-INF" + File.separator + "conf";
+        CONFIG_DIR = System.getProperty("config.dir", defaultDir);
 
         // Prepare log4j
         String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
@@ -57,7 +58,7 @@ public final class Configuration implements Serializable {
     private synchronized static Configuration read() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
-            LOGGER.log(Level.INFO, "Configuration file: " + file.getAbsolutePath());
+            LOGGER.info("Configuration file: " + file.getAbsolutePath());
             return (Configuration) context.createUnmarshaller().unmarshal(file);
         } catch (Exception e) {
             LOGGER.error("Configuration not loaded", e);

@@ -37,6 +37,10 @@ public final class Catalog implements Serializable {
         }
     }
 
+    public static void staticInit() {
+
+    }
+
     public Set<String> getData() {
         return Collections.unmodifiableSet(catalog);
     }

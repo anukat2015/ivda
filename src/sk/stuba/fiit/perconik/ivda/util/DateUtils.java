@@ -46,15 +46,15 @@ public final class DateUtils {
     }
 
     public static long diff(GregorianCalendar actual, GregorianCalendar last) {
-        return actual.getTimeInMillis() - last.getTimeInMillis();
+        return last.getTimeInMillis() - actual.getTimeInMillis();
     }
 
     public static boolean diff(GregorianCalendar actual, GregorianCalendar last, TimeUnit unit) {
-        return diff(actual, last) == unit.toMicros(1);
+        return diff(actual, last) == unit.toMillis(1);
     }
 
     public static boolean isRounded(GregorianCalendar actual, TimeUnit unit) {
-        return actual.getTimeInMillis() % unit.toMicros(1) == 0;
+        return actual.getTimeInMillis() % unit.toMillis(1) == 0;
     }
 
 }

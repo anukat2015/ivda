@@ -68,7 +68,7 @@ public class ActivityService extends RestClient {
             GregorianCalendar timeTo = DateUtils.fromString(request.getTimeTo());
             GregorianCalendar now = DateUtils.getNow();
             long diff = DateUtils.diff(timeTo, now);
-            if (diff >= IGNORE_CACHE_TIME.toMicros(1)) {
+            if (diff >= IGNORE_CACHE_TIME.toMillis(1)) {
                 UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
                 URI uri = UriUtils.addBeanProperties(builder, request).build();
                 return (ImmutableList<EventDto>) cache.get(Key.create(OfyBlob.class, uri.toString())).getData();

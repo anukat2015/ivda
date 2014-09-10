@@ -73,7 +73,6 @@ public final class AstRcsWcfService {
             throw new NotFoundException("PagedResponse have no items at:" + message);
         }
         if (res.getPageCount() > 1) {
-            // TODO: neimplementovat stahovanie dalsich stran, pockat kym sluzba prejde na REST
             LOGGER.warn("Response have more pages, ignoring next pages.");
         }
     }
@@ -190,7 +189,6 @@ public final class AstRcsWcfService {
     }
 
     public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
-        // TODO: caching
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
         // TODO: req.setUrl();  // nazov projektu $/PerConIK
