@@ -8,14 +8,15 @@
     <meta name="Author" content="Lukas Sekerak"/>
     <meta name="robots" content="noindex"/>
 
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
     <link rel="stylesheet" type="text/css" href="libs/timeline-2.8.0/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
     <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
     <link rel="stylesheet" type="text/css" href="libs/selectize.js/dist/css/selectize.default.css"/>
     <link rel="stylesheet" type="text/css" href="style.css"/>
 
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="libs/qtip2/jquery.qtip.js"></script>
 
@@ -41,17 +42,6 @@
     <script type="text/javascript" src="js/globals.js"></script>
 
     <script type="text/javascript">
-        /*Date.parseDate = function (input, format) {
-            // you code for convert string to date object
-            // simplest variant - use native Date.parse, not given format parametr
-            return gGlobals.dateFormatter.parse(input);
-        };
-        Date.prototype.dateFormat = function (format) {
-            //you code for convert date object to format string
-            var formatter = new JsSimpleDateFormat(format);
-            return formatter.format(this.valueOf());
-        }; */
-
         var gGlobals = undefined;
         google.load("visualization", "1", {packages: ["corechart", 'table']});
         google.setOnLoadCallback(onLoad);
