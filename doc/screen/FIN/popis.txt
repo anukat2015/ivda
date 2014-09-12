@@ -1,0 +1,30 @@
+FIN1 - Datum 6 august.
+Vyvojar pracoval viac o polnoci ako o 8 rano. 
+Vyvojar pisal kod len o polnoci. Kedy upravil 51 riadkov kodu.
+Spocitanim bodov je vidiet ze surfoval viac o polnoci ako rano.
+
+
+FIN2 - Vidime prehlad prace vyvojara za tyzden.
+Podla grafu 1 vyvojar viac pouzival Web ako pisal kod.
+Podla velkosti kruhov mozme usudit, ze najviac doelzitej prace vykonal 26 augusta.
+Velkost nezalezi od poctu prvkov dnu ale od ich vlastnosti co su dnu.
+Dalej podla grafu 2, 28Augusta vyvojar spravil najviac akcii. Pozeral najviac webov a upravoval kod.
+Vyvojar pisal najviac kod 26 augusta.
+
+FIN3 - Datum 26 Augusta
+Pouzivatela zaujimal 26august, interaktivne si priblizil na dany datum.
+Za pomoci animacii sa mu zobrazil tento prehlad dna.
+Z grafu 3 je vidiet, ze vyvojar najviac upravoval kod o 10tej rano.
+Dalej vyvojar pisal vela kodu  o polnoci.  Porovnanim obrazka FIN1 a FIN3 je vidiet, ze pouzivatel ma tendeciu upraovat kod po polnoci. Tretia najvysa hodnota o 1 rano to trocha potvrdzuje.
+Z grafu 1 je vidiet, ze vyvojar opat viac pouzival prehliac ako pisal.
+Z grafu 2 je vidiet, ze jednotlive akcie boli pomerne rovnako rozdelene do 11tej, 9tej a 10tej hodiny. To moze znamenat, ze jeho produktivne obdobie bolo v case od 9 tej do 11hodiny.
+Spojenim vlastnosti, ze vyvojar najviac upravoval kod o 10tej a jeho produktivne obdobie bolo od 9tej do 11tej. Mozem usudit, ze vyvojar bol vseobecne najefektivnejsi o 10tej hodine.
+
+
+Vysvetlenie:
+Pod pojmom akcia (na obrazku zobrazena ako kruh) sa mysli uprava kodu alebo navstivenie webu.
+Pojem pisanie kodu a uprava kodu je rovnaky. Nemozme rozoznat ci uzivatel upravoval alebo napisal novy kod.
+Vsetky viditelne akcie su pre vyvojara oznaceneho ako 'A'. Meno je cenzurovane.
+Vyvojar B je zobrazeny v riadku pod vyvojarom A. Je mozne tak porovnat akcie medzi nimy.
+
+
