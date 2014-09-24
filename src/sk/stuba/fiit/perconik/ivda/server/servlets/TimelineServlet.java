@@ -45,7 +45,7 @@ public class TimelineServlet extends HttpServlet {
             ProcessEvents2TimelineEvents process = new ProcessFileVersions();
             process.setFilter(request);
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
-            response.setEvents(process.getList());
+            response.setEvents(process.getData());
 
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, response);

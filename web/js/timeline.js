@@ -28,14 +28,11 @@ function getTimeline() {
 }
 
 function registerQTip() {
-    $(document).on("click", '.timeline-event-circle', function ($e) {
+    $(document).on("mouseenter", '.timeline-event-circle', function ($e) {
         $(this).qtip({
             overwrite: false,
             hide: 'unfocus',
             show: 'click',
-            /*show: {
-             ready: true // Needed to make it show on first mouseover event
-             }, */
             content: {
                 text: function (event, api) {
                     var item = gGlobals.timeline.getSelected();
@@ -43,7 +40,7 @@ function registerQTip() {
                         api.set('content.text', "Not selected entity.");
                     } else {
                         if (item.metadata.ajax != undefined) {
-                            console.log(item.metadata.ajax);
+                            api.set('content.text', JSON.stringify(item.metadata.ajax) );
                         } else {
                             $.ajax({
                                 url: gGlobals.getAjaxURL(item.metadata)

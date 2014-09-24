@@ -7,9 +7,7 @@ import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -19,11 +17,24 @@ import java.util.List;
 public abstract class ProcessEvents2TimelineEvents {
     protected static final Logger LOGGER = Logger.getLogger(ProcessEvents2TimelineEvents.class.getName());
     protected TimelineRequest filter;
-    private List<TimelineEvent> list;
+    private Map<String, List<TimelineEvent>> list;
 
     public ProcessEvents2TimelineEvents() {
         filter = null;
-        list = new ArrayList<>();
+        list = new HashMap<>();
+    }
+
+    public void add(TimelineEvent event) {
+        // Black out developer name
+        String group = Developers.getInstance().blackoutName(event.getGroup());
+        event.setGroup(group);
+
+        // Check if exist ..
+        List<TimelineEvent> events = list.get(group);
+        if (events == null) {
+            events = list.put(group, new ArrayList<TimelineEvent>());
+        }
+        events.add(event);
     }
 
     public void downloaded(List<EventDto> list) {
@@ -36,12 +47,6 @@ public abstract class ProcessEvents2TimelineEvents {
     protected abstract void proccessItem(EventDto event);
 
     protected void filterItem(EventDto event) {
-        if (filter != null) {
-            // Filter pre developerov
-            if (!filter.containDeveloper(event.getUser())) {
-                return;
-            }
-        }
         proccessItem(event);
     }
 
@@ -52,25 +57,20 @@ public abstract class ProcessEvents2TimelineEvents {
     public void finished() {
     }
 
-    protected void add(TimelineEvent event) {
-        event.setGroup(Developers.getInstance().blackoutName(event.getGroup()));
-        list.add(event);
-    }
-
-    public List<TimelineEvent> getList() {
-        return Collections.unmodifiableList(list);
+    public Map<String, List<TimelineEvent>> getData() {
+        return Collections.unmodifiableMap(list);
     }
 
     public void add(EventDto e, Object metadata) {
         TimelineEvent event = new TimelineEvent(
                 e.getTimestamp(),
-                Developers.getInstance().blackoutName(e.getUser()),
+                e.getUser(),
                 EventsUtil.event2Classname(e),
                 EventsUtil.event2name(e),
                 null,
                 metadata
         );
-        list.add(event);
+        add(event);
     }
 }
 

@@ -1,13 +1,14 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Seky on 11. 9. 2014.
  */
 public class TimelineResponse {
     private String status = "ok";
-    private List<TimelineEvent> events;
+    private Map<String, List<TimelineEvent>> events; // mapa zoznamu eventov pre developera
 
     public String getStatus() {
         return status;
@@ -17,11 +18,11 @@ public class TimelineResponse {
         this.status = status;
     }
 
-    public List<TimelineEvent> getEvents() {
+    public Map<String, List<TimelineEvent>> getEvents() {
         return events;
     }
 
-    public void setEvents(List<TimelineEvent> events) {
+    public void setEvents(Map<String, List<TimelineEvent>> events) {
         this.events = events;
     }
 }
