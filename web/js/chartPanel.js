@@ -1,6 +1,6 @@
 // https://developers.google.com/chart/interactive/docs/reference
 
-links.ChartPanel = function () {
+ChartPanel = function () {
     this.activityChart = new google.visualization.PieChart(document.getElementById('pieChart1'));
     this.activityOptions = {
         title: 'Developer Activities',
@@ -22,7 +22,7 @@ links.ChartPanel = function () {
     this.asynTask = undefined;
 };
 
-links.ChartPanel.prototype.computeStats = function () {
+ChartPanel.prototype.computeStats = function () {
     var labels = this.computeLabels();
     var visibleMap = {};
     var typesMap = {};
@@ -31,7 +31,7 @@ links.ChartPanel.prototype.computeStats = function () {
 
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
-            if (gGlobals.timeline.checkIntersection(label.start, label.end, item)) {
+            if (checkIntersection(label.start, label.end, item)) {
                 // Vypocitaj statistiky pre Label
                 if (visibleMap[label.label] === undefined) {
                     visibleMap[label.label] = 1;
@@ -64,7 +64,7 @@ links.ChartPanel.prototype.computeStats = function () {
     return {visible: visibleMap, types: typesMap, lines: linesMap};
 };
 
-links.ChartPanel.prototype.computeLabels = function () {
+ChartPanel.prototype.computeLabels = function () {
     var options = gGlobals.timeline.options; // nastavenia neupravuj
     var step = jQuery.extend(true, {}, gGlobals.timeline.step); // deep copy celeho objektu
     step.start();
@@ -85,7 +85,7 @@ links.ChartPanel.prototype.computeLabels = function () {
     return dates;
 };
 
-links.ChartPanel.prototype.drawCharts = function () {
+ChartPanel.prototype.drawCharts = function () {
     var data;
     var stats = this.computeStats();
     console.log(stats);
@@ -118,7 +118,7 @@ links.ChartPanel.prototype.drawCharts = function () {
     this.metadataChart.draw(data, this.metadataOptions);
 };
 
-links.ChartPanel.prototype.redraw = function () {
+ChartPanel.prototype.redraw = function () {
     if (this.asynTask) {
         clearTimeout(this.asynTask);
         delete this.asynTask;

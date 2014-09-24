@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class TimelineResponse {
     private String status = "ok";
-    private Map<String, List<TimelineEvent>> events; // mapa zoznamu eventov pre developera
+    private Map<String, List<TimelineEvent>> groups; // mapa zoznamu eventov pre developera
 
     public String getStatus() {
         return status;
@@ -18,11 +18,11 @@ public class TimelineResponse {
         this.status = status;
     }
 
-    public Map<String, List<TimelineEvent>> getEvents() {
-        return events;
+    public Map<String, List<TimelineEvent>> getGroups() {
+        return groups;
     }
 
-    public void setEvents(Map<String, List<TimelineEvent>> events) {
-        this.events = events;
+    public void setGroups(Map<String, List<TimelineEvent>> groups) {
+        this.groups = groups;
     }
 }

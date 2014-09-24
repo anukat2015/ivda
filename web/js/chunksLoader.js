@@ -1,15 +1,30 @@
-links.ChunksLoader = function () {
+/**
+ * Trieda sa stara o nacitavanie eventov zo sluzby.
+ * Eventy su priradenie do chunkov, skupiny, ktora je cela naraz spravovana.
+ * Eventy v skupine su teda naraz stiahnute, vytvorene a vymazane.
+ * @constructor
+ */
+ChunksLoader = function () {
     this.actualMin = undefined;
     this.actualMax = undefined;
     this.chunkSize = (60 * 1000 * 60); // jedna cela hodina
     this.showError = true;
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
+    this.developers = [];
+    this.groupRepositore = undefined; // docasne ulozisko eventov pre danu skupinu, ked skupina sa nema zobrazit, udaje su presunute sem
 };
 
-links.ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
+/**
+ * Nacitaj data pre cely casovy interval
+ * @param start
+ * @param end
+ * @param finishCallback
+ */
+ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
     // Statistiky sa mu vypocitaju na zaklade prvkov, ktore su viditelne
+    this.developers = gGlobals.getDevelopers();
     this.actualMin = this.chunkRound2Left(start);
     this.actualMax = this.chunkRound2Right(end);
 
@@ -19,8 +34,41 @@ links.ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     this.loadChunks(this.actualMin, chunks);
 };
 
-links.ChunksLoader.prototype.onRangeChanged = function (start, end) {
-    var chunked, newMin, newMax, changed;
+/**
+ * Pomocna metoda, ktora zisti ci mame zapnuteho daneho vyvojara
+ * @param developer
+ */
+ChunksLoader.prototype.containsDeveloper = function (developer) {
+    return this.developers.indexOf(developer) == -1;
+};
+
+/**
+ * Vymaz eventy z timelinu a repoziatara na zaklade casu
+ * @param start
+ * @param end
+ */
+ChunksLoader.prototype.deleteByTime = function (start, end) {
+    //console.log("deleteItems " + new Date(start).toString() + " " + new Date(end).toString());
+    // Vymaz eventy z Timelinu
+    var changed = gGlobals.timeline.deleteItems(start, end);
+    //console.log("deleted " + changed);
+
+    // Vymaz aj eventy z repozitara
+    Object.keys(this.groupRepositore).forEach(function (group) {
+        var events = this.groupRepositore[group];
+        filterItemsByInterval(events, start, end, function supplier(index, item) {
+            events.splice(index, 1);
+        });
+    });
+};
+
+/**
+ * Handler, ktory zachycuje pohyb casovej osi
+ * @param start
+ * @param end
+ */
+ChunksLoader.prototype.onRangeChanged = function (start, end) {
+    var chunked, newMin, newMax;
 
     // Vypocitaj offset pre lavu stranu
     chunked = this.chunksCount(this.chunkRound2Left(start), this.actualMin);
@@ -28,9 +76,7 @@ links.ChunksLoader.prototype.onRangeChanged = function (start, end) {
     if (chunked !== 0) { // Nepohli sme sa o zanedbatelny kusok
         if (newMin > this.actualMin) {
             // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
-            //console.log("deleteItems " + new Date(this.actualMin).toString() + " " + new Date(newMin).toString());
-            changed = gGlobals.timeline.deleteItems(this.actualMin, newMin);
-            //console.log("deleted " + changed);
+            this.deleteByTime(this.actualMin, newMin);
         } else {
             this.loadChunks(newMin, chunked);
         }
@@ -43,9 +89,7 @@ links.ChunksLoader.prototype.onRangeChanged = function (start, end) {
     if (chunked !== 0) {
         if (newMax < this.actualMax) {
             // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
-            //console.log("deleteItems " + new Date(newMax).toString() + " " + new Date(this.actualMax).toString());
-            changed = gGlobals.timeline.deleteItems(newMax, this.actualMax);
-            //console.log("deleted " + changed);
+            this.deleteByTime(newMax, this.actualMax);
         } else {
             this.loadChunks(this.actualMax, chunked);
         }
@@ -55,7 +99,12 @@ links.ChunksLoader.prototype.onRangeChanged = function (start, end) {
     console.log("Nove hranice " + new Date(this.actualMin).toString() + " " + new Date(this.actualMax).toString());
 };
 
-links.ChunksLoader.prototype.loadChunks = function (min, chunks) {
+/**
+ * Nacitaj urcity pocet chunkov od pociatocneho datumu
+ * @param min pociatocny datum
+ * @param chunks  pocet chunkov
+ */
+ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var end;
     var count = chunks > 0 ? chunks : chunks * -1;
     var temp = min;
@@ -66,7 +115,11 @@ links.ChunksLoader.prototype.loadChunks = function (min, chunks) {
     }
 };
 
-links.ChunksLoader.prototype.alertError = function (error) {
+/**
+ * Data sa nepodarilo stiahnut
+ * @param error
+ */
+ChunksLoader.prototype.alertError = function (error) {
     var msg = "Error in request: " + error;
     console.log(msg);
     if (this.showError) {
@@ -75,7 +128,13 @@ links.ChunksLoader.prototype.alertError = function (error) {
     }
 };
 
-links.ChunksLoader.prototype.loadChunk = function (start, end) {
+/**
+ * Stiahni eventy pre jeden chunk.
+ * Chunk je definovany casovym intervalom.
+ * @param start
+ * @param end
+ */
+ChunksLoader.prototype.loadChunk = function (start, end) {
     //console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
     var url = gGlobals.getServiceURL(new Date(start), new Date(end));
     //console.log(url);
@@ -95,17 +154,7 @@ links.ChunksLoader.prototype.loadChunk = function (start, end) {
             if (data.status != "ok") {
                 instance.alertError("I get error:" + data.status);
             } else {
-                for (var i = 0; i < data.events.length; i++) {
-                    var item = data.events[i];
-                    if (item.start != null) {
-                        item.start = new Date(parseInt(item.start));
-                    }
-                    if (item.end != null) {
-                        item.end = new Date(parseInt(item.end));
-                    }
-                }
-                gGlobals.timeline.addItems(data.events, true);
-                gGlobals.redraw();
+                instance.acceptData(data.events);
             }
         }
     }).always(function () {
@@ -116,14 +165,106 @@ links.ChunksLoader.prototype.loadChunk = function (start, end) {
     });
 };
 
-links.ChunksLoader.prototype.chunkRound2Left = function (date) {
+/**
+ * Prichadzajuce eventy zo sluzby je potrebne spracovat.
+ * @param events
+ */
+ChunksLoader.prototype.prepareEvents = function (events) {
+    var item;
+    for (var i = 0; i < events.length; i++) {
+        item = events[i];
+        if (item.start != null) {
+            item.start = new Date(parseInt(item.start));
+        }
+        if (item.end != null) {
+            item.end = new Date(parseInt(item.end));
+        }
+    }
+};
+
+/**
+ * Data prichadzaju vo forme zoznamu eventov pre developera.
+ * tzv pride serializovana Map<String, List<TimelineEvent>>
+ * @param events
+ */
+ChunksLoader.prototype.acceptData = function (groups) {
+    var instance = this;
+    var shouldReload = false;
+    Object.keys(groups).forEach(function (group) {
+        // Spracuj nove eventy
+        var events = groups[group];
+        instance.prepareEvents(events);
+
+        // Developera mame zapnuteho, pridaj ho do timelinu
+        if (instance.containsDeveloper(group)) {
+            gGlobals.timeline.addItems(events, true);
+            shouldReload = true;
+        } else {
+            // Developer je vypnuty, pridaj ho do repozitara
+            var repositore = instance.groupRepositore[group];
+            if (repositore == undefined) {  // presun vsetky prvky
+                instance.groupRepositore[group] = events;
+            } else {
+                instance.groupRepositore[group] = repositore.concat(events);
+            }
+        }
+    });
+
+    if (shouldReload) {
+        // Zmenili sa date, ktoire uzivatel ma vidiet
+        gGlobals.redraw();
+    }
+};
+
+ChunksLoader.prototype.chunkRound2Left = function (date) {
     return ( Math.floor(date.getTime() / this.chunkSize) * this.chunkSize);
 };
 
-links.ChunksLoader.prototype.chunkRound2Right = function (date) {
+ChunksLoader.prototype.chunkRound2Right = function (date) {
     return ( Math.ceil(date.getTime() / this.chunkSize) * this.chunkSize);
 };
 
-links.ChunksLoader.prototype.chunksCount = function (max, min) {
+ChunksLoader.prototype.chunksCount = function (max, min) {
     return Math.floor((max - min) / this.chunkSize);
+};
+
+/**
+ * Handler, ktory zachytava zmenu developerov.
+ * Reaguj na zmenu developerov.
+ */
+ChunksLoader.prototype.checkDevelopers = function () {
+    var actual = gGlobals.getDevelopers();
+    var i, developer;
+    var shouldRefresh = false;
+    for (i = 0; i < actual.length; i++) {
+        developer = actual[i];
+        if (this.containsDeveloper(developer)) {
+            // Developera musime pridat ...
+            gGlobals.timeline.getGroup(developer);
+            gGlobals.timeline.addItems(this.groupRepositore[developer], true);
+            this.groupRepositore[developer] = undefined;
+            shouldRefresh = true;
+        }
+    }
+    for (i = 0; i < this.developers.length; i++) {
+        developer = this.developers[i];
+        if (actual.indexOf(developer) == -1) {
+            // Presun eventy z timelinu do nasho repozitara
+            // Ktore treba presunut? vsetky ktore patria do skupiny
+            // Developera musime zmazat ...
+            var deletedItems = gGlobals.timeline.deleteGroup(developer);
+            if (this.groupRepositore[developer] != undefined) {
+                console.log("repozitar uz obsahuje skupinu, nieco je zle");
+            }
+            this.groupRepositore[developer] = deletedItems;
+            shouldRefresh = true;
+        }
+    }
+
+    if (shouldRefresh) {
+        gGlobals.timeline.redraw();
+        gGlobals.charts.redraw();
+    }
+
+    this.developers = actual;
 };

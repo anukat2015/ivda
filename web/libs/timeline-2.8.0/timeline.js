@@ -101,6 +101,33 @@ if (!Array.prototype.forEach) {
     }
 }
 
+function checkIntersection(start, end, item) {
+    if (item.end) {
+        // Time range object // NH use getLeft and getRight here
+        return (start <= item.start && item.end <= end);
+    } else {
+        // Point object
+        return (start <= item.start && item.start <= end);
+    }
+};
+
+/**
+ * Find all elements within the start and end range
+ * If no element is found, returns an empty array
+ * @param start time
+ * @param end time
+ * @return Array itemsInRange
+ */
+function filterItemsByInterval(items, start, end, supplier) {
+    if (items) {
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (checkIntersection(start, end, item)) {
+                supplier(i, item);
+            }
+        }
+    }
+};
 
 /**
  * @constructor links.Timeline
@@ -610,39 +637,6 @@ links.Timeline.prototype.getItemIndex = function (element) {
     return index;
 };
 
-links.Timeline.prototype.checkIntersection = function (start, end, item) {
-    if (item == undefined) {
-        console.log("echo");
-    }
-    if (item.end) {
-        // Time range object // NH use getLeft and getRight here
-        return (start <= item.start && item.end <= end);
-    } else {
-        // Point object
-        return (start <= item.start && item.start <= end);
-    }
-};
-
-/**
- * Find all elements within the start and end range
- * If no element is found, returns an empty array
- * @param start time
- * @param end time
- * @return Array itemsInRange
- */
-links.Timeline.prototype.getItemsByInterval = function (start, end, supplier) {
-    var items = this.items;
-
-    if (items) {
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            if (this.checkIntersection(start, end, item)) {
-                supplier(i, item);
-            }
-        }
-    }
-};
-
 /**
  * Get selected index or undefined.
  * @returns {undefined}
@@ -670,7 +664,7 @@ links.Timeline.prototype.getSelected = function (column) {
 };
 
 links.Timeline.prototype.getVisibleChartItems = function (supplier) {
-    return this.getItemsByInterval(new Date(this.start.valueOf()), new Date(this.end.valueOf()), supplier);
+    return filterItemsByInterval(this.items, new Date(this.start.valueOf()), new Date(this.end.valueOf()), supplier);
 };
 
 /**
@@ -3480,7 +3474,7 @@ links.Timeline.prototype.deleteItem = function (index, preventRender) {
 links.Timeline.prototype.deleteItems = function (start, end) {
     var timeline = this;
     var count = 0;
-    this.getItemsByInterval(start, end, function (index, item) {
+    filterItemsByInterval(this.items, start, end, function (index, item) {
         timeline.deleteItem(index, true);
         count++;
     });
@@ -3844,6 +3838,7 @@ links.Timeline.prototype.deleteGroup = function (groupName) {
     var groups = this.groups,
         groupIndexes = this.groupIndexes,
         items = this.items;
+    var deletedItems = [];
 
     // Find group
     var groupIndex = groupIndexes[groupName];
@@ -3854,8 +3849,11 @@ links.Timeline.prototype.deleteGroup = function (groupName) {
 
     // Remove items
     if (items) {
+        var item;
         for (var i = 0; i < items.length; i++) {
+            item = items[i];
             if (items[i].group.content == groupName) {
+                deletedItems.push(item);
                 this.removeItem(i, true);
             }
         }
@@ -3883,6 +3881,8 @@ links.Timeline.prototype.deleteGroup = function (groupName) {
     for (var i = 0, iMax = groups.length; i < iMax; i++) {
         groupIndexes[groups[i].content] = i;
     }
+
+    return deletedItems;
 };
 
 /**
