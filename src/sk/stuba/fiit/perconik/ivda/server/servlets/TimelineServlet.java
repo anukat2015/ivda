@@ -23,7 +23,7 @@ import java.io.IOException;
  */
 public class TimelineServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
-    private static final int CACHE_DURATION_IN_SECOND = 0; // 60 * 60 * 24 * 2; // 2 days
+    private static final int CACHE_DURATION_IN_SECOND = 60 * 60 * 24 * 1; // 1 days
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
 
