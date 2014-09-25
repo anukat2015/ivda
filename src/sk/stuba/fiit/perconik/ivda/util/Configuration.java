@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.util;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,8 +42,10 @@ public final class Configuration implements Serializable {
         CONFIG_DIR = System.getProperty("config.dir", defaultDir);
 
         // Prepare log4j
-        //String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
-        //PropertyConfigurator.configureAndWatch(log4jLoggingPropFile, 30000L);
+        if (CONFIG_DIR != defaultDir) { // tzv. Program bezi pravdepodobne lokalne
+            String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
+            PropertyConfigurator.configure(log4jLoggingPropFile);
+        }
 
         try {
             context = JAXBContext.newInstance(Configuration.class);

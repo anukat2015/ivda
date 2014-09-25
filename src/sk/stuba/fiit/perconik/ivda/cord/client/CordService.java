@@ -55,7 +55,7 @@ public final class CordService extends RestClient {
 
     @Override
     protected UriBuilder apiLink() {
-        return UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
+        return UriBuilder.fromUri(Configuration.getInstance().getCordLink());
     }
 
     public File getFile(String repo, String commit, String path) {
@@ -133,7 +133,8 @@ public final class CordService extends RestClient {
         // Iba zoznamy cachujeme
         try {
             URI link = UriUtils.addBeanProperties(path, filter).build();
-            return (ImmutableList<T>) cache.getCache().get(new Pair<URI, Class>(link, type));
+            ImmutableList<T> list = (ImmutableList<T>) cache.getCache().get(new Pair<URI, Class>(link, type));
+            return list;
         } catch (Exception e) {
             LOGGER.error("Error", e);
             return Collections.emptyList();

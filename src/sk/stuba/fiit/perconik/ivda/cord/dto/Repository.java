@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
@@ -61,5 +63,10 @@ public class Repository implements Serializable {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("lastUpdateTime", lastUpdateTime).append("name", name).append("url", url).toString();
     }
 }
