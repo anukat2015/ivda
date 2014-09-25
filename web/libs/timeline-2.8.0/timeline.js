@@ -120,11 +120,15 @@ function checkIntersection(start, end, item) {
  */
 function filterItemsByInterval(items, start, end, supplier) {
     if (items) {
-        for (var i = 0; i < items.length; i++) {
+        var i = 0;
+        while (i < items.length) {
             var item = items[i];
             if (checkIntersection(start, end, item)) {
-                supplier(i, item);
+                if (!supplier(i, item)) {
+                    continue; // preskoc iteraciu
+                }
             }
+            i++;
         }
     }
 };
@@ -515,6 +519,7 @@ links.Timeline.prototype.setData = function (data) {
     }
 
     // prepare data for clustering, by filtering and sorting by type
+    // TODO: pri castom mazani toto moze znamenat problem
     if (this.options.cluster) {
         this.clusterGenerator.setData(this.items);
     }
@@ -3477,6 +3482,7 @@ links.Timeline.prototype.deleteItems = function (start, end) {
     filterItemsByInterval(this.items, start, end, function (index, item) {
         timeline.deleteItem(index, true);
         count++;
+        return false;
     });
     return count;
 };
@@ -3843,18 +3849,32 @@ links.Timeline.prototype.deleteGroup = function (groupName) {
     // Find group
     var groupIndex = groupIndexes[groupName];
     if (groupIndex == undefined) {
-        console.log("not found");
-        return; // error
+        return deletedItems; // error
     }
+
+    /*
+     function inverseTransformItemData(item) {
+     return {
+     className: item.className,
+     content: item.content,
+     start: item.start,
+     end: item.end,
+     metadata: item.metadata,
+     group: item.group.content
+     };
+     }*/
 
     // Remove items
     if (items) {
         var item;
-        for (var i = 0; i < items.length; i++) {
+        var i = 0;
+        while (i < items.length) {
             item = items[i];
-            if (items[i].group.content == groupName) {
-                deletedItems.push(item);
-                this.removeItem(i, true);
+            if (item.group.content == groupName) {
+                deletedItems.push(this.data[i]);
+                this.deleteItem(i, true);
+            } else {
+                i++;
             }
         }
     }

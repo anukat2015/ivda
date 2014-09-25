@@ -12,7 +12,7 @@ ChunksLoader = function () {
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
     this.developers = [];
-    this.groupRepositore = undefined; // docasne ulozisko eventov pre danu skupinu, ked skupina sa nema zobrazit, udaje su presunute sem
+    this.groupRepositore = {}; // docasne ulozisko eventov pre danu skupinu, ked skupina sa nema zobrazit, udaje su presunute sem
 };
 
 /**
@@ -39,7 +39,7 @@ ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
  * @param developer
  */
 ChunksLoader.prototype.containsDeveloper = function (developer) {
-    return this.developers.indexOf(developer) == -1;
+    return this.developers.indexOf(developer) > -1;
 };
 
 /**
@@ -54,10 +54,12 @@ ChunksLoader.prototype.deleteByTime = function (start, end) {
     //console.log("deleted " + changed);
 
     // Vymaz aj eventy z repozitara
+    var instance = this;
     Object.keys(this.groupRepositore).forEach(function (group) {
-        var events = this.groupRepositore[group];
+        var events = instance.groupRepositore[group];
         filterItemsByInterval(events, start, end, function supplier(index, item) {
             events.splice(index, 1);
+            return false;
         });
     });
 };
@@ -154,7 +156,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             if (data.status != "ok") {
                 instance.alertError("I get error:" + data.status);
             } else {
-                instance.acceptData(data.events);
+                instance.acceptData(data.groups);
             }
         }
     }).always(function () {
@@ -201,11 +203,10 @@ ChunksLoader.prototype.acceptData = function (groups) {
             shouldReload = true;
         } else {
             // Developer je vypnuty, pridaj ho do repozitara
-            var repositore = instance.groupRepositore[group];
-            if (repositore == undefined) {  // presun vsetky prvky
+            if (!instance.groupRepositore.hasOwnProperty(group)) {  // presun vsetky prvky
                 instance.groupRepositore[group] = events;
             } else {
-                instance.groupRepositore[group] = repositore.concat(events);
+                instance.groupRepositore[group] = instance.groupRepositore[group].concat(events);
             }
         }
     });
@@ -238,11 +239,13 @@ ChunksLoader.prototype.checkDevelopers = function () {
     var shouldRefresh = false;
     for (i = 0; i < actual.length; i++) {
         developer = actual[i];
-        if (this.containsDeveloper(developer)) {
+        if (!this.containsDeveloper(developer)) {
             // Developera musime pridat ...
-            gGlobals.timeline.getGroup(developer);
-            gGlobals.timeline.addItems(this.groupRepositore[developer], true);
-            this.groupRepositore[developer] = undefined;
+            //gGlobals.timeline.getGroup(developer); o to sa postara uz redraw
+            if (this.groupRepositore.hasOwnProperty(developer)) {
+                gGlobals.timeline.addItems(this.groupRepositore[developer], true);
+                delete this.groupRepositore[developer];
+            }
             shouldRefresh = true;
         }
     }
@@ -253,7 +256,7 @@ ChunksLoader.prototype.checkDevelopers = function () {
             // Ktore treba presunut? vsetky ktore patria do skupiny
             // Developera musime zmazat ...
             var deletedItems = gGlobals.timeline.deleteGroup(developer);
-            if (this.groupRepositore[developer] != undefined) {
+            if (this.groupRepositore.hasOwnProperty(developer)) {
                 console.log("repozitar uz obsahuje skupinu, nieco je zle");
             }
             this.groupRepositore[developer] = deletedItems;
@@ -262,9 +265,7 @@ ChunksLoader.prototype.checkDevelopers = function () {
     }
 
     if (shouldRefresh) {
-        gGlobals.timeline.redraw();
-        gGlobals.charts.redraw();
+        gGlobals.redraw();
     }
-
     this.developers = actual;
 };

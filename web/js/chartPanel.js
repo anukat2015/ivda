@@ -59,6 +59,7 @@ ChartPanel.prototype.computeStats = function () {
         } else {
             typesMap[row]++;
         }
+        return true;
     });
 
     return {visible: visibleMap, types: typesMap, lines: linesMap};

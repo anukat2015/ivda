@@ -5,9 +5,6 @@ function onLoad() {
     var start = new Date(nowDate.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
 
     // Inicializuj data
-    gGlobals.initialize(start, nowDate);
-    registerQTip();
-
     $('#startDate').datetimepicker({
         format:"d.m.Y H:i"
     });
@@ -30,9 +27,12 @@ function onLoad() {
             {name: 'Developer C'}
         ],
         onChange: function(value) {
-            console.log(value);
+            gGlobals.loader.checkDevelopers();
         }
     });
+
+    gGlobals.initialize(start, nowDate);
+    registerQTip();
 }
 
 function onRangeChange() {
@@ -69,6 +69,6 @@ function onSetCurrentTime() {
 function onRangeChanged() {
     var range = gGlobals.timeline.getVisibleChartRange();
     console.log("onRangeChanged " + gGlobals.serverDateFormatter.format(range.start) + " " + gGlobals.serverDateFormatter.format(range.end));
-    gGlobals.chunks.onRangeChanged(range.start, range.end);
+    gGlobals.loader.onRangeChanged(range.start, range.end);
     gGlobals.charts.redraw();
 }

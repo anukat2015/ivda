@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 /**
  * Created by Seky on 17. 7. 2014.
@@ -27,7 +25,6 @@ public class TimelineServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
     private static final int CACHE_DURATION_IN_SECOND = 0; // 60 * 60 * 24 * 2; // 2 days
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
 
 
     @Override
@@ -45,17 +42,13 @@ public class TimelineServlet extends HttpServlet {
             ProcessEvents2TimelineEvents process = new ProcessFileVersions();
             process.setFilter(request);
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
-            response.setEvents(process.getData());
+            response.setGroups(process.getData());
 
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, response);
             setCacheHeaders(request, resp);
         } catch (Exception e) {
-            response.setStatus(e.getMessage());;
-            throw new WebApplicationException(
-                    Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
-                            .entity(response)
-                            .build());
+            throw new WebApplicationException(e);
         }
     }
 

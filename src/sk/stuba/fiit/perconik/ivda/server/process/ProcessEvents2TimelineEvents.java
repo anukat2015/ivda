@@ -32,7 +32,8 @@ public abstract class ProcessEvents2TimelineEvents {
         // Check if exist ..
         List<TimelineEvent> events = list.get(group);
         if (events == null) {
-            events = list.put(group, new ArrayList<TimelineEvent>());
+            events = new ArrayList<TimelineEvent>();
+            list.put(group, events);
         }
         events.add(event);
     }

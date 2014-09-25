@@ -5,14 +5,14 @@ function Globals() {
     this.timeline = getTimeline();
     this.startInput = $('#startDate');
     this.endInput = $('#endDate');
-    this.chunks = new ChunksLoader();
+    this.loader = new ChunksLoader();
     this.dateFormat = 'd.m.Y H:i';
 
     this.initialize = function (start, end) {
         this.setTime(start, end);
         this.timeline.draw();
         this.timeline.setVisibleChartRange(start, end);
-        this.chunks.loadRange(start, end, function () {
+        this.loader.loadRange(start, end, function () {
             console.log("finished loadRange");
             gGlobals.charts.redraw();
             gGlobals.timeline.render({
@@ -39,7 +39,11 @@ function Globals() {
     };
 
     this.getDevelopers = function () {
-        return $('#select-links').val().split(',');
+        var value = $('#select-links').val();
+        if (value.trim().length == 0) {
+            return [];
+        }
+        return value.split(',');
     };
 
     this.redraw = function () {
