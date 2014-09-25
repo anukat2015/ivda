@@ -58,8 +58,13 @@ public final class CordService extends RestClient {
         return UriBuilder.fromUri(Configuration.getInstance().getCordLink());
     }
 
-    public File getFile(String repo, String commit, String path) {
-        return callApi(apiLink().path("file").path(repo).path(commit).path(path), File.class);
+    /**
+     * ZVLASTNOST: fd.commit moze obsahovat aj BRANCH name a vrati rovnaky subor
+     * @param fd
+     * @return
+     */
+    public File getFile(FileDescription fd) {
+        return callApi(apiLink().path("file").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()), File.class);
     }
 
     public List<File> getFiles(String repo, String commit, String path, FileSearchFilter filter) {
@@ -70,16 +75,16 @@ public final class CordService extends RestClient {
         return filesCache.get(fd);
     }
 
-    public AstParseResultDto getFileBlob2(String repo, String commit, String path) {
-        return callApi(apiLink().path("blob").path(repo).path(commit).path(path).queryParam("format", "ast"), AstParseResultDto.class);
+    public AstParseResultDto getFileBlob2(FileDescription fd) {
+        return callApi(apiLink().path("blob").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()).queryParam("format", "ast"), AstParseResultDto.class);
     }
 
     public Repository getRepository(String repo) {
         return callApi(apiLink().path("repo").path(repo), Repository.class);
     }
 
-    public List<Repository> getRepositories(String repo) {
-        return callApi(apiLink().path("repos").path(repo), RepoSearchResult.class, new SearchFilter());
+    public List<Repository> getRepositories() {
+        return callApi(apiLink().path("repos"), RepoSearchResult.class, new SearchFilter());
     }
 
     public List<Branch> getBranches(String repo) {
@@ -102,7 +107,7 @@ public final class CordService extends RestClient {
     }
 
     public List<Commit> getCommits(String repo, String branch, @Nullable String path, CommitSearchFilter filter) {
-        UriBuilder builder = apiLink().path("commits").path(repo).path(branch).path("head");
+        UriBuilder builder = apiLink().path("commits").path(repo).path(branch);
         if (path != null) {
             builder.path(path);
         }

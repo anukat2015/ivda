@@ -8,18 +8,18 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  */
 public final class Author implements Serializable {
-    private String mail;
+    private String email;
     private String name;
 
     public Author() {
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {
@@ -37,18 +37,18 @@ public final class Author implements Serializable {
 
         Author author = (Author) o;
 
-        if (mail != null ? !mail.equals(author.mail) : author.mail != null) return false;
+        if (email != null ? !email.equals(author.email) : author.email != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return mail != null ? mail.hashCode() : 0;
+        return email != null ? email.hashCode() : 0;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("mail", mail).append("name", name).toString();
+        return new ToStringBuilder(this).append("email", email).append("name", name).toString();
     }
 }

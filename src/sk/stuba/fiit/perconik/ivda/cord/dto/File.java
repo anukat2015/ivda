@@ -3,26 +3,24 @@ package sk.stuba.fiit.perconik.ivda.cord.dto;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URL;
 
 /**
  * Created by Seky on 5. 9. 2014.
  */
 public class File implements Serializable {
-    private URL url;
+    private String url;
     private String lastCommit;
-    private URI versionUri;
+    private String versionUri;
     private File ancestor1;
 
     public File() {
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public void setUrl(URL url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
@@ -34,11 +32,11 @@ public class File implements Serializable {
         this.lastCommit = lastCommit;
     }
 
-    public URI getVersionUri() {
+    public String getVersionUri() {
         return versionUri;
     }
 
-    public void setVersionUri(URI versionUri) {
+    public void setVersionUri(String versionUri) {
         this.versionUri = versionUri;
     }
 
