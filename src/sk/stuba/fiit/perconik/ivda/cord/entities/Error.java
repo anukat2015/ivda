@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -38,5 +39,10 @@ public final class Error implements Serializable {
 
     public void setExceptionType(String exceptionType) {
         this.exceptionType = exceptionType;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("exceptionMessage", exceptionMessage).append("exceptionType", exceptionType).append("message", message).toString();
     }
 }

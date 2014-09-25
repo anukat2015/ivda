@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -171,5 +173,10 @@ public class AstNodeDto implements Serializable {
 
     public void setChildNodes(List<AstNodeDto> childNodes) {
         this.childNodes = childNodes;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("baseTypes", baseTypes).append("childNodes", childNodes).append("commentEndLine", commentEndLine).append("commentStartLine", commentStartLine).append("endIndex", endIndex).append("endLine", endLine).append("modifier", modifier).append("name", name).append("nodeType", nodeType).append("parameters", parameters).append("returnType", returnType).append("startIndex", startIndex).append("startLine", startLine).toString();
     }
 }

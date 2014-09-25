@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -46,5 +48,10 @@ public class BaseType implements Serializable {
         int result = typeName != null ? typeName.hashCode() : 0;
         result = 31 * result + (modifier != null ? modifier.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modifier", modifier).append("typeName", typeName).toString();
     }
 }

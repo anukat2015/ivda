@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -61,5 +63,10 @@ public final class FileDescription implements Serializable {
         result = 31 * result + (commit != null ? commit.hashCode() : 0);
         result = 31 * result + (path != null ? path.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("commit", commit).append("path", path).append("repo", repo).toString();
     }
 }

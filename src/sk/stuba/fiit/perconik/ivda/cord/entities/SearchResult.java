@@ -42,4 +42,6 @@ public class SearchResult<T extends Serializable> extends Paged {
     public boolean isEmpty() {
         return getItems().isEmpty();
     }
+
+
 }

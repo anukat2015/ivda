@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -91,5 +93,10 @@ public final class AstParseErrorDto implements Serializable {
         result = 31 * result + (startColumn != null ? startColumn.hashCode() : 0);
         result = 31 * result + (endColumn != null ? endColumn.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("endColumn", endColumn).append("endLine", endLine).append("level", level).append("message", message).append("startColumn", startColumn).append("startLine", startLine).toString();
     }
 }

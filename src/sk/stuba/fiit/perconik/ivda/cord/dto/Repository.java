@@ -1,9 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
-import com.ibm.icu.util.GregorianCalendar;
-
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Date;
 
 /**
  * Created by Seky on 5. 9. 2014.
@@ -15,7 +14,7 @@ public class Repository implements Serializable {
     /**
      * time of the last repository update call
      */
-    private GregorianCalendar lastUpdateTime;
+    private Date lastUpdateTime;
 
     public Repository() {
     }
@@ -36,11 +35,11 @@ public class Repository implements Serializable {
         this.url = url;
     }
 
-    public GregorianCalendar getLastUpdateTime() {
+    public Date getLastUpdateTime() {
         return lastUpdateTime;
     }
 
-    public void setLastUpdateTime(GregorianCalendar lastUpdateTime) {
+    public void setLastUpdateTime(Date lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
     }
 

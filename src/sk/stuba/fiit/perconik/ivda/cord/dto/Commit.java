@@ -1,8 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
-import com.ibm.icu.util.GregorianCalendar;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Seky on 5. 9. 2014.
@@ -10,7 +11,7 @@ import java.io.Serializable;
 public final class Commit implements Serializable {
     private String hash;
     private String message;
-    private GregorianCalendar commitDate;
+    private Date commitDate;
     private String ancestor1;
     private String ancestor2;
     private Author author;
@@ -34,11 +35,11 @@ public final class Commit implements Serializable {
         this.message = message;
     }
 
-    public GregorianCalendar getCommitDate() {
+    public Date getCommitDate() {
         return commitDate;
     }
 
-    public void setCommitDate(GregorianCalendar commitDate) {
+    public void setCommitDate(Date commitDate) {
         this.commitDate = commitDate;
     }
 
@@ -81,5 +82,10 @@ public final class Commit implements Serializable {
     @Override
     public int hashCode() {
         return hash != null ? hash.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("ancestor1", ancestor1).append("ancestor2", ancestor2).append("author", author).append("commitDate", commitDate).append("hash", hash).append("message", message).toString();
     }
 }

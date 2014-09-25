@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
@@ -66,5 +68,10 @@ public class File implements Serializable {
         int result = url != null ? url.hashCode() : 0;
         result = 31 * result + (versionUri != null ? versionUri.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("ancestor1", ancestor1).append("lastCommit", lastCommit).append("url", url).append("versionUri", versionUri).toString();
     }
 }

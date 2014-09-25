@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.cord.entities;
 
-import com.ibm.icu.util.GregorianCalendar;
+import java.util.Date;
 
 /**
  * Created by Seky on 5. 9. 2014.
@@ -12,8 +12,8 @@ public final class CommitSearchFilter extends SearchFilter {
     private String sort; // commitDate or topo
     private Boolean asc;
     private String author;
-    private GregorianCalendar since;
-    private GregorianCalendar until;
+    private Date since;
+    private Date until;
 
     public String getSort() {
         return sort;
@@ -39,19 +39,19 @@ public final class CommitSearchFilter extends SearchFilter {
         this.author = author;
     }
 
-    public GregorianCalendar getSince() {
+    public Date getSince() {
         return since;
     }
 
-    public void setSince(GregorianCalendar since) {
+    public void setSince(Date since) {
         this.since = since;
     }
 
-    public GregorianCalendar getUntil() {
+    public Date getUntil() {
         return until;
     }
 
-    public void setUntil(GregorianCalendar until) {
+    public void setUntil(Date until) {
         this.until = until;
     }
 }

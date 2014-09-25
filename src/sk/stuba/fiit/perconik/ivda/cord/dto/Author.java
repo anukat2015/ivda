@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -43,5 +45,10 @@ public final class Author implements Serializable {
     @Override
     public int hashCode() {
         return mail != null ? mail.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("mail", mail).append("name", name).toString();
     }
 }

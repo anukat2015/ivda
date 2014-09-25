@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.entities;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -35,5 +37,10 @@ public class SearchFilter implements Serializable {
 
     public void nextPage() {
         pageIndex++;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

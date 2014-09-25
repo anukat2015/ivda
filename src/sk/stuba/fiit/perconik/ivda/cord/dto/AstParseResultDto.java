@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.cord.dto;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -48,5 +50,10 @@ public class AstParseResultDto implements Serializable {
         int result = parseErrors != null ? parseErrors.hashCode() : 0;
         result = 31 * result + (syntaxTree != null ? syntaxTree.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("parseErrors", parseErrors).append("syntaxTree", syntaxTree).toString();
     }
 }
