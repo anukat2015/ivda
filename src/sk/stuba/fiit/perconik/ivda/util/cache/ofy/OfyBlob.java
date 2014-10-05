@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.util.cache;
+package sk.stuba.fiit.perconik.ivda.util.cache.ofy;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;

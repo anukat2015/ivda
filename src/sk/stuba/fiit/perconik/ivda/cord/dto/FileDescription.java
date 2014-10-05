@@ -69,4 +69,9 @@ public final class FileDescription implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("commit", commit).append("path", path).append("repo", repo).toString();
     }
+
+    public String getUID() {
+        int length = repo.length() + commit.length() + path.length();
+        return new StringBuffer(length).append(commit).append(path).append(repo).toString();
+    }
 }

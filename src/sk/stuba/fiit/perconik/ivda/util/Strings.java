@@ -1,6 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.util;
 
 import com.google.common.base.Function;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -35,4 +37,9 @@ public final class Strings {
         }
         return longestString;
     }
+
+    public static String computeUID(String x) {
+        return Hex.encodeHexString(DigestUtils.sha1(x));
+    }
+
 }

@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.cache.OfyService;
+import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

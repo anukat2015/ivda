@@ -10,18 +10,18 @@ import com.google.common.io.CharStreams;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.cord.dto.*;
-import sk.stuba.fiit.perconik.ivda.cord.dto.File;
 import sk.stuba.fiit.perconik.ivda.cord.entities.*;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
-import sk.stuba.fiit.perconik.ivda.util.cache.GuavaFilesCache;
-import sk.stuba.fiit.perconik.ivda.util.cache.PersistentCache;
+import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.core.UriBuilder;
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,6 @@ public final class CordService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(CordService.class.getName());
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");
     private final List<Repository> repositories;
-
 
     private final CordCache cache;
     private final FilesCache filesCache;
@@ -78,7 +77,7 @@ public final class CordService extends RestClient {
     }
 
     public List<String> getFileBlob(FileDescription fd) {
-        return filesCache.get(fd);
+        return (List<String>) filesCache.get(fd);
     }
 
     public AstParseResultDto getFileBlob2(FileDescription fd) {
@@ -155,7 +154,7 @@ public final class CordService extends RestClient {
         // Iba zoznamy cachujeme
         try {
             URI link = UriUtils.addBeanProperties(path, filter).build();
-            ImmutableList<T> list = (ImmutableList<T>) cache.getCache().get(new Pair<URI, Class>(link, type));
+            ImmutableList<T> list = (ImmutableList<T>) cache.get(new Pair<URI, Class>(link, type));
             return list;
         } catch (Exception e) {
             LOGGER.error("Error", e);
@@ -182,33 +181,29 @@ public final class CordService extends RestClient {
     /**
      * Cache pre requesty kde sa ziadaju zoznamy
      */
-    private final class CordCache extends GuavaFilesCache<Pair<URI, Class>, ImmutableList> {
-
-        protected CordCache() {
-            super(new java.io.File(Configuration.getInstance().getCacheFolder(), "cord"));
-        }
-
+    private final class CordCache extends OfyDynamicCache<Pair<URI, Class>> {
         @Override
         protected ImmutableList valueNotFound(Pair<URI, Class> key) {
             return downloadAll(key.getKey(), key.getValue(), "pageIndex");
         }
 
         @Override
-        protected java.io.File computeFilePath(java.io.File folder, Pair<URI, Class> key) {
-            return new java.io.File(folder, computeUID(key.getKey().toString()));
+        protected String computeUniqueID(Pair<URI, Class> key) {
+            return key.getKey().toString();
         }
     }
 
     /**
      * Cache pre stahovanie suborov.
      */
-    private final class FilesCache extends PersistentCache<FileDescription, ImmutableList<String>> {
-        protected FilesCache() {
-            super(new java.io.File(Configuration.getInstance().getCacheFolder(), "cordFiles"));
+    private final class FilesCache extends OfyDynamicCache<FileDescription> {
+        @Override
+        protected String computeUniqueID(FileDescription key) {
+            return key.getUID();
         }
 
         @Override
-        protected ImmutableList<String> valueNotFound(FileDescription fd) {
+        protected Serializable valueNotFound(FileDescription fd) {
             UriBuilder link = apiLink();
             link.path("blob").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()).queryParam("format", "text");
             String content = callApi(link, String.class);
@@ -217,29 +212,6 @@ public final class CordService extends RestClient {
             } catch (IOException e) {
                 LOGGER.error("Can not deserialize.", e);
                 return null;
-            }
-        }
-
-        @Override
-        protected ImmutableList<String> deserialize(FileDescriptor fd) {
-            try {
-                return ImmutableList.copyOf(CharStreams.readLines(new BufferedReader(new FileReader(fd))));
-            } catch (IOException e) {
-                LOGGER.error("Can not deserialize.", e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void serialize(FileDescriptor fd, ImmutableList<String> lines) {
-            try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(fd));
-                for (CharSequence line : lines) {
-                    writer.append(line);
-                    writer.newLine();
-                }
-            } catch (IOException e) {
-                LOGGER.error("Can not serialize.", e);
             }
         }
     }
