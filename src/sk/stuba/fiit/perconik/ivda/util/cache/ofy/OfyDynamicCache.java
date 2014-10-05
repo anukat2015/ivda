@@ -13,7 +13,7 @@ public abstract class OfyDynamicCache<K> {
     public final Serializable get(final K uri) {
         final String uid = computeUniqueID(uri);
         final Key<OfyBlob> key = Key.create(OfyBlob.class, uid);
-        final ArrayList<Serializable> ev = new ArrayList<>();
+        final ArrayList<OfyBlob> ev = new ArrayList<>();
         OfyService.ofy().transact(new VoidWork() {
             public void vrun() {
                 OfyBlob item = OfyService.ofy().load().key(key).now();
@@ -31,7 +31,7 @@ public abstract class OfyDynamicCache<K> {
         if (ev.isEmpty()) {
             return null;
         }
-        return ev.get(0);
+        return ev.get(0).getData();
     }
 
     protected abstract Serializable valueNotFound(K key);

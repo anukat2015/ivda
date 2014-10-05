@@ -34,7 +34,7 @@ public class OfyBlob implements Serializable {
         this.id = id;
     }
 
-    public Object getData() {
+    public Serializable getData() {
         return data;
     }
 
