@@ -82,18 +82,6 @@ public class ActivityService extends RestClient {
     private static class SingletonHolder {
         public static final ActivityService INSTANCE = new ActivityService();
     }
-    /*
-    private final class ActivityCache extends GuavaFilesCache<URI, ImmutableList<EventDto>> {
-        protected ActivityCache() {
-            super(new File(CACHE_FOLDER, "activity"));
-        }
-
-        @Override
-        protected ImmutableList<EventDto> fileNotFound(URI key) {
-            return (ImmutableList<EventDto>) downloadAll(key, EventsResponse.class, "page");
-        }
-    }
-    */
 
     private final class ActivityCache extends OfyCache<Key<OfyBlob>, OfyBlob> {
         @Override

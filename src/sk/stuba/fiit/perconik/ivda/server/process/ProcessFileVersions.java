@@ -6,13 +6,13 @@ import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
 import com.gratex.perconik.services.ast.rcs.RcsServerDto;
-import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
+import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -82,18 +82,22 @@ public final class ProcessFileVersions extends ProcessEvents2TimelineEvents {
 
         try {
             LOGGER.info("Skopiroval:\\n" + event.getText());
+            String path = dokument.getServerPath();
+            String commit = null;
+            String repo = null;
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
+            //File file = CordService.getInstance().getFile(repo, commit, path);
             int changedLines = EventsUtil.codeWritten(event.getText());
             if (changedLines > 0) {
                 Integer ancestor = fileVersion.getAncestor1Id().getValue();
                 add(event, ImmutableMap.of(
                         "uid", event.getEventId(),
                         "path", fileVersion.getUrl().getValue(),
-                        "id", fileVersion.getId(),
-                        "ancestor", ancestor == null ? 0 : ancestor,
+                        "repo", fileVersion.getId(),
+                        "commit", ancestor == null ? 0 : ancestor,
                         "changedLines", changedLines
                 ));
             } else {
