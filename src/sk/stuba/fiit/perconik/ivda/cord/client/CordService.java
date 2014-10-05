@@ -4,6 +4,7 @@ package sk.stuba.fiit.perconik.ivda.cord.client;
  * Created by Seky on 5. 9. 2014.
  */
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import javafx.util.Pair;
@@ -12,6 +13,7 @@ import sk.stuba.fiit.perconik.ivda.cord.dto.*;
 import sk.stuba.fiit.perconik.ivda.cord.dto.File;
 import sk.stuba.fiit.perconik.ivda.cord.entities.*;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.Strings;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 import sk.stuba.fiit.perconik.ivda.util.cache.GuavaFilesCache;
 import sk.stuba.fiit.perconik.ivda.util.cache.PersistentCache;
@@ -35,6 +37,8 @@ import java.util.regex.Pattern;
 public final class CordService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(CordService.class.getName());
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");
+    private final List<Repository> repositories;
+
 
     private final CordCache cache;
     private final FilesCache filesCache;
@@ -42,6 +46,7 @@ public final class CordService extends RestClient {
     private CordService() {
         cache = new CordCache();
         filesCache = new FilesCache();
+        repositories = Collections.unmodifiableList(getRepositories());
     }
 
     @SuppressWarnings("SameReturnValue")
@@ -60,6 +65,7 @@ public final class CordService extends RestClient {
 
     /**
      * ZVLASTNOST: fd.commit moze obsahovat aj BRANCH name a vrati rovnaky subor
+     *
      * @param fd
      * @return
      */
@@ -85,6 +91,17 @@ public final class CordService extends RestClient {
 
     public List<Repository> getRepositories() {
         return callApi(apiLink().path("repos"), RepoSearchResult.class, new SearchFilter());
+    }
+
+    public Repository getNearestRepository(URI url) {
+        Repository server = Strings.findLongestPrefix(repositories, url.toString().toLowerCase(), new Function<Repository, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable Repository input) {
+                return input.getUrl().toString();
+            }
+        });
+        return server;
     }
 
     public List<Branch> getBranches(String repo) {
