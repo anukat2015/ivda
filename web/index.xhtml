@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
     <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
     <link rel="stylesheet" type="text/css" href="libs/selectize.js/dist/css/selectize.default.css"/>
+    <link rel="stylesheet" type="text/css" href="loader.css"/>
     <link rel="stylesheet" type="text/css" href="style.css"/>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -54,7 +55,7 @@
     End time: <input type="text" id="endDate" value=""/>
     <input type="button" id="setRange" value="Set" onclick="onSetTime();"/>
     <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();"/>
-    <input type="text" id="select-links" class="demo-default" value="Developer A"/>
+    <input type="text" id="select-links" class="demo-default" value="" placeholder="Pick some developer..." />
 </div>
 
 <div id="mytimeline"></div>
@@ -65,6 +66,11 @@
 </div>
 <div class="clear"></div>
 <div id="datatable"></div>
+
+<div id="loader-wrapper">
+    <div id="loader"></div>
+</div>
+<div id="loader-text"></div>
 
 </body>
 </html>

@@ -31,7 +31,7 @@ function Globals() {
     };
 
     this.getEnd = function () {
-        return Date.parseDate(this.startInput.val(), this.dateFormat);
+        return Date.parseDate(this.endInput.val(), this.dateFormat);
     };
 
     this.getAjaxURL = function (parameters) {

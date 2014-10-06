@@ -11,6 +11,8 @@ ChunksLoader = function () {
     this.showError = true;
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
+    this.tasks = 0;
+    this.finishedTasks = 0;
     this.developers = [];
     this.groupRepositore = {}; // docasne ulozisko eventov pre danu skupinu, ked skupina sa nema zobrazit, udaje su presunute sem
 };
@@ -110,6 +112,7 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var end;
     var count = chunks > 0 ? chunks : chunks * -1;
     var temp = min;
+    this.tasks += count;
     for (var i = 0; i < count; i++) {
         end = temp + this.chunkSize;
         this.loadChunk(temp, end);
@@ -160,11 +163,17 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             }
         }
     }).always(function () {
+        instance.finishedTasks++;
         instance.finisherCounts--;
         if (instance.finisherCounts === 0) {
             instance.finisherCallback();
         }
     });
+};
+
+
+ChunksLoader.prototype.pendingTasks = function () {
+    return this.tasks - this.finishedTasks;
 };
 
 /**
