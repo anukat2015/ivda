@@ -1988,7 +1988,8 @@ links.Timeline.prototype.repaintGroups = function () {
             labelLine = labelLines[i],
             itemLine = itemLines[i];
 
-        label.style.top = (group.lineTop - 200) + "px";
+        var position = Math.max(60, group.lineTop - 160);
+        label.style.top = position + "px";
         labelLine.style.top = group.lineTop + "px";
         itemLine.style.top = group.lineTop + "px";
         itemLine.style.width = size.contentWidth + "px";

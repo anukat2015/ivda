@@ -79,6 +79,7 @@ div.timeline-axis-text {
 
 div.timeline-groups-text {
     color: #4D4D4D;
+    font-weight: bold;
 }
 
 div.timeline-groups-text span {
