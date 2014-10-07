@@ -36,13 +36,13 @@ html, body {
 
 #legenda .title {
     font-style: normal;
-    font-size: 28px;
+    font-size: 22pt;
     font-weight: bold;
     text-align: left;
 }
 
 #legenda .posun {
-    margin-bottom: 35%;
+    margin-bottom: 30%;
 }
 
 .timeline-event-circle .fixed-size {

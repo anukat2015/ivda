@@ -8,7 +8,6 @@ div.timeline-frame {
 
 div.timeline-axis {
     border-color: #5D99C3;
-
     background-color: #5D99C3;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5D99C3', endColorstr='#3A6DA0');
     background: -webkit-gradient(linear, left top, left bottom, from(#5D99C3), to(#3A6DA0));
