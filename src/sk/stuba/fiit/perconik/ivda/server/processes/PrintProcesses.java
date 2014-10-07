@@ -21,28 +21,7 @@ public final class PrintProcesses extends ProcessEvents2TimelineEvents {
     private final Set<String> processes = new HashSet<>(1000);
 
     public PrintProcesses() {
-        checkFiles();
-    }
 
-
-    public void checkLists(Catalog.Processes a, Catalog.Processes b) {
-        Set<String> same = a.getList().getSameValues(b.getList());
-        if (same.isEmpty()) {
-            return;
-        }
-        LOGGER.warn(a.getList().getFileName() + " == " + b.getList().getFileName() + " => ");
-        for (String name : same) {
-            LOGGER.warn(name);
-        }
-    }
-
-    public void checkFiles() {
-        checkLists(Catalog.Processes.BANNED, Catalog.Processes.COMMUNICATION);
-        checkLists(Catalog.Processes.BANNED, Catalog.Processes.NODEVELOPER);
-        checkLists(Catalog.Processes.BANNED, Catalog.Processes.TYPICAL);
-        checkLists(Catalog.Processes.COMMUNICATION, Catalog.Processes.NODEVELOPER);
-        checkLists(Catalog.Processes.COMMUNICATION, Catalog.Processes.TYPICAL);
-        checkLists(Catalog.Processes.NODEVELOPER, Catalog.Processes.TYPICAL);
     }
 
     @Override
