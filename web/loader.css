@@ -11,6 +11,7 @@
     font-family: Arial;
     font-style: italic;
     font-size: 10px;
+    text-align: center;
 }
 #loader {
     display: block;

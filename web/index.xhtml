@@ -8,7 +8,7 @@
     <meta name="Author" content="Lukas Sekerak"/>
     <meta name="robots" content="noindex"/>
 
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png"/>
     <link rel="stylesheet" type="text/css" href="libs/timeline-2.8.0/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
     <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
@@ -37,6 +37,7 @@
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/StepDate.js"></script>
 
     <script type="text/javascript" src="js/events.js"></script>
+    <script type="text/javascript" src="js/preloader.js"></script>
     <script type="text/javascript" src="js/timeline.js"></script>
     <script type="text/javascript" src="js/chartPanel.js"></script>
     <script type="text/javascript" src="js/chunksLoader.js"></script>
@@ -55,7 +56,7 @@
     End time: <input type="text" id="endDate" value=""/>
     <input type="button" id="setRange" value="Set" onclick="onSetTime();"/>
     <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();"/>
-    <input type="text" id="select-links" class="demo-default" value="" placeholder="Pick some developer..." />
+    <input type="text" id="select-links" class="demo-default" value="" placeholder="Pick some developer..."/>
 </div>
 
 <div id="mytimeline"></div>
@@ -63,6 +64,21 @@
     <div id="pieChart1"></div>
     <div id="pieChart2"></div>
     <div id="pieChart3"></div>
+    <div id="legenda">
+        <div class="title error">Nezobrazuju sa ziadne prvky.<br/>Zvol ine casove obdobie.</div>
+
+        <div class="title">Legenda:</div>
+        <div class="body">
+            <ul>
+                <li><span class="kruh">Web</span>Udalost vo webovom prehliadaci.</li>
+                <li><span class="kruh">Ide</span>Udalost vo vyvojom prostredi.</li>
+            </ul>
+        </div>
+
+        <div class="stred">
+            <input type="button" value="Skryt legendu" onclick="legendaOff();"/>
+        </div>
+    </div>
 </div>
 <div class="clear"></div>
 <div id="datatable"></div>

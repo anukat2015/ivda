@@ -87,6 +87,7 @@ div.timeline-groups-text span {
     min-height: 10px;
     text-align: center;
 }
+
 div.timeline-event {
     color: white;
 }
@@ -136,6 +137,28 @@ div.timeline-event-cluster div.timeline-event-dot {
 
 }
 
+#legenda {
+    padding: 15px;
+}
+#legenda .title {
+    font-style: normal;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: left;
+}
+
+#legenda .title ul {
+
+}
+
+#legenda .title ul li {
+
+}
+
+#legenda .title ul li .kruh {
+
+}
+
 .timeline-event-circle {
     border-radius: 50%;
 }
@@ -152,12 +175,15 @@ div.timeline-event-cluster div.timeline-event-dot {
     padding-left: 10px;
     padding-right: 10px;
 }
+
 .selectize-input {
     padding: 0;
 }
+
 .selectize-control.multi .selectize-input.has-items {
     padding: 0;
 }
+
 .selectize-control.multi .selectize-input > div {
     margin-bottom: 0;
 }

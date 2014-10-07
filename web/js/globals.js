@@ -7,6 +7,7 @@ function Globals() {
     this.endInput = $('#endDate');
     this.loader = new ChunksLoader();
     this.dateFormat = 'd.m.Y H:i';
+    this.preloader = new Preloader();
 
     this.initialize = function (start, end) {
         this.setTime(start, end);
@@ -59,5 +60,4 @@ function Globals() {
         });
         return restURL + parameters;
     };
-
 }

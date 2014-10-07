@@ -67,35 +67,10 @@ function onSetCurrentTime() {
     }
 }
 
-function loaderUpdateStatus() {
-    var text = "Pending requests</br>" + gGlobals.loader.finishedTasks + "/" + gGlobals.loader.tasks;
-    $('#loader-text').html(text);
-}
-
-function loaderStart() {
-    loaderUpdateStatus();
-    $('#loader').show();
-    $('#loader-text').show();
-    loaderTask();
-}
-
-function loaderTask() {
-    setTimeout(function () {
-        var tasks = gGlobals.loader.pendingTasks();
-        if (tasks > 0) {
-            loaderUpdateStatus();
-            loaderTask();
-        } else {
-            $('#loader').hide();
-            $('#loader-text').hide();
-        }
-    }, 200);
-}
-
 function onRangeChanged() {
     var range = gGlobals.timeline.getVisibleChartRange();
     console.log("onRangeChanged " + gGlobals.serverDateFormatter.format(range.start) + " " + gGlobals.serverDateFormatter.format(range.end));
     gGlobals.loader.onRangeChanged(range.start, range.end);
-    loaderStart();
+    gGlobals.preloader.start();
     gGlobals.charts.redraw();
 }
