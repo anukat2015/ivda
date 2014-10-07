@@ -32,8 +32,8 @@ public final class Configuration implements Serializable {
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private URI cordLink;
-    private File cacheFolder;
     private Developers developers;
+    private Boolean cacheEnabled;
 
     static {
         // Load conf dir
@@ -106,14 +106,6 @@ public final class Configuration implements Serializable {
         this.astRcs = astRcs;
     }
 
-    public File getCacheFolder() {
-        return cacheFolder;
-    }
-
-    public void setCacheFolder(File cacheFolder) {
-        this.cacheFolder = cacheFolder;
-    }
-
     public URI getCordLink() {
         return cordLink;
     }
@@ -150,4 +142,11 @@ public final class Configuration implements Serializable {
         }
     }
 
+    public Boolean getCacheEnabled() {
+        return cacheEnabled;
+    }
+
+    public void setCacheEnabled(Boolean cacheEnabled) {
+        this.cacheEnabled = cacheEnabled;
+    }
 }
