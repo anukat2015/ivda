@@ -20,6 +20,8 @@ ChartPanel = function () {
     };
 
     this.asynTask = undefined;
+    this.visibleCharts = true;
+    //this.hideCharts();
 };
 
 ChartPanel.prototype.computeStats = function () {
@@ -40,7 +42,7 @@ ChartPanel.prototype.computeStats = function () {
                 }
 
                 // Statistiky pre pocet zmenenych riadkov
-                if(item.metadata.changedLines != undefined) {
+                if (item.metadata.changedLines != undefined) {
                     var value = item.metadata.changedLines;
                     if (linesMap[label.label] === undefined) {
                         linesMap[label.label] = value;
@@ -86,10 +88,40 @@ ChartPanel.prototype.computeLabels = function () {
     return dates;
 };
 
-ChartPanel.prototype.drawCharts = function () {
-    var data;
+ChartPanel.prototype.hideCharts = function () {
+    $('#pieChart1').hide();
+    $('#pieChart2').hide();
+    $('#pieChart3').hide();
+    $('#legenda').show();
+    this.visibleCharts = false;
+};
+
+ChartPanel.prototype.showCharts = function () {
+    $('#pieChart1').show();
+    $('#pieChart2').show();
+    $('#pieChart3').show();
+    $('#legenda').hide();
+    this.visibleCharts = true;
+};
+
+ChartPanel.prototype.drawPanel = function () {
     var stats = this.computeStats();
     console.log(stats);
+
+    // Pouzivatelovi sa nezobrazuju ziadne prvky
+    var ziadnePrvky = Object.keys(stats.visible).length == 0;
+    if (this.visibleCharts && ziadnePrvky) {
+        this.hideCharts();
+        //return;
+    } else if (!this.visibleCharts && !ziadnePrvky) {
+        this.showCharts();
+    }
+
+    this.drawCharts(stats);
+};
+
+ChartPanel.prototype.drawCharts = function (stats) {
+    var data;
 
     // Activity
     data = new google.visualization.DataTable();
@@ -124,8 +156,9 @@ ChartPanel.prototype.redraw = function () {
         clearTimeout(this.asynTask);
         delete this.asynTask;
     }
+    var instance = this;
     this.asynTask = setTimeout(function () {
         // Run asynchronous task
-        gGlobals.charts.drawCharts();
+        instance.drawPanel();
     }, 1000);
 };

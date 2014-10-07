@@ -13,8 +13,9 @@
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
     <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
     <link rel="stylesheet" type="text/css" href="libs/selectize.js/dist/css/selectize.default.css"/>
-    <link rel="stylesheet" type="text/css" href="loader.css"/>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/loader.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/timeline.css"/>
+    <link rel="stylesheet" type="text/css" href="styles/style.css"/>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -65,19 +66,51 @@
     <div id="pieChart2"></div>
     <div id="pieChart3"></div>
     <div id="legenda">
-        <div class="title error">Nezobrazuju sa ziadne prvky.<br/>Zvol ine casove obdobie.</div>
-
-        <div class="title">Legenda:</div>
-        <div class="body">
-            <ul>
-                <li><span class="kruh">Web</span>Udalost vo webovom prehliadaci.</li>
-                <li><span class="kruh">Ide</span>Udalost vo vyvojom prostredi.</li>
-            </ul>
-        </div>
-
-        <div class="stred">
-            <input type="button" value="Skryt legendu" onclick="legendaOff();"/>
-        </div>
+        <div class="title posun">Nezobrazuju sa ziadne aktivity.</div>
+        <div class="title posun">Preto sa posun na casovej osi.</div>
+        <div class="title">Snaz sa identifikovat tieto aktivity:</div>
+        <table width="80%" align="center">
+            <tr>
+                <td>
+                    <div class="timeline-event timeline-event-circle available">
+                        <div class="timeline-event-content fixed-size">Web</div>
+                    </div>
+                </td>
+                <td>
+                    <p>Udalost vo webovom prehliadaci.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="timeline-event timeline-event-circle maybe">
+                        <div class="timeline-event-content fixed-size">Ide</div>
+                    </div>
+                </td>
+                <td>
+                    <p>Udalost vo vyvojom prostredi.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="timeline-event timeline-event-circle unavailable">
+                        <div class="timeline-event-content fixed-size">Unknown</div>
+                    </div>
+                </td>
+                <td>
+                    <p>Neznama udalost.</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="timeline-event timeline-event-circle timeline-event-cluster ui-widget-header">
+                        <div class="timeline-event-content fixed-size">46</div>
+                    </div>
+                </td>
+                <td>
+                    <p>Aktivita reprezentuje skupinu ualosti.</p>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 <div class="clear"></div>

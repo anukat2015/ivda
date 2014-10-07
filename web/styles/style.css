@@ -1,0 +1,99 @@
+/* Styles for the page */
+html, body {
+    font: 10pt arial;
+    margin: 4px;
+    padding: 0px;
+}
+
+#toolbar {
+    margin-bottom: 1%;
+    padding: 0px;
+}
+
+#mytimeline {
+    float: left;
+    width: 75%;
+}
+
+.clear {
+    display: block;
+    clear: both;
+}
+
+#rightBar {
+    display: block;
+    float: right;
+    width: 25%;
+}
+
+.more {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+#pieChart1 {
+
+}
+
+#pieChart2 {
+
+}
+
+#pieChart3 {
+
+}
+
+#legenda {
+    padding: 15px;
+}
+
+#legenda .title {
+    font-style: normal;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: left;
+}
+
+#legenda .posun {
+    margin-bottom: 30%;
+}
+
+.timeline-event-circle .fixed-size {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+#legenda .title ul {
+
+}
+
+#legenda .title ul li {
+
+}
+
+#legenda .title ul li .kruh {
+
+}
+
+.selectize-control {
+    min-width: 25%;
+    display: inline-flex;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.selectize-input {
+    padding: 0;
+}
+
+.selectize-control.multi .selectize-input.has-items {
+    padding: 0;
+}
+
+.selectize-control.multi .selectize-input > div {
+    margin-bottom: 0;
+}

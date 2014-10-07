@@ -1,53 +1,3 @@
-/* Styles for the page */
-html, body {
-    font: 10pt arial;
-    margin: 4px;
-    padding: 0px;
-}
-
-#toolbar {
-    margin-bottom: 1%;
-    padding: 0px;
-}
-
-#mytimeline {
-    float: left;
-    width: 75%;
-}
-
-.clear {
-    display: block;
-    clear: both;
-}
-
-/*
-#new {
-	position: absolute;
-	left: 25px;
-	top: 8px;
-
-	text-transform: uppercase;
-	color: white;
-	font-weight: bold;
-	font-size: 40px;
-	text-decoration: none;
-}
-*/
-
-#rightBar {
-    display: block;
-    float: right;
-    width: 25%;
-}
-
-.more {
-    display: none;
-}
-
-.hidden {
-    display: none;
-}
-
 /* Custom styles for the Timeline */
 
 div.timeline-frame {
@@ -125,40 +75,6 @@ div.timeline-event-cluster div.timeline-event-dot {
 
 }
 
-#pieChart1 {
-
-}
-
-#pieChart2 {
-
-}
-
-#pieChart3 {
-
-}
-
-#legenda {
-    padding: 15px;
-}
-#legenda .title {
-    font-style: normal;
-    font-size: 28px;
-    font-weight: bold;
-    text-align: left;
-}
-
-#legenda .title ul {
-
-}
-
-#legenda .title ul li {
-
-}
-
-#legenda .title ul li .kruh {
-
-}
-
 .timeline-event-circle {
     border-radius: 50%;
 }
@@ -167,23 +83,4 @@ div.timeline-event-cluster div.timeline-event-dot {
     text-align: center;
     padding: 0;
     vertical-align: middle;
-}
-
-.selectize-control {
-    min-width: 25%;
-    display: inline-flex;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.selectize-input {
-    padding: 0;
-}
-
-.selectize-control.multi .selectize-input.has-items {
-    padding: 0;
-}
-
-.selectize-control.multi .selectize-input > div {
-    margin-bottom: 0;
 }
