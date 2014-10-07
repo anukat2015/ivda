@@ -29,11 +29,14 @@ public final class Configuration implements Serializable {
     private static final String FILENAME = "configuration.xml";
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
     private static JAXBContext context;
+
+    // Configuration
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private URI cordLink;
     private Developers developers;
     private Boolean cacheEnabled;
+    private Integer cacheResponseDuration;
 
     static {
         // Load conf dir
@@ -148,5 +151,13 @@ public final class Configuration implements Serializable {
 
     public void setCacheEnabled(Boolean cacheEnabled) {
         this.cacheEnabled = cacheEnabled;
+    }
+
+    public Integer getCacheResponseDuration() {
+        return cacheResponseDuration;
+    }
+
+    public void setCacheResponseDuration(Integer cacheResponseDuration) {
+        this.cacheResponseDuration = cacheResponseDuration;
     }
 }

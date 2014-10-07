@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
 import sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import javax.servlet.ServletOutputStream;
@@ -23,9 +24,7 @@ import java.io.IOException;
  */
 public class TimelineServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
-    private static final int CACHE_DURATION_IN_SECOND = 60 * 60 * 24 * 1; // 1 days
     private static final ObjectMapper MAPPER = new ObjectMapper();
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -53,8 +52,9 @@ public class TimelineServlet extends HttpServlet {
     }
 
     protected void setCacheHeaders(TimelineRequest req, HttpServletResponse resp) {
+        Integer duration = Configuration.getInstance().getCacheResponseDuration();
         // Set cache for response
-        if (CACHE_DURATION_IN_SECOND == 0) {
+        if (duration == 0) {
             // Cachovanie je vypnute
             return;
         }
@@ -63,10 +63,10 @@ public class TimelineServlet extends HttpServlet {
             // Suradnica END je v minulosti, minimalne o 1 hodinu posunut
             // tzv buducnost necachujeme a ani eventy za poslednu hodinu, lebo tie sa mozu spracovavat este
             long now = System.currentTimeMillis();
-            resp.setHeader("Cache-Control", "max-age=" + Long.toString(CACHE_DURATION_IN_SECOND)); //HTTP 1.1
+            resp.setHeader("Cache-Control", "max-age=" + duration); //HTTP 1.1
             resp.setHeader("Cache-Control", "must-revalidate");
             resp.setHeader("Last-Modified", Long.toString(now)); //HTTP 1.0
-            resp.setDateHeader("Expires", now + CACHE_DURATION_IN_SECOND * 1000);
+            resp.setDateHeader("Expires", now + duration * 1000);
         }
     }
 
