@@ -20,8 +20,7 @@ ChartPanel = function () {
     };
 
     this.asynTask = undefined;
-    this.visibleCharts = true;
-    //this.hideCharts();
+    this.hideCharts();
 };
 
 ChartPanel.prototype.computeStats = function () {

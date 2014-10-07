@@ -20,6 +20,7 @@ function Globals() {
                 animate: false
             });
         });
+        this.preloader.start();
     };
 
     this.setTime = function (start, end) {

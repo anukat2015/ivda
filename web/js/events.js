@@ -32,7 +32,6 @@ function onLoad() {
     });
 
     gGlobals.initialize(start, nowDate);
-    loaderStart();
     registerQTip();
 }
 
