@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyService;
 
@@ -20,6 +21,7 @@ public class AppInitializer implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         Configuration.getInstance();
         OfyService.ofy();
+        Catalog.staticInit();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
+import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @ThreadSafe
 public class DivideByActivity implements IDividing {
     /**
-     * tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
+     * Tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
      */
     private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(1L);
 
