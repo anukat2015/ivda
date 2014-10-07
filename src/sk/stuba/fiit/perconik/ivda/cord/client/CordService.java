@@ -14,6 +14,7 @@ import sk.stuba.fiit.perconik.ivda.cord.entities.*;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.Strings;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
+import sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache;
 import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 
@@ -181,38 +182,48 @@ public final class CordService extends RestClient {
     /**
      * Cache pre requesty kde sa ziadaju zoznamy
      */
-    private final class CordCache extends OfyDynamicCache<Pair<URI, Class>> {
-        @Override
-        protected ImmutableList valueNotFound(Pair<URI, Class> key) {
-            return downloadAll(key.getKey(), key.getValue(), "pageIndex");
-        }
+    private final class CordCache extends CompositeGuavaCache<Pair<URI, Class>, ImmutableList> {
+        public CordCache() {
+            super(new OfyDynamicCache<Pair<URI, Class>, ImmutableList>() {
 
-        @Override
-        protected String computeUniqueID(Pair<URI, Class> key) {
-            return key.getKey().toString();
+                @Override
+                public ImmutableList valueNotFound(Pair<URI, Class> key) {
+                    return downloadAll(key.getKey(), key.getValue(), "pageIndex");
+                }
+
+                @Override
+                protected String computeUniqueID(Pair<URI, Class> key) {
+                    return key.getKey().toString();
+                }
+            });
         }
     }
 
     /**
      * Cache pre stahovanie suborov.
      */
-    private final class FilesCache extends OfyDynamicCache<FileDescription> {
-        @Override
-        protected String computeUniqueID(FileDescription key) {
-            return key.getUID();
-        }
+    private final class FilesCache extends CompositeGuavaCache<FileDescription, Serializable> {
+        public FilesCache() {
+            super(new OfyDynamicCache<FileDescription, Serializable>() {
+                      @Override
+                      protected String computeUniqueID(FileDescription key) {
+                          return key.getUID();
+                      }
 
-        @Override
-        protected Serializable valueNotFound(FileDescription fd) {
-            UriBuilder link = apiLink();
-            link.path("blob").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()).queryParam("format", "text");
-            String content = callApi(link, String.class);
-            try {
-                return ImmutableList.copyOf(CharStreams.readLines(new StringReader(content)));
-            } catch (IOException e) {
-                LOGGER.error("Can not deserialize.", e);
-                return null;
-            }
+                      @Override
+                      public Serializable valueNotFound(FileDescription fd) {
+                          UriBuilder link = apiLink();
+                          link.path("blob").path(fd.getRepo()).path(fd.getCommit()).path(fd.getPath()).queryParam("format", "text");
+                          String content = callApi(link, String.class);
+                          try {
+                              return ImmutableList.copyOf(CharStreams.readLines(new StringReader(content)));
+                          } catch (IOException e) {
+                              LOGGER.error("Can not deserialize.", e);
+                              return null;
+                          }
+                      }
+                  }
+            );
         }
     }
 

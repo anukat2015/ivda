@@ -6,12 +6,13 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
+import sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache;
 import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
 
 import javax.ws.rs.core.UriBuilder;
-import java.io.File;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
@@ -27,7 +28,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class ActivityService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(ActivityService.class.getName());
-    private static final File CACHE_FOLDER = Configuration.getInstance().getCacheFolder();
     private static final TimeUnit IGNORE_CACHE_TIME = TimeUnit.HOURS;
 
     private final ActivityCache cache;
@@ -80,10 +80,14 @@ public class ActivityService extends RestClient {
         public static final ActivityService INSTANCE = new ActivityService();
     }
 
-    private final class ActivityCache extends OfyDynamicCache<URI> {
-        @Override
-        protected ImmutableList<EventDto> valueNotFound(URI key) {
-            return downloadAll(key, EventsResponse.class, "page");
+    private final class ActivityCache extends CompositeGuavaCache<URI, Serializable> {
+        public ActivityCache() {
+            super(new OfyDynamicCache<URI, Serializable>() {
+                @Override
+                public ImmutableList<EventDto> valueNotFound(URI key) {
+                    return downloadAll(key, EventsResponse.class, "page");
+                }
+            });
         }
     }
 }
