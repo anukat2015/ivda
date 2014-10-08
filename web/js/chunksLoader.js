@@ -124,8 +124,7 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
  * Data sa nepodarilo stiahnut
  * @param error
  */
-ChunksLoader.prototype.alertError = function (error) {
-    var msg = "Error in request: " + error;
+ChunksLoader.prototype.alertError = function (msg) {
     console.log(msg);
     if (this.showError) {
         alert(msg);
@@ -149,7 +148,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
         url: url,
         cache: false,
         error: function (jqXHR, textStatus, errorThrown) {
-            instance.alertError("I get error:" + textStatus);
+            instance.alertError("Server response status:" + textStatus);
         },
         success: function (data, textStatus, jqXHR) {
             // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
@@ -157,7 +156,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
             //console.log("addItems " + data.getNumberOfRows());
             if (data.status != "ok") {
-                instance.alertError("I get error:" + data.status);
+                instance.alertError("Server return bad status:" + data.status);
             } else {
                 instance.acceptData(data.groups);
             }
