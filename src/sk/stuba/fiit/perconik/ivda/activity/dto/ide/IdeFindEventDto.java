@@ -55,6 +55,11 @@ public class IdeFindEventDto extends IdeEventDto {
     /**
      * search results per matched file
      */
+    private List<IdeFindFileResultDto> findFileResults;
+
+    /**
+     * search results per matched file
+     */
     private List<IdeFindFileResultDto> resultsPerFiles;
 
     /**
@@ -184,24 +189,32 @@ public class IdeFindEventDto extends IdeEventDto {
     }
 
     /**
-     * @return the {@link #resultsPerFiles}
+     * @return the {@link #findFileResults}
      */
-    public List<IdeFindFileResultDto> getResultsPerFiles() {
-        if (resultsPerFiles == null) {
-            resultsPerFiles = Collections.emptyList();
+    public List<IdeFindFileResultDto> getFindFileResults() {
+        if (findFileResults == null) {
+            findFileResults = Collections.emptyList();
         }
-        return resultsPerFiles;
+        return findFileResults;
     }
 
     /**
-     * @param {@link #resultsPerFiles}
+     * @param {@link #findFileResults}
      */
-    public void setResultsPerFiles(List<IdeFindFileResultDto> resultsPerFiles) {
-        this.resultsPerFiles = resultsPerFiles;
+    public void setFindFileResults(List<IdeFindFileResultDto> findFileResults) {
+        this.findFileResults = findFileResults;
     }
 
     @Override
     protected UriBuilder getDefaultEventTypeUri() {
         return super.getDefaultEventTypeUri().path("find");
+    }
+
+    public List<IdeFindFileResultDto> getResultsPerFiles() {
+        return resultsPerFiles;
+    }
+
+    public void setResultsPerFiles(List<IdeFindFileResultDto> resultsPerFiles) {
+        this.resultsPerFiles = resultsPerFiles;
     }
 }
