@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by Seky on 9. 9. 2014.
  */
 @Entity
-public class OfyBlob implements Serializable {
+public final class OfyBlob implements Serializable {
     private static final long serialVersionUID = -8190447034986807932L;
     @Id
     private String id;

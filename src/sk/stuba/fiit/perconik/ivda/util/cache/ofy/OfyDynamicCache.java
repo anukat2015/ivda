@@ -5,12 +5,14 @@ import com.googlecode.objectify.VoidWork;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.cache.Cache;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Seky on 5. 10. 2014.
  */
+@ThreadSafe
 public abstract class OfyDynamicCache<K, Value extends Serializable> extends Cache<K, Value> {
     @Override
     public boolean isCacheEnabled() {
@@ -18,7 +20,7 @@ public abstract class OfyDynamicCache<K, Value extends Serializable> extends Cac
     }
 
     @Override
-    protected Value getDirect(final K uri) {
+    protected final Value getDirect(final K uri) {
         final String uid = computeUniqueID(uri);
         final Key<OfyBlob> key = Key.create(OfyBlob.class, uid);
         final ArrayList<OfyBlob> ev = new ArrayList<>();

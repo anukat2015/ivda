@@ -4,10 +4,13 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
+import javax.annotation.concurrent.ThreadSafe;
+
 /**
  * Created by Seky on 9. 9. 2014.
  */
-public class OfyService {
+@ThreadSafe
+public final class OfyService {
 
     static {
         factory().register(OfyBlob.class);
