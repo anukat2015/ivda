@@ -6,6 +6,11 @@ import org.junit.Assert;
 
 import java.util.Set;
 
+/**
+ * Otestovanie nacitania white a black listov z konfiguracnej zlozky.
+ * Testuju sa prieniky white listov. tzv kazdy proces alebo link ma byt
+ * iba v jednom white liste.
+ */
 public class CatalogTest extends TestCase {
     private static final Logger LOGGER = Logger.getLogger(CatalogTest.class.getName());
 
@@ -13,10 +18,10 @@ public class CatalogTest extends TestCase {
         Catalog.staticInit();
 
         for (Catalog.Processes cat : Catalog.Processes.values()) {
-            Assert.assertTrue(cat.getList().getData().isEmpty());
+            Assert.assertFalse(cat.getList().getData().isEmpty());
         }
         for (Catalog.Web cat : Catalog.Web.values()) {
-            Assert.assertTrue(cat.getList().getData().isEmpty());
+            Assert.assertFalse(cat.getList().getData().isEmpty());
         }
     }
 

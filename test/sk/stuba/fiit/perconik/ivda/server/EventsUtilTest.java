@@ -3,6 +3,9 @@ package sk.stuba.fiit.perconik.ivda.server;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
+/**
+ * Otestovanie vypoctu metrik nad kodom.
+ */
 public class EventsUtilTest extends TestCase {
 
     public void testCodeWritten() throws Exception {

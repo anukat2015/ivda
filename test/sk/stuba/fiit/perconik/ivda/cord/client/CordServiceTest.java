@@ -7,6 +7,9 @@ import sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchFilter;
 
 import java.util.List;
 
+/**
+ * Otestovanie CORD sluzby
+ */
 public class CordServiceTest extends TestCase {
     protected static final Logger LOGGER = Logger.getLogger(CordServiceTest.class.getName());
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
