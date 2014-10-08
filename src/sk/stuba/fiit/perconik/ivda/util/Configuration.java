@@ -30,13 +30,14 @@ public final class Configuration implements Serializable {
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
     private static JAXBContext context;
 
-    // Configuration
+    // Configuration properties
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private URI cordLink;
     private Developers developers;
     private Boolean cacheEnabled;
     private Integer cacheResponseDuration;
+    private Boolean blackout;
 
     static {
         // Load conf dir
@@ -159,5 +160,13 @@ public final class Configuration implements Serializable {
 
     public void setCacheResponseDuration(Integer cacheResponseDuration) {
         this.cacheResponseDuration = cacheResponseDuration;
+    }
+
+    public Boolean getBlackout() {
+        return blackout;
+    }
+
+    public void setBlackout(Boolean blackout) {
+        this.blackout = blackout;
     }
 }

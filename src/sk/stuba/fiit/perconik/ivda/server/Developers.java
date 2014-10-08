@@ -51,6 +51,9 @@ public final class Developers {
         if (name == null) {
             return name;
         }
+        if (!Configuration.getInstance().getBlackout()) {
+            return name;
+        }
         String groupnew;
         synchronized (replaceGroup) {
             groupnew = replaceGroup.get(name);
