@@ -22,7 +22,6 @@ function getTimeline() {
     var timeline = new links.Timeline(document.getElementById('mytimeline'), options);
     google.visualization.events.addListener(timeline, 'rangechange', onRangeChange);
     google.visualization.events.addListener(timeline, 'rangechanged', onRangeChanged);
-    google.visualization.events.addListener(timeline, 'select', onSelect);
     //timeline.setCurrentTime( new Date(new Date().getTime() - 2 * 60 * 60 * 1000));
     return timeline;
 }
@@ -39,23 +38,29 @@ function registerQTip() {
                     if (item === undefined || item.metadata === undefined) {
                         api.set('content.text', "Not selected entity.");
                     } else {
-                        if (item.metadata.ajax != undefined) {
-                            api.set('content.text', JSON.stringify(item.metadata.ajax) );
-                        } else {
-                            $.ajax({
-                                url: gGlobals.getAjaxURL(item.metadata)
-                            }).then(function (content) {
-                                // Set the tooltip content upon successful retrieval
-                                api.set('content.text', content);
-                            }, function (xhr, status, error) {
-                                // Upon failure... set the tooltip content to error
-                                api.set('content.text', status + ': ' + error);
-                            });
-                        }
+                        onItemMouseEnter(api, item);
                     }
                     return 'Loading...'; // Set some initial text
                 }
             }
         });
     });
+}
+
+function onItemMouseEnter(api, item) {
+    if (item.isCluster) {
+        api.set('content.text', "Toto je skupina udalosti.");
+    } else if (item.metadata.ajax != undefined) {
+        api.set('content.text', JSON.stringify(item.metadata.ajax) );
+    } else {
+        $.ajax({
+            url: gGlobals.getAjaxURL(item.metadata)
+        }).then(function (content) {
+            // Set the tooltip content upon successful retrieval
+            api.set('content.text', content);
+        }, function (xhr, status, error) {
+            // Upon failure... set the tooltip content to error
+            api.set('content.text', status + ': ' + error);
+        });
+    }
 }

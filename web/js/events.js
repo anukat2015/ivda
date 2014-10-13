@@ -46,10 +46,6 @@ function onReSize() {
     }
 }
 
-function onSelect() {
-
-}
-
 function onSetTime() {
     if (gGlobals) {
         gGlobals.timeline.setVisibleChartRange(gGlobals.getStart(), gGlobals.getEnd(), true);
