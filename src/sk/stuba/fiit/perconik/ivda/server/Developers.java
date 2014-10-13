@@ -6,7 +6,7 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by Seky on 6. 9. 2014.
@@ -16,14 +16,13 @@ import java.util.List;
 @ThreadSafe
 public final class Developers {
     private final BiMap<String, String> replaceGroup;
+    private final Stack<String> animals;
     private char alphabetCurrent = 'A';
 
     private Developers() {
+        animals = new Stack<>();
         replaceGroup = HashBiMap.create(16);
-        List<String> developers = Configuration.getInstance().getDevelopers().getList();
-        for (String developer : developers) {
-            generateName(developer);
-        }
+        animals.addAll(Configuration.getInstance().getDevelopers().getList());
     }
 
     private static class DevelopersHolder {
@@ -34,17 +33,27 @@ public final class Developers {
         return DevelopersHolder.INSTANCE;
     }
 
+    private String generateName() {
+        String name;
+        if (animals.isEmpty()) {
+            name = "Developer " + alphabetCurrent;
+            alphabetCurrent++;
+        } else {
+            name = animals.pop();
+        }
+        return name;
+    }
+
     /**
      * Prislo nedefinovane nove meno ...
      *
      * @param name
      * @return
      */
-    private String generateName(String name) {
-        String groupnew = "Developer " + alphabetCurrent;
-        replaceGroup.put(name, groupnew);
-        alphabetCurrent++;
-        return groupnew;
+    private String newName(String name) {
+        String newName = generateName();
+        replaceGroup.put(name, newName);
+        return newName;
     }
 
     public String blackoutName(@Nullable String name) {
@@ -59,7 +68,7 @@ public final class Developers {
             groupnew = replaceGroup.get(name);
             if (groupnew == null) {
                 // Prislo nedefinovane nove meno ...
-                groupnew = generateName(name);
+                groupnew = newName(name);
             }
         }
         return groupnew;

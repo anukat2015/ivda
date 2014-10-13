@@ -9,11 +9,10 @@ import java.io.Serializable;
  * Created by Seky on 7. 10. 2014.
  */
 public abstract class Cache<K, V extends Serializable> implements ICaching<K, V> {
-    private static final Logger LOGGER = Logger.getLogger(Cache.class.getName());
 
     public Cache() {
         if (!isCacheEnabled()) {
-            LOGGER.warn("Caching is disabled!");
+            Logger.getLogger(this.getClass().getName()).warn("Caching is disabled!");
         }
     }
 

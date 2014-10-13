@@ -34,7 +34,7 @@ public final class Configuration implements Serializable {
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private URI cordLink;
-    private Developers developers;
+    private Name developers;
     private Boolean cacheEnabled;
     private Integer cacheResponseDuration;
     private Boolean blackout;
@@ -118,11 +118,11 @@ public final class Configuration implements Serializable {
         this.cordLink = cordLink;
     }
 
-    public Developers getDevelopers() {
+    public Name getDevelopers() {
         return developers;
     }
 
-    public void setDevelopers(Developers developers) {
+    public void setDevelopers(Name developers) {
         this.developers = developers;
     }
 
@@ -130,14 +130,14 @@ public final class Configuration implements Serializable {
         private static final Configuration INSTANCE = read();
     }
 
-    public static class Developers {
+    public static class Name {
         @XmlElement(name = "name")
         protected List<String> list = new ArrayList<>();
 
-        public Developers() {
+        public Name() {
         }
 
-        public Developers(List<String> list) {
+        public Name(List<String> list) {
             this.list = list;
         }
 

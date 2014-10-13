@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
-public class DevelopersTest extends TestCase {
+public class NameTest extends TestCase {
 
     public void testBlackoutName() throws Exception {
         String name = "Lukas";
