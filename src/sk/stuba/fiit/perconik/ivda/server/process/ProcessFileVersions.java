@@ -89,6 +89,7 @@ public final class ProcessFileVersions extends ProcessEvents2TimelineEvents {
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
+
             //File file = CordService.getInstance().getFile(repo, commit, path);
             int changedLines = EventsUtil.codeWritten(event.getText());
             if (changedLines > 0) {

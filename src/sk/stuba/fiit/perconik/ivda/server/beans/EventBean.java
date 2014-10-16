@@ -146,12 +146,13 @@ public class EventBean implements Serializable {
     public void init() {
         LOGGER.info("init");
 
-        String id = FacesUtil.getQueryParam("id");
-        String ancestor = FacesUtil.getQueryParam("ancestor");
+        String id = FacesUtil.getQueryParam("uid");
+        String repo = FacesUtil.getQueryParam("repo");
+        String ancestor = FacesUtil.getQueryParam("commit");
         String path = FacesUtil.getQueryParam("path");
 
         if (!Strings.isNullOrEmpty(path)) {
-            fileDiff(id, ancestor, path);
+            fileDiff(repo, ancestor, path);
             return;
         }
         eventDownload(id);

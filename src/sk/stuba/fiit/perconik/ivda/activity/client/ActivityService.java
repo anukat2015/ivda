@@ -85,7 +85,7 @@ public class ActivityService extends RestClient {
             super(new OfyDynamicCache<URI, Serializable>() {
                 @Override
                 public ImmutableList<EventDto> valueNotFound(URI key) {
-                    return downloadAll(key, EventsResponse.class, "page");
+                    return downloadAll(key, EventsResponse.class, "pageIndex");
                 }
             });
         }

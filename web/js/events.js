@@ -22,9 +22,11 @@ function onLoad() {
         createOnBlur: true,
         create: true,
         options: [
-            {name: 'Developer A'},
-            {name: 'Developer B'},
-            {name: 'Developer C'}
+            {name: 'Mouse'},
+            {name: 'Koala'},
+            {name: 'Panda'},
+            {name: 'Cat'},
+            {name: 'Liger'}
         ],
         onChange: function (value) {
             gGlobals.loader.checkDevelopers();

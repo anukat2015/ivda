@@ -69,8 +69,8 @@ div.MAYBE {
     margin: 0px;
 }
 
-div.timeline-event-cluster div.timeline-event-dot {
-
+div.timeline-event-cluster {
+    background-color: #a9e25c;
 }
 
 .timeline-event-circle {
