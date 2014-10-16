@@ -12,10 +12,10 @@ import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import difflib.Delta;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
-import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.util.Diff;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCheckinEventDto;
+import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
+import sk.stuba.fiit.perconik.ivda.util.Diff;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -72,7 +72,8 @@ public class EventBean implements Serializable {
         try {
             List<String> aktualneVerzia = AstRcsWcfService.getInstance().getContent(path, Integer.valueOf(id));
             List<String> staraVerzia = AstRcsWcfService.getInstance().getContent(path, Integer.valueOf(ancestor));
-            List<Delta> deltas = Diff.printDiff(aktualneVerzia, staraVerzia);
+            List<Delta> deltas = Diff.getDiff(aktualneVerzia, staraVerzia);
+            Diff.DiffStats stats = Diff.getStats(deltas);
             text = MAPPER.writeValueAsString(deltas);
         } catch (Exception e) {
             LOGGER.error("json serialize", e);
@@ -151,11 +152,11 @@ public class EventBean implements Serializable {
         String ancestor = FacesUtil.getQueryParam("commit");
         String path = FacesUtil.getQueryParam("path");
 
+        eventDownload(id);
         if (!Strings.isNullOrEmpty(path)) {
             fileDiff(repo, ancestor, path);
             return;
         }
-        eventDownload(id);
         if (!(event instanceof IdeCheckinEventDto)) {
             eventDetail();
             return;

@@ -23,35 +23,36 @@ public final class Diff {
      *
      * @param file
      */
-    public static List<Delta> printDiff(List<String> aktualneVerzia, List<String> staraVerzia) {
+    public static List<Delta> getDiff(List<String> aktualneVerzia, List<String> staraVerzia) {
         Patch patch = DiffUtils.diff(staraVerzia, aktualneVerzia);
-        Integer additions = 0;
-        Integer deletions = 0;
-        for (Delta delta : patch.getDeltas()) {
-            LOGGER.info("Diff\t" + delta.getType());
+        return patch.getDeltas();
+    }
+
+    public static DiffStats getStats(List<Delta> deltas) {
+        DiffStats stat = new DiffStats();
+        for (Delta delta : deltas) {
             switch (delta.getType()) {
                 case INSERT: {
-                    additions += delta.getRevised().getLines().size();
-                    LOGGER.info(chunk2String(delta.getRevised()));
+                    stat.additions += delta.getRevised().getLines().size();
+                    //LOGGER.info(chunk2String(delta.getRevised()));
                     break;
                 }
                 case DELETE: {
-                    deletions += delta.getOriginal().getLines().size();
-                    LOGGER.info(chunk2String(delta.getOriginal()));
+                    stat.deletions += delta.getOriginal().getLines().size();
+                    //LOGGER.info(chunk2String(delta.getOriginal()));
                     break;
                 }
                 case CHANGE: {
                     int changed = delta.getOriginal().getLines().size() + delta.getRevised().getLines().size();
-                    additions += changed;
-                    deletions += changed;
-                    LOGGER.info(chunk2String(delta.getOriginal()));
-                    LOGGER.info(chunk2String(delta.getRevised()));
+                    stat.additions += changed;
+                    stat.deletions += changed;
+                    //LOGGER.info(chunk2String(delta.getOriginal()));
+                    //LOGGER.info(chunk2String(delta.getRevised()));
                     break;
                 }
             }
         }
-        LOGGER.info("additions\t" + additions + "\tdeletions\t" + deletions);
-        return patch.getDeltas();
+        return stat;
     }
 
     private static String chunk2String(Chunk chunk) {
@@ -65,7 +66,7 @@ public final class Diff {
     }
 
     public static class DiffStats {
-        Integer additions = 0;
-        Integer deletions = 0;
+        public Integer additions = 0;
+        public Integer deletions = 0;
     }
 }
