@@ -36,7 +36,7 @@ import java.util.Date;
 public class EventsRequest implements Serializable {
     private static final long serialVersionUID = -402296428944403239L;
 
-    protected Integer page;
+    protected Integer pageIndex;
     protected Integer pageSize;
     protected String timeFrom;
     protected String timeTo;
@@ -48,18 +48,18 @@ public class EventsRequest implements Serializable {
 
     public EventsRequest() {
         // Defaultne hodnoty ktoreme chceme
-        page = 0;
+        pageIndex = 0;
         pageSize = 100;
         ascending = true;
         exactType = false;
     }
 
-    public Integer getPage() {
-        return page;
+    public Integer getPageIndex() {
+        return pageIndex;
     }
 
-    public void setPage(Integer page) {
-        this.page = page;
+    public void setPageIndex(Integer pageIndex) {
+        this.pageIndex = pageIndex;
     }
 
     public Integer getPageSize() {
