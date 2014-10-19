@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="159.375" y="78.0">sk.stuba.fiit.perconik.ivda.util.rest.RestClient</node>
+    <node x="39.375" y="78.0">sk.stuba.fiit.perconik.ivda.activity.client.ActivityService.ActivityCache</node>
+    <node x="280.375" y="244.0">sk.stuba.fiit.perconik.ivda.cord.client.CordService.SingletonHolder</node>
+    <node x="25.446924603174608" y="166.0">sk.stuba.fiit.perconik.ivda.activity.client.ActivityService</node>
+    <node x="262.375" y="78.0">sk.stuba.fiit.perconik.ivda.cord.client.CordService.CordCache</node>
+    <node x="2.625" y="0.0">sk.stuba.fiit.perconik.ivda.util.rest.WebClient</node>
+    <node x="23.446924603174608" y="244.0">sk.stuba.fiit.perconik.ivda.activity.client.ActivityService.SingletonHolder</node>
+    <node x="186.5" y="0.0">sk.stuba.fiit.perconik.ivda.util.rest.RestClient.IProcessPage</node>
+    <node x="288.875" y="166.0">sk.stuba.fiit.perconik.ivda.cord.client.CordService</node>
+    <node x="369.375" y="78.0">sk.stuba.fiit.perconik.ivda.cord.client.CordService.FilesCache</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService.FilesCache" target="sk.stuba.fiit.perconik.ivda.cord.client.CordService">
+      <point x="28.333333333333343" y="14.0" />
+      <point x="440.20833333333337" y="146.0" />
+      <point x="374.30357142857144" y="146.0" />
+      <point x="39.428571428571445" y="-14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService" target="sk.stuba.fiit.perconik.ivda.cord.client.CordService.FilesCache">
+      <point x="13.14285714285711" y="-14.0" />
+      <point x="348.0178571428571" y="126.0" />
+      <point x="383.5416666666667" y="126.0" />
+      <point x="-28.333333333333314" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService" target="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService.ActivityCache">
+      <point x="-8.75" y="-14.0" />
+      <point x="69.19692460317461" y="126.0" />
+      <point x="56.04166666666666" y="126.0" />
+      <point x="-33.33333333333334" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.rest.RestClient" target="sk.stuba.fiit.perconik.ivda.util.rest.RestClient.IProcessPage">
+      <point x="10.375" y="-14.0" />
+      <point x="-24.75" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService" target="sk.stuba.fiit.perconik.ivda.util.rest.RestClient">
+      <point x="43.75" y="-14.0" />
+      <point x="121.69692460317461" y="146.0" />
+      <point x="180.125" y="146.0" />
+      <point x="-20.75" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService" target="sk.stuba.fiit.perconik.ivda.util.rest.WebClient">
+      <point x="-43.75" y="-14.0" />
+      <point x="34.19692460317461" y="146.0" />
+      <point x="17.875" y="146.0" />
+      <point x="17.875" y="58.0" />
+      <point x="13.0" y="58.0" />
+      <point x="-31.125" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.rest.RestClient.IProcessPage" target="sk.stuba.fiit.perconik.ivda.util.rest.RestClient">
+      <point x="24.75" y="14.0" />
+      <point x="260.75" y="58.0" />
+      <point x="232.0" y="58.0" />
+      <point x="31.125" y="-14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService" target="sk.stuba.fiit.perconik.ivda.cord.client.CordService.CordCache">
+      <point x="-13.142857142857167" y="-14.0" />
+      <point x="321.73214285714283" y="126.0" />
+      <point x="305.875" y="126.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService.CordCache" target="sk.stuba.fiit.perconik.ivda.cord.client.CordService">
+      <point x="29.0" y="14.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService.SingletonHolder" target="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService.ActivityCache" target="sk.stuba.fiit.perconik.ivda.activity.client.ActivityService">
+      <point x="33.33333333333334" y="14.0" />
+      <point x="122.70833333333334" y="136.0" />
+      <point x="104.19692460317461" y="136.0" />
+      <point x="26.25" y="-14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService.SingletonHolder" target="sk.stuba.fiit.perconik.ivda.cord.client.CordService">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.rest.RestClient" target="sk.stuba.fiit.perconik.ivda.util.rest.WebClient">
+      <point x="-10.375" y="-14.0" />
+      <point x="190.5" y="48.0" />
+      <point x="75.25" y="48.0" />
+      <point x="31.125" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.client.CordService" target="sk.stuba.fiit.perconik.ivda.util.rest.RestClient">
+      <point x="-39.428571428571445" y="-14.0" />
+      <point x="295.44642857142856" y="146.0" />
+      <point x="221.625" y="146.0" />
+      <point x="20.75" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="229.0" y="281.0" />
+  <SelectedNodes>
+    <node>sk.stuba.fiit.perconik.ivda.cord.client.CordService</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

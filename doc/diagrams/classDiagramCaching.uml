@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="127.25" y="118.5">sk.stuba.fiit.perconik.ivda.util.cache.Cache</node>
+    <node x="307.75" y="247.5">sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache</node>
+    <node x="41.75" y="0.0">sk.stuba.fiit.perconik.ivda.util.cache.ICaching</node>
+    <node x="0.0" y="356.0">sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache</node>
+    <node x="331.25" y="98.0">sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyBlob</node>
+    <node x="47.75" y="237.0">sk.stuba.fiit.perconik.ivda.util.cache.GuavaCache</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache" target="sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyBlob">
+      <point x="40.5" y="-24.0" />
+      <point x="0.0" y="44.5" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.Cache" target="sk.stuba.fiit.perconik.ivda.util.cache.ICaching">
+      <point x="0.0" y="-24.0" />
+      <point x="208.25" y="73.0" />
+      <point x="163.25" y="73.0" />
+      <point x="40.5" y="24.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache" target="sk.stuba.fiit.perconik.ivda.util.cache.GuavaCache">
+      <point x="51.25" y="-24.0" />
+      <point x="153.75" y="331.0" />
+      <point x="167.75" y="331.0" />
+      <point x="0.0" y="34.5" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.GuavaCache" target="sk.stuba.fiit.perconik.ivda.util.cache.Cache">
+      <point x="0.0" y="-34.5" />
+      <point x="-40.5" y="24.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache" target="sk.stuba.fiit.perconik.ivda.util.cache.ICaching">
+      <point x="-51.25" y="-24.0" />
+      <point x="51.25" y="331.0" />
+      <point x="37.25" y="331.0" />
+      <point x="37.25" y="73.0" />
+      <point x="82.25" y="73.0" />
+      <point x="-40.5" y="24.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache" target="sk.stuba.fiit.perconik.ivda.util.cache.Cache">
+      <point x="-40.5" y="-24.0" />
+      <point x="348.25" y="212.0" />
+      <point x="248.75" y="212.0" />
+      <point x="40.5" y="24.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="264.0" y="202.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="0.0" y="0.0">sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest</node>
+    <node x="1285.7877604166665" y="108.0">sk.stuba.fiit.perconik.ivda.server.grouping.IGrouping</node>
+    <node x="1048.7877604166665" y="216.0">sk.stuba.fiit.perconik.ivda.server.grouping.DivideByOnline</node>
+    <node x="578.077194940476" y="216.0">sk.stuba.fiit.perconik.ivda.server.processes.PrintProcesses</node>
+    <node x="769.7877604166666" y="216.0">sk.stuba.fiit.perconik.ivda.server.grouping.DivideByActivity</node>
+    <node x="0.0" y="387.0">sk.stuba.fiit.perconik.ivda.server.TryBuildHistory</node>
+    <node x="668.6210937499999" y="0.0">sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent</node>
+    <node x="425.0" y="387.0">sk.stuba.fiit.perconik.ivda.server.EventsUtil</node>
+    <node x="64.53776041666663" y="314.0">sk.stuba.fiit.perconik.ivda.server.servlets.TimelineServlet</node>
+    <node x="56.037760416666515" y="108.0">sk.stuba.fiit.perconik.ivda.server.servlets.TimelineResponse</node>
+    <node x="1174.7877604166665" y="216.0">sk.stuba.fiit.perconik.ivda.server.grouping.FullGroup</node>
+    <node x="900.7877604166666" y="216.0">sk.stuba.fiit.perconik.ivda.server.process.ProcessChangesets</node>
+    <node x="1273.7877604166665" y="216.0">sk.stuba.fiit.perconik.ivda.server.grouping.BoundedGroup</node>
+    <node x="292.0" y="387.0">sk.stuba.fiit.perconik.ivda.server.Developers</node>
+    <node x="276.07719494047603" y="216.0">sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess</node>
+    <node x="551.4990699404761" y="108.0">sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents</node>
+    <node x="1063.7877604166665" y="108.0">sk.stuba.fiit.perconik.ivda.server.grouping.IDividing</node>
+    <node x="129.07719494047603" y="216.0">sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions</node>
+    <node x="426.07719494047603" y="216.0">sk.stuba.fiit.perconik.ivda.server.process.ProcessCodeWritten</node>
+    <node x="1194.5275297619046" y="314.0">sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup</node>
+    <node x="245.0714285714285" y="108.0">sk.stuba.fiit.perconik.ivda.server.Catalog</node>
+    <node x="476.15252976190465" y="314.0">sk.stuba.fiit.perconik.ivda.server.processes.ProcessAllFinishedProcesses</node>
+    <node x="151.0" y="387.0">sk.stuba.fiit.perconik.ivda.server.servlets.AppInitializer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.DivideByOnline">
+      <point x="-28.0" y="-14.0" />
+      <point x="1222.5275297619046" y="274.0" />
+      <point x="1101.2877604166665" y="274.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.ProcessAllFinishedProcesses" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="21.125" y="-14.0" />
+      <point x="581.7775297619046" y="284.0" />
+      <point x="692.577194940476" y="284.0" />
+      <point x="692.577194940476" y="196.0" />
+      <point x="657.0824032738095" y="196.0" />
+      <point x="15.083333333333314" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessChangesets" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="32.00000000000003" y="-14.0" />
+      <point x="996.7877604166666" y="186.0" />
+      <point x="980.4990699404761" y="186.0" />
+      <point x="980.4990699404761" y="78.0" />
+      <point x="747.1925223214284" y="78.0" />
+      <point x="28.571428571428555" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess" target="sk.stuba.fiit.perconik.ivda.server.Catalog">
+      <point x="-32.5" y="-14.0" />
+      <point x="308.57719494047603" y="176.0" />
+      <point x="280.5714285714285" y="176.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="-46.666666666666686" y="-14.0" />
+      <point x="1203.8608630952378" y="284.0" />
+      <point x="732.4960937499999" y="284.0" />
+      <point x="732.4960937499999" y="186.0" />
+      <point x="687.2490699404763" y="186.0" />
+      <point x="45.25000000000006" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="32.5" y="-14.0" />
+      <point x="373.57719494047603" y="176.0" />
+      <point x="364.07719494047603" y="176.0" />
+      <point x="364.07719494047603" y="68.0" />
+      <point x="690.0496651785713" y="68.0" />
+      <point x="-28.571428571428584" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessCodeWritten" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="0.0" y="-14.0" />
+      <point x="492.07719494047603" y="196.0" />
+      <point x="596.7490699404761" y="196.0" />
+      <point x="-45.25" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions" target="sk.stuba.fiit.perconik.ivda.server.Catalog">
+      <point x="-31.75" y="-14.0" />
+      <point x="160.82719494047603" y="176.0" />
+      <point x="256.9047619047618" y="176.0" />
+      <point x="-23.666666666666686" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.DivideByActivity" target="sk.stuba.fiit.perconik.ivda.server.grouping.IDividing">
+      <point x="27.75" y="-14.0" />
+      <point x="853.0377604166666" y="196.0" />
+      <point x="1076.2877604166665" y="196.0" />
+      <point x="-25.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineServlet" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest">
+      <point x="-35.33333333333337" y="-14.0" />
+      <point x="82.20442708333326" y="294.0" />
+      <point x="28.0" y="294.0" />
+      <point x="-28.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="0.0" y="-14.0" />
+      <point x="641.9990699404761" y="78.0" />
+      <point x="704.3353794642856" y="78.0" />
+      <point x="-14.285714285714278" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.ProcessAllFinishedProcesses" target="sk.stuba.fiit.perconik.ivda.server.processes.FindFinishedProcess">
+      <point x="-21.125" y="-14.0" />
+      <point x="539.5275297619046" y="284.0" />
+      <point x="373.57719494047603" y="284.0" />
+      <point x="32.5" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.BoundedGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.IGrouping">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.BoundedGroup">
+      <point x="9.333333333333314" y="-14.0" />
+      <point x="1259.8608630952378" y="274.0" />
+      <point x="1326.2877604166665" y="274.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.PrintProcesses" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="0.0" y="-14.0" />
+      <point x="630.077194940476" y="196.0" />
+      <point x="626.9157366071429" y="196.0" />
+      <point x="-15.083333333333314" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.DivideByOnline" target="sk.stuba.fiit.perconik.ivda.server.grouping.IDividing">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineResponse" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="0.0" y="-14.0" />
+      <point x="115.53776041666652" y="58.0" />
+      <point x="675.763950892857" y="58.0" />
+      <point x="-42.85714285714286" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineServlet" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineResponse">
+      <point x="0.0" y="-14.0" />
+      <point x="117.53776041666663" y="294.0" />
+      <point x="115.53776041666652" y="294.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.IGrouping">
+      <point x="28.0" y="-14.0" />
+      <point x="1278.5275297619046" y="284.0" />
+      <point x="1389.2877604166665" y="284.0" />
+      <point x="1389.2877604166665" y="196.0" />
+      <point x="1353.2877604166665" y="196.0" />
+      <point x="27.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.IDividing">
+      <point x="-9.333333333333258" y="-14.0" />
+      <point x="1241.1941964285713" y="264.0" />
+      <point x="1164.2877604166665" y="264.0" />
+      <point x="1164.2877604166665" y="196.0" />
+      <point x="1126.2877604166665" y="196.0" />
+      <point x="25.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest">
+      <point x="-60.333333333333314" y="-14.0" />
+      <point x="581.6657366071429" y="48.0" />
+      <point x="84.0" y="48.0" />
+      <point x="28.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.DivideByActivity" target="sk.stuba.fiit.perconik.ivda.server.Catalog">
+      <point x="-27.75" y="-14.0" />
+      <point x="797.5377604166666" y="166.0" />
+      <point x="304.2380952380952" y="166.0" />
+      <point x="23.666666666666686" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.processes.ProcessAllFinishedProcesses" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="63.375" y="-14.0" />
+      <point x="624.0275297619046" y="294.0" />
+      <point x="759.2877604166666" y="294.0" />
+      <point x="759.2877604166666" y="88.0" />
+      <point x="732.9068080357142" y="88.0" />
+      <point x="14.285714285714278" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessChangesets" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="-32.0" y="-14.0" />
+      <point x="932.7877604166666" y="156.0" />
+      <point x="717.4157366071429" y="156.0" />
+      <point x="75.41666666666669" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineServlet" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions">
+      <point x="35.333333333333314" y="-14.0" />
+      <point x="152.87109375" y="294.0" />
+      <point x="192.57719494047603" y="294.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions" target="sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents">
+      <point x="31.75" y="-14.0" />
+      <point x="224.32719494047603" y="186.0" />
+      <point x="566.5824032738095" y="186.0" />
+      <point x="-75.41666666666669" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup" target="sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent">
+      <point x="46.66666666666674" y="-14.0" />
+      <point x="1297.1941964285713" y="294.0" />
+      <point x="1400.2877604166665" y="294.0" />
+      <point x="1400.2877604166665" y="68.0" />
+      <point x="761.4782366071428" y="68.0" />
+      <point x="42.85714285714286" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.server.grouping.FullGroup" target="sk.stuba.fiit.perconik.ivda.server.grouping.IGrouping">
+      <point x="0.0" y="-14.0" />
+      <point x="1214.2877604166665" y="196.0" />
+      <point x="1299.2877604166665" y="196.0" />
+      <point x="-27.0" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7121745249824067" x="700.5" y="207.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

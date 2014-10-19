@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="439.0" y="385.0">sk.stuba.fiit.perconik.ivda.cord.entities.BranchSearchResult</node>
+    <node x="100.63095238095238" y="78.0">sk.stuba.fiit.perconik.ivda.cord.dto.Parameter</node>
+    <node x="391.0" y="609.0">sk.stuba.fiit.perconik.ivda.cord.entities.Error</node>
+    <node x="141.88095238095238" y="0.0">sk.stuba.fiit.perconik.ivda.cord.dto.BaseType</node>
+    <node x="438.0" y="536.0">sk.stuba.fiit.perconik.ivda.cord.dto.Commit</node>
+    <node x="85.75" y="458.0">sk.stuba.fiit.perconik.ivda.cord.entities.SearchFilter</node>
+    <node x="148.0" y="609.0">sk.stuba.fiit.perconik.ivda.cord.dto.Repository</node>
+    <node x="152.0" y="385.0">sk.stuba.fiit.perconik.ivda.cord.entities.FileSearchResult</node>
+    <node x="0.0" y="682.0">sk.stuba.fiit.perconik.ivda.cord.dto.File</node>
+    <node x="279.0" y="609.0">sk.stuba.fiit.perconik.ivda.cord.dto.Branch</node>
+    <node x="0.0" y="156.0">sk.stuba.fiit.perconik.ivda.cord.dto.AstParseErrorDto</node>
+    <node x="285.0" y="385.0">sk.stuba.fiit.perconik.ivda.cord.entities.ChangeSearchResult</node>
+    <node x="310.0" y="536.0">sk.stuba.fiit.perconik.ivda.cord.dto.Change</node>
+    <node x="138.0" y="156.0">sk.stuba.fiit.perconik.ivda.cord.dto.AstNodeDto</node>
+    <node x="146.0" y="536.0">sk.stuba.fiit.perconik.ivda.cord.entities.FileSearchFilter</node>
+    <node x="439.0" y="458.0">sk.stuba.fiit.perconik.ivda.cord.dto.Author</node>
+    <node x="0.0" y="609.0">sk.stuba.fiit.perconik.ivda.cord.dto.FileDescription</node>
+    <node x="303.5" y="307.0">sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult</node>
+    <node x="0.0" y="536.0">sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchFilter</node>
+    <node x="589.0" y="385.0">sk.stuba.fiit.perconik.ivda.cord.entities.RepoSearchResult</node>
+    <node x="298.0" y="458.0">sk.stuba.fiit.perconik.ivda.cord.dto.ChangeType</node>
+    <node x="0.0" y="385.0">sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchResult</node>
+    <node x="60.79761904761905" y="234.0">sk.stuba.fiit.perconik.ivda.cord.dto.AstParseResultDto</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.RepoSearchResult" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult">
+      <point x="0.0" y="-14.0" />
+      <point x="650.0" y="355.0" />
+      <point x="390.8" y="355.0" />
+      <point x="38.80000000000001" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.ChangeSearchResult" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.AstNodeDto" target="sk.stuba.fiit.perconik.ivda.cord.dto.Parameter">
+      <point x="-30.666666666666686" y="-14.0" />
+      <point x="153.33333333333331" y="131.0" />
+      <point x="142.63095238095238" y="131.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchResult" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult">
+      <point x="0.0" y="-14.0" />
+      <point x="66.0" y="355.0" />
+      <point x="313.2" y="355.0" />
+      <point x="-38.80000000000001" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.FileSearchFilter" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchFilter">
+      <point x="0.0" y="-14.0" />
+      <point x="199.5" y="511.0" />
+      <point x="154.0" y="511.0" />
+      <point x="22.75" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.AstParseResultDto" target="sk.stuba.fiit.perconik.ivda.cord.dto.AstParseErrorDto">
+      <point x="-31.0" y="-14.0" />
+      <point x="91.79761904761905" y="209.0" />
+      <point x="59.0" y="209.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.Commit" target="sk.stuba.fiit.perconik.ivda.cord.dto.Author">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.BranchSearchResult" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult">
+      <point x="0.0" y="-14.0" />
+      <point x="504.0" y="365.0" />
+      <point x="371.4" y="365.0" />
+      <point x="19.399999999999977" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.AstNodeDto" target="sk.stuba.fiit.perconik.ivda.cord.dto.BaseType">
+      <point x="30.666666666666657" y="-14.0" />
+      <point x="214.66666666666666" y="131.0" />
+      <point x="206.13095238095238" y="131.0" />
+      <point x="206.13095238095238" y="53.0" />
+      <point x="209.38095238095238" y="53.0" />
+      <point x="27.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.Change" target="sk.stuba.fiit.perconik.ivda.cord.dto.ChangeType">
+      <point x="0.0" y="-14.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.FileSearchResult" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchResult">
+      <point x="0.0" y="-14.0" />
+      <point x="208.5" y="365.0" />
+      <point x="332.6" y="365.0" />
+      <point x="-19.399999999999977" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchFilter" target="sk.stuba.fiit.perconik.ivda.cord.entities.SearchFilter">
+      <point x="0.0" y="-14.0" />
+      <point x="63.0" y="511.0" />
+      <point x="108.5" y="511.0" />
+      <point x="-22.75" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.AstParseResultDto" target="sk.stuba.fiit.perconik.ivda.cord.dto.AstNodeDto">
+      <point x="31.0" y="-14.0" />
+      <point x="153.79761904761904" y="209.0" />
+      <point x="184.0" y="209.0" />
+      <point x="0.0" y="14.0" />
+    </edge>
+    <edge source="sk.stuba.fiit.perconik.ivda.cord.dto.Parameter" target="sk.stuba.fiit.perconik.ivda.cord.dto.BaseType">
+      <point x="0.0" y="-14.0" />
+      <point x="142.63095238095238" y="53.0" />
+      <point x="155.38095238095238" y="53.0" />
+      <point x="-27.0" y="14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.821917808219178" x="355.5" y="355.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+
