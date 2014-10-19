@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
@@ -14,10 +15,12 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.util.Diff;
+import sk.stuba.fiit.perconik.ivda.util.GZIP;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.List;
@@ -83,16 +86,35 @@ public final class TryBuildHistory {
         LOGGER.info("koniec");
     }
 
+    private static final File tempFile = new File("C:\\events.gzip");
+
     private void getActivities() {
         EventsRequest request = new EventsRequest();
         Date start = changeset.getTimeStamp().toGregorianCalendar().getTime();
         Date end = successorChangeset.getTimeStamp().toGregorianCalendar().getTime();
+        request.setEventTypeUri(event); // tzv chceme rovnaky typ vytiahnut
         request.setTime(start, end);
 
-        List<EventDto> events = ActivityService.getInstance().getEvents(request);
+        ImmutableList<EventDto> events = null;
+        /*
+        try {
+            events = ActivityService.getInstance().getEvents(request);
+            GZIP.serialize(events, tempFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        */
+
+        try {
+            events = (ImmutableList<EventDto>) GZIP.deserialize(tempFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         for (EventDto e : events) {
-            if (!(event instanceof IdeCodeEventDto)) {
-                processIdeBlock((IdeCodeEventDto) events);
+            if ((e instanceof IdeCodeEventDto)) {
+                processIdeBlock((IdeCodeEventDto) e);
             }
         }
     }
@@ -101,13 +123,11 @@ public final class TryBuildHistory {
         IdeDocumentDto dokument = e.getDocument();
         sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
-            LOGGER.info("Lokalny subor");
             return;
         }
 
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
         if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-            LOGGER.info("changesetIdInRcs empty");
             return;
         }
 
@@ -116,8 +136,8 @@ public final class TryBuildHistory {
         }
 
         // ide o rovnaky subor, teda akcia bola vykonana nad tym suborom
-        LOGGER.info(e.getStartRowIndex() + " " + e.getEndRowIndex());
-        LOGGER.info("Skopiroval:\\n" + e.getText());
+        //LOGGER.info(e.getStartRowIndex() + " " + e.getEndRowIndex());
+        LOGGER.info(e);
     }
 
     private void getMoreInformation() {

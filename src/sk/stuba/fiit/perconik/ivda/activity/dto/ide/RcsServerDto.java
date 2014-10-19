@@ -10,7 +10,7 @@ public class RcsServerDto implements Serializable {
     /**
      * Server url
      */
-    private URI url;
+    private String url;
 
     /**
      * Type of the server.
@@ -22,7 +22,7 @@ public class RcsServerDto implements Serializable {
     public RcsServerDto() {
     }
 
-    public RcsServerDto(URI url, URI typeUri) {
+    public RcsServerDto(String url, URI typeUri) {
         super();
         this.url = url;
         this.typeUri = typeUri;
@@ -31,14 +31,14 @@ public class RcsServerDto implements Serializable {
     /**
      * @return the {@link #url}
      */
-    public URI getUrl() {
+    public String getUrl() {
         return url;
     }
 
     /**
      * @param {@link #url}
      */
-    public void setUrl(URI url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 

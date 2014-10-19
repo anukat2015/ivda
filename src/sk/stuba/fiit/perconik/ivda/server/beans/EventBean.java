@@ -60,7 +60,7 @@ public class EventBean implements Serializable {
         LOGGER.info("constr");
     }
 
-    public void fileDiff(String id, String ancestor, String path) {
+    private void fileDiff(String id, String ancestor, String path) {
         if (Strings.isNullOrEmpty(id) || Strings.isNullOrEmpty(ancestor) || Strings.isNullOrEmpty(path)) {
             throw new WebApplicationException(
                     Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
@@ -81,7 +81,7 @@ public class EventBean implements Serializable {
         }
     }
 
-    public void eventDownload(String id) {
+    private void eventDownload(String id) {
         if (Strings.isNullOrEmpty(id)) {
             throw new WebApplicationException(
                     Response.status(HttpURLConnection.HTTP_BAD_REQUEST)
@@ -100,7 +100,7 @@ public class EventBean implements Serializable {
         }
     }
 
-    public void eventDetail() {
+    private void eventDetail() {
         viewStateBean.setState(ViewStateBean.ViewState.EVENT);
         try {
             text = MAPPER.writeValueAsString(event);
@@ -110,7 +110,7 @@ public class EventBean implements Serializable {
         }
     }
 
-    public void checkIn() {
+    private void checkIn() {
         viewStateBean.setState(ViewStateBean.ViewState.DIFF_FILES);
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 

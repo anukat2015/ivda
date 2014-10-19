@@ -14,9 +14,7 @@ import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,7 +55,7 @@ public class ActivityService extends RestClient {
      *
      * @param uri adresa ktora sa ma stiahnut
      */
-    public List<EventDto> getEvents(EventsRequest request) {
+    public ImmutableList<EventDto> getEvents(EventsRequest request) {
         try {
             // Vrat prazdny vysledok ked:
             // poziadavka smeruje na vyber eventov z buducnosti
@@ -73,7 +71,7 @@ public class ActivityService extends RestClient {
         } catch (Exception e) {
             LOGGER.error("Nemozem vygenerovat adresu alebo doslo k chybe pri stahovani.", e);
         }
-        return Collections.emptyList();
+        return ImmutableList.of();
     }
 
     private static class SingletonHolder {
