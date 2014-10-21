@@ -50,7 +50,7 @@ public final class ProcessChangesets extends ProcessEvents2TimelineEvents {
 
         try {
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
+            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, cevent.getSolutionName());
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(changesetIdInRcs, project);
             List<FileVersionDto> fileVersion = AstRcsWcfService.getInstance().getChangedFiles(changeset);
 

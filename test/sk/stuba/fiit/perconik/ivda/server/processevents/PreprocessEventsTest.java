@@ -15,13 +15,13 @@ import java.util.Date;
 
 public class PreprocessEventsTest extends TestCase {
 
-    private static final File tempFile = new File("C:\\events_tyzden.gzip");
+    private static final File tempFile = new File("C:\\events_rok.gzip");
 
     public void testDownload() throws Exception {
         Configuration.getInstance();
         EventsRequest request = new EventsRequest();
-        Date start = DateUtils.fromString("2014-08-01T00:00:00.000Z");
-        Date end = DateUtils.fromString("2014-09-01T00:00:00.000Z");
+        Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2014-10-01T00:00:00.000Z");
         request.setTime(start, end);
 
         ImmutableList<EventDto> response = ActivityService.getInstance().getEvents(request);
