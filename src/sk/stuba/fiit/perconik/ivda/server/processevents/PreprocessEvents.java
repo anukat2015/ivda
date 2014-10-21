@@ -61,7 +61,7 @@ public final class PreprocessEvents extends ProcessEvents {
 
         try {
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
+            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
             ChangesetDto successorChangeset = AstRcsWcfService.getInstance().getChangesetSuccessor(changeset, fileVersion);

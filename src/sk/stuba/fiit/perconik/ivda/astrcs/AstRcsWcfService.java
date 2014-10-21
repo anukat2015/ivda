@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -134,6 +135,7 @@ public final class AstRcsWcfService {
         return SingletonHolder.INSTANCE;
     }
 
+
     private static <T> T returnOne(List<T> items) throws NotFoundException {
         int size = items.size();
         if (size == 0) {
@@ -144,6 +146,7 @@ public final class AstRcsWcfService {
         }
         return items.get(0);
     }
+
 
     @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
     private static void checkResponse(@Nullable PagedResponse res, String message) throws NotFoundException {
@@ -157,6 +160,7 @@ public final class AstRcsWcfService {
             LOGGER.error("Response have more pages, ignoring next pages.");
         }
     }
+
 
     private static String getName(String path, Integer versionID) {
         return FILE_NAME_PATTERN.matcher(path).replaceAll("_") + '-' + versionID;
@@ -238,7 +242,7 @@ public final class AstRcsWcfService {
             @Nullable
             @Override
             public String apply(@Nullable RcsServerDto input) {
-                return input.getUrl().getValue();
+                return input.getUrl().getValue().toLowerCase();
             }
         });
         if (server == null) {
@@ -255,28 +259,81 @@ public final class AstRcsWcfService {
         return getRcsServersDto(null);
     }
 
+    /**
+     * Metoda na stiahnutie vsetkych stranok.
+     *
+     * @param req
+     * @param func
+     * @param <P>
+     * @param <A>
+     * @return
+     */
+    private <P extends PagedRequest, A> List<A> downloadAll(String message, P req, Function<P, List<A>> func) throws NotFoundException {
+        Integer index = 0;
+        req.setPageSize(1000);
+        List<A> pole = new ArrayList<>();
+        while (true) {
+            req.setPageIndex(index);
+            List<A> add = func.apply(req);
+            if (add.isEmpty()) {
+                if (index == 0) {
+                    throw new NotFoundException("PagedResponse have no items at:" + message);
+                }
+                break;
+            }
+            pole.addAll(add);
+            index++;
+        }
+        return pole;
+    }
+
     public synchronized List<RcsServerDto> getRcsServersDto(@Nullable URI url) throws NotFoundException {
         SearchRcsServersRequest req = new SearchRcsServersRequest();
         if (url != null) {
             req.setUrl(factory.createSearchRcsServersRequestUrl(url.toString()));
         }
-        SearchRcsServersResponse response = service.searchRcsServers(req);
-        checkResponse(response, "getRcsServersDto");
-        List<RcsServerDto> ret = response.getRcsServers().getValue().getRcsServerDto();
-        for (RcsServerDto server : ret) { // Fixni nekonzistentne mena
+
+        List<RcsServerDto> ret = downloadAll("getRcsServersDto", req, new Function<SearchRcsServersRequest, List<RcsServerDto>>() {
+            @Nullable
+            @Override
+            public List<RcsServerDto> apply(@Nullable SearchRcsServersRequest req) {
+                SearchRcsServersResponse res = service.searchRcsServers(req);
+                if (res.getPageCount() == 0) {
+                    return Collections.emptyList();
+                }
+                return res.getRcsServers().getValue().getRcsServerDto();
+            }
+        });
+
+        // Fixni nekonzistentne mena
+        for (RcsServerDto server : ret) {
             server.getUrl().setValue(server.getUrl().getValue().toLowerCase());
         }
         return ret;
     }
 
-    public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server) throws NotFoundException {
+    public synchronized RcsProjectDto getRcsProjectDto(RcsServerDto server, String serverPath) throws NotFoundException {
         SearchRcsProjectsRequest req = new SearchRcsProjectsRequest();
         req.setRcsServerId(factory.createSearchRcsProjectsRequestRcsServerId(server.getId()));
-        // TODO: req.setUrl();  // nazov projektu $/PerConIK
+        req.setPageSize(1000);
+        // req.setUrl();  // nazov projektu $/PerConIK
         // dokument $/PerConIK/ITGenerator/ITGenerator.Lib/Entities/ActivitySubjectOrObject.cs
         SearchRcsProjectsResponse response = service.searchRcsProjects(req);
         checkResponse(response, "getRcsProjectDto");
-        return returnOne(response.getRcsProjects().getValue().getRcsProjectDto());
+
+        List<RcsProjectDto> projects = response.getRcsProjects().getValue().getRcsProjectDto();
+        RcsProjectDto project = Strings.findLongestPrefix(projects, serverPath.toLowerCase(), new Function<RcsProjectDto, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable RcsProjectDto input) {
+                return input.getUrl().getValue().toLowerCase();
+            }
+        });
+
+        if (project == null) {
+            throw new NotFoundException("getRcsProjectDto");
+        }
+        return project;
     }
 
     /**
@@ -303,7 +360,7 @@ public final class AstRcsWcfService {
         //noinspection HardcodedFileSeparator
         String prefix = project.getUrl().getValue() + '/';
         if (!serverPath.startsWith(prefix)) {
-            throw new RuntimeException("Prefix zadanej cedzy a projektu nesedi.");
+            throw new RuntimeException("Prefix zadanej cesty a projektu nesedi.");
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
         return returnOne(getFileVersionsDto(chs, startUrl, null));
@@ -331,9 +388,20 @@ public final class AstRcsWcfService {
         if (entity != null) {
             req.setEntityId(factory.createSearchFilesRequestEntityId(entity));
         }
-        SearchFilesResponse response = service.searchFiles(req);
-        checkResponse(response, "getFileVersionsDto");
-        return response.getFileVersions().getValue().getFileVersionDto();
+
+        List<FileVersionDto> ret = downloadAll("getFileVersionsDto", req, new Function<SearchFilesRequest, List<FileVersionDto>>() {
+            @Nullable
+            @Override
+            public List<FileVersionDto> apply(@Nullable SearchFilesRequest req) {
+                SearchFilesResponse res = service.searchFiles(req);
+                if (res.getPageCount() == 0) {
+                    return Collections.emptyList();
+                }
+                return res.getFileVersions().getValue().getFileVersionDto();
+            }
+        });
+
+        return ret;
     }
 
     public synchronized String getFileContent(Integer fileVersion) throws NotFoundException {
@@ -360,7 +428,7 @@ public final class AstRcsWcfService {
      * @param entityID
      * @return
      */
-    public synchronized List<ChangesetDto> getChangeset(Integer entityID) {
+    public synchronized List<ChangesetDto> getChangesets(Integer entityID) {
         GetFileChangesetsRequest req = new GetFileChangesetsRequest();
         req.setEntityId(entityID);
         GetFileChangesetsResponse response = service.getFileChangesets(req);
@@ -393,7 +461,7 @@ public final class AstRcsWcfService {
     }
 
     public ChangesetDto getChangesetSuccessor(ChangesetDto changeset, FileVersionDto file) throws NotFoundException {
-        List<ChangesetDto> changesets = getChangeset(file.getEntityId());
+        List<ChangesetDto> changesets = getChangesets(file.getEntityId());
         if (changesets == null || changesets.isEmpty()) {
             throw new NotFoundException("getChangesetSuccessor changeset empty");
         }

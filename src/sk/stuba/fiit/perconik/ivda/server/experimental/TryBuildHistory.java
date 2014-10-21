@@ -167,7 +167,7 @@ public final class TryBuildHistory {
 
         try {
             server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
+            project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
             changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
         } catch (AstRcsWcfService.NotFoundException e) {

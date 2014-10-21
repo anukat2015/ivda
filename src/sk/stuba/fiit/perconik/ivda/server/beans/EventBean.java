@@ -128,7 +128,7 @@ public class EventBean implements Serializable {
             }
 
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server);
+            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, cevent.getProjectName());
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(changesetIdInRcs, project);
             files = AstRcsWcfService.getInstance().getChangedFiles(changeset);
             Comparator<FileVersionDto> comparator = new Comparator<FileVersionDto>() {
