@@ -21,13 +21,13 @@ import java.util.Set;
  * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
  */
 @NotThreadSafe
-public abstract class FindFinishedProcess {
-    private static final Logger LOGGER = Logger.getLogger(FindFinishedProcess.class.getName());
+public abstract class FindFinishedProcessForUser {
+    private static final Logger LOGGER = Logger.getLogger(FindFinishedProcessForUser.class.getName());
 
     private final Map<Integer, FinishedProcess> startedApps;
     private final Catalog appBlackList;
 
-    protected FindFinishedProcess() {
+    protected FindFinishedProcessForUser() {
         startedApps = new HashMap<>(200);
         appBlackList = Catalog.Processes.BANNED.getList();
     }
@@ -53,7 +53,7 @@ public abstract class FindFinishedProcess {
             item.process = started;
             FinishedProcess saved = startedApps.put(started.getPid(), item);
             if (saved != null) {
-                LOGGER.info("Process s takym PID uz existuje... " + saved);
+                LOGGER.warn("Process s takym PID uz existuje... " + saved);
             }
         }
     }
@@ -86,7 +86,14 @@ public abstract class FindFinishedProcess {
         }
     }
 
-    protected static final class FinishedProcess {
+    /**
+     * Vycisti doteraz zachytene neukoncene procesy
+     */
+    public void clear() {
+        startedApps.clear();
+    }
+
+    public static final class FinishedProcess {
         public Date start;
         public Date end;
         public ProcessDto process;

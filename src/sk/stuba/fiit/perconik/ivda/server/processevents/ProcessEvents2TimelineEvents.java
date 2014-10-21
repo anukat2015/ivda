@@ -1,6 +1,5 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
-import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
@@ -13,8 +12,7 @@ import java.util.*;
  * <p/>
  * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
  */
-public abstract class ProcessEvents2TimelineEvents {
-    protected static final Logger LOGGER = Logger.getLogger(ProcessEvents2TimelineEvents.class.getName());
+public abstract class ProcessEvents2TimelineEvents extends ProcessEvents {
     private Map<String, List<TimelineEvent>> list;
 
     public ProcessEvents2TimelineEvents() {
@@ -33,22 +31,6 @@ public abstract class ProcessEvents2TimelineEvents {
             list.put(group, events);
         }
         events.add(event);
-    }
-
-    public void downloaded(List<EventDto> list) {
-        for (EventDto event : list) {
-            filterItem(event);
-        }
-        finished();
-    }
-
-    protected abstract void proccessItem(EventDto event);
-
-    protected void filterItem(EventDto event) {
-        proccessItem(event);
-    }
-
-    public void finished() {
     }
 
     public Map<String, List<TimelineEvent>> getData() {

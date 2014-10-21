@@ -177,7 +177,7 @@ public final class AstRcsWcfService {
                 return Collections.unmodifiableList(Files.readLines(cacheFile, Charset.defaultCharset()));
             } catch (IOException e) {
                 LOGGER.error("Nemozem precitat / zapisat zo suboru.", e);
-                throw new NotFoundException();
+                throw new NotFoundException("Nemozem precitat / zapisat zo suboru.");
             }
         }
     }
@@ -342,7 +342,7 @@ public final class AstRcsWcfService {
         GetFileContentResponse response = service.getFileContent(req);
         String value = response.getContent().getValue();
         if (value == null) {
-            throw new NotFoundException();
+            throw new NotFoundException("getFileContent content noit found");
         }
         return value;
     }
@@ -387,9 +387,6 @@ public final class AstRcsWcfService {
     public static class NotFoundException extends Exception {
         private static final long serialVersionUID = 0L;
 
-        public NotFoundException() {
-        }
-
         public NotFoundException(String msg) {
             super(msg);
         }
@@ -398,7 +395,7 @@ public final class AstRcsWcfService {
     public ChangesetDto getChangesetSuccessor(ChangesetDto changeset, FileVersionDto file) throws NotFoundException {
         List<ChangesetDto> changesets = getChangeset(file.getEntityId());
         if (changesets == null || changesets.isEmpty()) {
-            throw new NotFoundException();
+            throw new NotFoundException("getChangesetSuccessor changeset empty");
         }
         Iterator<ChangesetDto> it = changesets.iterator();
         while (it.hasNext()) {
@@ -411,7 +408,7 @@ public final class AstRcsWcfService {
                 }
             }
         }
-        throw new NotFoundException();
+        throw new NotFoundException("getChangesetSuccessor not found");
     }
 
     public FileVersionDto getFileVersionSuccessor(ChangesetDto succesorchangeset, FileVersionDto file) throws NotFoundException {
