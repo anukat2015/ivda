@@ -15,9 +15,12 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,7 +32,7 @@ import java.util.regex.Pattern;
 @ThreadSafe
 public final class AstRcsWcfService {
     private static final Logger LOGGER = Logger.getLogger(AstRcsWcfService.class.getName());
-    private static final File CACHE_FOLDER = new File(Configuration.getInstance().getCacheFolder(), "astrcs");
+    private static final File CACHE_FOLDER = new File(new File("C:/cache"), "astrcs");
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");
 
     private final IAstRcsWcfSvc service;
@@ -38,7 +41,85 @@ public final class AstRcsWcfService {
 
     private AstRcsWcfService() {
         authenticate();
-        service = new AstRcsWcfSvc().getPort(IAstRcsWcfSvc.class);
+        URL url = null;
+        try {
+            url = new URL("file:/" + Configuration.CONFIG_DIR + File.separator + "AstRcsWcfSvc.svc.wsdl");
+        } catch (MalformedURLException e) {
+            LOGGER.error("URL error", e);
+        }
+        service = new AstRcsWcfSvc(url).getPort(IAstRcsWcfSvc.class);
+        /*String username = Configuration.getInstance().getAstRcs().get("username");
+        String password = Configuration.getInstance().getAstRcs().get("password");
+
+        Map<String, Object> map = ((BindingProvider) service).getRequestContext();
+        map.put(BindingProvider.USERNAME_PROPERTY, username);
+        map.put(BindingProvider.PASSWORD_PROPERTY, password);
+
+        Map<String, List<String>> headers = new HashMap<String, List<String>>();
+        headers.put("Username", Collections.singletonList(username));
+        headers.put("Password", Collections.singletonList(password));
+        headers.put("username", Collections.singletonList(username));
+        headers.put("password", Collections.singletonList(password));
+        headers.put("http.basic.username", Collections.singletonList(username));
+        headers.put("http.basic.password", Collections.singletonList(password));
+        map.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+        map.put(Stub.USERNAME_PROPERTY, "http.basic.username");
+        map.put(Stub.PASSWORD_PROPERTY, "http.basic.password");
+        map.put(BindingProvider.USERNAME_PROPERTY, "http.basic.username");
+        map.put(BindingProvider.PASSWORD_PROPERTY, "http.basic.password");
+        map.put("Authorization:", "Basic " + Base64.encodeBase64String((username + ":" + password).getBytes()));
+        */
+
+        /*
+        ((BindingProvider) service).getRequestContext().put(MessageContext
+                .HTTP_REQUEST_HEADERS, Collections.singletonMap
+                ("X-Client-Version", Collections.singletonList("1.0-RC")));
+
+        ArrayList<javax.xml.ws.handler.Handler> list = new ArrayList();
+        list.add(new SOAPHandler<SOAPMessageContext>() {
+
+            @Override
+            public boolean handleMessage(SOAPMessageContext context) {
+                Boolean isRequest = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
+
+                //if this is a request, true for outbound messages, false for inbound
+                if (isRequest) {
+                    try {
+                        SOAPMessage soapMsg = context.getMessage();
+                        SOAPEnvelope soapEnv = soapMsg.getSOAPPart().getEnvelope();
+                        SOAPHeader soapHeader = soapEnv.getHeader();
+
+                        //if no header, add one
+                        if (soapHeader == null) {
+                            soapHeader = soapEnv.addHeader();
+                        }
+                        soapHeader.
+                    } catch (SOAPException e) {
+                        System.err.println(e);
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean handleFault(SOAPMessageContext context) {
+                return true;
+            }
+
+            @Override
+            public void close(MessageContext context) {
+
+            }
+
+            @Override
+            public Set<QName> getHeaders() {
+                return null;
+            }
+        });
+
+        ((BindingProvider) service).getBinding().setHandlerChain(list);
+         */
+
         factory = new ObjectFactory();
         try {
             servers = Collections.unmodifiableList(getRcsServersDto());
@@ -73,7 +154,7 @@ public final class AstRcsWcfService {
             throw new NotFoundException("PagedResponse have no items at:" + message);
         }
         if (res.getPageCount() > 1) {
-            LOGGER.warn("Response have more pages, ignoring next pages.");
+            LOGGER.error("Response have more pages, ignoring next pages.");
         }
     }
 
@@ -152,8 +233,8 @@ public final class AstRcsWcfService {
      * @param url
      * @return
      */
-    public RcsServerDto getNearestRcsServerDto(URI url) throws NotFoundException {
-        RcsServerDto server = Strings.findLongestPrefix(servers, url.toString().toLowerCase(), new Function<RcsServerDto, String>() {
+    public RcsServerDto getNearestRcsServerDto(String url) throws NotFoundException {
+        RcsServerDto server = Strings.findLongestPrefix(servers, url.toLowerCase(), new Function<RcsServerDto, String>() {
             @Nullable
             @Override
             public String apply(@Nullable RcsServerDto input) {
@@ -225,11 +306,11 @@ public final class AstRcsWcfService {
             throw new RuntimeException("Prefix zadanej cedzy a projektu nesedi.");
         }
         String startUrl = serverPath.substring(prefix.length(), serverPath.length());
-        return returnOne(getFileVersionsDto(chs, startUrl));
+        return returnOne(getFileVersionsDto(chs, startUrl, null));
     }
 
     public List<FileVersionDto> getFileVersionsDto(ChangesetDto chs) throws NotFoundException {
-        return getFileVersionsDto(chs, null);
+        return getFileVersionsDto(chs, null, null);
     }
 
     /**
@@ -241,11 +322,14 @@ public final class AstRcsWcfService {
      * @return
      * @throws NotFoundException
      */
-    public synchronized List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, @Nullable String startUrl) throws NotFoundException {
+    public synchronized List<FileVersionDto> getFileVersionsDto(ChangesetDto chs, @Nullable String startUrl, @Nullable Integer entity) throws NotFoundException {
         SearchFilesRequest req = new SearchFilesRequest();
         req.setChangesetId(chs.getId());
         if (startUrl != null) {
             req.setUrlStart(factory.createSearchFilesRequestUrlStart(startUrl));
+        }
+        if (entity != null) {
+            req.setEntityId(factory.createSearchFilesRequestEntityId(entity));
         }
         SearchFilesResponse response = service.searchFiles(req);
         checkResponse(response, "getFileVersionsDto");
@@ -309,6 +393,46 @@ public final class AstRcsWcfService {
         public NotFoundException(String msg) {
             super(msg);
         }
+    }
+
+    public ChangesetDto getChangesetSuccessor(ChangesetDto changeset, FileVersionDto file) throws NotFoundException {
+        List<ChangesetDto> changesets = getChangeset(file.getEntityId());
+        if (changesets == null || changesets.isEmpty()) {
+            throw new NotFoundException();
+        }
+        Iterator<ChangesetDto> it = changesets.iterator();
+        while (it.hasNext()) {
+            ChangesetDto ch = it.next();
+            if (ch.getId().equals(changeset.getId())) {
+                if (it.hasNext()) {
+                    return it.next();
+                } else {
+                    break;
+                }
+            }
+        }
+        throw new NotFoundException();
+    }
+
+    public FileVersionDto getFileVersionSuccessor(ChangesetDto succesorchangeset, FileVersionDto file) throws NotFoundException {
+        List<FileVersionDto> files;
+        files = getFileVersionsDto(succesorchangeset, null, file.getEntityId());
+        return returnOne(files);
+        /*
+         files = AstRcsWcfService.getInstance().getFileVersionsDto(ch, file.getUrl().getValue());
+                for (FileVersionDto f : files) {
+                    Integer ancestor = f.getAncestor1Id().getValue();
+                    if (ancestor == null) {
+                        continue;
+                    }
+
+                    if (ancestor.equals(file.getId())) {
+                        successorChangeset = ch;
+                        return f;
+                    }
+                }
+                return null;
+         */
     }
 }
 
