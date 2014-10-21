@@ -93,8 +93,8 @@ public final class CordService extends RestClient {
         return callApi(apiLink().path("repos"), RepoSearchResult.class, new SearchFilter());
     }
 
-    public Repository getNearestRepository(URI url) {
-        Repository server = Strings.findLongestPrefix(repositories, url.toString().toLowerCase(), new Function<Repository, String>() {
+    public Repository getNearestRepository(String url) {
+        Repository server = Strings.findLongestPrefix(repositories, url.toLowerCase(), new Function<Repository, String>() {
             @Nullable
             @Override
             public String apply(@Nullable Repository input) {

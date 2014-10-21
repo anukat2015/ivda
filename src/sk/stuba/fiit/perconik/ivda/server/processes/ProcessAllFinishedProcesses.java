@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
 
 import javax.annotation.concurrent.NotThreadSafe;

@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.experimental;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -68,7 +68,8 @@ public final class TryBuildHistory {
         String path = fileVersion.getUrl().getValue();
         Integer id = fileVersion.getId();
         Integer ancestor = fileVersion.getAncestor1Id().getValue();
-        FileVersionDto successor = getSuccessor(fileVersion);
+        successorChangeset = AstRcsWcfService.getInstance().getChangesetSuccessor(changeset, fileVersion);
+        FileVersionDto successor = AstRcsWcfService.getInstance().getFileVersionSuccessor(successorChangeset, fileVersion);
 
         // Stiahni vsetky 3 verzie
         //List<String> staraVerzia = AstRcsWcfService.getInstance().getContent(path, ancestor); // subor mohol mt v minulosti inu cestu
@@ -174,35 +175,5 @@ public final class TryBuildHistory {
         } catch (Exception e) {
             LOGGER.error("proccessItem", e);
         }
-    }
-
-    private FileVersionDto getSuccessor(FileVersionDto file) throws AstRcsWcfService.NotFoundException {
-        List<ChangesetDto> changesets = AstRcsWcfService.getInstance().getChangeset(file.getEntityId());
-        boolean najdenyChangeset = false;
-        List<FileVersionDto> files;
-        for (ChangesetDto ch : changesets) {
-            if (najdenyChangeset) {
-                // TODO: Cesta k suboru sa mohla zmenit
-                files = AstRcsWcfService.getInstance().getFileVersionsDto(ch, file.getUrl().getValue());
-                for (FileVersionDto f : files) {
-                    Integer ancestor = f.getAncestor1Id().getValue();
-                    if (ancestor == null) {
-                        continue;
-                    }
-
-                    if (ancestor.equals(file.getId())) {
-                        successorChangeset = ch;
-                        return f;
-                    }
-                }
-                return null;
-            }
-
-            if (ch.getId().equals(changeset.getId())) {
-                najdenyChangeset = true;  // changesetysu zoradene takze preskakujeme
-                files = AstRcsWcfService.getInstance().getFileVersionsDto(ch);
-            }
-        }
-        return null;
     }
 }

@@ -1,11 +1,10 @@
-package sk.stuba.fiit.perconik.ivda.server.process;
+package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
-import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineRequest;
 
 import java.util.*;
 
@@ -16,11 +15,9 @@ import java.util.*;
  */
 public abstract class ProcessEvents2TimelineEvents {
     protected static final Logger LOGGER = Logger.getLogger(ProcessEvents2TimelineEvents.class.getName());
-    protected TimelineRequest filter;
     private Map<String, List<TimelineEvent>> list;
 
     public ProcessEvents2TimelineEvents() {
-        filter = null;
         list = new HashMap<>();
     }
 
@@ -32,7 +29,7 @@ public abstract class ProcessEvents2TimelineEvents {
         // Check if exist ..
         List<TimelineEvent> events = list.get(group);
         if (events == null) {
-            events = new ArrayList<TimelineEvent>();
+            events = new ArrayList<>();
             list.put(group, events);
         }
         events.add(event);
@@ -49,10 +46,6 @@ public abstract class ProcessEvents2TimelineEvents {
 
     protected void filterItem(EventDto event) {
         proccessItem(event);
-    }
-
-    public void setFilter(TimelineRequest filter) {
-        this.filter = filter;
     }
 
     public void finished() {

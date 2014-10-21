@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
 import junit.framework.TestCase;
+import sk.stuba.fiit.perconik.ivda.server.experimental.TryBuildHistory;
 
 public class TryBuildHistoryTest extends TestCase {
 

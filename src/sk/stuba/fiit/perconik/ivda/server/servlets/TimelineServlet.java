@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessEvents2TimelineEvents;
-import sk.stuba.fiit.perconik.ivda.server.process.ProcessFileVersions;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessFileVersions;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
@@ -39,7 +39,6 @@ public class TimelineServlet extends HttpServlet {
             activityRequest.setTime(request.getStart(), request.getEnd());
 
             ProcessEvents2TimelineEvents process = new ProcessFileVersions();
-            process.setFilter(request);
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
             response.setGroups(process.getData());
 

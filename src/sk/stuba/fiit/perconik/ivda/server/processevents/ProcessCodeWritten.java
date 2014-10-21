@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.process;
+package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;

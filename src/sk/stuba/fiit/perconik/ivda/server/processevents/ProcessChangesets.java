@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.process;
+package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import com.google.common.collect.ImmutableMap;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
