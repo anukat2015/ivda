@@ -3,6 +3,7 @@ function Globals() {
     this.serverDateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     this.charts = new ChartPanel();
     this.timeline = getTimeline();
+    this.graph = new GraphPanel();
     this.startInput = $('#startDate');
     this.endInput = $('#endDate');
     this.loader = new ChunksLoader();
@@ -16,6 +17,7 @@ function Globals() {
         this.loader.loadRange(start, end, function () {
             console.log("finished loadRange");
             gGlobals.charts.redraw();
+            gGlobals.graph.redraw();
             gGlobals.timeline.render({
                 animate: false
             });
@@ -51,6 +53,7 @@ function Globals() {
     this.redraw = function () {
         this.timeline.redraw();
         this.charts.redraw();
+        this.graph.redraw();
     };
 
     this.getServiceURL = function (start, end) {

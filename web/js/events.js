@@ -91,4 +91,5 @@ function onRangeChanged() {
     gGlobals.loader.onRangeChanged(range.start, range.end);
     gGlobals.preloader.start();
     gGlobals.charts.redraw();
+    gGlobals.graph.redraw();
 }
