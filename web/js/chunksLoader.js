@@ -207,6 +207,7 @@ ChunksLoader.prototype.acceptData = function (groups) {
 
         // Developera mame zapnuteho, pridaj ho do timelinu
         if (instance.containsDeveloper(group)) {
+            // dataSet.add(data);
             gGlobals.timeline.addItems(events, true);
             shouldReload = true;
         } else {

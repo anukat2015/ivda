@@ -36,8 +36,28 @@ function onLoad() {
     gGlobals.initialize(start, nowDate);
     registerQTip();
 }
+/*
+timeline.on('rangechange', function (properties) {
+    properties.start
+    properties.end
+});
 
+timeline.on('rangechanged', function (properties) {
+    properties.start
+    properties.end
+});
+
+timeline.on('rangechanged', function (properties) {
+    properties.start
+    properties.end
+});
+*/
 function onRangeChange() {
+
+    var range = this.body.range.getRange();
+    var left  = this.body.util.toScreen(range.start);
+    var right = this.body.util.toScreen(range.end);
+
     var range = gGlobals.timeline.getVisibleChartRange();
     gGlobals.setTime(range.start, range.end);
 }
@@ -50,6 +70,7 @@ function onReSize() {
 
 function onSetTime() {
     if (gGlobals) {
+        // moveTo(time [, options])
         gGlobals.timeline.setVisibleChartRange(gGlobals.getStart(), gGlobals.getEnd(), true);
         onRangeChange();
         onRangeChanged();

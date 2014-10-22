@@ -28,6 +28,7 @@ ChartPanel.prototype.computeStats = function () {
     var visibleMap = {};
     var typesMap = {};
     var linesMap = {};
+    // getVisibleItems()
     gGlobals.timeline.getVisibleChartItems(function (index, item) {
 
         for (var i = 0; i < labels.length; i++) {
@@ -67,6 +68,7 @@ ChartPanel.prototype.computeStats = function () {
 };
 
 ChartPanel.prototype.computeLabels = function () {
+    //gGlobals.timeline.timeAxis.step
     var options = gGlobals.timeline.options; // nastavenia neupravuj
     var step = jQuery.extend(true, {}, gGlobals.timeline.step); // deep copy celeho objektu
     step.start();
