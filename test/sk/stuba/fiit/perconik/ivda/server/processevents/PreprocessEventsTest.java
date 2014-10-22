@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.Date;
 
 public class PreprocessEventsTest extends TestCase {
-
     private static final File tempFile = new File("C:\\events_rok.gzip");
 
     public void testDownload() throws Exception {
@@ -37,15 +36,9 @@ public class PreprocessEventsTest extends TestCase {
 
     public void testProccessList() throws Exception {
         Configuration.getInstance();
-        ImmutableList<EventDto> response = null;
-        try {
-            response = (ImmutableList<EventDto>) GZIP.deserialize(tempFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ImmutableList<EventDto> response = (ImmutableList<EventDto>) GZIP.deserialize(tempFile);
 
-        PreprocessEvents p = new PreprocessEvents();
+        ProcessEvents p = new PreprocessEvents();
         p.downloaded(response);
-
     }
 }

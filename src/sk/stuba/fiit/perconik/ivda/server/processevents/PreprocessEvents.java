@@ -51,10 +51,8 @@ public final class PreprocessEvents extends ProcessEvents {
         Integer changedLines = EventsUtil.codeWritten(event.getText());
         String servrurl = rcsServer.getUrl();
         //LOGGER.info(author + "\t" + date + "\t" + changedLines + "\t" + changesetIdInRcs + "\t" + servrurl + "\t" + path + "\t" + event);
-
         lookAtFileVersions(event, dokument, rcsServer);
         //Repository repo = CordService.getInstance().getNearestRepository(rcsServer.getUrl());      // miraven project neexistje, astrcs ostava
-
     }
 
     private void lookAtFileVersions(IdeCodeEventDto event, IdeDocumentDto dokument, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {

@@ -1,14 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,27 +14,20 @@ import java.util.Set;
  * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
  */
 @NotThreadSafe
-public final class PrintProcesses extends ProcessEvents2TimelineEvents {
+public final class PrintProcesses extends ProcessProcesses {
     private final Set<String> processes = new HashSet<>(1000);
 
-    public PrintProcesses() {
-
+    @Override
+    protected void handleStarted(ProcessesChangedSinceCheckEventDto event, ProcessDto p) {
+        processes.add(p.getName());
     }
 
     @Override
-    protected void proccessItem(EventDto event) {
-        if (!(event instanceof ProcessesChangedSinceCheckEventDto)) return;
-        ProcessesChangedSinceCheckEventDto cevent = (ProcessesChangedSinceCheckEventDto) event;
-        addAll(cevent.getStartedProcesses());
-        addAll(cevent.getKilledProcesses());
+    protected void handleKilled(ProcessesChangedSinceCheckEventDto event, ProcessDto p) {
+        processes.add(p.getName());
     }
 
-    private void addAll(List<ProcessDto> list) {
-        for (ProcessDto p : list) {
-            processes.add(p.getName());
-        }
-    }
-
+    @Override
     public void finished() {
         System.out.println("New processes:");
         for (String name : processes) {
