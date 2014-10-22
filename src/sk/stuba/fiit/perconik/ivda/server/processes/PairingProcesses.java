@@ -1,10 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,8 +20,9 @@ import java.util.Set;
  * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
  */
 @NotThreadSafe
-public class PairingProcesses extends ProcessProcesses {
+public class PairingProcesses extends ProcessProcesses implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(PairingProcesses.class.getName());
+    private static final long serialVersionUID = 4766155571852827559L;
 
     private final Map<String, PerUserInfo> userMapping;
 
@@ -37,6 +40,14 @@ public class PairingProcesses extends ProcessProcesses {
         }
     }
 
+    public ImmutableList<Process> getFinishedProcesses(String user) {
+        PerUserInfo info = userMapping.get(user);
+        if (info == null) {
+            return ImmutableList.of();
+        }
+        return ImmutableList.copyOf(info.getFinished());
+    }
+
     protected PerUserInfo getInfo(String user) {
         PerUserInfo info = userMapping.get(user);
         if (info == null) {
@@ -50,7 +61,7 @@ public class PairingProcesses extends ProcessProcesses {
     protected void handleStarted(ProcessesChangedSinceCheckEventDto event, ProcessDto started) {
         Process item = new Process();
         item.setStart(event.getTimestamp());
-        item.setProcess(started);
+        item.setName(started.getName());
         Process saved = getInfo(event.getUser()).getUnfinished().put(started.getPid(), item);
         if (saved != null) {
             LOGGER.warn("Process s takym PID uz existuje... " + saved);

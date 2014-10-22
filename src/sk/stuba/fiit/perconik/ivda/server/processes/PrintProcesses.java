@@ -5,6 +5,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventD
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,8 @@ import java.util.Set;
  * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
  */
 @NotThreadSafe
-public final class PrintProcesses extends ProcessProcesses {
+public final class PrintProcesses extends ProcessProcesses implements Serializable {
+    private static final long serialVersionUID = 2949364093850819480L;
     private final Set<String> processes = new HashSet<>(1000);
 
     @Override

@@ -2,13 +2,15 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import org.apache.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by Seky on 22. 10. 2014.
  */
-public class PerUserInfo {
+public class PerUserInfo implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(PerUserInfo.class.getName());
+    private static final long serialVersionUID = -2656574415238396199L;
 
     private final List<Process> finished;
     private final Map<Integer, Process> unfinished;

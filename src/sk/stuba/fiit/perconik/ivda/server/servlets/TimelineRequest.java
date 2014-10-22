@@ -2,9 +2,9 @@ package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -18,8 +18,8 @@ public final class TimelineRequest {
 
     public TimelineRequest(HttpServletRequest req) throws Exception {
         // Vplyv na rozsah ma jedine zoom, ize musime vypocitat sirku okna a poslat to sem
-        start = DateUtils.fromString(decode(req, "start"));
-        end = DateUtils.fromString(decode(req, "end"));
+        start = DateUtils.fromString(UriUtils.decode(req, "start"));
+        end = DateUtils.fromString(UriUtils.decode(req, "end"));
 
         // Skontroluj datumy
         if (!DateUtils.isRounded(start, SIZE_OF_CHUNK)) {
@@ -31,10 +31,6 @@ public final class TimelineRequest {
         if (!DateUtils.diff(start, end, TimeUnit.HOURS)) {
             throw new Exception("Rozdiel datumov je vacsi ako velkost chunku.");
         }
-    }
-
-    private static String decode(HttpServletRequest req, String key) throws Exception {
-        return URLDecoder.decode(req.getParameter(key), "UTF-8");
     }
 
     @Override

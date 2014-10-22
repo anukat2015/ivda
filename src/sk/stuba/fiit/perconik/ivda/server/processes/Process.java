@@ -1,22 +1,23 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
-
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Seky on 21. 10. 2014.
  */
-public class Process {
+public class Process implements Serializable {
+    private static final long serialVersionUID = -7316143646812880569L;
+
     private Date start;
     private Date end;
-    private ProcessDto process;
+    private String name;
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("FinishedProcess{");
+        final StringBuilder sb = new StringBuilder("Process{");
         sb.append("end=").append(end);
-        sb.append(", process=").append(process);
+        sb.append(", name=").append(name);
         sb.append(", start=").append(start);
         sb.append('}');
         return sb.toString();
@@ -38,12 +39,12 @@ public class Process {
         this.end = end;
     }
 
-    public ProcessDto getProcess() {
-        return process;
+    public String getName() {
+        return name;
     }
 
-    public void setProcess(ProcessDto process) {
-        this.process = process;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isFinished() {

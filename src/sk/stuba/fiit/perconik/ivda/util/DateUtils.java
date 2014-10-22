@@ -53,4 +53,7 @@ public final class DateUtils {
         return actual.getTime() % unit.toMillis(1) == 0;
     }
 
+    public static boolean rangesAreOverlaping(Date s1, Date e1, Date start2, Date end2) {
+        return e1.after(start2) && s1.before(end2);
+    }
 }

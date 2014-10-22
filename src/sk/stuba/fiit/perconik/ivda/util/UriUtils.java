@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.util;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.UriBuilder;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -20,6 +21,10 @@ import java.util.Map;
  * Pomocna trieda pre rpacovanie s URI.
  */
 public final class UriUtils {
+    public static String decode(HttpServletRequest req, String key) throws Exception {
+        return URLDecoder.decode(req.getParameter(key), "UTF-8");
+    }
+
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {
         return splitQuery(url.getQuery());
     }

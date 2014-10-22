@@ -11,6 +11,16 @@
         <url-pattern>/datatable</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>Processes servlet</servlet-name>
+        <servlet-class>sk.stuba.fiit.perconik.ivda.server.servlets.ProcessesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Processes servlet</servlet-name>
+        <url-pattern>/processes</url-pattern>
+    </servlet-mapping>
+
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
         <param-value>server</param-value>
