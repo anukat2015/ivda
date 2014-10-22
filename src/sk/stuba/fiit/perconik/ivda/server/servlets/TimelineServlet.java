@@ -28,7 +28,6 @@ public class TimelineServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TimelineResponse response = new TimelineResponse();
         resp.setContentType(MediaType.APPLICATION_JSON);
 
         try {
@@ -40,10 +39,9 @@ public class TimelineServlet extends HttpServlet {
 
             ProcessEvents2TimelineEvents process = new ProcessFileVersions();
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
-            response.setGroups(process.getData());
 
             ServletOutputStream stream = resp.getOutputStream();
-            MAPPER.writeValue(stream, response);
+            MAPPER.writeValue(stream, process.getData());
             setCacheHeaders(request, resp);
         } catch (Exception e) {
             throw new WebApplicationException(e);

@@ -4,14 +4,8 @@
 
 function GraphLines() {
     this.lines = {};
-    this.createLine('changedLines', 'Changed lines');
-    this.createLine('changedInFuture', 'Changed in future');
 
-    this.createLine = function (type) {
-        return this.createLine(type, type);
-    };
-
-    this.createLine = function (type, name) {
+    this.createLine2 = function (type, name) {
         if (!this.lines.hasOwnProperty(type)) {
             this.lines[type] = {
                 'label': name,
@@ -19,6 +13,10 @@ function GraphLines() {
             };
         }
         return this.lines[type].data;
+    };
+
+    this.createLine = function (type) {
+        return this.createLine2(type, type);
     };
 
     this.addPoint = function (type, date, value) {
@@ -39,4 +37,7 @@ function GraphLines() {
             'value': value
         });
     };
+
+    this.createLine2('changedLines', 'Changed lines');
+    this.createLine2('changedInFuture', 'Changed in future');
 }

@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -47,6 +49,7 @@ public class Process implements Serializable {
         this.name = name;
     }
 
+    @JsonIgnore
     public boolean isFinished() {
         return getEnd() != null;
     }

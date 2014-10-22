@@ -155,11 +155,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             // Alebo prisla neskoro a hranice uz su zmenene ..
             // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
             //console.log("addItems " + data.getNumberOfRows());
-            if (data.status != "ok") {
-                instance.alertError("Server return bad status:" + data.status);
-            } else {
-                instance.acceptData(data.groups);
-            }
+            instance.acceptData(data);
         }
     }).always(function () {
         instance.finishedTasks++;

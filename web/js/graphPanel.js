@@ -5,14 +5,14 @@ GraphPanel = function () {
     this.component = $('#mygraph');
     this.options = {      // Specify options
         width: "100%",
-        height: "100px",
+        height: "600px",
         moveable: false,
         line: {width: 2.0},   // apply width to all lines
         legend: {toggleVisibility: true}
     };
 
     // Instantiate our graph object.
-    this.graph = new links.Graph(this.component);
+    this.graph = new links.Graph(document.getElementById('mygraph'));
     this.savedLines = null;
     this.asynTask = undefined;
 
@@ -40,7 +40,7 @@ GraphPanel.prototype.draw = function () {
     this.loadProcesses();
 };
 
-ChartPanel.prototype.drawPanel = function (lines) {
+GraphPanel.prototype.drawPanel = function (lines) {
     var data = new Array;
     Object.keys(lines.lines).forEach(function (key) {
         data.push(lines.lines[key]);
@@ -72,10 +72,16 @@ GraphPanel.prototype.computeData = function () {
     console.log("graph computeData");
     for (var i = 0; i < grouping.groups.length; i++) {
         var group = grouping.groups[i];
-        lines.addInterval(group.getFirstEvent().content, group.getFirstEvent().start, group.getLastEvent().start, group.getTimeInterval());
+        var value = this.normalizeTime(group.getTimeInterval());
+        lines.addInterval(group.getFirstEvent().content, group.getFirstEvent().start, group.getLastEvent().start, value);
     }
     return lines;
 };
+
+GraphPanel.prototype.normalizeTime = function (value) {
+    return value / (1000 * 60); // ostavaju minuty
+};
+
 
 GraphPanel.prototype.loadProcesses = function () {
     var instance = this;
@@ -84,16 +90,14 @@ GraphPanel.prototype.loadProcesses = function () {
     console.log(url);
     $.ajax({
         url: url
-    }).then(function (content) {
-        // Set the tooltip content upon successful retrieval
-        var processes = JSON.parse(content);
-        console.log(processes);
+    }).then(function (processes) {
+        //console.log(processes);
         for (var i = 0; i < processes.length; i++) {
             var process = processes[i];
-            var value = process.end.getTime() - process.start.getTime();
-            instance.savedLines.addInterval(process.name, process.start, process.end, value);
+            var value = instance.normalizeTime(process.end - process.start);
+            instance.savedLines.addInterval(process.name, new Date(process.start), new Date(process.end), value);
         }
-        this.drawPanel(instance.savedLines);
+        instance.drawPanel(instance.savedLines);
     }, function (xhr, status, error) {
         alert(error);
     });
