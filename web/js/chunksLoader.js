@@ -140,7 +140,7 @@ ChunksLoader.prototype.alertError = function (msg) {
  */
 ChunksLoader.prototype.loadChunk = function (start, end) {
     //console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
-    var url = gGlobals.getServiceURL(new Date(start), new Date(end));
+    var url = gGlobals.getTimelineServiceURL(new Date(start), new Date(end));
     //console.log(url);
     var instance = this;
     $.ajax({

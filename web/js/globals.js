@@ -56,8 +56,17 @@ function Globals() {
         this.graph.redraw();
     };
 
-    this.getServiceURL = function (start, end) {
+    this.getTimelineServiceURL = function (start, end) {
         var restURL = "datatable?";
+        var parameters = $.param({
+            start: this.serverDateFormatter.format(start),
+            end: this.serverDateFormatter.format(end)
+        });
+        return restURL + parameters;
+    };
+
+    this.getProcessesServiceURL = function (start, end) {
+        var restURL = "processes?";
         var parameters = $.param({
             start: this.serverDateFormatter.format(start),
             end: this.serverDateFormatter.format(end)

@@ -3,16 +3,7 @@
  */
 GraphPanel = function () {
     this.component = $('#mygraph');
-    this.graph = this.buildStructure();
-    this.asynTask = undefined;
-
-    // Zatial schovaj
-    this.component.hide();
-};
-
-GraphPanel.prototype.buildStructure = function () {
-    // specify options
-    var options = {
+    this.options = {      // Specify options
         width: "100%",
         height: "100px",
         moveable: false,
@@ -21,9 +12,13 @@ GraphPanel.prototype.buildStructure = function () {
     };
 
     // Instantiate our graph object.
-    var graph = new links.Graph(this.component);
-    //google.visualization.events.addListener(graph, 'rangechange', graphOnrangechange);
-    return graph;
+    this.graph = new links.Graph(this.component);
+    this.savedLines = null;
+    this.asynTask = undefined;
+
+    // Zatial schovaj
+    this.component.hide();
+    console.log("graph created");
 };
 
 GraphPanel.prototype.redraw = function () {
@@ -35,69 +30,73 @@ GraphPanel.prototype.redraw = function () {
     this.asynTask = setTimeout(function () {
         // Run asynchronous task
         instance.draw();
-    }, 1000);
+    }, 500);
 };
 
 GraphPanel.prototype.draw = function () {
+    console.log("graph draw");
     this.component.show();
-    var stats = this.computeData();
-    this.drawPanel(stats);
+    this.savedLines = this.computeData();
+    this.loadProcesses();
 };
 
-ChartPanel.prototype.drawPanel = function (stats) {
-    var data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'time');
-    Object.keys(stats.names).forEach(function (key) {
-        data.addColumn('number', key);
+ChartPanel.prototype.drawPanel = function (lines) {
+    var data = new Array;
+    Object.keys(lines.lines).forEach(function (key) {
+        data.push(lines.lines[key]);
     });
-    Object.keys(stats.data).forEach(function (key) {
-        data.addRow([ key, stats.lines[key]]);
-    });
-    this.hrapg.draw(data, this.metadataOptions);
-};
-/*
-function graphOnrangechange() {
-    if (gGlobals) {
-        var range = this.graph.getVisibleChartRange();
-        gGlobals.timeline.setVisibleChartRange(range.start, range.end, true);
-    }
-}
-*/
-
-GraphPanel.prototype.computeRow = function (item) {
-    var row;
-    row["timepoint"] = item.start;
-    // Hodnoty pola casu pouzitia
-    row["webValue"]
-    row["ideValue"]
-    row["processAValue"]
-    row["processBValue"]
-    row["processCValue"]
-    row["processDValue"]
-
-    // Specificke hodnoty
-    row["changedLines"]
-    row["changedInFuture"]
+    this.graph.draw(data, this.options);
 };
 
 GraphPanel.prototype.computeData = function () {
-    var graphStats = {};
-    var graphLabels = {};
-    var instance = this;
-    // Procesy este neriesime
+    var lines = new GraphLines();
+    var grouping = new ProcessAsGroup();
+
+    // Prechadzaj vsetky prvky, vypocitaj skupinu a popri tom dalsie vlasnosti
     gGlobals.timeline.getVisibleChartItems(function (index, item) {
-        var type = item.content
-        var row = instance.computeRow(item);
-        graphStats.push(row);
+        // Ak to ma metadata
+        if (item.metadata != undefined) {
+            if (item.metadata.changedLines != undefined) {
+                lines.addPoint("changedLines", item.start, item.metadata.changedLines);
+            }
+            if (item.metadata.changedInFuture != undefined) {
+                lines.addPoint("changedInFuture", item.start, item.metadata.changedInFuture);
+            }
+        }
 
-        if (item.metadata.changedLines != undefined)
+        grouping.processItem(item);
+    });
+    console.log(lines);
 
-        // Activity histogram
-        var row = item.content;
-        if (typesMap[row] === undefined) {
-            typesMap[row] = 1;
-        } else {
-            typesMap[row]++;
-            return true;
-        });
-    };
+    // Prechazaj skupiny a dopis udaje
+    console.log("graph computeData");
+    for (var i = 0; i < grouping.groups.length; i++) {
+        var group = grouping.groups[i];
+        lines.addInterval(group.getFirstEvent().content, group.getFirstEvent().start, group.getLastEvent().start, group.getTimeInterval());
+    }
+    return lines;
+};
+
+GraphPanel.prototype.loadProcesses = function () {
+    var instance = this;
+    var range = gGlobals.timeline.getVisibleChartRange();
+    var url = gGlobals.getProcessesServiceURL(new Date(range.start), new Date(range.end));
+    console.log(url);
+    $.ajax({
+        url: url
+    }).then(function (content) {
+        // Set the tooltip content upon successful retrieval
+        var processes = JSON.parse(content);
+        console.log(processes);
+        for (var i = 0; i < processes.length; i++) {
+            var process = processes[i];
+            var value = process.end.getTime() - process.start.getTime();
+            instance.savedLines.addInterval(process.name, process.start, process.end, value);
+        }
+        this.drawPanel(instance.savedLines);
+    }, function (xhr, status, error) {
+        alert(error);
+    });
+};
+
+

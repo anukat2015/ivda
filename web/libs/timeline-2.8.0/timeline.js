@@ -133,6 +133,10 @@ function filterItemsByInterval(items, start, end, supplier) {
     }
 };
 
+function diffItemsTime(actual, last) {
+    return actual.start.getTime() - actual.start.getTime();
+};
+
 /**
  * @constructor links.Timeline
  * The timeline is a visualization chart to visualize events in time.
