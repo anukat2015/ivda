@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -52,5 +53,15 @@ public class Process implements Serializable {
     @JsonIgnore
     public boolean isFinished() {
         return getEnd() != null;
+    }
+
+    @JsonIgnore
+    public boolean isOverlaping(Date s, Date e) {
+        return DateUtils.rangesAreOverlaping(start, end, s, e);
+    }
+
+    @JsonIgnore
+    public boolean isOverlaping(Process p) {
+        return isOverlaping(p.getStart(), p.getEnd());
     }
 }

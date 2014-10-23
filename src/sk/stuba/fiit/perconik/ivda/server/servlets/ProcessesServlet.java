@@ -55,16 +55,26 @@ public class ProcessesServlet extends HttpServlet {
         }
     }
 
-    protected ImmutableList<Process> findProcesses(Date start, Date end, String name) {
+    private static ImmutableList<Process> findProcesses(Date start, Date end, String name) {
         List<Process> saved = new ArrayList<>();
         for (Process p : processes) {
-            if (DateUtils.rangesAreOverlaping(start, end, p.getStart(), p.getEnd())) {
+            if (p.isOverlaping(start, end)) {
                 saved.add(p);
             }
         }
+        fixOverLapingProccesses(saved);
         return ImmutableList.copyOf(saved);
     }
 
-
+    private static void fixOverLapingProccesses(List<Process> list) {
+        for (Process a : list) {
+            Integer number = 1;
+            for (Process b : list) {
+                if (a != b && a.getName().equals(b.getName()) && a.isOverlaping(b)) {
+                    b.setName(b.getName() + number);
+                    number++;
+                }
+            }
+        }
+    }
 }
-
