@@ -112,13 +112,13 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("uid", event.getEventId());
             metadata.put("path", fileVersion.getUrl().getValue());
-            metadata.put("repo", fileVersion.getId().toString());
-            metadata.put("commit", ancestor == null ? 0 : ancestor.toString());
-            metadata.put("changedLines", changedLines.toString());
+            metadata.put("repo", fileVersion.getId());
+            metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
+            metadata.put("changedLines", changedLines);
             metadata.put("changedInFuture", changedInFuture);
             add(event, metadata);
         } else {
-            LOGGER.warn("Prazdne riadky!");
+           // LOGGER.warn("Prazdne riadky!");
         }
     }
 }
