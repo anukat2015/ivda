@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.processes;
+package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import com.google.common.collect.ImmutableList;
 import junit.framework.TestCase;
@@ -7,20 +7,12 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.GZIP;
 
-import java.io.File;
-
-public class PairingProcessesTest extends TestCase {
-    private static final File processesFile = new File("C:\\processes.gzip");
-
-    public void testProccessItem() throws Exception {
+public class PreprocessEvents2CountEditsTest extends TestCase {
+    public void testProccessList() throws Exception {
         Configuration.getInstance();
         ImmutableList<EventDto> response = (ImmutableList<EventDto>) GZIP.deserialize(ActivityServiceTest.FILE_EVENTS_ROK);
 
-        PairingProcesses p = new PairingProcesses();
+        ProcessEvents p = new PreprocessEvents2CountEdits();
         p.downloaded(response);
-        p.printInfo();
-
-        ImmutableList<Process> processes = p.getFinishedProcesses("steltecia\\krastocny");
-        GZIP.serialize(processes, processesFile);
     }
 }

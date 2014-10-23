@@ -30,29 +30,30 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
         IdeDocumentDto dokument = event.getDocument();
         sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
-            //LOGGER.info("Lokalny subor");
             return;
         }
         String path = dokument.getServerPath();
         if (Strings.isNullOrEmpty(path)) {
-            //LOGGER.info("Path is empty");
             return;
         }
-
         String changesetIdInRcs = dokument.getChangesetIdInRcs();  // 3494
         if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-            //LOGGER.info("changesetIdInRcs empty");
+            return;
+        }
+        int changedLines = EventsUtil.codeWritten(event.getText());  // nejde prakticky o ziadnu upravu
+        if (changedLines == 0) {
             return;
         }
 
-        // computeCountOfFileOperations
+        fileWasChanged(event, changesetIdInRcs, path, changedLines);
+        //lookAtFileVersions(event, dokument, rcsServer);
+        //Repository repo = CordService.getInstance().getNearestRepository(rcsServer.getUrl());      // miraven project neexistje, astrcs tak musi ostat
+    }
+
+    private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, String path, int changedLines) {
         String author = event.getUser();
         Date date = event.getTimestamp();
-        Integer changedLines = EventsUtil.codeWritten(event.getText());
-        String servrurl = rcsServer.getUrl();
-        //LOGGER.info(author + "\t" + date + "\t" + changedLines + "\t" + changesetIdInRcs + "\t" + servrurl + "\t" + path + "\t" + event);
-        lookAtFileVersions(event, dokument, rcsServer);
-        //Repository repo = CordService.getInstance().getNearestRepository(rcsServer.getUrl());      // miraven project neexistje, astrcs ostava
+        LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines + "\t" + event);
     }
 
     private void lookAtFileVersions(IdeCodeEventDto event, IdeDocumentDto dokument, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {

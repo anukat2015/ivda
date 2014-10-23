@@ -1,17 +1,21 @@
 package sk.stuba.fiit.perconik.ivda.activity.client;
 
+import com.google.common.collect.ImmutableList;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.GZIP;
 
+import java.io.File;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Otestovanie funkcionality Activity sluzby
  */
 public class ActivityServiceTest extends TestCase {
+    public static final File FILE_EVENTS_ROK = new File("C:\\events_rok.gzip");
 
     /**
      * Skontroluj deserializaciu a stiahnutie konkretneho eventu
@@ -23,20 +27,26 @@ public class ActivityServiceTest extends TestCase {
         Assert.assertNotNull(dto);
     }
 
-
     /**
-     * Skontroluj deserializaciu a stiahnutie evntov v ramci obdobia
+     * Skontroluj deserializaciu a stiahnutie eventov v ramci obdobia
      *
      * @throws Exception
      */
     public void testGetEvents() throws Exception {
+        Configuration.getInstance();
         EventsRequest request = new EventsRequest();
-        Date start = DateUtils.fromString("2014-06-01T08:00:00.000Z");
-        Date end = DateUtils.fromString("2014-07-01T16:00:00.000Z");
+        Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2014-10-01T00:00:00.000Z");
         request.setTime(start, end);
 
-        List<EventDto> resposne = ActivityService.getInstance().getEvents(request);
-        Assert.assertNotNull(resposne);
-        Assert.assertFalse(resposne.isEmpty());
+        ImmutableList<EventDto> response = ActivityService.getInstance().getEvents(request);
+        Assert.assertNotNull(response);
+        Assert.assertFalse(response.isEmpty());
+
+        try {
+            GZIP.serialize(response, FILE_EVENTS_ROK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
