@@ -8,6 +8,8 @@ import java.util.Date;
 
 /**
  * Created by Seky on 21. 10. 2014.
+ * <p/>
+ * Proces spusteni v OS.
  */
 public class Process implements Serializable {
     private static final long serialVersionUID = -7316143646812880569L;

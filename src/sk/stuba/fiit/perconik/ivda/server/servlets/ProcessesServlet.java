@@ -23,6 +23,8 @@ import java.util.List;
 
 /**
  * Created by Seky on 22. 10. 2014.
+ * <p/>
+ * Servlet pre vypisanie procesov pre daneho pouzivatel v danom case.
  */
 public class ProcessesServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(ProcessesServlet.class.getName());

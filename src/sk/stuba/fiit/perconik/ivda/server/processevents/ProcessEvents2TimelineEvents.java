@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by Seky on 22. 7. 2014.
  * <p/>
- * Trieda, ktora stiahne vsetky Eventy a je na rozsireni tejto triedy ako sa spracuju dane eventy do datatable.
+ * Metoda spracovania udalosti, ktora je rozsirena o moznost ukladat zaujimave udalosti.
  */
 public abstract class ProcessEvents2TimelineEvents extends ProcessEvents {
     private Map<String, List<TimelineEvent>> list;

@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Created by Seky on 21. 10. 2014.
+ * Metoda spracovania udalosti.
  */
 public abstract class ProcessEvents {
     protected final Logger LOGGER;

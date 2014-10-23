@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.server.experimental;
 
 import junit.framework.TestCase;
 import sk.stuba.fiit.perconik.ivda.server.experimental.TryBuildHistory;

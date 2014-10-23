@@ -12,6 +12,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * Created by Seky on 7. 8. 2014.
+ * Metoda spracovania udalosti, ktora rozsiruje svoju funkcionalitu spracovania udalosti
+ * tak, ze sa zameriava iba na procesy spustene a ukoncene u pouzivatela.
  */
 @NotThreadSafe
 public abstract class ProcessProcesses extends ProcessEvents {

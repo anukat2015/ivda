@@ -12,7 +12,8 @@ import java.util.Set;
 /**
  * Created by Seky on 21. 8. 2014.
  * <p/>
- * Pomocna trieda len pre vyvoj! Na hladanie pouzitych procesov a vypisanie ich nazvu.
+ * Metoda spracovania procesov, ktora vypise zoznam vsetkych procesov, ktore sa nenachadzaju ani v ejdnom white lsiste.
+ * Metoda je urcena ako pomocka pri analyze dat.
  */
 @NotThreadSafe
 public final class PrintProcesses extends ProcessProcesses implements Serializable {

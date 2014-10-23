@@ -10,6 +10,11 @@ import sk.stuba.fiit.perconik.ivda.util.GZIP;
 
 public class PrintConreteProcessTest extends TestCase {
 
+    /**
+     * Metoda na spustenie a overenie funkcionality pre hladanie konkretne procesu podla nazvu.
+     *
+     * @throws Exception
+     */
     public void testHandleAll() throws Exception {
         Configuration.getInstance();
         ImmutableList<EventDto> response = (ImmutableList<EventDto>) GZIP.deserialize(ActivityServiceTest.FILE_EVENTS_ROK);

@@ -24,15 +24,15 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(PairingProcesses.class.getName());
     private static final long serialVersionUID = 4766155571852827559L;
 
-    private final Map<String, PerUserInfo> userMapping;
+    private final Map<String, PerUserProcesses> userMapping;
 
     public PairingProcesses() {
         userMapping = new HashMap<>(16);
     }
 
     public void printInfo() {
-        Set<Map.Entry<String, PerUserInfo>> set = userMapping.entrySet();
-        for (Map.Entry<String, PerUserInfo> entry : set) {
+        Set<Map.Entry<String, PerUserProcesses>> set = userMapping.entrySet();
+        for (Map.Entry<String, PerUserProcesses> entry : set) {
             LOGGER.info("Flushing finished processes for " + entry.getKey());
             entry.getValue().printFinished();
             LOGGER.info("Flushing unfinished processes for " + entry.getKey());
@@ -41,17 +41,17 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
     }
 
     public ImmutableList<Process> getFinishedProcesses(String user) {
-        PerUserInfo info = userMapping.get(user);
+        PerUserProcesses info = userMapping.get(user);
         if (info == null) {
             return ImmutableList.of();
         }
         return ImmutableList.copyOf(info.getFinished());
     }
 
-    protected PerUserInfo getInfo(String user) {
-        PerUserInfo info = userMapping.get(user);
+    protected PerUserProcesses getInfo(String user) {
+        PerUserProcesses info = userMapping.get(user);
         if (info == null) {
-            info = new PerUserInfo();
+            info = new PerUserProcesses();
             userMapping.put(user, info);
         }
         return info;
@@ -70,7 +70,7 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
 
     @Override
     protected void handleKilled(ProcessesChangedSinceCheckEventDto event, ProcessDto killed) {
-        PerUserInfo info = getInfo(event.getUser());
+        PerUserProcesses info = getInfo(event.getUser());
         Process saved = info.getUnfinished().get(killed.getPid());
         if (saved != null) {
             info.getUnfinished().remove(killed.getPid());
@@ -84,7 +84,7 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
      *
      * @param process
      */
-    protected void found(PerUserInfo info, Process toSave) {
+    protected void found(PerUserProcesses info, Process toSave) {
         info.getFinished().add(toSave);
     }
 

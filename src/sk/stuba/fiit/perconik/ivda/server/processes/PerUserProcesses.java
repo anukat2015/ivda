@@ -7,15 +7,17 @@ import java.util.*;
 
 /**
  * Created by Seky on 22. 10. 2014.
+ * <p/>
+ * Zoskupene procesy pre jedneho pouzivatela.
  */
-public class PerUserInfo implements Serializable {
-    private static final Logger LOGGER = Logger.getLogger(PerUserInfo.class.getName());
+public class PerUserProcesses implements Serializable {
+    private static final Logger LOGGER = Logger.getLogger(PerUserProcesses.class.getName());
     private static final long serialVersionUID = -2656574415238396199L;
 
     private final List<Process> finished;
     private final Map<Integer, Process> unfinished;
 
-    public PerUserInfo() {
+    public PerUserProcesses() {
         finished = new ArrayList<>(256);
         unfinished = new HashMap<>(256);
     }

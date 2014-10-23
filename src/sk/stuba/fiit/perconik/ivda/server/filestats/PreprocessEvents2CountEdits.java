@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server.processevents;
+package sk.stuba.fiit.perconik.ivda.server.filestats;
 
 import com.google.common.base.Strings;
 import com.gratex.perconik.services.ast.rcs.ChangesetDto;
@@ -10,11 +10,14 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
 
 import java.util.Date;
 
 /**
  * Created by Seky on 21. 10. 2014.
+ * Metoda spracovania udalosti, ktora z ualosti vytiahne operacie nad suborom.
+ * Tieto operacie scita a vytvori statistiky.
  */
 public final class PreprocessEvents2CountEdits extends ProcessEvents {
 
@@ -53,7 +56,7 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
     private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, String path, int changedLines) {
         String author = event.getUser();
         Date date = event.getTimestamp();
-        LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines + "\t" + event);
+        LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines);
     }
 
     private void lookAtFileVersions(IdeCodeEventDto event, IdeDocumentDto dokument, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {

@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Seky on 7. 8. 2014.
  * <p/>
- * Stiahni file verziu suboru ktory pride v evente..
+ * Metoda spracovania udalosti, ktora posiela vyslene informacie o timeline.
  */
 @NotThreadSafe
 public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents {
