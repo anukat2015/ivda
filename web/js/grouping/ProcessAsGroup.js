@@ -13,25 +13,33 @@ function ProcessAsGroup() {
         }
 
         if(this.group == null) {
-            this.group = this.createGroup();
+            this.group = this.createGroup(item);
             this.group.add2Group(item);
             return;
         }
 
         if(this.dividing.canDivide(this.group, item)) {
             this.foundEndOfGroup(this.group);
-            this.group = this.createGroup();
+            this.group = this.createGroup(item);
         }
         this.group.add2Group(item);
     };
 
-    this.createGroup = function() {
-        return new BoundedGroup();
+    this.createGroup = function(item) {
+        var group =  new BoundedGroup();
+        group.init(item);
+        return group;
     };
 
     this.foundEndOfGroup = function(group) {
-        var first = group.getFirstEvent();
-        var last = group.gettLastEvent();
         this.groups.push(group);
     }
+
+    this.finish = function() {
+        if (this.group == null || this.group.isEmpty()) {
+            return; // ked ziadny prvok nebol v odpovedi
+        }
+
+        this.foundEndOfGroup(this.group);
+    };
 }

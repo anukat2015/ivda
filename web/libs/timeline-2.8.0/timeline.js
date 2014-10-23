@@ -133,8 +133,12 @@ function filterItemsByInterval(items, start, end, supplier) {
     }
 };
 
-function diffItemsTime(actual, last) {
-    return actual.start.getTime() - actual.start.getTime();
+function diffItemsTime(history, future) {
+    if (future == undefined || history == undefined) {
+        throw new Error("undefined");
+        return 0;
+    }
+    return future.start.getTime() - history.start.getTime();
 };
 
 /**
@@ -674,6 +678,25 @@ links.Timeline.prototype.getSelected = function (column) {
 
 links.Timeline.prototype.getVisibleChartItems = function (supplier) {
     return filterItemsByInterval(this.items, new Date(this.start.valueOf()), new Date(this.end.valueOf()), supplier);
+};
+
+links.Timeline.prototype.getSortedVisibleChartItems = function () {
+    var data = new Array();
+    filterItemsByInterval(this.items, new Date(this.start.valueOf()), new Date(this.end.valueOf()), function (index, item) {
+        data.push(item);
+        return true;
+    });
+
+    function compare(a, b) {
+        if (a.start < b.start)
+            return -1;
+        if (a.start > b.start)
+            return 1;
+        return 0;
+    }
+
+    data.sort(compare);
+    return data;
 };
 
 /**

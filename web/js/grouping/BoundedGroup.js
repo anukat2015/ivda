@@ -8,21 +8,21 @@ function BoundedGroup() {
     this.inGroup;
 
     this.init = function (actual) {  // alias createNewGroup
-        inGroup = 0;
-        firstEvent = actual;
+        this.inGroup = 0;
+        this.firstEvent = actual;
     };
 
     this.add2Group = function (event) {
-        lastEvent = event;
-        inGroup++;
+        this.lastEvent = event;
+        this.inGroup++;
     };
 
     this.getLastEvent = function () {
-        return lastEvent;
+        return this.lastEvent;
     }
 
     this.getFirstEvent = function () {
-        return firstEvent;
+        return this.firstEvent;
     }
 
     this.isEmpty = function () {
@@ -30,10 +30,10 @@ function BoundedGroup() {
     }
 
     this.size = function () {
-        return inGroup;
+        return this.inGroup;
     }
 
     this.getTimeInterval = function() {
-        return diffItemsTime(this.getFirstEvent(), this.lastEvent());
+        return diffItemsTime(this.getFirstEvent(), this.getLastEvent());
     };
 }

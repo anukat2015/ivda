@@ -14,7 +14,7 @@ function DivideByTimeAndType() {
     };
 
     this.divideByTime = function (group, actual) {
-        return diffItemsTime(actual, group.getLastEvent()) > this.ONLINE_MIN_INTERVAL;
+        return diffItemsTime(group.getLastEvent(), actual) > this.ONLINE_MIN_INTERVAL;
     };
 
     this.divideByType = function (group, actual) {
