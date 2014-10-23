@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import java.util.Set;
 
@@ -15,6 +16,7 @@ public class CatalogTest extends TestCase {
     private static final Logger LOGGER = Logger.getLogger(CatalogTest.class.getName());
 
     public void testStaticInit() throws Exception {
+        Configuration.getInstance();
         Catalog.staticInit();
 
         for (Catalog.Processes cat : Catalog.Processes.values()) {
@@ -26,10 +28,11 @@ public class CatalogTest extends TestCase {
     }
 
     public void testCheckFiles() throws Exception {
+        Configuration.getInstance();
         checkFiles();
     }
 
-    public void checkLists(Catalog.Processes a, Catalog.Processes b) {
+    public static void checkLists(Catalog.Processes a, Catalog.Processes b) {
         Set<String> same = a.getList().getSameValues(b.getList());
         if (same.isEmpty()) {
             return;
@@ -40,7 +43,7 @@ public class CatalogTest extends TestCase {
         }
     }
 
-    public void checkFiles() {
+    public static void checkFiles() {
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.COMMUNICATION);
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.NODEVELOPER);
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.TYPICAL);

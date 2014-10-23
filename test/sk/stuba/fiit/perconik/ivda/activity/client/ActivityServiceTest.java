@@ -23,6 +23,7 @@ public class ActivityServiceTest extends TestCase {
      * @throws Exception
      */
     public void testGetEvent() throws Exception {
+        Configuration.getInstance();
         EventDto dto = ActivityService.getInstance().getEvent("68119af1-ebc3-4dc6-bab5-b6a7b1f03aad");
         Assert.assertNotNull(dto);
     }

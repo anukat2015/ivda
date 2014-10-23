@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 import junit.framework.TestCase;
 import org.junit.Assert;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 /**
  * Otestovanie vypoctu metrik nad kodom.
@@ -9,6 +10,7 @@ import org.junit.Assert;
 public class EventsUtilTest extends TestCase {
 
     public void testCodeWritten() throws Exception {
+        Configuration.getInstance();
         int lines;
         lines = EventsUtil.codeWritten("  ass\ndas");
         Assert.assertTrue(lines == 2);

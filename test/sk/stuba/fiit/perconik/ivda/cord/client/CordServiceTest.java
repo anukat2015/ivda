@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.cord.dto.*;
 import sk.stuba.fiit.perconik.ivda.cord.entities.CommitSearchFilter;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ public class CordServiceTest extends TestCase {
 
 
     public void testGetRepositories() throws Exception {
+        Configuration.getInstance();
         LOGGER.info(CordService.getInstance().getRepositories());
     }
 
     public void testBranches() throws Exception {
+        Configuration.getInstance();
         List<Repository> repositories = CordService.getInstance().getRepositories();
         for (Repository rep : repositories) {
             List<Branch> branches = CordService.getInstance().getBranches(rep.getName());
@@ -31,11 +34,13 @@ public class CordServiceTest extends TestCase {
     }
 
     public void testCommit() throws Exception {
+        Configuration.getInstance();
         List<Commit> commits = CordService.getInstance().getCommits(REPOSITORE, BRANCH, null, new CommitSearchFilter());
         LOGGER.info(commits);
     }
 
     public void testCommits() throws Exception {
+        Configuration.getInstance();
         List<Repository> repositories = CordService.getInstance().getRepositories();
         for (Repository rep : repositories) {
             List<Branch> branches = CordService.getInstance().getBranches(rep.getName());
@@ -48,6 +53,7 @@ public class CordServiceTest extends TestCase {
     }
 
     public void testFile() throws Exception {
+        Configuration.getInstance();
         File file = CordService.getInstance().getFile(FD);
         LOGGER.info(file);
         List<String> content = CordService.getInstance().getFileBlob(FD);
