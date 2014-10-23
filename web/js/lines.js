@@ -38,6 +38,14 @@ function GraphLines() {
         });
     };
 
-    this.createLine2('changedLines', 'Changed lines');
-    this.createLine2('changedInFuture', 'Changed in future');
+    this.hasData = function () {
+        var keys = Object.keys(this.lines);
+        for (var i = 0; i < keys.length; i++) {
+            var data = this.lines[keys[i]].data;
+            if (data.length > 0) {
+                return true;
+            }
+        }
+        return false;
+    };
 }

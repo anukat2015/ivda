@@ -70,7 +70,7 @@ function Globals() {
         var parameters = $.param({
             start: this.serverDateFormatter.format(start),
             end: this.serverDateFormatter.format(end),
-            developers: this.getDevelopers()
+            developers: this.getDevelopers().join()
         });
         return restURL + parameters;
     };

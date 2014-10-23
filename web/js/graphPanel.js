@@ -30,11 +30,8 @@ GraphPanel = function () {
     this.asynTask = undefined;
 
     // Zatial schovaj
-    var instance = this;
-    Object.keys(this.components).forEach(function (key) {
-        instance.components[key].hide();
-    });
     console.log("graph created");
+    this.hide();
 };
 
 GraphPanel.prototype.redraw = function () {
@@ -49,14 +46,38 @@ GraphPanel.prototype.redraw = function () {
     }, 500);
 };
 
-GraphPanel.prototype.draw = function () {
-    console.log("graph draw");
+GraphPanel.prototype.show = function () {
     var instance = this;
     Object.keys(this.components).forEach(function (key) {
         instance.components[key].show();
-    });
-    this.savedLines = this.computeData();
-    this.loadProcesses();
+    })
+};
+
+GraphPanel.prototype.hide = function () {
+    var instance = this;
+    Object.keys(this.components).forEach(function (key) {
+        instance.components[key].hide();
+    })
+};
+
+GraphPanel.prototype.draw = function () {
+    var lines = this.computeData();
+    if (!lines.hasData()) {
+        this.hide();
+        return;
+    } else {
+        this.show();
+    }
+
+    var developers = gGlobals.getDevelopers();
+    if (developers.length == 0) {
+        // Zobraz hned
+        this.drawPanel(lines);
+    } else {
+        // Inak donacitaj este zoznam procesov
+        this.savedLines = lines;
+        this.loadProcesses();
+    }
 };
 
 GraphPanel.prototype.drawPanel = function (lines) {
@@ -72,6 +93,7 @@ GraphPanel.prototype.drawPanel = function (lines) {
     data = new Array();
     Object.keys(lines.lines).forEach(function (key) {
         if (key === "changedLines" || key === "changedInFuture") {
+            // ignore
         } else {
             data.push(lines.lines[key]);
         }
@@ -93,6 +115,8 @@ GraphPanel.prototype.drawPanel = function (lines) {
 
 GraphPanel.prototype.computeData = function () {
     var lines = new GraphLines();
+    lines.createLine2('changedLines', 'Changed lines');
+    lines.createLine2('changedInFuture', 'Changed in future');
     var grouping = new ProcessAsGroup();
 
     // Prechadzaj vsetky prvky, vypocitaj skupinu a popri tom dalsie vlasnosti
@@ -126,13 +150,12 @@ GraphPanel.prototype.loadProcesses = function () {
     var instance = this;
     var range = gGlobals.timeline.getVisibleChartRange();
     var url = gGlobals.getProcessesServiceURL(new Date(range.start), new Date(range.end));
-    // console.log(url);
 
     $.ajax({
         url: url
     }).then(function (processes) {
-        //console.log(processes);
-        //instance.graphAddProcesses(instance.savedLines, processes);
+        console.log(processes);
+        instance.graphAddProcesses(instance.savedLines, processes);
         instance.drawPanel(instance.savedLines);
     }, function (xhr, status, error) {
         alert(error);
