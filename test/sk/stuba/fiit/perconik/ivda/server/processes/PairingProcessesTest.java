@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import junit.framework.TestCase;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityServiceTest;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
@@ -23,9 +24,10 @@ public class PairingProcessesTest extends TestCase {
 
         PairingProcesses p = new PairingProcesses();
         p.downloaded(response);
-        p.printInfo();
+        //p.printInfo();
+        p.clearAllUnfinished();
 
-        ImmutableList<Process> processes = p.getFinishedProcesses("steltecia\\krastocny");
-        GZIP.serialize(processes, processesFile);
+        ImmutableMap<String, PerUserProcesses> map = p.getUserMapping();
+        GZIP.serialize(map, processesFile);
     }
 }

@@ -69,7 +69,8 @@ function Globals() {
         var restURL = "processes?";
         var parameters = $.param({
             start: this.serverDateFormatter.format(start),
-            end: this.serverDateFormatter.format(end)
+            end: this.serverDateFormatter.format(end),
+            developers: this.getDevelopers()
         });
         return restURL + parameters;
     };

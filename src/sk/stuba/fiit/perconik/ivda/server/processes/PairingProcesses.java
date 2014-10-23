@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
@@ -17,7 +18,7 @@ import java.util.Set;
  * Trieda sa pozera na vytvorene a ukoncene procesy.
  * Pomocou PID procesu hlada zaciatok a ukoncenie procesu.
  * Nasledne danemu procesu priradi aproximovane casi zaciatku a ukoncenia.
- * Mnohe procesy nas nezaujimaju na to sluzi black lis procesov
+ * Mnohe procesy nas nezaujimaju na to sluzi black list procesov
  */
 @NotThreadSafe
 public class PairingProcesses extends ProcessProcesses implements Serializable {
@@ -33,10 +34,12 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
     public void printInfo() {
         Set<Map.Entry<String, PerUserProcesses>> set = userMapping.entrySet();
         for (Map.Entry<String, PerUserProcesses> entry : set) {
-            LOGGER.info("Flushing finished processes for " + entry.getKey());
-            entry.getValue().printFinished();
-            LOGGER.info("Flushing unfinished processes for " + entry.getKey());
-            entry.getValue().printUnfinished();
+            String name = entry.getKey();
+            PerUserProcesses info = entry.getValue();
+            LOGGER.info("Flushing finished processes for " + name);
+            info.printFinished();
+            LOGGER.info("Flushing unfinished processes for " + name);
+            info.printUnfinished();
         }
     }
 
@@ -79,6 +82,17 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
         }
     }
 
+    public ImmutableMap<String, PerUserProcesses> getUserMapping() {
+        return ImmutableMap.copyOf(userMapping);
+    }
+
+    public void clearAllUnfinished() {
+        Set<Map.Entry<String, PerUserProcesses>> set = userMapping.entrySet();
+        for (Map.Entry<String, PerUserProcesses> entry : set) {
+            entry.getValue().getUnfinished().clear();
+        }
+    }
+
     /**
      * Nasiel sa zaciatok a koniec procesu.
      *
@@ -90,6 +104,6 @@ public class PairingProcesses extends ProcessProcesses implements Serializable {
 
     @Override
     protected void restartProccesses(String user) {
-        getInfo(user).clear();
+        getInfo(user).getUnfinished().clear();
     }
 }

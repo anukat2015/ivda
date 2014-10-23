@@ -43,8 +43,4 @@ public class PerUserProcesses implements Serializable {
     public Map<Integer, Process> getUnfinished() {
         return unfinished;
     }
-
-    public void clear() {
-        unfinished.clear();
-    }
 }
