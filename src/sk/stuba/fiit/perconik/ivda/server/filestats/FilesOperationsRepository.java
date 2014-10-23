@@ -12,6 +12,8 @@ import java.util.*;
  */
 @NotThreadSafe
 public class FilesOperationsRepository implements Serializable {
+    private static final long serialVersionUID = -8340258263883768813L;
+
     private final Map<String, PerUserRecords> map;
 
     public FilesOperationsRepository() {

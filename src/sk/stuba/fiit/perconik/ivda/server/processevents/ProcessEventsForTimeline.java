@@ -13,8 +13,12 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.GZIP;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +29,18 @@ import java.util.Map;
  */
 @NotThreadSafe
 public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents {
+    private static final FilesOperationsRepository OP_REPOSITORY;
     private final Catalog developerLinks;
+
+    static {
+        Configuration.getInstance();
+        File processesFile = new File("C:\\fileOperations.gzip");
+        try {
+            OP_REPOSITORY = (FilesOperationsRepository) GZIP.deserialize(processesFile);
+        } catch (Exception e) {
+            throw new RuntimeException(processesFile + " file is missing.");
+        }
+    }
 
     public ProcessEventsForTimeline() {
         developerLinks = Catalog.Processes.BANNED.getList();
@@ -60,33 +75,17 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
 
     private void ideEvent(IdeCodeEventDto event) {
         IdeDocumentDto dokument = event.getDocument();
-        if (event.getStartColumnIndex() != null) {
-            LOGGER.warn("ZAUJIMAVE getStartColumnIndex nieje null");
-        }
-        if (event.getEndColumnIndex() != null) {
-            LOGGER.warn("ZAUJIMAVE getEndColumnIndex nieje null");
-        }
-        if (dokument.getBranch() != null) {
-            LOGGER.warn("ZAUJIMAVE getBranch nieje null");
-        }
-
         sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
-            LOGGER.info("Lokalny subor");
             return;
         }
-
         String changesetIdInRcs = dokument.getChangesetIdInRcs();
         if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
-            LOGGER.info("changesetIdInRcs empty");
             return;
         }
 
         try {
-            LOGGER.info("Skopiroval:\\n" + event.getText());
-            String path = dokument.getServerPath();
-            String commit = null;
-            String repo = null;
+            //LOGGER.info("Skopiroval:\\n" + event.getText());
             RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
@@ -105,19 +104,19 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
     private void saveEvent(IdeCodeEventDto event, FileVersionDto fileVersion) {
         // Uloz udaje tak aby ich klient mohol spracovat
         Integer changedLines = EventsUtil.codeWritten(event.getText());
-        Integer changedInFuture = 0;
         if (changedLines > 0) {
             Integer ancestor = fileVersion.getAncestor1Id().getValue();
+            Integer changedInFuture = OP_REPOSITORY.countOperationsAfter(event.getDocument().getServerPath(), event.getTimestamp());
 
             // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
-            Map<String, Object> map = new HashMap<>();
-            map.put("uid", event.getEventId());
-            map.put("path", fileVersion.getUrl().getValue());
-            map.put("repo", fileVersion.getId().toString());
-            map.put("commit", ancestor == null ? 0 : ancestor.toString());
-            map.put("changedLines", changedLines.toString());
-            map.put("changedInFuture", changedInFuture);
-            add(event, map);
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("uid", event.getEventId());
+            metadata.put("path", fileVersion.getUrl().getValue());
+            metadata.put("repo", fileVersion.getId().toString());
+            metadata.put("commit", ancestor == null ? 0 : ancestor.toString());
+            metadata.put("changedLines", changedLines.toString());
+            metadata.put("changedInFuture", changedInFuture);
+            add(event, metadata);
         } else {
             LOGGER.warn("Prazdne riadky!");
         }

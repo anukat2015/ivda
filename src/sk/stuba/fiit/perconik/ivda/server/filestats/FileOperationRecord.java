@@ -9,6 +9,8 @@ import java.util.Date;
  * Trieda, ktora reprezentuje zaznam  o operacii nad suborom.
  */
 public class FileOperationRecord implements Serializable, Comparator<FileOperationRecord> {
+    private static final long serialVersionUID = 3017840679078607108L;
+
     private final Date operated;
     private final int changeLines;  // Pocet zmenenych riadkov nad suborom
 

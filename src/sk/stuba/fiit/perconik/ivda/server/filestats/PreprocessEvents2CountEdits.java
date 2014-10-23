@@ -42,10 +42,6 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             return;
         }
-        String path = dokument.getServerPath();
-        if (Strings.isNullOrEmpty(path)) {
-            return;
-        }
         String changesetIdInRcs = dokument.getChangesetIdInRcs();  // 3494
         if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
             return;
@@ -55,14 +51,15 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
             return;
         }
 
-        fileWasChanged(event, changesetIdInRcs, path, changedLines);
+        fileWasChanged(event, changesetIdInRcs, changedLines);
         //lookAtFileVersions(event, dokument, rcsServer);
         //Repository repo = CordService.getInstance().getNearestRepository(rcsServer.getUrl());      // miraven project neexistje, astrcs tak musi ostat
     }
 
-    private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, String path, int changedLines) {
+    private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, int changedLines) {
         String author = event.getUser();
         Date date = event.getTimestamp();
+        String path = event.getDocument().getServerPath();
         //LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines);
         opRepository.add(author, path, new FileOperationRecord(date, changedLines));
     }

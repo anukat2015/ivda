@@ -21,6 +21,7 @@ public final class ProcessAllWrittenCodes extends ProcessEvents2TimelineEvents {
         if (!(event instanceof IdeCodeEventDto)) {
             throw new IllegalArgumentException("Prisiel zly event.");
         }
+
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
 
         int size = EventsUtil.codeWritten(cevent.getText());
