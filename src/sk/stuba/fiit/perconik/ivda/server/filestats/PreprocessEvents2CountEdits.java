@@ -12,6 +12,7 @@ import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Date;
 
 /**
@@ -19,7 +20,13 @@ import java.util.Date;
  * Metoda spracovania udalosti, ktora z ualosti vytiahne operacie nad suborom.
  * Tieto operacie scita a vytvori statistiky.
  */
+@NotThreadSafe
 public final class PreprocessEvents2CountEdits extends ProcessEvents {
+    private final FilesOperationsRepository opRepository;
+
+    public PreprocessEvents2CountEdits() {
+        opRepository = new FilesOperationsRepository();
+    }
 
     @Override
     protected void proccessItem(EventDto event) {
@@ -56,7 +63,8 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
     private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, String path, int changedLines) {
         String author = event.getUser();
         Date date = event.getTimestamp();
-        LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines);
+        //LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines);
+        opRepository.add(author, path, new FileOperationRecord(date, changedLines));
     }
 
     private void lookAtFileVersions(IdeCodeEventDto event, IdeDocumentDto dokument, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {
@@ -76,5 +84,9 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
         } catch (AstRcsWcfService.NotFoundException e) {
             LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
         }
+    }
+
+    public FilesOperationsRepository getOpRepository() {
+        return opRepository;
     }
 }
