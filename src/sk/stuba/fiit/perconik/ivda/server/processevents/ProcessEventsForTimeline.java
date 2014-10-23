@@ -15,6 +15,8 @@ import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Seky on 7. 8. 2014.
@@ -22,10 +24,10 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Stiahni file verziu suboru ktory pride v evente..
  */
 @NotThreadSafe
-public final class ProcessFileVersions extends ProcessEvents2TimelineEvents {
+public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents {
     private final Catalog developerLinks;
 
-    public ProcessFileVersions() {
+    public ProcessEventsForTimeline() {
         developerLinks = Catalog.Processes.BANNED.getList();
     }
 
@@ -89,25 +91,35 @@ public final class ProcessFileVersions extends ProcessEvents2TimelineEvents {
             RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
             ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
             FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-
             //File file = CordService.getInstance().getFile(repo, commit, path);
-            int changedLines = EventsUtil.codeWritten(event.getText());
-            if (changedLines > 0) {
-                Integer ancestor = fileVersion.getAncestor1Id().getValue();
-                add(event, ImmutableMap.of(
-                        "uid", event.getEventId(),
-                        "path", fileVersion.getUrl().getValue(),
-                        "repo", fileVersion.getId(),
-                        "commit", ancestor == null ? 0 : ancestor,
-                        "changedLines", changedLines
-                ));
-            } else {
-                LOGGER.warn("Prazdne riadky!");
-            }
+
+            // Uloz udaje tak aby ich klient mohol spracovat
+            saveEvent(event, fileVersion);
         } catch (AstRcsWcfService.NotFoundException e) {
             LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
         } catch (Exception e) {
             LOGGER.error("proccessItem", e);
+        }
+    }
+
+    private void saveEvent(IdeCodeEventDto event, FileVersionDto fileVersion) {
+        // Uloz udaje tak aby ich klient mohol spracovat
+        Integer changedLines = EventsUtil.codeWritten(event.getText());
+        Integer changedInFuture = 0;
+        if (changedLines > 0) {
+            Integer ancestor = fileVersion.getAncestor1Id().getValue();
+
+            // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
+            Map<String, Object> map = new HashMap<>();
+            map.put("uid", event.getEventId());
+            map.put("path", fileVersion.getUrl().getValue());
+            map.put("repo", fileVersion.getId().toString());
+            map.put("commit", ancestor == null ? 0 : ancestor.toString());
+            map.put("changedLines", changedLines.toString());
+            map.put("changedInFuture", changedInFuture);
+            add(event, map);
+        } else {
+            LOGGER.warn("Prazdne riadky!");
         }
     }
 }

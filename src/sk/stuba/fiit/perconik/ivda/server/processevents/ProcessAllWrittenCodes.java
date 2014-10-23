@@ -1,9 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -13,9 +13,8 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Vypis event, kde pouzivatel upravoval kod.
  */
 @NotThreadSafe
-public final class ProcessCodeWritten extends ProcessEvents2TimelineEvents {
-    protected static final Logger LOGGER = Logger.getLogger(ProcessCodeWritten.class.getName());
-
+public final class ProcessAllWrittenCodes extends ProcessEvents2TimelineEvents {
+    protected static final Logger LOGGER = Logger.getLogger(ProcessAllWrittenCodes.class.getName());
 
     @Override
     protected void proccessItem(EventDto event) {
@@ -23,10 +22,10 @@ public final class ProcessCodeWritten extends ProcessEvents2TimelineEvents {
             throw new IllegalArgumentException("Prisiel zly event.");
         }
         IdeCodeEventDto cevent = (IdeCodeEventDto) event;
-        //LOGGER.info(cevent);
+
         int size = EventsUtil.codeWritten(cevent.getText());
         if (size > 0) {
-            // Ignorujeme ziadne zmeny v kode
+            // Pridam elen ke nastala zmena
             add(event, Integer.valueOf(size));
         }
     }

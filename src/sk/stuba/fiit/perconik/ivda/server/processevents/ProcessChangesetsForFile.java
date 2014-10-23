@@ -20,7 +20,7 @@ import java.util.List;
  * Vypis file verziu specifickeho suboru.
  */
 @NotThreadSafe
-public final class ProcessChangesets extends ProcessEvents2TimelineEvents {
+public final class ProcessChangesetsForFile extends ProcessEvents2TimelineEvents {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
 
     /**

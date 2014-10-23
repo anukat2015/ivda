@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessFileVersions;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsForTimeline;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 
@@ -37,7 +37,7 @@ public class TimelineServlet extends HttpServlet {
             EventsRequest activityRequest = new EventsRequest();
             activityRequest.setTime(request.getStart(), request.getEnd());
 
-            ProcessEvents2TimelineEvents process = new ProcessFileVersions();
+            ProcessEvents2TimelineEvents process = new ProcessEventsForTimeline();
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));
 
             ServletOutputStream stream = resp.getOutputStream();

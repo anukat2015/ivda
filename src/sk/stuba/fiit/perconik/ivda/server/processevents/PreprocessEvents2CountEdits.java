@@ -16,7 +16,7 @@ import java.util.Date;
 /**
  * Created by Seky on 21. 10. 2014.
  */
-public final class PreprocessEvents extends ProcessEvents {
+public final class PreprocessEvents2CountEdits extends ProcessEvents {
 
     @Override
     protected void proccessItem(EventDto event) {
