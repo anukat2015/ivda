@@ -43,12 +43,6 @@ public class FilesOperationsRepository implements Serializable {
      * @return
      */
     public int countOperationsAfter(String file, Date date) {
-        /*
-             PerUserRecords user = map.get(userName);  // time complexy ~O(1)
-            if (user == null) {
-                return count;
-            }
-         */
         int count = 0;
         Set<Map.Entry<String, PerUserRecords>> set = map.entrySet();
         for (Map.Entry<String, PerUserRecords> entry : set) {      // time complexy O(n)
