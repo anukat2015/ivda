@@ -53,7 +53,7 @@ links.Timeline.ItemCircle.prototype.computeSize = function () {
     var radius = 12;
     if (this.metadata != undefined) {
         if (this.metadata.changedLines != undefined) {
-            radius = Math.max(radius, this.metadata.changedLines) * 2;
+            radius = Math.max(radius, this.metadata.changedLines);
         }
         //if (this.metadata.changedInFuture != undefined) {
         //    radius = Math.max(radius, this.metadata.changedInFuture);
