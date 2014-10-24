@@ -60,7 +60,6 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         //if (changedLines > 0) {
         add(event, ImmutableMap.of(
                 "uid", event.getEventId(),
-                "ajax", event,
                 "link", link
         ));
         //}

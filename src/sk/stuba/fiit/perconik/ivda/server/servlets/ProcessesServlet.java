@@ -13,7 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +51,7 @@ public class ProcessesServlet extends HttpServlet {
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, list);
         } catch (Exception e) {
-            throw new WebApplicationException(e);
+            resp.sendError(500, e.getMessage());
         }
     }
 

@@ -35,12 +35,14 @@ function registerQTip() {
             content: {
                 text: function (event, api) {
                     var item = gGlobals.timeline.getSelected();
-                    if (item === undefined || item.metadata === undefined) {
-                        api.set('content.text', "Not selected entity.");
-                    } else {
-                        onItemMouseEnter(api, item);
+                    if (item === undefined) {
+                        return 'Not selected entity.';
+                    } else if (item.isCluster) {
+                        return "Toto je skupina udalosti.";
+                    } else if (item.metadata == undefined) {
+                        return 'Ziadne data.';
                     }
-                    return 'Loading...'; // Set some initial text
+                    return onItemMouseEnter(api, item);
                 }
             }
         });
@@ -48,13 +50,11 @@ function registerQTip() {
 }
 
 function onItemMouseEnter(api, item) {
-    if (item.isCluster) {
-        api.set('content.text', "Toto je skupina udalosti.");
-    } else if (item.metadata.link != undefined) {
+    if (item.metadata.link != undefined) {
         var html = '<a href="' + item.metadata.link + '">' + item.metadata.link + '</a>';
-        api.set('content.text', html);
+        return html;
     } else if (item.metadata.ajax != undefined) {
-        api.set('content.text', JSON.stringify(item.metadata.ajax));
+        return JSON.stringify(item.metadata.ajax);
     } else {
         $.ajax({
             url: gGlobals.getAjaxURL(item.metadata)
@@ -65,5 +65,6 @@ function onItemMouseEnter(api, item) {
             // Upon failure... set the tooltip content to error
             api.set('content.text', status + ': ' + error);
         });
+        return 'Loading...';
     }
 }

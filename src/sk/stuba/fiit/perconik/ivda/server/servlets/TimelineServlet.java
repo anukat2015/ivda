@@ -13,7 +13,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
@@ -45,7 +44,7 @@ public class TimelineServlet extends HttpServlet {
             MAPPER.writeValue(stream, process.getData());
             setCacheHeaders(request, resp);
         } catch (Exception e) {
-            throw new WebApplicationException(e);
+            resp.sendError(500, e.getMessage());
         }
     }
 
