@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by Seky on 5. 9. 2014.
  */
+@SuppressWarnings("unchecked")
 public abstract class RestClient {
     private static final Logger LOGGER = Logger.getLogger(RestClient.class.getName());
 
@@ -83,15 +84,15 @@ public abstract class RestClient {
         return client.synchronizedRequest(uri, type);
     }
 
-    public static interface IProcessPage<T extends Paged> {
+    public interface IProcessPage<T extends Paged> {
         /**
          * Spracuj odpoved vo vlastnej metode.
          *
          * @param response
          * @return true - pokracuj v stahovani dalej
          */
-        public void downloaded(T response);
+        void downloaded(T response);
 
-        public void finished();
+        void finished();
     }
 }

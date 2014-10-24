@@ -16,6 +16,7 @@ public class SearchResult<T extends Serializable> extends Paged {
 
     private List<T> items;
 
+    @Override
     public List<T> getItems() {
         return items;
     }
@@ -29,9 +30,10 @@ public class SearchResult<T extends Serializable> extends Paged {
         return new ToStringBuilder(this).append("resultSet", items).toString();
     }
 
+    @Override
     public boolean isHasNextPage() {
         for (Link link : getLinks()) {
-            if (link.getRel().equals("next")) {
+            if ("next".equals(link.getRel())) {
                 return true;
             }
         }

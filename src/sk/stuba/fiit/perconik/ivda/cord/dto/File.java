@@ -8,13 +8,11 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  */
 public class File implements Serializable {
+    private static final long serialVersionUID = 5614600428941874883L;
     private String url;
     private String lastCommit;
     private String versionUri;
     private File ancestor1;
-
-    public File() {
-    }
 
     public String getUrl() {
         return url;

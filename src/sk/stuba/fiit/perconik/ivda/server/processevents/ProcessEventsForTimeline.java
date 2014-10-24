@@ -6,6 +6,7 @@ import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
@@ -37,10 +38,6 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         }
     }
 
-    public ProcessEventsForTimeline() {
-        //developerLinks = Catalog.Processes.BANNED.getList();
-    }
-
     @Override
     protected void proccessItem(EventDto event) {
         if (event instanceof IdeCodeEventDto) {
@@ -63,14 +60,15 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         //if (changedLines > 0) {
         add(event, ImmutableMap.of(
                 "uid", event.getEventId(),
-                "ajax", event
+                "ajax", event,
+                "link", link
         ));
         //}
     }
 
     private void ideEvent(IdeCodeEventDto event) {
         IdeDocumentDto dokument = event.getDocument();
-        sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer = dokument.getRcsServer();
+        RcsServerDto rcsServer = dokument.getRcsServer();
         if (rcsServer == null) { // tzv ide o lokalny subor bez riadenia verzii
             return;
         }
@@ -105,7 +103,7 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
             Integer changedInFuture = OP_REPOSITORY.countOperationsAfter(event.getDocument().getServerPath(), event.getTimestamp());
 
             // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
-            Map<String, Object> metadata = new HashMap<>();
+            Map<String, Object> metadata = new HashMap<>(8);
             metadata.put("uid", event.getEventId());
             //metadata.put("path", fileVersion.getUrl().getValue());
             //metadata.put("repo", fileVersion.getId());
@@ -113,8 +111,6 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
             metadata.put("changedLines", changedLines);
             metadata.put("changedInFuture", changedInFuture);
             add(event, metadata);
-        } else {
-            // LOGGER.warn("Prazdne riadky!");
         }
     }
 }

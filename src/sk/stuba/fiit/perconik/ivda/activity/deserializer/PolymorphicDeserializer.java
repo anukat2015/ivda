@@ -58,6 +58,7 @@ public class PolymorphicDeserializer<T> extends CustomDeserializer<T> {
         }
 
         for (Class<? extends T> aClass : subTypes) {
+            @SuppressWarnings("ClassNewInstance")
             Object object = callMethod.invoke(aClass.newInstance());
             register(object.toString(), aClass);
         }

@@ -17,6 +17,7 @@ public final class TimelineEvent implements Serializable {
     private ClassName className;
     private String content;
     private Date end;
+    @SuppressWarnings("NonSerializableFieldInSerializableClass")
     private Object metadata;
 
     public TimelineEvent() {

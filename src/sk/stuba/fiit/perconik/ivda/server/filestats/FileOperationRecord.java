@@ -51,7 +51,7 @@ public class FileOperationRecord implements Serializable, Comparator<FileOperati
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("FileOperationStat{");
+        StringBuilder sb = new StringBuilder("FileOperationStat{");
         sb.append("changeLines=").append(changeLines);
         sb.append(", operated=").append(operated);
         sb.append('}');

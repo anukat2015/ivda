@@ -9,15 +9,13 @@ import java.util.Date;
  * Created by Seky on 5. 9. 2014.
  */
 public final class Commit implements Serializable {
+    private static final long serialVersionUID = 7295557274559874889L;
     private String hash;
     private String message;
     private Date commitDate;
     private String ancestor1;
     private String ancestor2;
     private Author author;
-
-    public Commit() {
-    }
 
     public String getHash() {
         return hash;

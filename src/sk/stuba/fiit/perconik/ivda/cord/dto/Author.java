@@ -8,11 +8,9 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  */
 public final class Author implements Serializable {
+    private static final long serialVersionUID = 818901952544791144L;
     private String email;
     private String name;
-
-    public Author() {
-    }
 
     public String getEmail() {
         return email;

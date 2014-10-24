@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Client cachuje odpovede do CACHE_FOLDER zlozky.
  * <p/>
  */
+@SuppressWarnings("unchecked")
 public class ActivityService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(ActivityService.class.getName());
     private static final TimeUnit IGNORE_CACHE_TIME = TimeUnit.HOURS;

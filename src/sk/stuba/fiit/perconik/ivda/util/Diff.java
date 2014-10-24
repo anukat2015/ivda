@@ -28,6 +28,7 @@ public final class Diff {
         return patch.getDeltas();
     }
 
+    @SuppressWarnings("UnnecessaryCodeBlock")
     public static DiffStats getStats(List<Delta> deltas) {
         DiffStats stat = new DiffStats();
         for (Delta delta : deltas) {

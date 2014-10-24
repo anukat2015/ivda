@@ -2,7 +2,6 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
@@ -22,7 +21,6 @@ import java.util.Set;
  */
 @NotThreadSafe
 public class PairingProcesses extends ProcessProcesses implements Serializable {
-    private static final Logger LOGGER = Logger.getLogger(PairingProcesses.class.getName());
     private static final long serialVersionUID = 4766155571852827559L;
 
     private final Map<String, PerUserProcesses> userMapping;

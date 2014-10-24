@@ -9,6 +9,7 @@ import java.util.List;
  * Created by Seky on 5. 9. 2014.
  */
 public abstract class Paged implements Serializable {
+    private static final long serialVersionUID = -7836543897281298275L;
     private Integer pageIndex;
     private Integer pageSize;
     private List<Link> links;

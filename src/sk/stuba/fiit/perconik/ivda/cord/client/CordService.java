@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
  * Sluzba Cord. Pozri popis CordUserManual.docx.
  * <p/>
  */
+@SuppressWarnings("unchecked")
 public final class CordService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(CordService.class.getName());
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("[\\/]");

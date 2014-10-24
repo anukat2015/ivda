@@ -10,6 +10,7 @@ import java.util.Date;
  * Created by Seky on 5. 9. 2014.
  */
 public class Repository implements Serializable {
+    private static final long serialVersionUID = 7987038385630834758L;
     private String name;
     private URL url;
 
@@ -17,9 +18,6 @@ public class Repository implements Serializable {
      * time of the last repository update call
      */
     private Date lastUpdateTime;
-
-    public Repository() {
-    }
 
     public String getName() {
         return name;

@@ -13,9 +13,9 @@ public enum ChangeType implements Serializable {
     RENAME("rename"),
     COPY("copy");
 
-    String value;
+    final String value;
 
-    private ChangeType(String x) {
+    ChangeType(String x) {
         value = x;
     }
 

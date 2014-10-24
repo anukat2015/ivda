@@ -17,7 +17,7 @@ public class FilesOperationsRepository implements Serializable {
     private final Map<String, PerUserRecords> map;
 
     public FilesOperationsRepository() {
-        map = new HashMap<>();
+        map = new HashMap<>(8);
     }
 
     private PerUserRecords putIfAbsent(String user) {
@@ -70,6 +70,7 @@ public class FilesOperationsRepository implements Serializable {
      * Zbierka zaznamov pre pouzivatela.
      */
     private static class PerUserRecords implements Serializable {
+        private static final long serialVersionUID = -3549360720283319575L;
         private final Map<String, List<FileOperationRecord>> map;  // file -> list of records
 
         private PerUserRecords() {

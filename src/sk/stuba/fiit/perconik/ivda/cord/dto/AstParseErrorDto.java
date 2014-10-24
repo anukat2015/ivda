@@ -9,15 +9,13 @@ import java.io.Serializable;
  * Contains informatio nabout AST parseerror
  */
 public final class AstParseErrorDto implements Serializable {
+    private static final long serialVersionUID = 985979756205158009L;
     private String message;
     private String level;
     private Integer startLine;
     private Integer endLine;
     private Integer startColumn;
     private Integer endColumn;
-
-    public AstParseErrorDto() {
-    }
 
     public String getMessage() {
         return message;

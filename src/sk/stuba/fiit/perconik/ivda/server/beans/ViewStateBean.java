@@ -34,9 +34,9 @@ public class ViewStateBean implements Serializable {
         CHANGED_FILES("ajax/changedFiles.xhtml"),
         DIFF_FILES("ajax/diffFiles.xhtml");
 
-        String viewName;
+        final String viewName;
 
-        private ViewState(String viewName) {
+        ViewState(String viewName) {
             this.viewName = viewName;
         }
 

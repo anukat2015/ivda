@@ -268,10 +268,10 @@ public final class AstRcsWcfService {
      * @param <A>
      * @return
      */
-    private <P extends PagedRequest, A> List<A> downloadAll(String message, P req, Function<P, List<A>> func) throws NotFoundException {
+    private static <P extends PagedRequest, A> List<A> downloadAll(String message, P req, Function<P, List<A>> func) throws NotFoundException {
+        req.setPageSize(200);
+        List<A> pole = new ArrayList<>(200);
         Integer index = 0;
-        req.setPageSize(1000);
-        List<A> pole = new ArrayList<>();
         while (true) {
             req.setPageIndex(index);
             List<A> add = func.apply(req);
@@ -467,8 +467,8 @@ public final class AstRcsWcfService {
         }
         Iterator<ChangesetDto> it = changesets.iterator();
         while (it.hasNext()) {
-            ChangesetDto ch = it.next();
-            if (ch.getId().equals(changeset.getId())) {
+            ChangesetDto change = it.next();
+            if (change.getId().equals(changeset.getId())) {
                 if (it.hasNext()) {
                     return it.next();
                 } else {
@@ -480,8 +480,7 @@ public final class AstRcsWcfService {
     }
 
     public FileVersionDto getFileVersionSuccessor(ChangesetDto succesorchangeset, FileVersionDto file) throws NotFoundException {
-        List<FileVersionDto> files;
-        files = getFileVersionsDto(succesorchangeset, null, file.getEntityId());
+        List<FileVersionDto> files = getFileVersionsDto(succesorchangeset, null, file.getEntityId());
         return returnOne(files);
         /*
          files = AstRcsWcfService.getInstance().getFileVersionsDto(ch, file.getUrl().getValue());

@@ -29,7 +29,7 @@ public final class ProcessesRequest {
             throw new Exception("Specifikuj aspon jedneho vyvojara.");
         }
 
-        ArrayList<String> users = new ArrayList<>();
+        ArrayList<String> users = new ArrayList<>(8);
         for (String user : parsedUsers) {
             String realName = Developers.getInstance().getRealName(user);
             if (realName != null) {
@@ -53,7 +53,7 @@ public final class ProcessesRequest {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ProcessesRequest{");
+        StringBuilder sb = new StringBuilder("ProcessesRequest{");
         sb.append("developers=").append(developers);
         sb.append(", end=").append(end);
         sb.append(", start=").append(start);

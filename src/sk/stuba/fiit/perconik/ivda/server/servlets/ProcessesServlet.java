@@ -28,17 +28,19 @@ import java.util.List;
 public class ProcessesServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(ProcessesServlet.class.getName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final ImmutableMap<String, PerUserProcesses> processes;
+    private static final ImmutableMap<String, PerUserProcesses> PROCESSES;
 
     static {
         Configuration.getInstance();
-        File processesFile = new File(Configuration.CONFIG_DIR, "processes.gzip");
+        File processesFile = new File(Configuration.CONFIG_DIR, "PROCESSES.gzip");
         try {
-            processes = (ImmutableMap<String, PerUserProcesses>) GZIP.deserialize(processesFile);
+            PROCESSES = (ImmutableMap<String, PerUserProcesses>) GZIP.deserialize(processesFile);
         } catch (Exception e) {
             throw new RuntimeException(processesFile + " file is missing.");
         }
     }
+
+    private static final long serialVersionUID = -6630885232172276063L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -55,9 +57,9 @@ public class ProcessesServlet extends HttpServlet {
     }
 
     private static ImmutableList<Process> findProcesses(ProcessesRequest req) {
-        List<Process> saved = new ArrayList<>();
+        List<Process> saved = new ArrayList<>(128);
         for (String developer : req.getDevelopers()) {
-            PerUserProcesses info = processes.get(developer);
+            PerUserProcesses info = PROCESSES.get(developer);
             if (info == null) {
                 continue;
             }
@@ -73,11 +75,11 @@ public class ProcessesServlet extends HttpServlet {
     }
 
     private static void fixOverLapingProccesses(List<Process> list) {
-        for (Process a : list) {
+        for (Process p1 : list) {
             Integer number = 1;
-            for (Process b : list) {
-                if (a != b && a.getName().equals(b.getName()) && a.isOverlaping(b)) {
-                    b.setName(b.getName() + number);
+            for (Process p2 : list) {
+                if (!p1.equals(p2) && p1.getName().equals(p2.getName()) && p1.isOverlaping(p2)) {
+                    p2.setName(p2.getName() + number);
                     number++;
                 }
             }

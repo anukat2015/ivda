@@ -8,11 +8,9 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  */
 public final class Branch implements Serializable {
+    private static final long serialVersionUID = 1217658377635142108L;
     private String name;
     private String head;
-
-    public Branch() {
-    }
 
     public String getName() {
         return name;

@@ -32,7 +32,7 @@ public abstract class GuavaCache<Key, Value extends Serializable> extends Cache<
                 .expireAfterWrite(1L, TimeUnit.HOURS)
                 .build(new CacheLoader<Key, Value>() {
                     @Override
-                    public Value load(@SuppressWarnings("unused") Key key) throws Exception {
+                    public Value load(@SuppressWarnings("unused") Key key) {
                         return valueNotFound(key);
                     }
                 });
@@ -49,6 +49,4 @@ public abstract class GuavaCache<Key, Value extends Serializable> extends Cache<
         return cache.getUnchecked(key);
     }
 
-    @Override
-    public abstract Value valueNotFound(Key key);
 }

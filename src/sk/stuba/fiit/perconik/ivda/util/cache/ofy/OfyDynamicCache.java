@@ -2,7 +2,6 @@ package sk.stuba.fiit.perconik.ivda.util.cache.ofy;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.VoidWork;
-import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.cache.Cache;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -14,11 +13,8 @@ import java.util.ArrayList;
  */
 @ThreadSafe
 public abstract class OfyDynamicCache<K, Value extends Serializable> extends Cache<K, Value> {
-    @Override
-    public boolean isCacheEnabled() {
-        return Configuration.getInstance().getCacheEnabled();
-    }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected final Value getDirect(final K uri) {
         final String uid = computeUniqueID(uri);

@@ -7,12 +7,10 @@ import java.net.URL;
  * Created by Seky on 5. 9. 2014.
  */
 public class Change implements Serializable {
+    private static final long serialVersionUID = -6173983344599674208L;
     private URL url;
     private ChangeType ancestor1ChangeType;
     private ChangeType ancestor2ChangeType;
-
-    public Change() {
-    }
 
     public URL getUrl() {
         return url;

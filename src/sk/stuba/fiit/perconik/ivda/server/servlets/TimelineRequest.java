@@ -28,7 +28,7 @@ public final class TimelineRequest {
         if (!DateUtils.isRounded(end, SIZE_OF_CHUNK)) {
             throw new Exception("End datum nie je zaokruhleny na velkost chunku.");
         }
-        if (!DateUtils.diff(start, end, TimeUnit.HOURS)) {
+        if (!DateUtils.isDiff(start, end, TimeUnit.HOURS)) {
             throw new Exception("Rozdiel datumov je vacsi ako velkost chunku.");
         }
     }

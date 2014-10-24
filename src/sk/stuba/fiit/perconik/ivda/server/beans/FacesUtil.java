@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by Seky on 20. 8. 2014.
  */
 public final class FacesUtil {
-    private static final Logger LOGGER = Logger.getLogger(EventBean.class);
+    private static final Logger LOGGER = Logger.getLogger(FacesUtil.class);
 
     public static Map<String, String> getQueryParams() {
         return getFacesEContext().getRequestParameterMap();
@@ -37,6 +37,7 @@ public final class FacesUtil {
         return FacesContext.getCurrentInstance().getExternalContext();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T getBean(String bean) {
         ELContext elContext = FacesContext.getCurrentInstance().getELContext();
         return (T) FacesContext.getCurrentInstance().getApplication().getELResolver().getValue(elContext, null, bean);
@@ -50,12 +51,8 @@ public final class FacesUtil {
         return getFacesEContext().getRequestContextPath();
     }
 
-    public static void addMessage(String component, String msg, FacesMessage.Severity severity) {
-        LOGGER.info("Msg:" + msg);
-        FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(severity, msg, null));
-    }
-
     public static void addMessage(String msg, FacesMessage.Severity severity) {
-        addMessage(null, msg, severity);
+        LOGGER.info("Msg:" + msg);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, msg, null));
     }
 }

@@ -6,10 +6,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Created by Seky on 5. 9. 2014.
  */
 public class Parameter extends BaseType {
+    private static final long serialVersionUID = -3653966080144192037L;
     private String name;
-
-    public Parameter() {
-    }
 
     public String getName() {
         return name;

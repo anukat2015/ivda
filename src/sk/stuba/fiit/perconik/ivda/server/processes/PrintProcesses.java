@@ -32,12 +32,12 @@ public final class PrintProcesses extends ProcessProcesses implements Serializab
 
     @Override
     public void finished() {
-        System.out.println("New processes:");
+        LOGGER.info("New processes:");
         for (String name : processes) {
-            if (!Catalog.Processes.BANNED.getList().contains(name) &&
-                    !Catalog.Processes.NODEVELOPER.getList().contains(name) &&
-                    !Catalog.Processes.COMMUNICATION.getList().contains(name) &&
-                    !Catalog.Processes.TYPICAL.getList().contains(name)) {
+            if (!Catalog.Processes.BANNED.getList().exist(name) &&
+                    !Catalog.Processes.NODEVELOPER.getList().exist(name) &&
+                    !Catalog.Processes.COMMUNICATION.getList().exist(name) &&
+                    !Catalog.Processes.TYPICAL.getList().exist(name)) {
                 LOGGER.warn(name);
             }
         }

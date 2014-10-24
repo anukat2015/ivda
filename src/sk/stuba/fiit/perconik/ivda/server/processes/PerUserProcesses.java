@@ -22,7 +22,7 @@ public class PerUserProcesses implements Serializable {
         unfinished = new HashMap<>(256);
     }
 
-    protected void printProcesses(Collection<Process> processes) {
+    private static void printProcesses(Collection<Process> processes) {
         for (Process p : processes) {
             LOGGER.info(p);
         }

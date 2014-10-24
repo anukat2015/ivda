@@ -1172,11 +1172,6 @@
     <inspection_tool class="TrivialStringConcatenation" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="TypeCustomizer" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="TypeParameterExtendsFinalClass" enabled="true" level="WARNING" enabled_by_default="true" />
-    <inspection_tool class="TypeParameterNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="m_regex" value="[A-Z][A-Za-z\d]*" />
-      <option name="m_minLength" value="1" />
-      <option name="m_maxLength" value="1" />
-    </inspection_tool>
     <inspection_tool class="UnaryPlus" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UncheckedExceptionClass" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="UnconditionalWait" enabled="true" level="WARNING" enabled_by_default="true" />

@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public abstract class Cache<K, V extends Serializable> implements ICaching<K, V> {
 
-    public Cache() {
+    protected Cache() {
         if (!isCacheEnabled()) {
             Logger.getLogger(this.getClass().getName()).warn("Caching is disabled!");
         }
@@ -30,9 +30,6 @@ public abstract class Cache<K, V extends Serializable> implements ICaching<K, V>
     }
 
     protected abstract V getDirect(final K uri);
-
-    @Override
-    public abstract V valueNotFound(K key);
 
     protected String computeUniqueID(K key) {
         return key.toString();

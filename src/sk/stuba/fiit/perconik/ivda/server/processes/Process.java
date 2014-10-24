@@ -20,7 +20,7 @@ public class Process implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Process{");
+        StringBuilder sb = new StringBuilder("Process{");
         sb.append("end=").append(end);
         sb.append(", name=").append(name);
         sb.append(", start=").append(start);
@@ -54,16 +54,16 @@ public class Process implements Serializable {
 
     @JsonIgnore
     public boolean isFinished() {
-        return getEnd() != null;
+        return end != null;
     }
 
     @JsonIgnore
-    public boolean isOverlaping(Date s, Date e) {
-        return DateUtils.rangesAreOverlaping(start, end, s, e);
+    public boolean isOverlaping(Date start2, Date end2) {
+        return DateUtils.isOverlaping(start, end, start2, end2);
     }
 
     @JsonIgnore
     public boolean isOverlaping(Process p) {
-        return isOverlaping(p.getStart(), p.getEnd());
+        return isOverlaping(p.start, p.getEnd());
     }
 }

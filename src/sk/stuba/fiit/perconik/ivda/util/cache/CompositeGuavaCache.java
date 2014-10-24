@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 @ThreadSafe
 public class CompositeGuavaCache<Key, Value extends Serializable> extends GuavaCache<Key, Value> {
-    private ICaching<Key, Value> another;
+    private final ICaching<Key, Value> another;
 
     public CompositeGuavaCache(ICaching<Key, Value> another) {
         this.another = another;

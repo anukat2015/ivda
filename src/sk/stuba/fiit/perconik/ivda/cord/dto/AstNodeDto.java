@@ -9,6 +9,7 @@ import java.util.List;
  * Created by Seky on 5. 9. 2014.
  */
 public class AstNodeDto implements Serializable {
+    private static final long serialVersionUID = 613703949301018395L;
     private String nodeType;
     private String name;
     private Integer startLine;
@@ -23,9 +24,6 @@ public class AstNodeDto implements Serializable {
     private List<Parameter> parameters;
     private List<BaseType> baseTypes;
     private List<AstNodeDto> childNodes;
-
-    public AstNodeDto() {
-    }
 
     @Override
     public boolean equals(Object o) {

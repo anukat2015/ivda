@@ -9,6 +9,7 @@ import java.io.Serializable;
  * Pomocna trieda pre opis cesty a verzie suboru.
  */
 public final class FileDescription implements Serializable {
+    private static final long serialVersionUID = 3799313651616035641L;
     private String repo;
     private String commit;
     private String path;

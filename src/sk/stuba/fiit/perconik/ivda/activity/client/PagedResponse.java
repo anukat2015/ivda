@@ -55,6 +55,7 @@ public class PagedResponse<T extends Serializable> extends Paged {
         return new ToStringBuilder(this).append("resultSet", resultSet).toString();
     }
 
+    @Override
     public boolean isHasNextPage() {
         return (getPageIndex() + 1) < pageCnt;
     }

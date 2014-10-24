@@ -13,10 +13,10 @@ import java.util.*;
  * Metoda spracovania udalosti, ktora je rozsirena o moznost ukladat zaujimave udalosti.
  */
 public abstract class ProcessEvents2TimelineEvents extends ProcessEvents {
-    private Map<String, List<TimelineEvent>> list;
+    private final Map<String, List<TimelineEvent>> list;
 
-    public ProcessEvents2TimelineEvents() {
-        list = new HashMap<>();
+    protected ProcessEvents2TimelineEvents() {
+        list = new HashMap<>(8);
     }
 
     public void add(TimelineEvent event) {
@@ -27,7 +27,7 @@ public abstract class ProcessEvents2TimelineEvents extends ProcessEvents {
         // Check if exist ..
         List<TimelineEvent> events = list.get(group);
         if (events == null) {
-            events = new ArrayList<>();
+            events = new ArrayList<>(128);
             list.put(group, events);
         }
         events.add(event);

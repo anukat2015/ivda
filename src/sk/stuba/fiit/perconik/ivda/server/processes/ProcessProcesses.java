@@ -19,7 +19,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 public abstract class ProcessProcesses extends ProcessEvents {
     private final Catalog appBlackList;
 
-    public ProcessProcesses() {
+    protected ProcessProcesses() {
         appBlackList = Catalog.Processes.BANNED.getList();
     }
 

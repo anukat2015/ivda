@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@SuppressWarnings("AccessOfSystemProperties")
 @XmlRootElement
 public final class Configuration implements Serializable {
 
@@ -28,7 +29,7 @@ public final class Configuration implements Serializable {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
     private static final String FILENAME = "configuration.xml";
     private static final String LOGGING_PROPERTIES_FILE = "log4j.properties";
-    private static JAXBContext context;
+    private static JAXBContext CONTEXT;
 
     // Configuration properties
     private Map<String, String> astRcs = new HashMap<>(16);
@@ -41,18 +42,17 @@ public final class Configuration implements Serializable {
 
     static {
         // Load conf dir
-        //noinspection AccessOfSystemProperties
         String defaultDir = System.getProperty("user.dir") + File.separator + "WEB-INF" + File.separator + "conf";
         CONFIG_DIR = System.getProperty("config.dir", defaultDir);
 
         // Prepare log4j
-        if (CONFIG_DIR != defaultDir) { // tzv. Program bezi pravdepodobne lokalne
+        if (!CONFIG_DIR.equals(defaultDir)) { // tzv. Program bezi pravdepodobne lokalne
             String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
             PropertyConfigurator.configure(log4jLoggingPropFile);
         }
 
         try {
-            context = JAXBContext.newInstance(Configuration.class);
+            CONTEXT = JAXBContext.newInstance(Configuration.class);
         } catch (JAXBException ex) {
             LOGGER.log(Level.ERROR, null, ex);
         }
@@ -65,11 +65,11 @@ public final class Configuration implements Serializable {
         return ConfigurationHolder.INSTANCE;
     }
 
-    private synchronized static Configuration read() {
+    private static synchronized Configuration read() {
         try {
             File file = new File(CONFIG_DIR, FILENAME);
             LOGGER.info("Configuration file: " + file.getAbsolutePath());
-            return (Configuration) context.createUnmarshaller().unmarshal(file);
+            return (Configuration) CONTEXT.createUnmarshaller().unmarshal(file);
         } catch (Exception e) {
             LOGGER.error("Configuration not loaded", e);
             throw new RuntimeException("Configuration not loaded", e);
@@ -77,7 +77,7 @@ public final class Configuration implements Serializable {
     }
 
     private static Marshaller getMarshaller() throws JAXBException {
-        Marshaller marshaller = context.createMarshaller();
+        Marshaller marshaller = CONTEXT.createMarshaller();
         marshaller.setProperty("jaxb.formatted.output", true);
         return marshaller;
     }
@@ -130,9 +130,9 @@ public final class Configuration implements Serializable {
         private static final Configuration INSTANCE = read();
     }
 
-    public static class Name {
+    public static class Name implements Serializable {
         @XmlElement(name = "name")
-        protected List<String> list = new ArrayList<>();
+        private List<String> list = new ArrayList<>(8);
 
         public Name() {
         }

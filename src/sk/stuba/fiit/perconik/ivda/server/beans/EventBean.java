@@ -43,7 +43,7 @@ public class EventBean implements Serializable {
     private static final long serialVersionUID = 2563906954713653265L;
     private static final ObjectMapper MAPPER;
 
-    @ManagedProperty(value = "#{viewState}")
+    @ManagedProperty("#{viewState}")
     private ViewStateBean viewStateBean;
 
     private List<FileVersionDto> files;
@@ -110,7 +110,7 @@ public class EventBean implements Serializable {
         }
     }
 
-    private void checkIn() {
+    private void processCheckIn() {
         viewStateBean.setState(ViewStateBean.ViewState.DIFF_FILES);
         IdeCheckinEventDto cevent = (IdeCheckinEventDto) event;
 
@@ -162,7 +162,7 @@ public class EventBean implements Serializable {
             return;
         }
 
-        checkIn();
+        processCheckIn();
     }
 
     public Collection<FileVersionDto> getFiles() {

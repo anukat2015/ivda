@@ -10,11 +10,9 @@ import java.util.List;
  * Contains file content as AST
  */
 public class AstParseResultDto implements Serializable {
+    private static final long serialVersionUID = 3471813719637871735L;
     private List<AstParseErrorDto> parseErrors;
     private AstNodeDto syntaxTree;
-
-    public AstParseResultDto() {
-    }
 
     public List<AstParseErrorDto> getParseErrors() {
         return parseErrors;

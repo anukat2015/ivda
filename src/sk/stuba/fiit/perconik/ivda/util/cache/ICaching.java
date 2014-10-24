@@ -7,9 +7,9 @@ import java.io.Serializable;
  */
 public interface ICaching<Key, Value extends Serializable> {
 
-    public boolean isCacheEnabled();
+    boolean isCacheEnabled();
 
-    public Value get(Key uri);
+    Value get(Key uri);
 
-    public Value valueNotFound(Key key);
+    Value valueNotFound(Key key);
 }

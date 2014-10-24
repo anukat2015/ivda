@@ -70,8 +70,8 @@ public final class EventsUtil {
             // TRIM sa pouzit nemoze, lebo to meni charakteristiku kodu ...
             String line = scanner.nextLine();
             //LOGGER.info(line);
-            Matcher m = FULL_LINE_PATTERN.matcher(line);
-            if (m.find()) {
+            Matcher matcher = FULL_LINE_PATTERN.matcher(line);
+            if (matcher.find()) {
                 count++;
             } else {
                 emptyLines++;

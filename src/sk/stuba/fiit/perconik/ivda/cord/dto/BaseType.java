@@ -8,11 +8,9 @@ import java.io.Serializable;
  * Created by Seky on 5. 9. 2014.
  */
 public class BaseType implements Serializable {
+    private static final long serialVersionUID = 3505850979464232142L;
     private String typeName;
     private String modifier;
-
-    public BaseType() {
-    }
 
     public String getTypeName() {
         return typeName;

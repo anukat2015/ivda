@@ -45,7 +45,7 @@ public final class DateUtils {
         return last.getTime() - actual.getTime();
     }
 
-    public static boolean diff(Date actual, Date last, TimeUnit unit) {
+    public static boolean isDiff(Date actual, Date last, TimeUnit unit) {
         return diff(actual, last) == unit.toMillis(1);
     }
 
@@ -53,7 +53,7 @@ public final class DateUtils {
         return actual.getTime() % unit.toMillis(1) == 0;
     }
 
-    public static boolean rangesAreOverlaping(Date s1, Date e1, Date start2, Date end2) {
+    public static boolean isOverlaping(Date s1, Date e1, Date start2, Date end2) {
         return e1.after(start2) && s1.before(end2);
     }
 }

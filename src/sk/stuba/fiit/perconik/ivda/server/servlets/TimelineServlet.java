@@ -25,6 +25,7 @@ import java.io.IOException;
 public class TimelineServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final long serialVersionUID = -2486259178164233472L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -48,7 +49,7 @@ public class TimelineServlet extends HttpServlet {
         }
     }
 
-    protected void setCacheHeaders(TimelineRequest req, HttpServletResponse resp) {
+    private static void setCacheHeaders(TimelineRequest req, HttpServletResponse resp) {
         Integer duration = Configuration.getInstance().getCacheResponseDuration();
         // Set cache for response
         if (duration == 0) {

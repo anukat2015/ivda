@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  * Pomocna trieda pre pracu s reflection API.
  */
 public final class Objects {
-    public final static Method getGetter(Class<?> beanClass, String attributeName) throws NoSuchMethodException {
+    public static Method getGetter(Class<?> beanClass, String attributeName) throws NoSuchMethodException {
         String name = Character.toUpperCase(attributeName.charAt(0)) + attributeName.substring(1);
         Method getter;
 
