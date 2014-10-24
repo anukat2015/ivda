@@ -167,7 +167,7 @@ GraphPanel.prototype.graphAddProcesses = function (lines, processes) {
     for (var i = 0; i < processes.length; i++) {
         process = processes[i];
         value = this.normalizeTime(process.end - process.start);
-        lines.addInterval(process.name, new Date(process.start), new Date(process.end), value);
+        lines.addInterval(process.name, new Date(process.start + gGlobals.timezoneOffset), new Date(process.end + gGlobals.timezoneOffset), value);
     }
 };
 

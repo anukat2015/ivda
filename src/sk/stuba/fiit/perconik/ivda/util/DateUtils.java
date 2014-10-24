@@ -24,7 +24,9 @@ public final class DateUtils {
     private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"); //new ISO8601DateFormat();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            format.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
+            return format;
         }
     };
 

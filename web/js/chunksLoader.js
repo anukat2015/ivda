@@ -180,10 +180,10 @@ ChunksLoader.prototype.prepareEvents = function (events) {
     for (var i = 0; i < events.length; i++) {
         item = events[i];
         if (item.start != null) {
-            item.start = new Date(parseInt(item.start));
+            item.start = new Date(parseInt(item.start) + gGlobals.timezoneOffset);
         }
         if (item.end != null) {
-            item.end = new Date(parseInt(item.end));
+            item.end = new Date(parseInt(item.end) + gGlobals.timezoneOffset);
         }
     }
 };

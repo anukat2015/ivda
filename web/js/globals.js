@@ -9,6 +9,7 @@ function Globals() {
     this.loader = new ChunksLoader();
     this.dateFormat = 'd.m.Y H:i';
     this.preloader = new Preloader();
+    this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
 
     this.initialize = function (start, end) {
         this.setTime(start, end);
@@ -56,11 +57,15 @@ function Globals() {
         this.graph.redraw();
     };
 
+    this.converDate = function (date) {
+        return new Date(date.getTime() + this.timezoneOffset);  // local to utc time
+    };
+
     this.getTimelineServiceURL = function (start, end) {
         var restURL = "datatable?";
         var parameters = $.param({
-            start: this.serverDateFormatter.format(start),
-            end: this.serverDateFormatter.format(end)
+            start: this.serverDateFormatter.format(this.converDate(start)),
+            end: this.serverDateFormatter.format(this.converDate(end))
         });
         return restURL + parameters;
     };
@@ -68,8 +73,8 @@ function Globals() {
     this.getProcessesServiceURL = function (start, end) {
         var restURL = "processes?";
         var parameters = $.param({
-            start: this.serverDateFormatter.format(start),
-            end: this.serverDateFormatter.format(end),
+            start: this.serverDateFormatter.format(this.converDate(start)),
+            end: this.serverDateFormatter.format(this.converDate(end)),
             developers: this.getDevelopers().join()
         });
         return restURL + parameters;
