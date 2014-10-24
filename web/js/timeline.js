@@ -50,8 +50,11 @@ function registerQTip() {
 function onItemMouseEnter(api, item) {
     if (item.isCluster) {
         api.set('content.text', "Toto je skupina udalosti.");
+    } else if (item.metadata.link != undefined) {
+        var html = '<a href="' + item.metadata.link + '">' + item.metadata.link + '</a>';
+        api.set('content.text', html);
     } else if (item.metadata.ajax != undefined) {
-        api.set('content.text', JSON.stringify(item.metadata.ajax) );
+        api.set('content.text', JSON.stringify(item.metadata.ajax));
     } else {
         $.ajax({
             url: gGlobals.getAjaxURL(item.metadata)

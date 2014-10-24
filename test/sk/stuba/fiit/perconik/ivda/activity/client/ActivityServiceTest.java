@@ -15,7 +15,7 @@ import java.util.Date;
  * Otestovanie funkcionality Activity sluzby
  */
 public class ActivityServiceTest extends TestCase {
-    public static final File FILE_EVENTS_ROK = new File(Configuration.CONFIG_DIR, "events_rok.gzip");
+    public static final File FILE_EVENTS_ROK = new File(Configuration.CONFIG_DIR, "events_2014.gzip");
 
     /**
      * Skontroluj deserializaciu a stiahnutie konkretneho eventu
@@ -37,7 +37,7 @@ public class ActivityServiceTest extends TestCase {
         Configuration.getInstance();
         EventsRequest request = new EventsRequest();
         Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
-        Date end = DateUtils.fromString("2014-10-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2014-10-20T00:00:00.000Z");
         request.setTime(start, end);
 
         ImmutableList<EventDto> response = ActivityService.getInstance().getEvents(request);

@@ -49,6 +49,19 @@ links.Timeline.ItemCircle.prototype.unselect = function () {
     links.Timeline.removeClassName(dom, 'timeline-event-selected ui-state-active');
 };
 
+links.Timeline.ItemCircle.prototype.computeSize = function () {
+    var radius = 12;
+    if (this.metadata != undefined) {
+        if (this.metadata.changedLines != undefined) {
+            radius = Math.max(radius, this.metadata.changedLines) * 2;
+        }
+        //if (this.metadata.changedInFuture != undefined) {
+        //    radius = Math.max(radius, this.metadata.changedInFuture);
+        //}
+    }
+    return radius;
+};
+
 /**
  * Creates the DOM for the item, depending on its type
  * @return {Element | undefined}
@@ -67,12 +80,7 @@ links.Timeline.ItemCircle.prototype.createDOM = function () {
     divBox.appendChild(divContent);
     divBox.content = divContent;
 
-    // Pridaj chart
-    var radius = 12;
-    if (this.metadata != undefined && this.metadata.changedLines != undefined) {
-        radius = Math.max(radius, this.metadata.changedLines) * 2;
-    }
-    var size = radius + "px";
+    var size = this.computeSize() + "px";
     divContent.style.width = size;
     divContent.style.height = size;
     divContent.style.lineHeight = size;

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Seky on 6. 9. 2014.
  */
 public final class TimelineRequest {
-    private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.HOURS;
+    private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.DAYS;
     private final Date start;
     private final Date end;
 

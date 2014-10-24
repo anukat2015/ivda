@@ -7,7 +7,7 @@
 ChunksLoader = function () {
     this.actualMin = undefined;
     this.actualMax = undefined;
-    this.chunkSize = (60 * 1000 * 60); // jedna cela hodina
+    this.chunkSize = (60 * 1000 * 60 * 24); // cely den
     this.showError = true;
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
