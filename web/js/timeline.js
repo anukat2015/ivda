@@ -50,12 +50,15 @@ function registerQTip() {
 }
 
 function onItemMouseEnter(api, item) {
-    if (item.metadata.link != undefined) {
-        var html = '<a href="' + item.metadata.link + '">' + item.metadata.link + '</a>';
-        return html;
-    } else if (item.metadata.ajax != undefined) {
-        return JSON.stringify(item.metadata.ajax);
-    } else {
+    var html = 'Loading...';
+    if (item.metadata.link != undefined) {   // web
+        html = '<a href="' + item.metadata.link + '">' + item.metadata.link + '</a>';
+    } else if (item.metadata.changedLines != undefined) {  // ide
+        html = 'Changed lines: ' + item.metadata.changedLines + '</br>'
+            + 'Changed in future: ' + item.metadata.changedInFuture + '</br>'
+            + 'Path: ' + item.metadata.path + '</br>'
+            + 'Text: </br><pre>' + item.metadata.text + '</pre></br>';
+    } else {                // dynamic item
         $.ajax({
             url: gGlobals.getAjaxURL(item.metadata)
         }).then(function (content) {
@@ -65,6 +68,6 @@ function onItemMouseEnter(api, item) {
             // Upon failure... set the tooltip content to error
             api.set('content.text', status + ': ' + error);
         });
-        return 'Loading...';
     }
+    return html;
 }

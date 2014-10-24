@@ -105,6 +105,8 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
             Map<String, Object> metadata = new HashMap<>(8);
             metadata.put("uid", event.getEventId());
             //metadata.put("path", fileVersion.getUrl().getValue());
+            metadata.put("path", event.getDocument().getServerPath());
+            metadata.put("text", event.getText());
             //metadata.put("repo", fileVersion.getId());
             // metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
             metadata.put("changedLines", changedLines);
