@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Seky on 23. 10. 2014.
  */
 public final class ProcessesRequest {
-    private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.HOURS;
     private final Date start;
     private final Date end;
     private final List<String> developers;

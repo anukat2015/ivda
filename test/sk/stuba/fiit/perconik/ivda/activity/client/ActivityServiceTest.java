@@ -15,7 +15,7 @@ import java.util.Date;
  * Otestovanie funkcionality Activity sluzby
  */
 public class ActivityServiceTest extends TestCase {
-    public static final File FILE_EVENTS_ROK = new File("C:\\events_rok.gzip");
+    public static final File FILE_EVENTS_ROK = new File(Configuration.CONFIG_DIR, "events_rok.gzip");
 
     /**
      * Skontroluj deserializaciu a stiahnutie konkretneho eventu

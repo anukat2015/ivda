@@ -32,7 +32,7 @@ public class ProcessesServlet extends HttpServlet {
 
     static {
         Configuration.getInstance();
-        File processesFile = new File("C:\\processes.gzip");
+        File processesFile = new File(Configuration.CONFIG_DIR, "processes.gzip");
         try {
             processes = (ImmutableMap<String, PerUserProcesses>) GZIP.deserialize(processesFile);
         } catch (Exception e) {

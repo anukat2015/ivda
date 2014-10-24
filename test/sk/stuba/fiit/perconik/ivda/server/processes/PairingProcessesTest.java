@@ -11,7 +11,7 @@ import sk.stuba.fiit.perconik.ivda.util.GZIP;
 import java.io.File;
 
 public class PairingProcessesTest extends TestCase {
-    private static final File processesFile = new File("C:\\processes.gzip");
+    private static final File processesFile = new File(Configuration.CONFIG_DIR, "processes.gzip");
 
     /**
      * Tento test spusti funkcionality PairingProcessesTest, nasledne vytiahne procesy pre pouzivatela a ulozi ich.

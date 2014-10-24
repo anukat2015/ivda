@@ -2,16 +2,11 @@ package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.gratex.perconik.services.ast.rcs.ChangesetDto;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
-import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
-import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
-import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
@@ -30,11 +25,11 @@ import java.util.Map;
 @NotThreadSafe
 public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents {
     private static final FilesOperationsRepository OP_REPOSITORY;
-    private final Catalog developerLinks;
+    //private final Catalog developerLinks;
 
     static {
         Configuration.getInstance();
-        File processesFile = new File("C:\\fileOperations.gzip");
+        File processesFile = new File(Configuration.CONFIG_DIR, "fileOperations.gzip");
         try {
             OP_REPOSITORY = (FilesOperationsRepository) GZIP.deserialize(processesFile);
         } catch (Exception e) {
@@ -43,7 +38,7 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
     }
 
     public ProcessEventsForTimeline() {
-        developerLinks = Catalog.Processes.BANNED.getList();
+        //developerLinks = Catalog.Processes.BANNED.getList();
     }
 
     @Override
@@ -85,17 +80,18 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         }
 
         try {
+            FileVersionDto fileVersion = null;
             //LOGGER.info("Skopiroval:\\n" + event.getText());
-            RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
-            ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
-            FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
+            //RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
+            //RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
+            //ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
+            //FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
             //File file = CordService.getInstance().getFile(repo, commit, path);
 
             // Uloz udaje tak aby ich klient mohol spracovat
             saveEvent(event, fileVersion);
-        } catch (AstRcsWcfService.NotFoundException e) {
-            LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
+            //} catch (AstRcsWcfService.NotFoundException e) {
+            //    LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
         } catch (Exception e) {
             LOGGER.error("proccessItem", e);
         }
@@ -105,20 +101,20 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         // Uloz udaje tak aby ich klient mohol spracovat
         Integer changedLines = EventsUtil.codeWritten(event.getText());
         if (changedLines > 0) {
-            Integer ancestor = fileVersion.getAncestor1Id().getValue();
+            //Integer ancestor = fileVersion.getAncestor1Id().getValue();
             Integer changedInFuture = OP_REPOSITORY.countOperationsAfter(event.getDocument().getServerPath(), event.getTimestamp());
 
             // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("uid", event.getEventId());
-            metadata.put("path", fileVersion.getUrl().getValue());
-            metadata.put("repo", fileVersion.getId());
-            metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
+            //metadata.put("path", fileVersion.getUrl().getValue());
+            //metadata.put("repo", fileVersion.getId());
+            // metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
             metadata.put("changedLines", changedLines);
             metadata.put("changedInFuture", changedInFuture);
             add(event, metadata);
         } else {
-           // LOGGER.warn("Prazdne riadky!");
+            // LOGGER.warn("Prazdne riadky!");
         }
     }
 }

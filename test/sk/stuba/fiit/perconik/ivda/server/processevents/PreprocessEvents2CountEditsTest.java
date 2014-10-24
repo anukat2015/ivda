@@ -12,7 +12,7 @@ import sk.stuba.fiit.perconik.ivda.util.GZIP;
 import java.io.File;
 
 public class PreprocessEvents2CountEditsTest extends TestCase {
-    private static final File operationsFile = new File("C:\\fileOperations.gzip");
+    private static final File operationsFile = new File(Configuration.CONFIG_DIR, "fileOperations.gzip");
 
     public void testProccessList() throws Exception {
         Configuration.getInstance();
