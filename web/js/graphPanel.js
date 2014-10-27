@@ -9,7 +9,6 @@ GraphPanel = function () {
     this.options = {      // Specify options
         width: "100%",
         height: "300px",
-        //moveable: false,
         line: {width: 1.0, visible: false},   // apply properties to all lines
         legend: {
             toggleVisibility: true,
@@ -28,6 +27,7 @@ GraphPanel = function () {
     };
     this.savedLines = null;
     this.asynTask = undefined;
+    this.showProcesses = false;
 
     // Zatial schovaj
     console.log("graph created");
@@ -70,7 +70,7 @@ GraphPanel.prototype.draw = function () {
     }
 
     var developers = gGlobals.getDevelopers();
-    if (developers.length == 0) {
+    if (!this.showProcesses || developers.length == 0) {
         // Zobraz hned
         this.drawPanel(lines);
     } else {
@@ -107,10 +107,6 @@ GraphPanel.prototype.drawPanel = function (lines) {
     data.push(lines.lines.changedLines);
     data.push(lines.lines.changedInFuture);
     this.graphs.changes.draw(data, this.options);
-
-    // Set autoscale
-    //this.graphs.activity.setAutoScale(true);
-    //this.graphs.changes.setAutoScale(true);
 };
 
 GraphPanel.prototype.computeData = function () {

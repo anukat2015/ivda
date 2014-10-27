@@ -79,4 +79,19 @@ function Globals() {
         });
         return restURL + parameters;
     };
+
+    this.toggleMetric = function () {
+        var prototyp = links.Timeline.ItemCircle.prototype;
+        if (prototyp.computeSize == prototyp.computeSizeByChangedLines) {
+            prototyp.computeSize = prototyp.computeSizeByChangesInFuture;
+        } else {
+            prototyp.computeSize = prototyp.computeSizeByChangedLines;
+        }
+        this.timeline.redraw();
+    };
+
+    this.toggleProcesses = function () {
+        this.graph.showProcesses = !this.graph.showProcesses;
+        this.graph.redraw();
+    };
 }

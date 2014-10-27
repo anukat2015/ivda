@@ -49,18 +49,27 @@ links.Timeline.ItemCircle.prototype.unselect = function () {
     links.Timeline.removeClassName(dom, 'timeline-event-selected ui-state-active');
 };
 
-links.Timeline.ItemCircle.prototype.computeSize = function () {
+links.Timeline.ItemCircle.prototype.computeSizeByChangedLines = function () {
     var radius = 12;
     if (this.metadata != undefined) {
         if (this.metadata.changedLines != undefined) {
             radius = Math.max(radius, this.metadata.changedLines);
         }
-        //if (this.metadata.changedInFuture != undefined) {
-        //    radius = Math.max(radius, this.metadata.changedInFuture);
-        //}
     }
     return radius;
 };
+
+links.Timeline.ItemCircle.prototype.computeSizeByChangesInFuture = function () {
+    var radius = 12;
+    if (this.metadata != undefined) {
+        if (this.metadata.changedInFuture != undefined) {
+            radius = Math.max(radius, this.metadata.changedInFuture);
+        }
+    }
+    return radius;
+};
+
+links.Timeline.ItemCircle.prototype.computeSize = links.Timeline.ItemCircle.prototype.computeSizeByChangedLines;
 
 /**
  * Creates the DOM for the item, depending on its type

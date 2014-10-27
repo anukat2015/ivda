@@ -8,14 +8,17 @@ function Preloader() {
     this.updateStatus = function () {
         var text = "Pending requests</br>" + gGlobals.loader.finishedTasks + "/" + gGlobals.loader.tasks;
         this.loaderText.html(text);
-    }
+    };
 
     this.start = function () {
+        if (gGlobals.loader.pendingTasks() == 0) {
+            return;
+        }
         this.updateStatus();
         this.loader.show();
         this.loaderText.show();
         this.task();
-    }
+    };
 
     this.task = function () {
         var instance = this;
@@ -29,5 +32,5 @@ function Preloader() {
                 instance.loaderText.hide();
             }
         }, 200);
-    }
+    };
 }
