@@ -9,7 +9,7 @@ function Globals() {
     this.loader = new ChunksLoader();
     this.dateFormat = 'd.m.Y H:i';
     this.preloader = new Preloader();
-    this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
+    this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
 
     this.initialize = function (start, end) {
         this.setTime(start, end);
