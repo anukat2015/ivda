@@ -3,11 +3,13 @@ package sk.stuba.fiit.perconik.ivda.server.processevents;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.gratex.perconik.services.ast.rcs.FileVersionDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.BashCommandEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebTabEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
@@ -40,6 +42,13 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
 
     @Override
     protected void proccessItem(EventDto event) {
+        if (event instanceof WebTabEventDto) { // ako dlho stravil na konkretnej stranke
+            return;
+        }
+        if (event instanceof BashCommandEventDto) {
+            return;
+        }
+
         if (event instanceof IdeCodeEventDto) {
             ideEvent((IdeCodeEventDto) event);
             return;
@@ -99,7 +108,7 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
         Integer changedLines = EventsUtil.codeWritten(event.getText());
         if (changedLines > 0) {
             //Integer ancestor = fileVersion.getAncestor1Id().getValue();
-            Integer changedInFuture = OP_REPOSITORY.countOperationsAfter(event.getDocument().getServerPath(), event.getTimestamp());
+            FilesOperationsRepository.CountOperations stats = OP_REPOSITORY.countOperationsAfter(event.getDocument().getServerPath(), event.getTimestamp());
 
             // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
             Map<String, Object> metadata = new HashMap<>(8);
@@ -110,7 +119,8 @@ public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents
             //metadata.put("repo", fileVersion.getId());
             // metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
             metadata.put("changedLines", changedLines);
-            metadata.put("changedInFuture", changedInFuture);
+            metadata.put("changedInFuture", stats.after);
+            metadata.put("changedInHistory", stats.before);
             add(event, metadata);
         }
     }

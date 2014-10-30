@@ -2,30 +2,50 @@
  * Created by Seky on 22. 10. 2014.
  */
 GraphPanel = function () {
-    this.components = {
-        changes: $('#graph-changes'),
-        activity: $('#graph-activity')
-    };
-    this.options = {      // Specify options
-        width: "100%",
-        height: "300px",
-        line: {width: 1.0, visible: false},   // apply properties to all lines
-        legend: {
-            toggleVisibility: true,
-            width: "160px"
+    var options;
+    options = {      // Specify options
+        /*width: "100%",
+         height: "300px",
+         CatmullRom: false  */
+        /*legend: {
+            right: {position: 'top-right'},
+            left: {position: 'top-left'}
+        }, */
+        style: 'bar',
+        barChart: {width: 50, align: 'center'}, // align: left, center, right
+        drawPoints: true,
+        dataAxis: {
+            icons: false
         },
-        lines: [
-            {visible: true}, // Povolime zozbrazit len prve 2
-            {visible: true}
-        ]
+        orientation: 'bottom'
     };
 
-    // Instantiate our graph object.
-    this.graphs = {
-        changes: new links.Graph(document.getElementById('graph-changes')),
-        activity: new links.Graph(document.getElementById('graph-activity'))
+    var changes = {
+        component: $('#graph-changes'),
+        graph: new vis.Graph2d(document.getElementById('graph-changes'), new vis.DataSet(), options)
     };
-    this.savedLines = null;
+
+    options = {
+        style: 'bar',
+        barChart: {width: 50, align: 'center', handleOverlap: 'sideBySide'}, // align: left, center, right
+        drawPoints: false,
+        dataAxis: {
+            icons: true
+        },
+        orientation: 'top'
+    };
+
+    var activities = {
+        component: $('#graph-activity'),
+        graph: new vis.Graph2d(document.getElementById('graph-activity'), new vis.DataSet(), options)
+    };
+
+    this.graphs = {
+        changes: changes,
+        activities: activities
+    };
+
+    this.savedData = null;
     this.asynTask = undefined;
     this.showProcesses = false;
 
@@ -43,31 +63,31 @@ GraphPanel.prototype.redraw = function () {
     this.asynTask = setTimeout(function () {
         // Run asynchronous task
         instance.draw();
-    }, 500);
+    }, 1000);
 };
 
 GraphPanel.prototype.show = function () {
     var instance = this;
-    Object.keys(this.components).forEach(function (key) {
-        instance.components[key].show();
-    })
+    Object.keys(this.graphs).forEach(function (key) {
+        instance.graphs[key].component.show();
+    });
 };
 
 GraphPanel.prototype.hide = function () {
     var instance = this;
-    Object.keys(this.components).forEach(function (key) {
-        instance.components[key].hide();
-    })
+    Object.keys(this.graphs).forEach(function (key) {
+        instance.graphs[key].component.hide();
+    });
 };
 
 GraphPanel.prototype.draw = function () {
     var lines = this.computeData();
-    if (!lines.hasData()) {
-        this.hide();
-        return;
-    } else {
-        this.show();
-    }
+    /*if (!lines.hasData()) {
+     this.hide();
+     return;
+     } else {  */
+    this.show();
+    //}
 
     var developers = gGlobals.getDevelopers();
     if (!this.showProcesses || developers.length == 0) {
@@ -80,62 +100,118 @@ GraphPanel.prototype.draw = function () {
     }
 };
 
-GraphPanel.prototype.drawPanel = function (lines) {
+GraphPanel.prototype.drawPanel = function (data) {
     // Update position
     var range = gGlobals.timeline.getVisibleChartRange();
-    this.options.start = range.start;
-    this.options.end = range.end;
-    //this.graphs.activity.setVisibleChartRange(range);
-    //this.graphs.changes.setVisibleChartRange(range);
-    var data;
+    var instance = this;
+    Object.keys(this.graphs).forEach(function (key) {
+        instance.graphs[key].graph.setOptions(range);   // nastav okno na vidditelnu cast
+    });
 
     // Draw activity graph
-    data = new Array();
-    Object.keys(lines.lines).forEach(function (key) {
-        if (key === "changedLines" || key === "changedInFuture") {
-            // ignore
-        } else {
-            data.push(lines.lines[key]);
-        }
-    });
-    if (data.length > 0) {
-        this.graphs.activity.draw(data, this.options);
-    }
+    /*data = new Array();
+     Object.keys(lines.lines).forEach(function (key) {
+     if (key === "changedLines" || key === "changedInFuture") {
+     // ignore
+     } else {
+     data.push(lines.lines[key]);
+     }
+     });
+     if (data.length > 0) {
+     this.graphs.activity.draw(data, this.options);
+     } */
 
     // Draw changes graph
-    data = new Array();
-    data.push(lines.lines.changedLines);
-    data.push(lines.lines.changedInFuture);
-    this.graphs.changes.draw(data, this.options);
+    this.graphs.changes.graph.setGroups(data.groups);
+    this.graphs.changes.graph.setItems(data.items);
 };
 
 GraphPanel.prototype.computeData = function () {
-    var lines = new GraphLines();
-    lines.createLine2('changedLines', 'Changed lines');
-    lines.createLine2('changedInFuture', 'Changed in future');
+    var data = new GraphData();
+    data.createGroup2('changedInFuture', 'Changed in future');
+    data.createGroup2('changedInHistory', 'Changed in past');
+    data.groups.add({id: "changedLines", content: "LOC changed"//, options: {}
+    });
     var grouping = new ProcessAsGroup();
+    var pathsMap = {};
+    var domainsMap = {};
+
 
     // Prechadzaj vsetky prvky, vypocitaj skupinu a popri tom dalsie vlasnosti
+    var label, item;
     var items = gGlobals.timeline.getSortedVisibleChartItems();
     for (var i = 0; i < items.length; i++) {
-        var item = items[i];
+        item = items[i];
         grouping.processItem(item);
 
         // Ak to ma metadata
         if (item.metadata != undefined) {
-            if (item.metadata.changedLines != undefined) {
-                lines.addPoint("changedLines", item.start, item.metadata.changedLines);
+            /*label = item.metadata.changedLines;
+            if (label != undefined) {
+                data.addPoint("changedLines", item.start, label);
             }
-            if (item.metadata.changedInFuture != undefined) {
-                lines.addPoint("changedInFuture", item.start, item.metadata.changedInFuture);
+            label = item.metadata.changedInFuture;
+            if (label != undefined) {
+                data.addPoint("changedInFuture", item.start, label);
             }
+            label = item.metadata.changedInHistory;
+            if (label != undefined) {
+                data.addPoint("changedInHistory", item.start, label);
+            } */
+            /*
+            label = item.metadata.path;
+            if (label != undefined) {
+                if (pathsMap[label] === undefined) {
+                    pathsMap[label] = 1;
+                } else {
+                    pathsMap[label]++;
+                }
+            }
+            label = item.metadata.link;
+            if (label != undefined) {
+                label = new URL(label).hostname;
+                if (domainsMap[label] === undefined) {
+                    domainsMap[label] = 1;
+                } else {
+                    domainsMap[label]++;
+                }
+            }
+            */
         }
     }
-
     grouping.finish();
-    this.graphAddGroups(lines, grouping.groups);
-    console.log(lines);
-    return lines;
+    //this.graphAddGroups(data, grouping.groups);
+    console.log(data);
+    /*
+    var gdata, options, chart;
+
+    gdata = new google.visualization.DataTable();
+    gdata.addColumn('string', 'Path');
+    gdata.addColumn('number', 'Edits');
+    Object.keys(pathsMap).forEach(function (key) {
+        gdata.addRow([ key, pathsMap[key]]);
+    });
+    options = {
+        title: 'Files modifications, in counts'
+    };
+    console.log(gdata);
+    chart = new google.visualization.Histogram(document.getElementById('histogram'));
+    chart.draw(gdata, options);
+
+    gdata = new google.visualization.DataTable();
+    gdata.addColumn('string', 'Domain');
+    gdata.addColumn('number', 'Visit');
+    Object.keys(domainsMap).forEach(function (key) {
+        gdata.addRow([ key, domainsMap[key]]);
+    });
+    options = {
+        title: 'Domain visit, in counts'
+    };
+    console.log(gdata);
+    chart = new google.visualization.Histogram(document.getElementById('histogram2'));
+    chart.draw(gdata, options);
+    */
+    return data;
 };
 
 GraphPanel.prototype.normalizeTime = function (value) {

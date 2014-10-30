@@ -34,6 +34,11 @@ public class FilesOperationsRepository implements Serializable {
         records.put(file, record);
     }
 
+    public static final class CountOperations {
+        public int before;
+        public int after;
+    }
+
     /**
      * Spocitaj, kolko krat bol subor upraveny po danom datume.
      *
@@ -42,8 +47,8 @@ public class FilesOperationsRepository implements Serializable {
      * @param date
      * @return
      */
-    public int countOperationsAfter(String file, Date date) {
-        int count = 0;
+    public CountOperations countOperationsAfter(String file, Date date) {
+        CountOperations stats = new CountOperations();
         Set<Map.Entry<String, PerUserRecords>> set = map.entrySet();
         for (Map.Entry<String, PerUserRecords> entry : set) {      // time complexy O(n)
             PerUserRecords user = entry.getValue();
@@ -53,11 +58,13 @@ public class FilesOperationsRepository implements Serializable {
             }
             for (FileOperationRecord op : operations) {  // time complexy O(n)
                 if (op.getOperated().after(date)) {
-                    count++;
+                    stats.after++;
+                } else {
+                    stats.before++;
                 }
             }
         }
-        return count;
+        return stats;
     }
 
     /**

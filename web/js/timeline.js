@@ -12,8 +12,8 @@ function getTimeline() {
         zoomMin: 1000 * 60 * 1,             // 5 min
         zoomMax: 1000 * 60 * 60 * 24 * 7,     // tyzden
         showMajorLabels: true,
-        //stackEvents: true,
-        cluster: true,
+        stackEvents: true,
+        //cluster: true,
         groupMinHeight: windowHeight * 0.1,
         groupWidth: '20px'
     };

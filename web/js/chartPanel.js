@@ -9,7 +9,7 @@ ChartPanel = function () {
 
     this.visibleChart = new google.visualization.PieChart(document.getElementById('pieChart2'));
     this.visibleOptions = {
-        title: 'Histogram of visible objects',
+        title: 'Chart of visible objects',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
