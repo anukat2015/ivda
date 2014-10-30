@@ -13,28 +13,21 @@ import java.util.*;
  * Metoda spracovania udalosti, ktora je rozsirena o moznost ukladat zaujimave udalosti.
  */
 public abstract class ProcessEvents2TimelineEvents extends ProcessEvents {
-    private final Map<String, List<TimelineEvent>> list;
+    private final List<TimelineEvent> list;
 
     protected ProcessEvents2TimelineEvents() {
-        list = new HashMap<>(8);
+        list = new ArrayList<>(128);
     }
 
     public void add(TimelineEvent event) {
         // Black out developer name
         String group = Developers.getInstance().blackoutName(event.getGroup());
         event.setGroup(group);
-
-        // Check if exist ..
-        List<TimelineEvent> events = list.get(group);
-        if (events == null) {
-            events = new ArrayList<>(128);
-            list.put(group, events);
-        }
-        events.add(event);
+        list.add(event);
     }
 
-    public Map<String, List<TimelineEvent>> getData() {
-        return Collections.unmodifiableMap(list);
+    public List<TimelineEvent> getData() {
+        return Collections.unmodifiableList(list);
     }
 
     public void add(EventDto e, Object metadata) {

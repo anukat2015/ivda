@@ -12,52 +12,60 @@ function onLoad() {
         format: "d.m.Y H:i"
     });
 
-    $('#select-links').selectize({
-        plugins: ['remove_button'], // , 'drag_drop'
-        delimiter: ',',
-        persist: false,
-        valueField: 'name',
-        labelField: 'name',
-        searchField: 'name',
-        createOnBlur: true,
-        create: true,
-        options: [
-            {name: 'Mouse'},
-            {name: 'Koala'},
-            {name: 'Panda'},
-            {name: 'Cat'},
-            {name: 'Liger'}
-        ],
-        onChange: function (value) {
-            gGlobals.loader.checkDevelopers();
+    $.ajax({
+        dataType: "json",
+        url: gGlobals.getDevelopersServiceURL(),
+        cache: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            gGlobals.alertError("Server response status:" + textStatus);
+        },
+        success: function (developers, textStatus, jqXHR) {
+            var items = developers.map(function (x) {
+                return { name: x };
+            });
+            $('#select-links').selectize({
+                plugins: ['remove_button'], // , 'drag_drop'
+                maxItems: 1,
+                delimiter: ',',
+                persist: false,
+                valueField: 'name',
+                labelField: 'name',
+                searchField: 'name',
+                createOnBlur: true,
+                create: true,
+                options: items,
+                onChange: function (value) {
+                    gGlobals.loader.checkDevelopers();
+                }
+            });
+
+            gGlobals.initialize(start, nowDate);
         }
     });
-
-    gGlobals.initialize(start, nowDate);
     registerQTip();
 }
 /*
-timeline.on('rangechange', function (properties) {
-    properties.start
-    properties.end
-});
+ timeline.on('rangechange', function (properties) {
+ properties.start
+ properties.end
+ });
 
-timeline.on('rangechanged', function (properties) {
-    properties.start
-    properties.end
-});
+ timeline.on('rangechanged', function (properties) {
+ properties.start
+ properties.end
+ });
 
-timeline.on('rangechanged', function (properties) {
-    properties.start
-    properties.end
-});
-*/
+ timeline.on('rangechanged', function (properties) {
+ properties.start
+ properties.end
+ });
+ */
 function onRangeChange() {
     /*
-    var range = this.body.range.getRange();
-    var left  = this.body.util.toScreen(range.start);
-    var right = this.body.util.toScreen(range.end);
-    */
+     var range = this.body.range.getRange();
+     var left  = this.body.util.toScreen(range.start);
+     var right = this.body.util.toScreen(range.end);
+     */
     var range = gGlobals.timeline.getVisibleChartRange();
     gGlobals.setTime(range.start, range.end);
 }

@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.util.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 
@@ -15,11 +15,13 @@ public final class TimelineRequest {
     private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.DAYS;
     private final Date start;
     private final Date end;
+    private final String developer;
 
     public TimelineRequest(HttpServletRequest req) throws Exception {
         // Vplyv na rozsah ma jedine zoom, ize musime vypocitat sirku okna a poslat to sem
         start = DateUtils.fromString(UriUtils.decode(req, "start"));
         end = DateUtils.fromString(UriUtils.decode(req, "end"));
+        developer = Developers.getInstance().getRealName(UriUtils.decode(req, "developer"));
 
         // Skontroluj datumy
         if (!DateUtils.isRounded(start, SIZE_OF_CHUNK)) {
@@ -35,7 +37,12 @@ public final class TimelineRequest {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("end", end).append("start", start).toString();
+        final StringBuilder sb = new StringBuilder("TimelineRequest{");
+        sb.append("developer='").append(developer).append('\'');
+        sb.append(", end=").append(end);
+        sb.append(", start=").append(start);
+        sb.append('}');
+        return sb.toString();
     }
 
     public Date getStart() {
@@ -44,6 +51,10 @@ public final class TimelineRequest {
 
     public Date getEnd() {
         return end;
+    }
+
+    public String getDeveloper() {
+        return developer;
     }
 
     public long diffTime() {

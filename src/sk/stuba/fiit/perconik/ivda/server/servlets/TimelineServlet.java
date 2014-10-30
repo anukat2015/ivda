@@ -36,6 +36,7 @@ public class TimelineServlet extends HttpServlet {
 
             EventsRequest activityRequest = new EventsRequest();
             activityRequest.setTime(request.getStart(), request.getEnd());
+            activityRequest.setUser(request.getDeveloper());
 
             ProcessEvents2TimelineEvents process = new ProcessEventsForTimeline();
             process.downloaded(ActivityService.getInstance().getEvents(activityRequest));

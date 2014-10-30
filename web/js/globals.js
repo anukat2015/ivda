@@ -10,12 +10,13 @@ function Globals() {
     this.dateFormat = 'd.m.Y H:i';
     this.preloader = new Preloader();
     this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
+    this.showError = true;
 
     this.initialize = function (start, end) {
         this.setTime(start, end);
         this.timeline.draw();
         this.timeline.setVisibleChartRange(start, end);
-        this.loader.loadRange(start, end, function () {
+        /*this.loader.loadRange(start, end, function () {
             console.log("finished loadRange");
             gGlobals.charts.redraw();
             gGlobals.graph.redraw();
@@ -23,7 +24,7 @@ function Globals() {
                 animate: false
             });
         });
-        this.preloader.start();
+        this.preloader.start(); */
     };
 
     this.setTime = function (start, end) {
@@ -43,12 +44,8 @@ function Globals() {
         return "faces/ajax.xhtml?" + $.param(parameters);
     };
 
-    this.getDevelopers = function () {
-        var value = $('#select-links').val();
-        if (value.trim().length == 0) {
-            return [];
-        }
-        return value.split(',');
+    this.getDeveloper = function () {
+        return $('#select-links').val();
     };
 
     this.redraw = function () {
@@ -65,7 +62,8 @@ function Globals() {
         var restURL = "datatable?";
         var parameters = $.param({
             start: this.serverDateFormatter.format(this.converDate(start)),
-            end: this.serverDateFormatter.format(this.converDate(end))
+            end: this.serverDateFormatter.format(this.converDate(end)),
+            developer: this.getDeveloper()
         });
         return restURL + parameters;
     };
@@ -75,10 +73,15 @@ function Globals() {
         var parameters = $.param({
             start: this.serverDateFormatter.format(this.converDate(start)),
             end: this.serverDateFormatter.format(this.converDate(end)),
-            developers: this.getDevelopers().join()
+            developer: this.getDeveloper()
         });
         return restURL + parameters;
     };
+
+    this.getDevelopersServiceURL = function() {
+        return "rest/getDevelopers";
+    };
+
 
     this.toggleMetric = function () {
         var prototyp = links.Timeline.ItemCircle.prototype;
@@ -93,5 +96,18 @@ function Globals() {
     this.toggleProcesses = function () {
         this.graph.showProcesses = !this.graph.showProcesses;
         this.graph.redraw();
+    };
+
+
+    /**
+     * Data sa nepodarilo stiahnut
+     * @param error
+     */
+    this.alertError = function (msg) {
+        console.log(msg);
+        if (this.showError) {
+            alert(msg);
+            this.showError = false;
+        }
     };
 }

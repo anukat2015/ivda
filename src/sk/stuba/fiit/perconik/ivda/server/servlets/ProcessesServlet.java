@@ -57,18 +57,15 @@ public class ProcessesServlet extends HttpServlet {
 
     private static ImmutableList<Process> findProcesses(ProcessesRequest req) {
         List<Process> saved = new ArrayList<>(128);
-        for (String developer : req.getDevelopers()) {
-            PerUserProcesses info = PROCESSES.get(developer);
-            if (info == null) {
-                continue;
-            }
-
+        PerUserProcesses info = PROCESSES.get(req.getDeveloper());
+        if (info != null) {
             for (Process p : info.getFinished()) {
                 if (p.isOverlaping(req.getStart(), req.getEnd())) {
                     saved.add(p);
                 }
             }
         }
+
         fixOverLapingProccesses(saved);
         return ImmutableList.copyOf(saved);
     }

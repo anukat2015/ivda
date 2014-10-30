@@ -4,6 +4,8 @@
 function Preloader() {
     this.loader = $('#loader');
     this.loaderText = $('#loader-text');
+    this.tasks = 0;
+    this.finishedTasks = 0;
 
     this.updateStatus = function () {
         var text = "Pending requests</br>" + gGlobals.loader.finishedTasks + "/" + gGlobals.loader.tasks;
@@ -23,7 +25,7 @@ function Preloader() {
     this.task = function () {
         var instance = this;
         setTimeout(function () {
-            var tasks = gGlobals.loader.pendingTasks();
+            var tasks = this.pendingTasks();
             if (tasks > 0) {
                 instance.updateStatus();
                 instance.task();
@@ -32,5 +34,9 @@ function Preloader() {
                 instance.loaderText.hide();
             }
         }, 200);
+    };
+
+    this.pendingTasks = function () {
+        return gGlobals.loader.tasks - gGlobals.loader.finishedTasks;
     };
 }

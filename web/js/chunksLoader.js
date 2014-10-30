@@ -5,16 +5,13 @@
  * @constructor
  */
 ChunksLoader = function () {
+    this.CHUNK_SIZE = (60 * 1000 * 60 * 24); // cely den
+
     this.actualMin = undefined;
     this.actualMax = undefined;
-    this.chunkSize = (60 * 1000 * 60 * 24); // cely den
-    this.showError = true;
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
-    this.tasks = 0;
-    this.finishedTasks = 0;
-    this.developers = [];
-    this.groupRepositore = {}; // docasne ulozisko eventov pre danu skupinu, ked skupina sa nema zobrazit, udaje su presunute sem
+    this.developer = undefined;
 };
 
 /**
@@ -26,7 +23,6 @@ ChunksLoader = function () {
 ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
     // Statistiky sa mu vypocitaju na zaklade prvkov, ktore su viditelne
-    this.developers = gGlobals.getDevelopers();
     this.actualMin = this.chunkRound2Left(start);
     this.actualMax = this.chunkRound2Right(end);
 
@@ -34,14 +30,7 @@ ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     this.finisherCallback = finishCallback;
     this.finisherCounts = chunks;
     this.loadChunks(this.actualMin, chunks);
-};
-
-/**
- * Pomocna metoda, ktora zisti ci mame zapnuteho daneho vyvojara
- * @param developer
- */
-ChunksLoader.prototype.containsDeveloper = function (developer) {
-    return this.developers.indexOf(developer) > -1;
+    gGlobals.preloader.start();
 };
 
 /**
@@ -54,16 +43,6 @@ ChunksLoader.prototype.deleteByTime = function (start, end) {
     // Vymaz eventy z Timelinu
     var changed = gGlobals.timeline.deleteItems(start, end);
     //console.log("deleted " + changed);
-
-    // Vymaz aj eventy z repozitara
-    var instance = this;
-    Object.keys(this.groupRepositore).forEach(function (group) {
-        var events = instance.groupRepositore[group];
-        filterItemsByInterval(events, start, end, function supplier(index, item) {
-            events.splice(index, 1);
-            return false;
-        });
-    });
 };
 
 /**
@@ -76,7 +55,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
 
     // Vypocitaj offset pre lavu stranu
     chunked = this.chunksCount(this.chunkRound2Left(start), this.actualMin);
-    newMin = this.actualMin + this.chunkSize * chunked;
+    newMin = this.actualMin + this.CHUNK_SIZE * chunked;
     if (chunked !== 0) { // Nepohli sme sa o zanedbatelny kusok
         if (newMin > this.actualMin) {
             // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
@@ -89,7 +68,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
 
     // Vypocitaj offset pre pravu stranu
     chunked = this.chunksCount(this.chunkRound2Right(end), this.actualMax);
-    newMax = this.actualMax + this.chunkSize * chunked;
+    newMax = this.actualMax + this.CHUNK_SIZE * chunked;
     if (chunked !== 0) {
         if (newMax < this.actualMax) {
             // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
@@ -112,23 +91,11 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var end;
     var count = chunks > 0 ? chunks : chunks * -1;
     var temp = min;
-    this.tasks += count;
+    gGlobals.preloader.tasks += count;
     for (var i = 0; i < count; i++) {
-        end = temp + this.chunkSize;
+        end = temp + this.CHUNK_SIZE;
         this.loadChunk(temp, end);
         temp = end;
-    }
-};
-
-/**
- * Data sa nepodarilo stiahnut
- * @param error
- */
-ChunksLoader.prototype.alertError = function (msg) {
-    console.log(msg);
-    if (this.showError) {
-        alert(msg);
-        this.showError = false;
     }
 };
 
@@ -146,9 +113,8 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
     $.ajax({
         dataType: "json",
         url: url,
-        cache: false,
         error: function (jqXHR, textStatus, errorThrown) {
-            instance.alertError("Server response status:" + textStatus);
+            gGlobals.alertError("Server response status:" + textStatus);
         },
         success: function (data, textStatus, jqXHR) {
             // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
@@ -158,7 +124,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             instance.acceptData(data);
         }
     }).always(function () {
-        instance.finishedTasks++;
+        gGlobals.preloader.finishedTasks++;
         instance.finisherCounts--;
         if (instance.finisherCounts === 0) {
             instance.finisherCallback();
@@ -166,10 +132,6 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
     });
 };
 
-
-ChunksLoader.prototype.pendingTasks = function () {
-    return this.tasks - this.finishedTasks;
-};
 
 /**
  * Prichadzajuce eventy zo sluzby je potrebne spracovat.
@@ -190,48 +152,25 @@ ChunksLoader.prototype.prepareEvents = function (events) {
 
 /**
  * Data prichadzaju vo forme zoznamu eventov pre developera.
- * tzv pride serializovana Map<String, List<TimelineEvent>>
+ * tzv pride serializovana List<TimelineEvent>
  * @param events
  */
-ChunksLoader.prototype.acceptData = function (groups) {
-    var instance = this;
-    var shouldReload = false;
-    Object.keys(groups).forEach(function (group) {
-        // Spracuj nove eventy
-        var events = groups[group];
-        instance.prepareEvents(events);
-
-        // Developera mame zapnuteho, pridaj ho do timelinu
-        if (instance.containsDeveloper(group)) {
-            // dataSet.add(data);
-            gGlobals.timeline.addItems(events, true);
-            shouldReload = true;
-        } else {
-            // Developer je vypnuty, pridaj ho do repozitara
-            if (!instance.groupRepositore.hasOwnProperty(group)) {  // presun vsetky prvky
-                instance.groupRepositore[group] = events;
-            } else {
-                instance.groupRepositore[group] = instance.groupRepositore[group].concat(events);
-            }
-        }
-    });
-
-    if (shouldReload) {
-        // Zmenili sa date, ktoire uzivatel ma vidiet
-        gGlobals.redraw();
-    }
+ChunksLoader.prototype.acceptData = function (events) {
+    this.prepareEvents(events);
+    gGlobals.timeline.addItems(events, true);
+    gGlobals.redraw();
 };
 
 ChunksLoader.prototype.chunkRound2Left = function (date) {
-    return ( Math.floor(date.getTime() / this.chunkSize) * this.chunkSize);
+    return ( Math.floor(date.getTime() / this.CHUNK_SIZE) * this.CHUNK_SIZE);
 };
 
 ChunksLoader.prototype.chunkRound2Right = function (date) {
-    return ( Math.ceil(date.getTime() / this.chunkSize) * this.chunkSize);
+    return ( Math.ceil(date.getTime() / this.CHUNK_SIZE) * this.CHUNK_SIZE);
 };
 
 ChunksLoader.prototype.chunksCount = function (max, min) {
-    return Math.floor((max - min) / this.chunkSize);
+    return Math.floor((max - min) / this.CHUNK_SIZE);
 };
 
 /**
@@ -239,38 +178,21 @@ ChunksLoader.prototype.chunksCount = function (max, min) {
  * Reaguj na zmenu developerov.
  */
 ChunksLoader.prototype.checkDevelopers = function () {
-    var actual = gGlobals.getDevelopers();
-    var i, developer;
-    var shouldRefresh = false;
-    for (i = 0; i < actual.length; i++) {
-        developer = actual[i];
-        if (!this.containsDeveloper(developer)) {
-            // Developera musime pridat ...
-            //gGlobals.timeline.getGroup(developer); o to sa postara uz redraw
-            if (this.groupRepositore.hasOwnProperty(developer)) {
-                gGlobals.timeline.addItems(this.groupRepositore[developer], true);
-                delete this.groupRepositore[developer];
-            }
-            shouldRefresh = true;
-        }
-    }
-    for (i = 0; i < this.developers.length; i++) {
-        developer = this.developers[i];
-        if (actual.indexOf(developer) == -1) {
-            // Presun eventy z timelinu do nasho repozitara
-            // Ktore treba presunut? vsetky ktore patria do skupiny
-            // Developera musime zmazat ...
-            var deletedItems = gGlobals.timeline.deleteGroup(developer);
-            if (this.groupRepositore.hasOwnProperty(developer)) {
-                console.log("repozitar uz obsahuje skupinu, nieco je zle");
-            }
-            this.groupRepositore[developer] = deletedItems;
-            shouldRefresh = true;
-        }
+    var actual = gGlobals.getDeveloper();
+    if (actual === this.developer) {
+        return;
     }
 
-    if (shouldRefresh) {
+    this.developer = actual;
+    gGlobals.timeline.deleteAllItems();
+    gGlobals.redraw();
+
+    var range = gGlobals.timeline.getVisibleChartRange();
+    this.loadRange(range.start, range.end, function () {
+        console.log("finished loadRange");
         gGlobals.redraw();
-    }
-    this.developers = actual;
+        gGlobals.timeline.render({
+            animate: false
+        });
+    });
 };
