@@ -8,15 +8,12 @@ import org.apache.log4j.PropertyConfigurator;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -35,7 +32,7 @@ public final class Configuration implements Serializable {
     private Map<String, String> astRcs = new HashMap<>(16);
     private URI uacaLink;
     private URI cordLink;
-    private Name developers;
+    private Map<String, String> developers;
     private Boolean cacheEnabled;
     private Integer cacheResponseDuration;
     private Boolean blackout;
@@ -118,32 +115,16 @@ public final class Configuration implements Serializable {
         this.cordLink = cordLink;
     }
 
-    public Name getDevelopers() {
+    public Map<String, String> getDevelopers() {
         return developers;
     }
 
-    public void setDevelopers(Name developers) {
+    public void setDevelopers(Map<String, String> developers) {
         this.developers = developers;
     }
 
     private static class ConfigurationHolder {
         private static final Configuration INSTANCE = read();
-    }
-
-    public static class Name implements Serializable {
-        @XmlElement(name = "name")
-        private List<String> list = new ArrayList<>(8);
-
-        public Name() {
-        }
-
-        public Name(List<String> list) {
-            this.list = list;
-        }
-
-        public List<String> getList() {
-            return list;
-        }
     }
 
     public Boolean getCacheEnabled() {

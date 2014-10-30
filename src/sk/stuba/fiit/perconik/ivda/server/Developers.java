@@ -6,7 +6,8 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Stack;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Created by Seky on 6. 9. 2014.
@@ -16,13 +17,10 @@ import java.util.Stack;
 @ThreadSafe
 public final class Developers {
     private final BiMap<String, String> replaceGroup;
-    private final Stack<String> animals;
-    private char alphabetCurrent = 'A';
 
     private Developers() {
-        animals = new Stack<>();
         replaceGroup = HashBiMap.create(16);
-        animals.addAll(Configuration.getInstance().getDevelopers().getList());
+        replaceGroup.putAll(Configuration.getInstance().getDevelopers());
     }
 
     private static class DevelopersHolder {
@@ -33,52 +31,31 @@ public final class Developers {
         return DevelopersHolder.INSTANCE;
     }
 
-    private String generateName() {
-        String name;
-        if (animals.isEmpty()) {
-            name = "Developer " + alphabetCurrent;
-            alphabetCurrent++;
-        } else {
-            name = animals.pop();
-        }
-        return name;
-    }
-
-    /**
-     * Prislo nedefinovane nove meno ...
-     *
-     * @param name
-     * @return
-     */
-    private String newName(String name) {
-        String newName = generateName();
-        replaceGroup.put(name, newName);
-        return newName;
-    }
-
-    public String blackoutName(@Nullable String name) {
+    public String blackoutName(@Nullable String name) throws IllegalArgumentException {
         if (name == null) {
-            return name;
+            throw new IllegalArgumentException();
         }
         if (!Configuration.getInstance().getBlackout()) {
             return name;
         }
-        String groupnew;
-        synchronized (replaceGroup) {
-            groupnew = replaceGroup.get(name);
-            if (groupnew == null) {
-                // Prislo nedefinovane nove meno ...
-                groupnew = newName(name);
-            }
+        String balckOutName = replaceGroup.inverse().get(name);
+        if (balckOutName == null) {
+            throw new IllegalArgumentException();
         }
-        return groupnew;
+        return balckOutName;
     }
 
-    public String getRealName(String name) {
+    public String getRealName(String name) throws IllegalArgumentException {
         String real;
-        synchronized (replaceGroup) {
-            real = replaceGroup.inverse().get(name);
+        real = replaceGroup.get(name);
+        if (real == null) {
+            throw new IllegalArgumentException();
         }
         return real;
     }
+
+    public Set<String> getRealNames() {
+        return Collections.unmodifiableSet(replaceGroup.values());
+    }
+
 }
