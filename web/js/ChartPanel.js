@@ -110,7 +110,7 @@ ChartPanel.prototype.drawPanel = function () {
     console.log(stats);
 
     // Pouzivatelovi sa nezobrazuju ziadne prvky
-    var ziadnePrvky = Object.keys(stats.visible).length == 0;
+    var ziadnePrvky = $.isEmptyObject(stats.visible);
     if (this.visibleCharts && ziadnePrvky) {
         this.hideCharts();
         //return;

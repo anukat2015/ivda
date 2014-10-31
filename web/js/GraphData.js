@@ -21,30 +21,13 @@ function GraphData() {
         this.items.add({x: date, y: value, group: type});
     };
 
-    /*
-     this.addInterval = function (type, start, end, value) {
-     var data = this.createLine(type);
-     data.push({
-     'date': start,
-     'value': value
-     });
-     data.push({
-     'date': end,
-     'value': value
-     });
-     };
-     */
+    this.addItem = function(item) {
+        this.items.add(item);
+    };
 
-    /*
-     this.hasData = function () {
-     var keys = Object.keys(this.lines);
-     for (var i = 0; i < keys.length; i++) {
-     var data = this.lines[keys[i]].data;
-     if (data.length > 0) {
-     return true;
-     }
-     }
-     return false;
-     };
-     */
+
+    this.isEmpty = function () {
+        return $.isEmptyObject(this.items._data);
+    };
+
 }

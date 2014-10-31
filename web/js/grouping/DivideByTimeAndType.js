@@ -22,7 +22,19 @@ function DivideByTimeAndType() {
     };
 
     this.divideForWebTabSpendTime = function (group, actual) {
-        return !group.isEmpty() && group.getFirstEvent().content == "Web";
+        var first, url1, url2;
+        first = group.getFirstEvent();
+        url1 = first.metadata.link;
+        if (url1 == undefined) {
+            return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie
+        }
+        url1 = new URL(url1).hostname;
+        url2 = actual.metadata.link;
+        if (url2 == undefined) {
+            return true; // druhy prvok je iny typ
+        }
+        url2 = new URL(url2).hostname;
+        return group.inGroup > 1 && url != url2; // tzv prida event na zaciatok a na konci bude druhy event
     };
 
     this.canIgnore = function (event) {
