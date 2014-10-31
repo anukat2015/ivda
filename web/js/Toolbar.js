@@ -71,3 +71,5 @@ function onSetCurrentTime() {
         gGlobals.timeline.onRangeChanged();
     }
 }
+
+
