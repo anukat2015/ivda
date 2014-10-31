@@ -30,7 +30,6 @@ ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     this.finisherCallback = finishCallback;
     this.finisherCounts = chunks;
     this.loadChunks(this.actualMin, chunks);
-    gGlobals.preloader.start();
 };
 
 /**
@@ -41,7 +40,7 @@ ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
 ChunksLoader.prototype.deleteByTime = function (start, end) {
     //console.log("deleteItems " + new Date(start).toString() + " " + new Date(end).toString());
     // Vymaz eventy z Timelinu
-    var changed = gGlobals.timeline.deleteItems(start, end);
+    var changed = gGlobals.timeline.panel.deleteItems(start, end);
     //console.log("deleted " + changed);
 };
 
@@ -51,6 +50,9 @@ ChunksLoader.prototype.deleteByTime = function (start, end) {
  * @param end
  */
 ChunksLoader.prototype.onRangeChanged = function (start, end) {
+    if (this.developer == undefined) {
+        return;
+    }
     var chunked, newMin, newMax;
 
     // Vypocitaj offset pre lavu stranu
@@ -92,6 +94,7 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var count = chunks > 0 ? chunks : chunks * -1;
     var temp = min;
     gGlobals.preloader.tasks += count;
+    gGlobals.preloader.start();
     for (var i = 0; i < count; i++) {
         end = temp + this.CHUNK_SIZE;
         this.loadChunk(temp, end);
@@ -106,13 +109,10 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
  * @param end
  */
 ChunksLoader.prototype.loadChunk = function (start, end) {
-    //console.log("loadChunk " + new Date(start).toString() + " " + new Date(end).toString());
-    var url = gGlobals.getTimelineServiceURL(new Date(start), new Date(end));
-    //console.log(url);
     var instance = this;
     $.ajax({
         dataType: "json",
-        url: url,
+        url: gGlobals.service.getTimelineURL(new Date(start), new Date(end), this.developer),
         error: function (jqXHR, textStatus, errorThrown) {
             gGlobals.alertError("Server response status:" + textStatus);
         },
@@ -139,13 +139,14 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
  */
 ChunksLoader.prototype.prepareEvents = function (events) {
     var item;
+    var service = gGlobals.service;
     for (var i = 0; i < events.length; i++) {
         item = events[i];
         if (item.start != null) {
-            item.start = new Date(parseInt(item.start) + gGlobals.timezoneOffset);
+            item.start = service.convertDate(parseInt(item.start));
         }
         if (item.end != null) {
-            item.end = new Date(parseInt(item.end) + gGlobals.timezoneOffset);
+            item.end = service.convertDate(parseInt(item.end));
         }
     }
 };
@@ -157,7 +158,7 @@ ChunksLoader.prototype.prepareEvents = function (events) {
  */
 ChunksLoader.prototype.acceptData = function (events) {
     this.prepareEvents(events);
-    gGlobals.timeline.addItems(events, true);
+    gGlobals.timeline.panel.addItems(events, true);
     gGlobals.redraw();
 };
 
@@ -177,22 +178,20 @@ ChunksLoader.prototype.chunksCount = function (max, min) {
  * Handler, ktory zachytava zmenu developerov.
  * Reaguj na zmenu developerov.
  */
-ChunksLoader.prototype.checkDevelopers = function () {
-    var actual = gGlobals.getDeveloper();
-    if (actual === this.developer) {
+ChunksLoader.prototype.checkDeveloper = function (actual) {
+    var instance = gGlobals.loader;
+    console.log(actual);
+    if (actual == instance.developer) {
         return;
     }
 
-    this.developer = actual;
-    gGlobals.timeline.deleteAllItems();
+    instance.developer = actual;
+    gGlobals.timeline.panel.deleteAllItems();
     gGlobals.redraw();
 
-    var range = gGlobals.timeline.getVisibleChartRange();
-    this.loadRange(range.start, range.end, function () {
+    var range = gGlobals.timeline.panel.getVisibleChartRange();
+    instance.loadRange(range.start, range.end, function () {
         console.log("finished loadRange");
         gGlobals.redraw();
-        gGlobals.timeline.render({
-            animate: false
-        });
     });
 };

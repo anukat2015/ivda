@@ -12,6 +12,7 @@ import sk.stuba.fiit.perconik.ivda.util.Strings;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
  * Pomocna trieda sluzbu AstRcsWcf.
  * document.ChangesetIdInRcs changeset ID unique within AST RCS system, in which the entity version has been created
  */
+@Singleton
 @ThreadSafe
 public final class AstRcsWcfService {
     private static final Logger LOGGER = Logger.getLogger(AstRcsWcfService.class.getName());

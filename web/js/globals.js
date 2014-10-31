@@ -1,87 +1,32 @@
 function Globals() {
     this.table = new google.visualization.Table(document.getElementById('datatable'));
-    this.serverDateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     this.charts = new ChartPanel();
-    this.timeline = getTimeline();
+    this.timeline = new Timeline();
     this.graph = new GraphPanel();
-    this.startInput = $('#startDate');
-    this.endInput = $('#endDate');
     this.loader = new ChunksLoader();
-    this.dateFormat = 'd.m.Y H:i';
     this.preloader = new Preloader();
-    this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
+    this.toolbar = new Toolbar();
+    this.service = new IvdaService();
     this.showError = true;
+    this.wasInit = false;
 
-    this.initialize = function (start, end) {
-        this.setTime(start, end);
-        this.timeline.draw();
-        this.timeline.setVisibleChartRange(start, end);
-        /*this.loader.loadRange(start, end, function () {
-            console.log("finished loadRange");
-            gGlobals.charts.redraw();
-            gGlobals.graph.redraw();
-            gGlobals.timeline.render({
-                animate: false
-            });
-        });
-        this.preloader.start(); */
-    };
+    this.timeline.init();
 
-    this.setTime = function (start, end) {
-        this.startInput.val(start.dateFormat(this.dateFormat));
-        this.endInput.val(end.dateFormat(this.dateFormat));
-    };
 
-    this.getStart = function () {
-        return Date.parseDate(this.startInput.val(), this.dateFormat);
-    };
-
-    this.getEnd = function () {
-        return Date.parseDate(this.endInput.val(), this.dateFormat);
-    };
-
-    this.getAjaxURL = function (parameters) {
-        return "faces/ajax.xhtml?" + $.param(parameters);
-    };
-
-    this.getDeveloper = function () {
-        return $('#select-links').val();
+    this.init = function (start, end, developers) {
+        this.toolbar.init(developers, this.loader.checkDeveloper);
+        this.toolbar.setTime(start, end);
+        this.timeline.panel.draw();
+        this.timeline.panel.setVisibleChartRange(start, end);
+        this.wasInit = true;
     };
 
     this.redraw = function () {
-        this.timeline.redraw();
+        if (!this.wasInit) return;
+        this.timeline.panel.redraw();
         this.charts.redraw();
         this.graph.redraw();
     };
-
-    this.converDate = function (date) {
-        return new Date(date.getTime() + this.timezoneOffset);  // local to utc time
-    };
-
-    this.getTimelineServiceURL = function (start, end) {
-        var restURL = "datatable?";
-        var parameters = $.param({
-            start: this.serverDateFormatter.format(this.converDate(start)),
-            end: this.serverDateFormatter.format(this.converDate(end)),
-            developer: this.getDeveloper()
-        });
-        return restURL + parameters;
-    };
-
-    this.getProcessesServiceURL = function (start, end) {
-        var restURL = "processes?";
-        var parameters = $.param({
-            start: this.serverDateFormatter.format(this.converDate(start)),
-            end: this.serverDateFormatter.format(this.converDate(end)),
-            developer: this.getDeveloper()
-        });
-        return restURL + parameters;
-    };
-
-    this.getDevelopersServiceURL = function() {
-        return "rest/getDevelopers";
-    };
-
 
     this.toggleMetric = function () {
         var prototyp = links.Timeline.ItemCircle.prototype;
@@ -90,7 +35,7 @@ function Globals() {
         } else {
             prototyp.computeSize = prototyp.computeSizeByChangedLines;
         }
-        this.timeline.redraw();
+        this.timeline.panel.redraw();
     };
 
     this.toggleProcesses = function () {
@@ -110,4 +55,30 @@ function Globals() {
             this.showError = false;
         }
     };
+}
+
+function onReSize() {
+    if (gGlobals && gGlobals.wasInit) {
+        gGlobals.redraw();
+    }
+}
+
+function onLoad() {
+    gGlobals = new Globals();
+    //var end = new Date();
+    var end = gGlobals.service.serverDateFormatter.parse("2014-08-06T12:00:00.000");
+    var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
+
+    // Stiahni mena vyvojarov
+    $.ajax({
+        dataType: "json",
+        url: gGlobals.service.getDevelopersURL(),
+        cache: false,
+        error: function (jqXHR, textStatus, errorThrown) {
+            gGlobals.alertError("IVDA service not responding:");
+        },
+        success: function (developers, textStatus, jqXHR) {
+            gGlobals.init(start, end, developers);
+        }
+    });
 }

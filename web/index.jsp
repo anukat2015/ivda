@@ -17,7 +17,7 @@
     <link rel="stylesheet" type="text/css" href="styles/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
 
-    <script src="libs/vis/dist/vis.js"></script>
+    <script type="text/javascript" src="libs/vis/dist/vis.js"></script>
     <link href="libs/vis/dist/vis.css" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
@@ -43,15 +43,16 @@
     <script type="text/javascript" src="js/grouping/BoundedGroup.js"></script>
     <script type="text/javascript" src="js/grouping/DivideByTimeAndType.js"></script>
     <script type="text/javascript" src="js/grouping/ProcessAsGroup.js"></script>
-    <script type="text/javascript" src="js/graphData.js"></script>
 
-    <script type="text/javascript" src="js/events.js"></script>
-    <script type="text/javascript" src="js/preloader.js"></script>
-    <script type="text/javascript" src="js/timeline.js"></script>
-    <script type="text/javascript" src="js/chartPanel.js"></script>
-    <script type="text/javascript" src="js/graphPanel.js"></script>
-    <script type="text/javascript" src="js/chunksLoader.js"></script>
-    <script type="text/javascript" src="js/globals.js"></script>
+    <script type="text/javascript" src="js/Preloader.js"></script>
+    <script type="text/javascript" src="js/Timeline.js"></script>
+    <script type="text/javascript" src="js/ChartPanel.js"></script>
+    <script type="text/javascript" src="js/GraphData.js"></script>
+    <script type="text/javascript" src="js/GraphPanel.js"></script>
+    <script type="text/javascript" src="js/ChunksLoader.js"></script>
+    <script type="text/javascript" src="js/Toolbar.js"></script>
+    <script type="text/javascript" src="js/IvdaService.js"></script>
+    <script type="text/javascript" src="js/Globals.js"></script>
 
     <script type="text/javascript">
         var gGlobals = undefined;

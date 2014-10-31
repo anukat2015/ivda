@@ -11,6 +11,7 @@ import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;
 import java.net.URI;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  */
 @SuppressWarnings("unchecked")
+@Singleton
 public class ActivityService extends RestClient {
     private static final Logger LOGGER = Logger.getLogger(ActivityService.class.getName());
     private static final TimeUnit IGNORE_CACHE_TIME = TimeUnit.HOURS;

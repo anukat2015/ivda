@@ -6,6 +6,7 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Set;
 
@@ -14,6 +15,7 @@ import java.util.Set;
  * Udaje dodavene do group sa nahradzuju inym retazcom.
  * Ochrana sukromia.
  */
+@Singleton
 @ThreadSafe
 public final class Developers {
     private final BiMap<String, String> replaceGroup;
@@ -55,7 +57,7 @@ public final class Developers {
     }
 
     public Set<String> getRealNames() {
-        return Collections.unmodifiableSet(replaceGroup.values());
+        return Collections.unmodifiableSet(replaceGroup.keySet());
     }
 
 }

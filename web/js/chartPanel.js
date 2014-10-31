@@ -29,7 +29,7 @@ ChartPanel.prototype.computeStats = function () {
     var typesMap = {};
     var linesMap = {};
     // getVisibleItems()
-    gGlobals.timeline.getVisibleChartItems(function (index, item) {
+    gGlobals.timeline.panel.getVisibleChartItems(function (index, item) {
 
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
@@ -69,8 +69,8 @@ ChartPanel.prototype.computeStats = function () {
 
 ChartPanel.prototype.computeLabels = function () {
     //gGlobals.timeline.timeAxis.step
-    var options = gGlobals.timeline.options; // nastavenia neupravuj
-    var step = jQuery.extend(true, {}, gGlobals.timeline.step); // deep copy celeho objektu
+    var options = gGlobals.timeline.panel.options; // nastavenia neupravuj
+    var step = jQuery.extend(true, {}, gGlobals.timeline.panel.step); // deep copy celeho objektu
     step.start();
     var max = 0;
     var dates = [];

@@ -7,13 +7,16 @@ function Preloader() {
     this.tasks = 0;
     this.finishedTasks = 0;
 
+    this.loader.hide();
+    this.loaderText.hide();
+
     this.updateStatus = function () {
-        var text = "Pending requests</br>" + gGlobals.loader.finishedTasks + "/" + gGlobals.loader.tasks;
+        var text = "Pending requests</br>" + this.finishedTasks + "/" + this.tasks;
         this.loaderText.html(text);
     };
 
     this.start = function () {
-        if (gGlobals.loader.pendingTasks() == 0) {
+        if (this.pendingTasks() == 0) {
             return;
         }
         this.updateStatus();
@@ -25,7 +28,7 @@ function Preloader() {
     this.task = function () {
         var instance = this;
         setTimeout(function () {
-            var tasks = this.pendingTasks();
+            var tasks = instance.pendingTasks();
             if (tasks > 0) {
                 instance.updateStatus();
                 instance.task();
@@ -37,6 +40,6 @@ function Preloader() {
     };
 
     this.pendingTasks = function () {
-        return gGlobals.loader.tasks - gGlobals.loader.finishedTasks;
+        return this.loader.tasks - this.loader.finishedTasks;
     };
 }

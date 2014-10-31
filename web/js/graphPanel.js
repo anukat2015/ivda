@@ -8,9 +8,9 @@ GraphPanel = function () {
          height: "300px",
          CatmullRom: false  */
         /*legend: {
-            right: {position: 'top-right'},
-            left: {position: 'top-left'}
-        }, */
+         right: {position: 'top-right'},
+         left: {position: 'top-left'}
+         }, */
         style: 'bar',
         barChart: {width: 50, align: 'center'}, // align: left, center, right
         drawPoints: true,
@@ -89,8 +89,7 @@ GraphPanel.prototype.draw = function () {
     this.show();
     //}
 
-    var developers = gGlobals.getDevelopers();
-    if (!this.showProcesses || developers.length == 0) {
+    if (!this.showProcesses) {
         // Zobraz hned
         this.drawPanel(lines);
     } else {
@@ -102,7 +101,7 @@ GraphPanel.prototype.draw = function () {
 
 GraphPanel.prototype.drawPanel = function (data) {
     // Update position
-    var range = gGlobals.timeline.getVisibleChartRange();
+    var range = gGlobals.timeline.panel.getVisibleChartRange();
     var instance = this;
     Object.keys(this.graphs).forEach(function (key) {
         instance.graphs[key].graph.setOptions(range);   // nastav okno na vidditelnu cast
@@ -139,7 +138,7 @@ GraphPanel.prototype.computeData = function () {
 
     // Prechadzaj vsetky prvky, vypocitaj skupinu a popri tom dalsie vlasnosti
     var label, item;
-    var items = gGlobals.timeline.getSortedVisibleChartItems();
+    var items = gGlobals.timeline.panel.getSortedVisibleChartItems();
     for (var i = 0; i < items.length; i++) {
         item = items[i];
         grouping.processItem(item);
@@ -147,70 +146,70 @@ GraphPanel.prototype.computeData = function () {
         // Ak to ma metadata
         if (item.metadata != undefined) {
             /*label = item.metadata.changedLines;
-            if (label != undefined) {
-                data.addPoint("changedLines", item.start, label);
-            }
-            label = item.metadata.changedInFuture;
-            if (label != undefined) {
-                data.addPoint("changedInFuture", item.start, label);
-            }
-            label = item.metadata.changedInHistory;
-            if (label != undefined) {
-                data.addPoint("changedInHistory", item.start, label);
-            } */
+             if (label != undefined) {
+             data.addPoint("changedLines", item.start, label);
+             }
+             label = item.metadata.changedInFuture;
+             if (label != undefined) {
+             data.addPoint("changedInFuture", item.start, label);
+             }
+             label = item.metadata.changedInHistory;
+             if (label != undefined) {
+             data.addPoint("changedInHistory", item.start, label);
+             } */
             /*
-            label = item.metadata.path;
-            if (label != undefined) {
-                if (pathsMap[label] === undefined) {
-                    pathsMap[label] = 1;
-                } else {
-                    pathsMap[label]++;
-                }
-            }
-            label = item.metadata.link;
-            if (label != undefined) {
-                label = new URL(label).hostname;
-                if (domainsMap[label] === undefined) {
-                    domainsMap[label] = 1;
-                } else {
-                    domainsMap[label]++;
-                }
-            }
-            */
+             label = item.metadata.path;
+             if (label != undefined) {
+             if (pathsMap[label] === undefined) {
+             pathsMap[label] = 1;
+             } else {
+             pathsMap[label]++;
+             }
+             }
+             label = item.metadata.link;
+             if (label != undefined) {
+             label = new URL(label).hostname;
+             if (domainsMap[label] === undefined) {
+             domainsMap[label] = 1;
+             } else {
+             domainsMap[label]++;
+             }
+             }
+             */
         }
     }
     grouping.finish();
     //this.graphAddGroups(data, grouping.groups);
     console.log(data);
     /*
-    var gdata, options, chart;
+     var gdata, options, chart;
 
-    gdata = new google.visualization.DataTable();
-    gdata.addColumn('string', 'Path');
-    gdata.addColumn('number', 'Edits');
-    Object.keys(pathsMap).forEach(function (key) {
-        gdata.addRow([ key, pathsMap[key]]);
-    });
-    options = {
-        title: 'Files modifications, in counts'
-    };
-    console.log(gdata);
-    chart = new google.visualization.Histogram(document.getElementById('histogram'));
-    chart.draw(gdata, options);
+     gdata = new google.visualization.DataTable();
+     gdata.addColumn('string', 'Path');
+     gdata.addColumn('number', 'Edits');
+     Object.keys(pathsMap).forEach(function (key) {
+     gdata.addRow([ key, pathsMap[key]]);
+     });
+     options = {
+     title: 'Files modifications, in counts'
+     };
+     console.log(gdata);
+     chart = new google.visualization.Histogram(document.getElementById('histogram'));
+     chart.draw(gdata, options);
 
-    gdata = new google.visualization.DataTable();
-    gdata.addColumn('string', 'Domain');
-    gdata.addColumn('number', 'Visit');
-    Object.keys(domainsMap).forEach(function (key) {
-        gdata.addRow([ key, domainsMap[key]]);
-    });
-    options = {
-        title: 'Domain visit, in counts'
-    };
-    console.log(gdata);
-    chart = new google.visualization.Histogram(document.getElementById('histogram2'));
-    chart.draw(gdata, options);
-    */
+     gdata = new google.visualization.DataTable();
+     gdata.addColumn('string', 'Domain');
+     gdata.addColumn('number', 'Visit');
+     Object.keys(domainsMap).forEach(function (key) {
+     gdata.addRow([ key, domainsMap[key]]);
+     });
+     options = {
+     title: 'Domain visit, in counts'
+     };
+     console.log(gdata);
+     chart = new google.visualization.Histogram(document.getElementById('histogram2'));
+     chart.draw(gdata, options);
+     */
     return data;
 };
 
@@ -220,8 +219,9 @@ GraphPanel.prototype.normalizeTime = function (value) {
 
 GraphPanel.prototype.loadProcesses = function () {
     var instance = this;
-    var range = gGlobals.timeline.getVisibleChartRange();
-    var url = gGlobals.getProcessesServiceURL(new Date(range.start), new Date(range.end));
+    var range = gGlobals.timeline.panel.getVisibleChartRange();
+    var developer = gGlobals.toolbar.getDeveloper();
+    var url = gGlobals.service.getProcessesURL(new Date(range.start), new Date(range.end), developer);
 
     $.ajax({
         url: url
@@ -230,16 +230,17 @@ GraphPanel.prototype.loadProcesses = function () {
         instance.graphAddProcesses(instance.savedLines, processes);
         instance.drawPanel(instance.savedLines);
     }, function (xhr, status, error) {
-        alert(error);
+        gGlobals.alertError(error);
     });
 };
 
 GraphPanel.prototype.graphAddProcesses = function (lines, processes) {
     var process, value;
+    var service = gGlobals.service;
     for (var i = 0; i < processes.length; i++) {
         process = processes[i];
         value = this.normalizeTime(process.end - process.start);
-        lines.addInterval(process.name, new Date(process.start + gGlobals.timezoneOffset), new Date(process.end + gGlobals.timezoneOffset), value);
+        lines.addInterval(process.name, service.convertDate(process.start), service.convertDate(process.end), value);
     }
 };
 

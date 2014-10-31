@@ -10,7 +10,7 @@ function DivideByTimeAndType() {
     this.ONLINE_MIN_INTERVAL = 1000 * 60 * 6;
 
     this.canDivide = function (group, actual) {
-        return this.divideByTime(group, actual) || this.divideByType(group, actual);
+        return this.divideByTime(group, actual) || this.divideForWebTabSpendTime(group, actual) || this.divideByType(group, actual);
     };
 
     this.divideByTime = function (group, actual) {
@@ -19,6 +19,10 @@ function DivideByTimeAndType() {
 
     this.divideByType = function (group, actual) {
         return !(group.getLastEvent().content === actual.content);
+    };
+
+    this.divideForWebTabSpendTime = function (group, actual) {
+        return !group.isEmpty() && group.getFirstEvent().content == "Web";
     };
 
     this.canIgnore = function (event) {
