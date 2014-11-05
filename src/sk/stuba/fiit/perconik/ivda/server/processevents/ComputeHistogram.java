@@ -18,6 +18,10 @@ public final class ComputeHistogram extends ProcessEvents {
     private final Histogram<Date> hDni = new HistogramByList<>();
     private static final File statsDir = new File(Configuration.CONFIG_DIR);
 
+    public ComputeHistogram() {
+        LOGGER.info("Starting computing");
+    }
+
     @Override
     protected void proccessItem(EventDto event) {
         Calendar c = Calendar.getInstance();

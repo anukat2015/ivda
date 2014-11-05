@@ -17,11 +17,11 @@ public class HistogramByList<K extends Comparable<K>> implements Histogram<K> {
     private static final class MyEntry<K> implements Map.Entry<K, MutableInt> {
         private static final long serialVersionUID = 5517661263377263387L;
         private final K key;
-        private int count;
+        private MutableInt count;
 
         private MyEntry(K key) {
             this.key = key;
-            count = 1;
+            count = new MutableInt(1);
         }
 
         @Override
@@ -31,7 +31,7 @@ public class HistogramByList<K extends Comparable<K>> implements Histogram<K> {
 
         @Override
         public MutableInt getValue() {
-            return new MutableInt(count);
+            return count;
         }
 
         @Override

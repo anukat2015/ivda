@@ -13,6 +13,7 @@ public class ComputeHistogramTest extends TestCase {
         Configuration.getInstance();
         ImmutableList<EventDto> response = (ImmutableList<EventDto>) GZIP.deserialize(ActivityServiceTest.FILE_EVENTS_ROK);
 
+
         ComputeHistogram p = new ComputeHistogram();
         p.downloaded(response);
     }
