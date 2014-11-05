@@ -44,6 +44,35 @@ div.timeline-event-content {
     padding: 5px;
 }
 
+/* Circle layout */
+.timeline-event-chart {
+
+}
+
+.timeline-event-chart .timeline-event-content {
+    padding: 0px;
+    margin: 0px;
+}
+
+div.timeline-event-cluster {
+    background-color: #a9e25c;
+}
+
+.timeline-event-circle {
+    border-radius: 50%;
+}
+
+.timeline-event-circle .timeline-event-content {
+    text-align: center;
+    padding: 0;
+    vertical-align: middle;
+}
+
+div.timeline-event {
+    /*background-color: #d5ddf6; slabsia verzie pre Web event*/
+    background-color: #97b0f8;
+}
+
 /* New timeline */
 
 .vis.timeline.root {

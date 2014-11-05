@@ -73,3 +73,16 @@ html, body {
 .selectize-control.multi .selectize-input > div {
     margin-bottom: 0;
 }
+
+
+.vis.timeline .bar {
+    fill-opacity: 1.0;
+    stroke-width: 0;
+}
+
+.vis.timeline .graphGroup0 {
+    fill: #97b0f8;
+}
+.vis.timeline .graphGroup0 {
+    fill: #FFA500;
+}
