@@ -34,7 +34,7 @@ function DivideByTimeAndType() {
             return true; // druhy prvok je iny typ
         }
         url2 = new URL(url2).hostname;
-        return group.inGroup > 1 && url != url2; // tzv prida event na zaciatok a na konci bude druhy event
+        return group.inGroup > 1 && url1 != url2; // tzv prida event na zaciatok a na konci bude druhy event
     };
 
     this.canIgnore = function (event) {

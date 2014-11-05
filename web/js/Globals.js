@@ -28,16 +28,6 @@ function Globals() {
         this.graph.redraw();
     };
 
-    this.toggleMetric = function () {
-        var prototyp = links.Timeline.ItemCircle.prototype;
-        if (prototyp.computeSize == prototyp.computeSizeByChangedLines) {
-            prototyp.computeSize = prototyp.computeSizeByChangesInFuture;
-        } else {
-            prototyp.computeSize = prototyp.computeSizeByChangedLines;
-        }
-        this.timeline.panel.redraw();
-    };
-
     this.toggleProcesses = function () {
         this.graph.showProcesses = !this.graph.showProcesses;
         this.graph.redraw();

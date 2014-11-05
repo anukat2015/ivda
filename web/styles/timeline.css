@@ -1,4 +1,4 @@
-/* Custom styles for the Timeline */
+/* Old timeline */
 
 div.timeline-frame {
     border-color: #5D99C3;
@@ -44,6 +44,46 @@ div.timeline-event-content {
     padding: 5px;
 }
 
+/* New timeline */
+
+.vis.timeline.root {
+    border-color: #5D99C3;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.vis.timeline .vispanel.top, .vis.timeline .vispanel.bottom {
+    border-color: #5D99C3;
+    background-color: #5D99C3;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#5D99C3', endColorstr='#3A6DA0');
+    background: -webkit-gradient(linear, left top, left bottom, from(#5D99C3), to(#3A6DA0));
+    background: -moz-linear-gradient(top, #5D99C3, #3A6DA0);
+}
+
+.vis.timeline .timeaxis .text {
+    color: white;
+}
+
+.vis.timeline .vispanel.left, .vis.timeline .vispanel.right {
+    border-color: #5D99C3;
+    color: #4D4D4D;
+    font-weight: bold;
+}
+
+.vis.timeline .vertical-text span {
+    display: block;
+    min-height: 10px;
+    text-align: center;
+}
+
+.vis.timeline div.item {
+    color: white;
+}
+
+.vis.timeline div.item div.content {
+    padding: 5px;
+}
+
 div.UNAVAILABLE {
     background-color: #F03030;
     border-color: #bd2828;
@@ -60,25 +100,69 @@ div.MAYBE {
 }
 
 /* Circle layout */
-.timeline-event-chart {
-
+.vis.timeline div.chart {
 }
 
-.timeline-event-chart .timeline-event-content {
+.vis.timeline div.chart div.content {
     padding: 0px;
     margin: 0px;
 }
 
+.vis.timeline div.circle {
+    border-radius: 50%;
+}
+
+.vis.timeline div.circle div.content {
+    text-align: center;
+    padding: 0;
+    vertical-align: middle;
+}
+
+/* Nepouzite */
 div.timeline-event-cluster {
     background-color: #a9e25c;
 }
 
-.timeline-event-circle {
-    border-radius: 50%;
+#toolbar input {
+    width: 105px;
 }
 
-.timeline-event-circle .timeline-event-content {
-    text-align: center;
-    padding: 0;
-    vertical-align: middle;
+div.timeline-navigation {
+    -moz-border-radius: 2px;
+    -moz-box-sizing: border-box;
+    background-color: #f5f5f5;
+    border: 1px solid #bebebe;
+    border-radius: 2px;
+    box-sizing: border-box;
+    color: #808080;
+    font-family: arial;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+div.timeline-navigation-zoom-in {
+    background: url('/libs/timeline-2.8.0/img/16/zoomin.png') no-repeat center;
+}
+
+div.timeline-navigation-zoom-out {
+    background: url('/libs/timeline-2.8.0/img/16/zoomout.png') no-repeat center;
+}
+
+div.timeline-navigation-move-right {
+    background: url('/libs/timeline-2.8.0/img/16/moveright.png') no-repeat center;
+}
+
+div.timeline-navigation-move-left {
+    background: url('/libs/timeline-2.8.0/img/16/moveleft.png') no-repeat center;
+}
+
+div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-zoom-in, div.timeline-navigation-zoom-out, div.timeline-navigation-move-left, div.timeline-navigation-move-right {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    cursor: pointer;
+    float: left;
+    height: 36px;
+    padding: 10px;
+    text-decoration: none;
+    width: 36px;
 }

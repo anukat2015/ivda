@@ -8,6 +8,9 @@
     <meta name="Author" content="Lukas Sekerak"/>
     <meta name="robots" content="noindex"/>
 
+    <script type="text/javascript" src="libs/vis/dist/vis.js"></script>
+    <link href="libs/vis/dist/vis.css" rel="stylesheet" type="text/css"/>
+
     <link rel="shortcut icon" type="image/x-icon" href="logo.png"/>
     <link rel="stylesheet" type="text/css" href="libs/timeline-2.8.0/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
@@ -16,9 +19,6 @@
     <link rel="stylesheet" type="text/css" href="styles/loader.css"/>
     <link rel="stylesheet" type="text/css" href="styles/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
-
-    <script type="text/javascript" src="libs/vis/dist/vis.js"></script>
-    <link href="libs/vis/dist/vis.css" rel="stylesheet" type="text/css"/>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -33,6 +33,7 @@
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemRange.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemFloatingRange.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemDot.js"></script>
+    <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemMetrics.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemCircle.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemChart.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/ItemBox.js"></script>
@@ -71,7 +72,7 @@
 </div>
 
 <div id="leftBar">
-    <div id="mytimeline"></div>
+    <div class="mytimeline" id="mytimeline"></div>
 </div>
 <div id="rightBar">
     <div id="pieChart1"></div>
@@ -127,7 +128,8 @@
 </div>
 <div class="clear"></div>
 <div id="datatable"></div>
-<div id="graph-changes"></div>
+<div class="mytimeline" id="graph-changes">
+</div>
 <div id="graph-activity"></div>
 <div id="histogram"></div>
 <div id="histogram2"></div>
