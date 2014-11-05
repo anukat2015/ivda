@@ -12,7 +12,7 @@ GraphPanel = function () {
             left: {position: 'top-left'}
         },
         style: 'bar',
-        barChart: {width: 1, align: 'center'}, // align: left, center, right
+        barChart: {width: 0, align: 'center'}, // align: left, center, right
         drawPoints: true,
         dataAxis: {
             icons: false
@@ -466,7 +466,7 @@ GraphPanel.prototype.computeData = function () {
 
     var histogram_graph = new GraphData();
     histogram_graph.createGroup2('events', 'Count of events');
-    for (i = 0; i < histogram.length-1; i++) {
+    for (i = 0; i < histogram.length - 1; i++) {
         //histogram_graph.addPoint("events", new Date(histogram[i][0]), histogram[i][1]);
         var obj = {
             group: "events",
@@ -536,7 +536,7 @@ GraphPanel.prototype.normalizeTime = function (value) {
 GraphPanel.prototype.graphAddGroups = function (grouping) {
     // Prechazaj skupiny a dopis udaje
     var activities = new GraphData();
-    activities.createGroup2('A', 'Activity');
+    activities.groups.add({id: 'A', content: 'Activity', className: 'graphGroupIde', drawPoints: {enabled: false}});
 
     var group, url, obj, content;
     for (var i = 0; i < grouping.groups.length; i++) {

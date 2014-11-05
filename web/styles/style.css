@@ -79,10 +79,12 @@ html, body {
     fill-opacity: 1.0;
     stroke-width: 0;
 }
-
 .vis.timeline .graphGroup0 {
     fill: #97b0f8;
 }
-.vis.timeline .graphGroup0 {
+.vis.timeline .graphGroupWeb {
+    fill: #97b0f8;
+}
+.vis.timeline .graphGroupIde {
     fill: #FFA500;
 }

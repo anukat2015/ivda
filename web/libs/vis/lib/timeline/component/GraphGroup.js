@@ -112,11 +112,15 @@ GraphGroup.prototype.drawIcon = function(x, y, JSONcontainer, SVGcontainer, icon
     var barWidth = Math.round(0.3 * iconWidth);
     var bar1Height = Math.round(0.4 * iconHeight);
     var bar2Height = Math.round(0.75 * iconHeight);
-
     var offset = Math.round((iconWidth - (2 * barWidth))/3);
 
-    DOMutil.drawBar(x + 0.5*barWidth + offset    , y + fillHeight - bar1Height - 1, barWidth, bar1Height, this.className + ' bar', JSONcontainer, SVGcontainer);
-    DOMutil.drawBar(x + 1.5*barWidth + offset + 2, y + fillHeight - bar2Height - 1, barWidth, bar2Height, this.className + ' bar', JSONcontainer, SVGcontainer);
+    var start, width;
+    start = x + 0.5*barWidth + offset;
+    width = start - 0.5 * barWidth;
+    DOMutil.drawBar(start, y + fillHeight - bar1Height - 1, width, bar1Height, this.className + ' bar', JSONcontainer, SVGcontainer);
+    start = x + 1.5*barWidth + offset + 2;
+    width = start - 0.5 * barWidth;
+    DOMutil.drawBar(start, y + fillHeight - bar2Height - 1, width, bar2Height, this.className + ' bar', JSONcontainer, SVGcontainer);
   }
 };
 
