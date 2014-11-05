@@ -211,7 +211,7 @@ DataAxis.prototype.hide = function() {
  */
 DataAxis.prototype.setRange = function (start, end) {
   this.range.start = start;
-  this.range.end = end;
+  this.range.end = end * 1.9;   // better fit
 };
 
 /**
