@@ -1,6 +1,4 @@
 Battle.net
-wmpnetwk
-vlc
 WinCDEmu
 mediacoder
 PinballFX2

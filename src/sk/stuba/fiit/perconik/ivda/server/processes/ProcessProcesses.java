@@ -4,7 +4,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.util.Catalog;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
 
 import javax.annotation.concurrent.NotThreadSafe;

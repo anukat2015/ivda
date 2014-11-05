@@ -1,9 +1,8 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.util;
 
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -97,7 +96,8 @@ public final class Catalog implements Serializable {
         BANNED("banned.txt"),
         COMMUNICATION("communication.txt"),
         TYPICAL("typical.txt"),
-        NODEVELOPER("nodeveloper.txt");
+        NODEVELOPER("nodeveloper.txt"),
+        MUSIC("music.txt");
 
         Catalog list;
 

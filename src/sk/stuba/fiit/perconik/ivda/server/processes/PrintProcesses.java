@@ -2,7 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.util.Catalog;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.Serializable;

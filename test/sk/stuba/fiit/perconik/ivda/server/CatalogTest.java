@@ -3,6 +3,7 @@ package sk.stuba.fiit.perconik.ivda.server;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
+import sk.stuba.fiit.perconik.ivda.util.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
 import java.util.Set;

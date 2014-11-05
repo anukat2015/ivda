@@ -1,6 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
-import sk.stuba.fiit.perconik.ivda.server.Catalog;
+import sk.stuba.fiit.perconik.ivda.util.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyService;
 
