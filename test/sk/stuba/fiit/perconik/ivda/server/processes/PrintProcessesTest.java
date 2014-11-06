@@ -1,19 +1,24 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
-import com.google.common.collect.ImmutableList;
 import junit.framework.TestCase;
-import sk.stuba.fiit.perconik.ivda.activity.client.ActivityServiceTest;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
+
+import java.util.Date;
+import java.util.Iterator;
 
 public class PrintProcessesTest extends TestCase {
 
     public void testFinished() throws Exception {
         Configuration.getInstance();
-        ImmutableList<EventDto> response = (ImmutableList<EventDto>) GZIP.deserialize(ActivityServiceTest.FILE_EVENTS_ROK);
+        Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2014-11-09T00:00:00.000Z");
+        Iterator<EventDto> it = BankOfChunks.getEvents(start, end);
+
         ProcessEvents p = new PrintProcesses();
-        p.downloaded(response);
+        p.proccess(it);
     }
 }

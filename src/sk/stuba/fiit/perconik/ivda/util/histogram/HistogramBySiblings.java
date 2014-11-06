@@ -10,7 +10,7 @@ import java.util.*;
  * Use this class for keys inserting in sorted position!
  * Usable for distinct keys.
  */
-public class HistogramByList<K extends Comparable<K>> implements Histogram<K> {
+public class HistogramBySiblings<K extends Comparable<K>> implements Histogram<K> {
 
     private final List<Map.Entry<K, MutableInt>> keys = new ArrayList();
 

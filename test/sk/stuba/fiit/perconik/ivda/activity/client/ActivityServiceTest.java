@@ -6,17 +6,13 @@ import org.junit.Assert;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
-import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
-import java.io.File;
 import java.util.Date;
 
 /**
  * Otestovanie funkcionality Activity sluzby
  */
 public class ActivityServiceTest extends TestCase {
-    public static final File FILE_EVENTS_ROK = new File(Configuration.CONFIG_DIR, "events_2014.gzip");
-
     /**
      * Skontroluj deserializaciu a stiahnutie konkretneho eventu
      *
@@ -43,11 +39,5 @@ public class ActivityServiceTest extends TestCase {
         ImmutableList<EventDto> response = ActivityService.getInstance().getEvents(request);
         Assert.assertNotNull(response);
         Assert.assertFalse(response.isEmpty());
-
-        try {
-            GZIP.serialize(response, FILE_EVENTS_ROK);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

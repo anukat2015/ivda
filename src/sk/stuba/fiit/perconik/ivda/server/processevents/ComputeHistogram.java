@@ -4,7 +4,7 @@ import com.ibm.icu.util.Calendar;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
-import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramByList;
+import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramBySiblings;
 
 import java.io.*;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by Seky on 1. 11. 2014.
  */
 public final class ComputeHistogram extends ProcessEvents {
-    private final Histogram<Date> hDni = new HistogramByList<>();
+    private final Histogram<Date> hDni = new HistogramBySiblings<>();
     private static final File statsDir = new File(Configuration.CONFIG_DIR);
 
     public ComputeHistogram() {
