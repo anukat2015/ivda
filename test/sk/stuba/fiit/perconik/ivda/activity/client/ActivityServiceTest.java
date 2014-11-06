@@ -37,7 +37,7 @@ public class ActivityServiceTest extends TestCase {
         Configuration.getInstance();
         EventsRequest request = new EventsRequest();
         Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
-        Date end = DateUtils.fromString("2014-10-20T00:00:00.000Z");
+        Date end = DateUtils.fromString("2014-03-01T00:00:00.000Z");
         request.setTime(start, end);
 
         ImmutableList<EventDto> response = ActivityService.getInstance().getEvents(request);
