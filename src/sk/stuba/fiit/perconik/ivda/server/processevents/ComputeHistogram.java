@@ -35,6 +35,7 @@ public final class ComputeHistogram extends ProcessEvents {
 
     @Override
     public void finished() {
+        LOGGER.info("Flushing");
         saveToFile("hDni.txt", hDni);
     }
 
@@ -47,7 +48,7 @@ public final class ComputeHistogram extends ProcessEvents {
             output.write("[['Date', 'Count'],");
             while (zoznam.hasNext()) {
                 Map.Entry<Date, Object> entry = zoznam.next();
-                output.write("[" + entry.getKey().getTime() + ",\t" + entry.getValue() + "],\n");
+                output.write("[" + entry.getKey() + ",\t" + entry.getValue() + "],\n");
             }
             output.flush();
             output.close();

@@ -1,9 +1,11 @@
 package sk.stuba.fiit.perconik.ivda.activity.dto.ide;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ApplicationEventDto;
 
 import javax.ws.rs.core.UriBuilder;
 
+@JsonIgnoreProperties({ "type" })
 public class IdeEventDto extends ApplicationEventDto {
     private static final long serialVersionUID = -6256629269034699823L;
     /**
