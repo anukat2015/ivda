@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.util;
+package sk.stuba.fiit.perconik.ivda.util.lang;
 
 import com.google.common.base.Function;
 import org.apache.commons.codec.binary.Hex;

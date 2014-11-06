@@ -5,10 +5,10 @@ import java.io.*;
 /**
  * Created by Seky on 5. 11. 2014.
  */
-public final class IterativeOutputStream implements ObjectOutput {
+public final class IterateOutputStream implements ObjectOutput {
     private final ObjectOutputStream out;
 
-    public IterativeOutputStream(OutputStream out) throws IOException {
+    public IterateOutputStream(OutputStream out) throws IOException {
         this.out = new ObjectOutputStream(out);
     }
 

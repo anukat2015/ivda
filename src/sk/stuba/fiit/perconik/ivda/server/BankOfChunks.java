@@ -2,13 +2,13 @@ package sk.stuba.fiit.perconik.ivda.server;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
-import org.apache.commons.collections.list.UnmodifiableList;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.serialize.IterateOutputStreamForFiles;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;
@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
 public class BankOfChunks {
     private static final Logger LOGGER = Logger.getLogger(BankOfChunks.class.getName());
     private static final File DIR = new File(Configuration.CONFIG_DIR, "dump");
-    private static final int SIZE_OF_CHUNK = 1000 * 60 * 60 * 24 * 7; // 1 week
+    private static final int SIZE_OF_CHUNK = 1000 * 60 * 60 * 24; // 1 day
 
     private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
         @Override
@@ -91,6 +92,63 @@ public class BankOfChunks {
                 touched.add(file);
             }
         }
-        return UnmodifiableList.decorate(touched);
+        return touched;
+    }
+
+    public static Iterator<EventDto> getEvents(Date start, Date end) {
+        return new IterateEvents(start, end);
+    }
+
+    private static class IterateEvents implements Iterator<EventDto> {
+        private static final Logger LOGGER = Logger.getLogger(IterateEvents.class.getName());
+        private final Date start;
+        private final Date end;
+        private final Iterator<Object> savedObjects;
+        private EventDto actual = null;
+
+        private IterateEvents(Date start, Date end) {
+            this.start = start;
+            this.end = end;
+            List<File> files = null;
+            try {
+                files = loadChunks(start, end);
+            } catch (ParseException e) {
+                LOGGER.error("Cannot parse:" + e);
+            }
+            savedObjects = new IterateOutputStreamForFiles(files);
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (actual != null) {
+                return true; //we have stored item
+            }
+
+            // if there is no stired item, try find another
+            EventDto temp;
+            Date time;
+            while (savedObjects.hasNext()) {
+                temp = (EventDto) savedObjects.next();
+                time = temp.getTimestamp();
+                if (time.after(start) && time.before(end)) {
+                    actual = temp;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public EventDto next() {
+            EventDto ret = actual;
+            actual = null; // remove stored item
+            return ret;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

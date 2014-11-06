@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.processes.PerUserProcesses;
 import sk.stuba.fiit.perconik.ivda.server.processes.Process;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;

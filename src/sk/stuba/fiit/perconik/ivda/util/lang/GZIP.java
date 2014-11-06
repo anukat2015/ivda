@@ -1,7 +1,7 @@
-package sk.stuba.fiit.perconik.ivda.util;
+package sk.stuba.fiit.perconik.ivda.util.lang;
 
 import org.apache.commons.lang.SerializationUtils;
-import sk.stuba.fiit.perconik.ivda.util.serialize.IterativeOutputStream;
+import sk.stuba.fiit.perconik.ivda.util.serialize.IterateOutputStream;
 import sk.stuba.fiit.perconik.ivda.util.serialize.ObjectInputIterator;
 
 import java.io.*;
@@ -38,8 +38,8 @@ public final class GZIP {
         return SerializationUtils.deserialize(new BufferedInputStream(inputStream(file)));
     }
 
-    public static IterativeOutputStream getIterativeOutput(File name) throws IOException {
-        return new IterativeOutputStream(new BufferedOutputStream(outputStream(name)));
+    public static IterateOutputStream getIterativeOutput(File name) throws IOException {
+        return new IterateOutputStream(new BufferedOutputStream(outputStream(name)));
     }
 
     public static ObjectInputIterator getIterativeInput(File name) throws IOException {

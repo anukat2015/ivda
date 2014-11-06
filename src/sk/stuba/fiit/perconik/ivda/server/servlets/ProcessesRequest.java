@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import sk.stuba.fiit.perconik.ivda.server.Developers;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;

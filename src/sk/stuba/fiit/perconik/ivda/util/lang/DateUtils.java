@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.util;
+package sk.stuba.fiit.perconik.ivda.util.lang;
 
 import com.google.common.base.Preconditions;
 import com.ibm.icu.util.GregorianCalendar;

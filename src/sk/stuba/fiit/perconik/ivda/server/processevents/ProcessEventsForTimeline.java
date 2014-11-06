@@ -13,7 +13,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebTabEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;

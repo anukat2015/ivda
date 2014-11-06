@@ -199,11 +199,11 @@ GraphPanel.prototype.computeData = function () {
      this.graphs.changes.graph.redraw();
      */
     var activities = this.graphAddGroups(grouping);
-
+    /*
     this.graphs.changes.graph.setGroups(activities.groups);
     this.graphs.changes.graph.setItems(activities.items);
     this.graphs.changes.graph.redraw();
-
+    */
     this.graphs.activities.graph.setGroups(activities.groups);
     this.graphs.activities.graph.setItems(activities.items);
     this.graphs.activities.graph.redraw();
@@ -219,7 +219,7 @@ GraphPanel.prototype.computeData = function () {
         gdata.addRow([ key, pathsMap[key]]);
     });
 
-    /*
+     /*
      var histogram = [
      ['Date', 'Count'],
      ['Mon Jun 02 00:00:00 CEST 2014',	128],
@@ -465,19 +465,20 @@ GraphPanel.prototype.computeData = function () {
     ];
 
     var histogram_graph = new GraphData();
-    histogram_graph.createGroup2('events', 'Count of events');
+    histogram_graph.createGroup2('events', 'Count of events | Per day');
     for (i = 0; i < histogram.length - 1; i++) {
         //histogram_graph.addPoint("events", new Date(histogram[i][0]), histogram[i][1]);
         var obj = {
             group: "events",
             x: new Date(histogram[i][0]),
+            end: new Date(histogram[i+1][0]),
             y: histogram[i][1]
         };
         histogram_graph.addItem(obj);
     }
-    //this.graphs.changes.graph.setGroups(histogram_graph.groups);
-    //this.graphs.changes.graph.setItems(histogram_graph.items);
-    //this.graphs.changes.graph.redraw();
+    this.graphs.changes.graph.setGroups(histogram_graph.groups);
+    this.graphs.changes.graph.setItems(histogram_graph.items);
+    this.graphs.changes.graph.redraw();
     //gdata = google.visualization.arrayToDataTable(histogram);
 
     options = {

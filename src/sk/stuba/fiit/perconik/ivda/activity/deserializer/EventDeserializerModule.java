@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebSaveDocumentEventDto;
 
 /**
  * Created by Seky on 20. 7. 2014.
@@ -20,6 +21,7 @@ public final class EventDeserializerModule extends SimpleModule {
         super("PolymorphicDeserializerModule", new Version(1, 0, 0, "1.0-SNAPSHOT", GROUP_ID, GROUP_ID));
         PolymorphicDeserializer<EventDto> deserializer = new PolymorphicDeserializer<>(EventDto.class, "eventTypeUri");
         deserializer.pushSubTypesOf(ENTITIES_PACKAGE);
+        deserializer.register("http://perconik.gratex.com/useractivity/event/web/save", WebSaveDocumentEventDto.class);
         addDeserializer(EventDto.class, deserializer);
         LOGGER.debug("PolymorphicDeserializerModule loaded");
     }

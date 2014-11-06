@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.util.serialize;
 import junit.framework.TestCase;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import java.io.File;
 import java.io.ObjectOutput;

@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import java.io.Serializable;
 import java.util.Date;

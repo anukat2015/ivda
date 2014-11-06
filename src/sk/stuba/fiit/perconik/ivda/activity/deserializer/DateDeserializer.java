@@ -3,7 +3,7 @@ package sk.stuba.fiit.perconik.ivda.activity.deserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import java.io.IOException;
 import java.text.ParseException;

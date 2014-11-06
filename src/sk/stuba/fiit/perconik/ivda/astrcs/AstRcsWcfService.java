@@ -8,7 +8,7 @@ import com.gratex.perconik.services.IAstRcsWcfSvc;
 import com.gratex.perconik.services.ast.rcs.*;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.Strings;
+import sk.stuba.fiit.perconik.ivda.util.lang.Strings;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;

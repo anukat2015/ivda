@@ -4,8 +4,8 @@ import com.google.common.base.Function;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
-import sk.stuba.fiit.perconik.ivda.util.Objects;
-import sk.stuba.fiit.perconik.ivda.util.Strings;
+import sk.stuba.fiit.perconik.ivda.util.lang.Objects;
+import sk.stuba.fiit.perconik.ivda.util.lang.Strings;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;

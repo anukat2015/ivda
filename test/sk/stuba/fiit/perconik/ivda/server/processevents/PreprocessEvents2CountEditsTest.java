@@ -7,7 +7,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.server.filestats.PreprocessEvents2CountEdits;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import java.io.File;
 

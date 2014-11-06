@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.cord.dto.*;
 import sk.stuba.fiit.perconik.ivda.cord.entities.*;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.Strings;
+import sk.stuba.fiit.perconik.ivda.util.lang.Strings;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 import sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache;
 import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;

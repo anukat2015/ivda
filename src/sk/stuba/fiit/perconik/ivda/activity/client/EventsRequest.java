@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.activity.client;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import javax.ws.rs.core.UriBuilder;
 import java.io.Serializable;

@@ -7,7 +7,7 @@ import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsForTimeline;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
-import sk.stuba.fiit.perconik.ivda.util.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
