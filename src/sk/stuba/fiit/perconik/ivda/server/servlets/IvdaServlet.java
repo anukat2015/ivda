@@ -1,28 +1,32 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import org.apache.log4j.Logger;
-import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
-import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents2TimelineEvents;
+import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsForTimeline;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsOut;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Created by Seky on 17. 7. 2014.
  * <p/>
  * Servlet pre TImeline.
  */
-public class TimelineServlet extends HttpServlet {
-    private static final Logger LOGGER = Logger.getLogger(TimelineServlet.class.getName());
+public class IvdaServlet extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(IvdaServlet.class.getName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final long serialVersionUID = -2486259178164233472L;
 
@@ -31,25 +35,34 @@ public class TimelineServlet extends HttpServlet {
         resp.setContentType(MediaType.APPLICATION_JSON);
 
         try {
-            TimelineRequest request = new TimelineRequest(req);
+            final IvdaRequest request = new IvdaRequest(req);
             LOGGER.info("Request: " + request);
-
+            Iterator<EventDto> events;
+            /*
             EventsRequest activityRequest = new EventsRequest();
             activityRequest.setTime(request.getStart(), request.getEnd());
             activityRequest.setUser(request.getDeveloper());
+            events = ActivityService.getInstance().getEvents(activityRequest).iterator()
+            */
 
-            ProcessEvents2TimelineEvents process = new ProcessEventsForTimeline();
-            process.proccess(ActivityService.getInstance().getEvents(activityRequest).iterator());
+            Iterator<EventDto> allEvents = BankOfChunks.getEvents(request.getStart(), request.getEnd());
+            events = Iterators.filter(allEvents, new Predicate<EventDto>() {
+                @Override
+                public boolean apply(@Nullable EventDto input) {
+                    return input.getUser().equals(request.getDeveloper());
+                }
+            });
 
             ServletOutputStream stream = resp.getOutputStream();
-            MAPPER.writeValue(stream, process.getData());
+            ProcessEventsOut process = new ProcessEventsForTimeline(stream);
+            process.proccess(events);
             setCacheHeaders(request, resp);
         } catch (Exception e) {
             resp.sendError(500, e.getMessage());
         }
     }
 
-    private static void setCacheHeaders(TimelineRequest req, HttpServletResponse resp) {
+    private static void setCacheHeaders(IvdaRequest req, HttpServletResponse resp) {
         Integer duration = Configuration.getInstance().getCacheResponseDuration();
         // Set cache for response
         if (duration == 0) {

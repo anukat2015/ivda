@@ -14,7 +14,7 @@
 
     <servlet>
         <servlet-name>Timeline servlet</servlet-name>
-        <servlet-class>sk.stuba.fiit.perconik.ivda.server.servlets.TimelineServlet</servlet-class>
+        <servlet-class>sk.stuba.fiit.perconik.ivda.server.servlets.IvdaServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

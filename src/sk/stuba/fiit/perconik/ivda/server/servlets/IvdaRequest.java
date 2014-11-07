@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Seky on 6. 9. 2014.
  */
-public final class TimelineRequest {
+public final class IvdaRequest {
     private static final TimeUnit SIZE_OF_CHUNK = TimeUnit.DAYS;
     private final Date start;
     private final Date end;
     private final String developer;
 
-    public TimelineRequest(HttpServletRequest req) throws Exception {
+    public IvdaRequest(HttpServletRequest req) throws Exception {
         // Vplyv na rozsah ma jedine zoom, ize musime vypocitat sirku okna a poslat to sem
         start = DateUtils.fromString(UriUtils.decode(req, "start"));
         end = DateUtils.fromString(UriUtils.decode(req, "end"));
