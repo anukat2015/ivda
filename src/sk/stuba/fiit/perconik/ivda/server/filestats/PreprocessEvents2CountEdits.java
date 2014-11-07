@@ -1,14 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.server.filestats;
 
 import com.google.common.base.Strings;
-import com.gratex.perconik.services.ast.rcs.ChangesetDto;
-import com.gratex.perconik.services.ast.rcs.FileVersionDto;
-import com.gratex.perconik.services.ast.rcs.RcsProjectDto;
-import com.gratex.perconik.services.ast.rcs.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
-import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
 
@@ -52,8 +47,6 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
         }
 
         fileWasChanged(event, changesetIdInRcs, changedLines);
-        //lookAtFileVersions(event, dokument, rcsServer);
-        //Repository repo = CordService.getInstance().getNearestRepository(rcsServer.getUrl());      // miraven project neexistje, astrcs tak musi ostat
     }
 
     private void fileWasChanged(IdeCodeEventDto event, String changesetIdInRcs, int changedLines) {
@@ -62,25 +55,6 @@ public final class PreprocessEvents2CountEdits extends ProcessEvents {
         String path = event.getDocument().getServerPath();
         //LOGGER.info(author + "\t" + date + "\t" + changesetIdInRcs + "\t" + path + "\t" + changedLines);
         opRepository.add(author, path, new FileOperationRecord(date, changedLines));
-    }
-
-    private void lookAtFileVersions(IdeCodeEventDto event, IdeDocumentDto dokument, sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto rcsServer) {
-
-        try {
-            RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
-            ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
-            FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-            ChangesetDto successorChangeset = AstRcsWcfService.getInstance().getChangesetSuccessor(changeset, fileVersion);
-            FileVersionDto successorfileVersion = AstRcsWcfService.getInstance().getFileVersionSuccessor(successorChangeset, fileVersion);
-
-            if (!fileVersion.getUrl().getValue().equals(successorfileVersion.getUrl().getValue())) {
-                LOGGER.warn("Nesedia cesty.");
-            }
-
-        } catch (AstRcsWcfService.NotFoundException e) {
-            LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
-        }
     }
 
     public FilesOperationsRepository getOpRepository() {

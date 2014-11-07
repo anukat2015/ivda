@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Seky on 21. 8. 2014.
  * <p/>
- * Skupina reprezentovana akzdym jednym prvkom.
+ * Skupina reprezentovana kazdym jednym prvkom.
  */
 @NotThreadSafe
 public class FullGroup extends Group implements Serializable {

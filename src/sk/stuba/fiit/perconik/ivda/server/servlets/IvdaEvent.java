@@ -11,12 +11,15 @@ import java.util.Date;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class IvdaEvent implements Serializable {
-    private static final long serialVersionUID = 2235473137254607516L;
+    private static final long serialVersionUID = 87925860374597210L;
+
+    private String id;
     private Date start;
     private Date end;
     private String group;
     private String content;
     private Integer y;
+    private Object metadata;
 
     public IvdaEvent() {
     }
@@ -59,5 +62,21 @@ public final class IvdaEvent implements Serializable {
 
     public void setY(Integer y) {
         this.y = y;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Object getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Object metadata) {
+        this.metadata = metadata;
     }
 }

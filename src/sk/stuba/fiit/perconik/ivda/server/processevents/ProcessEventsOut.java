@@ -9,6 +9,7 @@ import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -19,7 +20,7 @@ import java.io.OutputStream;
  */
 public abstract class ProcessEventsOut extends ProcessEvents {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private JsonGenerator generator = null;
+    private JsonGenerator generator;
 
     protected ProcessEventsOut(OutputStream out) {
         JsonFactory factory = new JsonFactory();
@@ -70,15 +71,15 @@ public abstract class ProcessEventsOut extends ProcessEvents {
         }
     }
 
-    public void add(EventDto e, Object metadata) {
-        IvdaEvent event = new IvdaEvent(
-                e.getTimestamp(),
-                e.getUser(),
-                EventsUtil.event2Classname(e),
-                EventsUtil.event2name(e),
-                null,
-                metadata
-        );
+    public void add(EventDto e, @Nullable String content, @Nullable Integer value, @Nullable Object metadata) {
+        String group = EventsUtil.event2name(e);
+        IvdaEvent event = new IvdaEvent();
+        event.setId(e.getEventId());
+        event.setStart(e.getTimestamp());
+        event.setContent(content != null ? content : group);
+        event.setGroup(group);
+        event.setY(value);
+        event.setMetadata(metadata);
         add(event);
     }
 }

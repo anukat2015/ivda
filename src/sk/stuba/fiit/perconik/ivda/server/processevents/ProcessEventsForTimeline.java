@@ -1,15 +1,12 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.gratex.perconik.services.ast.rcs.FileVersionDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.BashCommandEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.RcsServerDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
-import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebTabEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
@@ -29,7 +26,6 @@ import java.util.Map;
 @NotThreadSafe
 public final class ProcessEventsForTimeline extends ProcessEventsOut {
     private static final FilesOperationsRepository OP_REPOSITORY;
-    //private final Catalog developerLinks;
 
     public ProcessEventsForTimeline(OutputStream out) {
         super(out);
@@ -47,11 +43,8 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
 
     @Override
     protected void proccessItem(EventDto event) {
-        if (event instanceof WebTabEventDto) { // ako dlho stravil na konkretnej stranke
-            return;
-        }
         if (event instanceof BashCommandEventDto) {
-            return;
+            bashEvent((BashCommandEventDto) event);
         }
 
         if (event instanceof IdeCodeEventDto) {
@@ -65,18 +58,13 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
         }
     }
 
+    private void bashEvent(BashCommandEventDto event) {
+        add(event, event.getCommandLine(), null, null);
+    }
+
     private void webEvent(WebNavigateEventDto event) {
         String link = event.getUrl();
-        //if (!developerLinks.contains(link)) {
-        //   return;
-        //}
-        //int changedLines = 20;
-        //if (changedLines > 0) {
-        add(event, ImmutableMap.of(
-                "uid", event.getEventId(),
-                "link", link
-        ));
-        //}
+        add(event, link, null, null);
     }
 
     private void ideEvent(IdeCodeEventDto event) {
@@ -89,26 +77,10 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
         if (Strings.isNullOrEmpty(changesetIdInRcs) || changesetIdInRcs.compareTo("0") == 0) { // changeset - teda commit id nenajdeny
             return;
         }
-
-        try {
-            FileVersionDto fileVersion = null;
-            //LOGGER.info("Skopiroval:\\n" + event.getText());
-            //RcsServerDto server = AstRcsWcfService.getInstance().getNearestRcsServerDto(rcsServer.getUrl());
-            //RcsProjectDto project = AstRcsWcfService.getInstance().getRcsProjectDto(server, dokument.getServerPath());
-            //ChangesetDto changeset = AstRcsWcfService.getInstance().getChangesetDto(dokument.getChangesetIdInRcs(), project);
-            //FileVersionDto fileVersion = AstRcsWcfService.getInstance().getFileVersionDto(changeset, dokument.getServerPath(), project);
-            //File file = CordService.getInstance().getFile(repo, commit, path);
-
-            // Uloz udaje tak aby ich klient mohol spracovat
-            saveEvent(event, fileVersion);
-            //} catch (AstRcsWcfService.NotFoundException e) {
-            //    LOGGER.error("Chybaju nejake udaje:" + e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error("proccessItem", e);
-        }
+        saveEvent(event);
     }
 
-    private void saveEvent(IdeCodeEventDto event, FileVersionDto fileVersion) {
+    private void saveEvent(IdeCodeEventDto event) {
         // Uloz udaje tak aby ich klient mohol spracovat
         Integer changedLines = EventsUtil.codeWritten(event.getText());
         if (changedLines > 0) {
@@ -117,16 +89,12 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
 
             // Vytvore metadata pre Event, tie sa posielaju potom na Ajax detail
             Map<String, Object> metadata = new HashMap<>(8);
-            metadata.put("uid", event.getEventId());
-            //metadata.put("path", fileVersion.getUrl().getValue());
-            metadata.put("path", event.getDocument().getServerPath());
             metadata.put("text", event.getText());
             //metadata.put("repo", fileVersion.getId());
             // metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
-            metadata.put("changedLines", changedLines);
             metadata.put("changedInFuture", stats.after);
             metadata.put("changedInHistory", stats.before);
-            add(event, metadata);
+            add(event, event.getDocument().getServerPath(), changedLines, metadata);
         }
     }
 }

@@ -57,24 +57,21 @@ public class ProcessAsGroup extends ProcessEventsOut {
         // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
         EventDto first = group.getFirstEvent();
         EventDto last = group.getLastEvent();
-        IvdaEvent event = new IvdaEvent(
-                first.getTimestamp(),
-                first.getUser(),
-                EventsUtil.event2Classname(first),
-                EventsUtil.event2name(first),
-                last.getTimestamp(),
-                group.size());
 
+        // Store event
+        IvdaEvent event = new IvdaEvent();
+        event.setStart(first.getTimestamp());
+        event.setEnd(last.getTimestamp());
+        event.setGroup(EventsUtil.event2name(first));
+        event.setY(group.size());
         add(event);
     }
 
     @Override
     public void finished() {
-        if (currentGroup == null || currentGroup.isEmpty()) {
-            super.finished();
-            return; // ked ziadny prvok nebol v odpovedi
+        if (!(currentGroup == null || currentGroup.isEmpty())) {
+            foundEndOfGroup(currentGroup);
         }
-        foundEndOfGroup(currentGroup);
         super.finished();
     }
 }
