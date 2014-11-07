@@ -5,6 +5,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.OutputStream;
 
 /**
  * Created by Seky on 21. 8. 2014.
@@ -12,7 +13,11 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Vypis event, kde pouzivatel upravoval kod.
  */
 @NotThreadSafe
-public final class ProcessAllWrittenCodes extends ProcessEvents2TimelineEvents {
+public final class ProcessAllWrittenCodes extends ProcessEventsOut {
+
+    protected ProcessAllWrittenCodes(OutputStream out) {
+        super(out);
+    }
 
     @Override
     protected void proccessItem(EventDto event) {

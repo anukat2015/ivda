@@ -17,6 +17,7 @@ import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,9 +27,13 @@ import java.util.Map;
  * Metoda spracovania udalosti, ktora posiela vyslene informacie o timeline.
  */
 @NotThreadSafe
-public final class ProcessEventsForTimeline extends ProcessEvents2TimelineEvents {
+public final class ProcessEventsForTimeline extends ProcessEventsOut {
     private static final FilesOperationsRepository OP_REPOSITORY;
     //private final Catalog developerLinks;
+
+    public ProcessEventsForTimeline(OutputStream out) {
+        super(out);
+    }
 
     static {
         Configuration.getInstance();

@@ -9,9 +9,10 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCheckinEventDto;
 import sk.stuba.fiit.perconik.ivda.astrcs.AstRcsWcfService;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.servlets.TimelineEvent;
+import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -20,8 +21,12 @@ import java.util.List;
  * Vypis file verziu specifickeho suboru.
  */
 @NotThreadSafe
-public final class ProcessChangesetsForFile extends ProcessEvents2TimelineEvents {
+public final class ProcessChangesetsForFile extends ProcessEventsOut {
     private static final String ZAUJIMAVY_SUBOR = "sk.stuba.fiit.perconik.eclipse/src/sk/stuba/fiit/perconik/eclipse/jdt/core/JavaElementEventType.java";
+
+    protected ProcessChangesetsForFile(OutputStream out) {
+        super(out);
+    }
 
     /**
      * Prechadzaj vsetky commity.
@@ -57,7 +62,7 @@ public final class ProcessChangesetsForFile extends ProcessEvents2TimelineEvents
             for (FileVersionDto file : fileVersion) {
                 if (file.getUrl().getValue().equals(ZAUJIMAVY_SUBOR)) {
                     LOGGER.info(changesetIdInRcs);
-                    TimelineEvent e = new TimelineEvent(
+                    IvdaEvent e = new IvdaEvent(
                             event.getTimestamp(),
                             event.getUser(),
                             EventsUtil.event2Classname(event),

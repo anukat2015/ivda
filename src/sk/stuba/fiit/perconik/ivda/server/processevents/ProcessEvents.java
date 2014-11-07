@@ -11,22 +11,28 @@ import java.util.Iterator;
  */
 public abstract class ProcessEvents {
     protected final Logger LOGGER;
+    private boolean enabledProcess;
 
     protected ProcessEvents() {
         LOGGER = Logger.getLogger(this.getClass().getName());
+        enabledProcess = true;
     }
 
     public void proccess(Iterator<EventDto> it) {
         started();
-        while(it.hasNext()) {
+        while (enabledProcess && it.hasNext()) {
             proccessItem(it.next());
         }
         finished();
     }
 
+    protected void stop() {
+        enabledProcess = false;
+    }
+
     protected abstract void proccessItem(EventDto event);
 
-    public void finished() {
+    protected void finished() {
     }
 
     protected void started() {
