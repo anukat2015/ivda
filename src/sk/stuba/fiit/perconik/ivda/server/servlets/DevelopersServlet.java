@@ -1,6 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.Developers;
 
 import javax.servlet.ServletOutputStream;
@@ -17,6 +18,7 @@ import java.util.Set;
  * Created by Seky on 30. 10. 2014.
  */
 public class DevelopersServlet extends HttpServlet {
+    private static final Logger LOGGER = Logger.getLogger(ProcessesServlet.class.getName());
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final long serialVersionUID = 6807046140866478480L;
 
@@ -31,6 +33,7 @@ public class DevelopersServlet extends HttpServlet {
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, list);
         } catch (Exception e) {
+            LOGGER.error("Reponse: ", e);
             resp.sendError(500, e.getMessage());
         }
     }

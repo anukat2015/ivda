@@ -38,6 +38,7 @@ public class IvdaServlet extends HttpServlet {
             process.proccess(events);
             setCacheHeaders(request, resp);
         } catch (Exception e) {
+            LOGGER.error("Reponse: ", e);
             resp.sendError(500, e.getMessage());
         }
     }

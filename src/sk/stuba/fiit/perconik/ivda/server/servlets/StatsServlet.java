@@ -51,6 +51,7 @@ public class StatsServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
+            LOGGER.error("Reponse: ", e);
             resp.sendError(500, e.getMessage());
         }
 
@@ -71,6 +72,7 @@ public class StatsServlet extends HttpServlet {
 
             IvdaEvent e = new IvdaEvent();
             e.setStart(start);
+            e.setGroup("events");
             e.setEnd(g.addThreshold(start));
             e.setY(entry.getValue().toInteger());
             json.write(e);

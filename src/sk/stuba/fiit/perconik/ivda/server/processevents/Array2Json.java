@@ -5,14 +5,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.*;
 
 /**
  * Created by Seky on 22. 7. 2014.
@@ -58,8 +56,6 @@ public final class Array2Json {
 
     public void write(IvdaEvent event) {
         // Black out developer name
-        String group = Developers.getInstance().blackoutName(event.getGroup());
-        event.setGroup(group);
         try {
             generator.writeObject(event);
         } catch (IOException e) {

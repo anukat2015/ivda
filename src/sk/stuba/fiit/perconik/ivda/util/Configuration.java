@@ -43,10 +43,10 @@ public final class Configuration implements Serializable {
         CONFIG_DIR = System.getProperty("config.dir", defaultDir);
 
         // Prepare log4j
-        if (!CONFIG_DIR.equals(defaultDir)) { // tzv. Program bezi pravdepodobne lokalne
+        //if (!CONFIG_DIR.equals(defaultDir)) { // tzv. Program bezi pravdepodobne lokalne
             String log4jLoggingPropFile = new File(CONFIG_DIR, LOGGING_PROPERTIES_FILE).getAbsolutePath();
             PropertyConfigurator.configure(log4jLoggingPropFile);
-        }
+        //}
 
         try {
             CONTEXT = JAXBContext.newInstance(Configuration.class);

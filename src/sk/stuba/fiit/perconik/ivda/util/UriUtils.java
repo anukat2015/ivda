@@ -22,7 +22,11 @@ import java.util.Map;
  */
 public final class UriUtils {
     public static String decode(HttpServletRequest req, String key) throws Exception {
-        return URLDecoder.decode(req.getParameter(key), "UTF-8");
+        String param = req.getParameter(key);
+        if (param == null) {
+            return null;
+        }
+        return URLDecoder.decode(param, "UTF-8");
     }
 
     public static Map<String, String> splitQuery(URL url) throws UnsupportedEncodingException {

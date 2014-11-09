@@ -51,6 +51,7 @@ public class ProcessesServlet extends HttpServlet {
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, list);
         } catch (Exception e) {
+            LOGGER.error("Reponse: ", e);
             resp.sendError(500, e.getMessage());
         }
     }
