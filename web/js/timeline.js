@@ -77,12 +77,13 @@ function Timeline() {
 
     this.onItemMouseClick = function (api, item) {
         var html = 'Loading...';
-        if (item.metadata.link != undefined) {   // web
-            html = '<a href="' + item.metadata.link + '">' + item.metadata.link + '</a>';
-        } else if (item.metadata.changedLines != undefined) {  // ide
-            html = 'Changed lines: ' + item.metadata.changedLines + '</br>'
+        if (item.group == "Web") {
+            html = '<a href="' + item.content + '">' + item.content+ '</a>';
+        } else if (item.group == "Ide") {  // ide
+            html = 'Changed lines: ' + item.metadata.y + '</br>'
                 + 'Changed in future: ' + item.metadata.changedInFuture + '</br>'
-                + 'Path: ' + item.metadata.path + '</br>'
+                + 'Changed in past: ' + item.metadata.changedInHistory + '</br>'
+                + 'Path: ' + item.content + '</br>'
                 + 'Text: </br><pre>' + item.metadata.text + '</pre></br>';
         }
         return html;

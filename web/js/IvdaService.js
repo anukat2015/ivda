@@ -25,6 +25,18 @@ function IvdaService() {
         return restURL + parameters;
     };
 
+    this.getStatsURL = function (start, end, developer) {
+        var restURL = "stats?";
+        var parameters = $.param({
+            start: this.serverDateFormatter.format(this.convertDate(start.getTime())),
+            end: this.serverDateFormatter.format(this.convertDate(end.getTime())),
+            developer: developer,
+            attribute: "count",
+            granularity: "DAY"
+        });
+        return restURL + parameters;
+    };
+
     this.getDevelopersURL = function () {
         return "developers";
     };

@@ -42,8 +42,8 @@ ChartPanel.prototype.computeStats = function () {
                 }
 
                 // Statistiky pre pocet zmenenych riadkov
-                if (item.metadata.changedLines != undefined) {
-                    var value = item.metadata.changedLines;
+                if (item.group == "Ide") {
+                    var value = item.metadata.y;
                     if (linesMap[label.label] === undefined) {
                         linesMap[label.label] = value;
                     } else {

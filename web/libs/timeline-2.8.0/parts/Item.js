@@ -1,4 +1,3 @@
-
 /**
  * @constructor links.Timeline.Item
  * @param {Object} data       Object containing parameters start, end
@@ -23,6 +22,10 @@ links.Timeline.Item = function (data, options) {
         this.group = data.group;
         this.type = data.type;
         this.metadata = data.metadata;
+        if (this.metadata == undefined) {
+            this.metadata = {};
+        }
+        this.metadata.y = data.y;
     }
     this.top = 0;
     this.left = 0;
