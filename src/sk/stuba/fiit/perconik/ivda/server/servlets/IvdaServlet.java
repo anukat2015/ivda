@@ -1,17 +1,13 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsForTimeline;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsOut;
+import sk.stuba.fiit.perconik.ivda.server.processevents.ListOfEventsForTimeline;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
-import javax.annotation.Nullable;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,34 +23,18 @@ import java.util.Iterator;
  */
 public class IvdaServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(IvdaServlet.class.getName());
-    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final long serialVersionUID = -2486259178164233472L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType(MediaType.APPLICATION_JSON);
-
         try {
             final IvdaRequest request = new IvdaRequest(req);
             LOGGER.info("Request: " + request);
-            Iterator<EventDto> events;
-            /*
-            EventsRequest activityRequest = new EventsRequest();
-            activityRequest.setTime(request.getStart(), request.getEnd());
-            activityRequest.setUser(request.getDeveloper());
-            events = ActivityService.getInstance().getEvents(activityRequest).iterator()
-            */
 
-            Iterator<EventDto> allEvents = BankOfChunks.getEvents(request.getStart(), request.getEnd());
-            events = Iterators.filter(allEvents, new Predicate<EventDto>() {
-                @Override
-                public boolean apply(@Nullable EventDto input) {
-                    return input.getUser().equals(request.getDeveloper());
-                }
-            });
-
+            resp.setContentType(MediaType.APPLICATION_JSON);
             ServletOutputStream stream = resp.getOutputStream();
-            ProcessEventsOut process = new ProcessEventsForTimeline(stream);
+            Iterator<EventDto> events = BankOfChunks.getEvents(request.getStart(), request.getEnd(), request.getDeveloper());
+            ProcessIterator<EventDto> process = new ListOfEventsForTimeline(stream);
             process.proccess(events);
             setCacheHeaders(request, resp);
         } catch (Exception e) {

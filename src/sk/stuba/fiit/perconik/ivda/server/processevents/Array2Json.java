@@ -1,9 +1,9 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.Developers;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
@@ -12,27 +12,26 @@ import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.*;
 
 /**
  * Created by Seky on 22. 7. 2014.
  * <p/>
- * Metoda spracovania udalosti, ktora je rozsirena o moznost ukladat zaujimave udalosti.
+ * Metoda spracovania prvkov, ktora je rozsirena o moznost ukladat zaujimave udalosti.
  */
-public abstract class ProcessEventsOut extends ProcessEvents {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+public final class Array2Json {
+    private static final Logger LOGGER = Logger.getLogger(Array2Json.class.getName());
     private JsonGenerator generator;
 
-    protected ProcessEventsOut(OutputStream out) {
-        JsonFactory factory = new JsonFactory();
+    public Array2Json(OutputStream out) {
         try {
-            generator = MAPPER.getFactory().createGenerator(out, JsonEncoding.UTF8);
+            generator = new ObjectMapper().getFactory().createGenerator(out, JsonEncoding.UTF8);
         } catch (IOException e) {
             LOGGER.error("error, ", e);
         }
     }
 
-    @Override
-    protected void started() {
+    public void start() {
         if (generator == null) {
             return;
         }
@@ -41,12 +40,10 @@ public abstract class ProcessEventsOut extends ProcessEvents {
             generator.writeStartArray();
         } catch (IOException e) {
             LOGGER.error("error, ", e);
-            stop();
         }
     }
 
-    @Override
-    protected void finished() {
+    public void close() {
         if (generator == null) {
             return;
         }
@@ -59,7 +56,7 @@ public abstract class ProcessEventsOut extends ProcessEvents {
         }
     }
 
-    protected void add(IvdaEvent event) {
+    public void write(IvdaEvent event) {
         // Black out developer name
         String group = Developers.getInstance().blackoutName(event.getGroup());
         event.setGroup(group);
@@ -67,11 +64,10 @@ public abstract class ProcessEventsOut extends ProcessEvents {
             generator.writeObject(event);
         } catch (IOException e) {
             LOGGER.error("error, ", e);
-            stop();
         }
     }
 
-    public void add(EventDto e, @Nullable String content, @Nullable Integer value, @Nullable Object metadata) {
+    public void write(EventDto e, @Nullable String content, @Nullable Integer value, @Nullable Object metadata) {
         String group = EventsUtil.event2name(e);
         IvdaEvent event = new IvdaEvent();
         event.setId(e.getEventId());
@@ -80,7 +76,7 @@ public abstract class ProcessEventsOut extends ProcessEvents {
         event.setGroup(group);
         event.setY(value);
         event.setMetadata(metadata);
-        add(event);
+        write(event);
     }
 }
 

@@ -1,6 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.server;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import com.google.common.io.Files;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
@@ -10,6 +12,7 @@ import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 import sk.stuba.fiit.perconik.ivda.util.serialize.IterateOutputStreamForFiles;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +101,16 @@ public class BankOfChunks {
     public static Iterator<EventDto> getEvents(Date start, Date end) {
         return new IterateEvents(start, end);
     }
+
+    public static Iterator<EventDto> getEvents(Date start, Date end, final String user) {
+        return Iterators.filter(getEvents(start, end), new Predicate<EventDto>() {
+            @Override
+            public boolean apply(@Nullable EventDto input) {
+                return input.getUser().equals(user);
+            }
+        });
+    }
+
 
     private static class IterateEvents implements Iterator<EventDto> {
         private static final Logger LOGGER = Logger.getLogger(IterateEvents.class.getName());

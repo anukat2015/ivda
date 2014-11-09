@@ -5,7 +5,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Date;
@@ -16,7 +16,7 @@ import java.util.Date;
  * Tieto operacie scita a vytvori statistiky.
  */
 @NotThreadSafe
-public final class PreprocessEvents2CountEdits extends ProcessEvents {
+public final class PreprocessEvents2CountEdits extends ProcessIterator<EventDto> {
     private final FilesOperationsRepository opRepository;
 
     public PreprocessEvents2CountEdits() {

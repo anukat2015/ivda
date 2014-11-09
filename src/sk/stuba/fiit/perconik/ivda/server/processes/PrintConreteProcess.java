@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
+import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 
@@ -10,6 +11,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventD
  * Metoda je urcena ako pomocka pri analyze dat..
  */
 public final class PrintConreteProcess extends ProcessProcesses {
+    private static final Logger LOGGER = Logger.getLogger(PrintConreteProcess.class.getName());
     private final String name;
 
     public PrintConreteProcess(String name) {

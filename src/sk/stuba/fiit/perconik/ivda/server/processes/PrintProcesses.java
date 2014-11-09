@@ -1,5 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.processes;
 
+import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.util.Catalog;
@@ -18,6 +19,7 @@ import java.util.Set;
 @NotThreadSafe
 public final class PrintProcesses extends ProcessProcesses implements Serializable {
     private static final long serialVersionUID = 2949364093850819480L;
+    private static final Logger LOGGER = Logger.getLogger(PrintProcesses.class.getName());
     private final Set<String> processes = new HashSet<>(1000);
 
     @Override

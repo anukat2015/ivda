@@ -11,6 +11,7 @@ import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.filestats.FilesOperationsRepository;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;
@@ -24,11 +25,12 @@ import java.util.Map;
  * Metoda spracovania udalosti, ktora posiela vyslene informacie o timeline.
  */
 @NotThreadSafe
-public final class ProcessEventsForTimeline extends ProcessEventsOut {
+public final class ListOfEventsForTimeline extends ProcessIterator<EventDto> {
     private static final FilesOperationsRepository OP_REPOSITORY;
+    private final Array2Json out;
 
-    public ProcessEventsForTimeline(OutputStream out) {
-        super(out);
+    public ListOfEventsForTimeline(OutputStream out) {
+        this.out = new Array2Json(out);
     }
 
     static {
@@ -58,13 +60,25 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
         }
     }
 
+    @Override
+    protected void finished() {
+        super.finished();
+        out.close();
+    }
+
+    @Override
+    protected void started() {
+        out.start();
+        super.started();
+    }
+
     private void bashEvent(BashCommandEventDto event) {
-        add(event, event.getCommandLine(), null, null);
+        out.write(event, event.getCommandLine(), null, null);
     }
 
     private void webEvent(WebNavigateEventDto event) {
         String link = event.getUrl();
-        add(event, link, null, null);
+        out.write(event, link, null, null);
     }
 
     private void ideEvent(IdeCodeEventDto event) {
@@ -94,7 +108,7 @@ public final class ProcessEventsForTimeline extends ProcessEventsOut {
             // metadata.put("commit", ancestor == null ? 0 : ancestor);   //! Nepridavat .toString(, lebo javascript to nacitava ako cislo
             metadata.put("changedInFuture", stats.after);
             metadata.put("changedInHistory", stats.before);
-            add(event, event.getDocument().getServerPath(), changedLines, metadata);
+            out.write(event, event.getDocument().getServerPath(), changedLines, metadata);
         }
     }
 }

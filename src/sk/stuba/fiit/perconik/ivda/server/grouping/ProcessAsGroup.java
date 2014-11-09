@@ -1,24 +1,19 @@
 package sk.stuba.fiit.perconik.ivda.server.grouping;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.BoundedGroup;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsOut;
-import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
-
-import java.io.OutputStream;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 
 /**
  * Created by Seky on 8. 8. 2014.
  */
-public class ProcessAsGroup extends ProcessEventsOut {
-    private final IDividing divide;
+public abstract class ProcessAsGroup extends ProcessIterator<EventDto> {
+    private IDividing divide;
     private Group currentGroup;
 
-    protected ProcessAsGroup(OutputStream out) {
-        super(out);
+    protected ProcessAsGroup() {
         divide = new DivideByTimeAndType();
     }
 
@@ -53,25 +48,12 @@ public class ProcessAsGroup extends ProcessEventsOut {
         return new BoundedGroup(event);
     }
 
-    protected void foundEndOfGroup(Group group) {
-        // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
-        EventDto first = group.getFirstEvent();
-        EventDto last = group.getLastEvent();
-
-        // Store event
-        IvdaEvent event = new IvdaEvent();
-        event.setStart(first.getTimestamp());
-        event.setEnd(last.getTimestamp());
-        event.setGroup(EventsUtil.event2name(first));
-        event.setY(group.size());
-        add(event);
-    }
+    protected abstract void foundEndOfGroup(Group group);
 
     @Override
-    public void finished() {
+    protected void finished() {
         if (!(currentGroup == null || currentGroup.isEmpty())) {
             foundEndOfGroup(currentGroup);
         }
-        super.finished();
     }
 }

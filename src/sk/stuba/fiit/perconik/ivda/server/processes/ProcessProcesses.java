@@ -5,7 +5,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.MonitoringStartedEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventDto;
 import sk.stuba.fiit.perconik.ivda.util.Catalog;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEvents;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
@@ -16,7 +16,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * tak, ze sa zameriava iba na procesy spustene a ukoncene u pouzivatela.
  */
 @NotThreadSafe
-public abstract class ProcessProcesses extends ProcessEvents {
+public abstract class ProcessProcesses extends ProcessIterator<EventDto> {
     private final Catalog appBlackList;
 
     protected ProcessProcesses() {

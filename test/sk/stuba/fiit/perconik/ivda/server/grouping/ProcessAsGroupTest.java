@@ -5,9 +5,13 @@ import com.google.common.collect.Iterators;
 import junit.framework.TestCase;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ProcessEventsOut;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
+import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
+import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
+import sk.stuba.fiit.perconik.ivda.server.servlets.IvdaEvent;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
+import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -31,7 +35,36 @@ public class ProcessAsGroupTest extends TestCase {
             }
         });
 
-        ProcessEventsOut process = new ProcessAsGroup(new FileOutputStream(FILE, false));
+        ProcessIterator<EventDto> process = new ProcessAsGroup() {
+            private final Array2Json out = new Array2Json(new FileOutputStream(FILE, false));
+
+            @Override
+            public void finished() {
+                super.finished();
+                out.close();
+            }
+
+            @Override
+            protected void started() {
+                out.start();
+                super.started();
+            }
+
+            @Override
+            protected void foundEndOfGroup(Group group) {
+                // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
+                EventDto first = group.getFirstEvent();
+                EventDto last = group.getLastEvent();
+
+                // Store event
+                IvdaEvent event = new IvdaEvent();
+                event.setStart(first.getTimestamp());
+                event.setEnd(last.getTimestamp());
+                event.setGroup(EventsUtil.event2name(first));
+                event.setY(group.size());
+                out.write(event);
+            }
+        };
         process.proccess(it);
     }
 }

@@ -13,6 +13,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>Stats servlet</servlet-name>
+        <servlet-class>sk.stuba.fiit.perconik.ivda.server.servlets.StatsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Stats servlet</servlet-name>
+        <url-pattern>/stats</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>Timeline servlet</servlet-name>
         <servlet-class>sk.stuba.fiit.perconik.ivda.server.servlets.IvdaServlet</servlet-class>
     </servlet>

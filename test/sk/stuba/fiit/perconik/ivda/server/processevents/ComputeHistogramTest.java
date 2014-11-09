@@ -5,6 +5,7 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
+import sk.stuba.fiit.perconik.ivda.server.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
@@ -26,7 +27,7 @@ public class ComputeHistogramTest extends TestCase {
         Iterator<EventDto> it = BankOfChunks.getEvents(start, end);
 
         LOGGER.info("Starting computing");
-        ComputeHistogram p = new ComputeHistogram();
+        ComputeHistogram p = new ComputeHistogram(TimeGranularity.DAY);
         p.proccess(it);
         LOGGER.info("Flushing");
         saveToFile("hAutory.txt", p.getHistogram());
