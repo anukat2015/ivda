@@ -214,7 +214,7 @@ Graph2d.prototype.getItemRange = function() {
       if (this.linegraph.groups[groupId].visible == true) {
         for (var i = 0; i < this.linegraph.groups[groupId].itemsData.length; i++) {
           var item = this.linegraph.groups[groupId].itemsData[i];
-          var value = util.convert(item.x, 'Date').valueOf();
+          var value = util.convert(item.start, 'Date').valueOf();
           min = min == null ? value : min > value ? value : min;
           max = max == null ? value : max < value ? value : max;
         }

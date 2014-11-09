@@ -26,7 +26,7 @@ GraphGroup.prototype.setItems = function(items) {
   if (items != null) {
     this.itemsData = items;
     if (this.options.sort == true) {
-      this.itemsData.sort(function (a,b) {return a.x - b.x;})
+      this.itemsData.sort(function (a,b) {return a.start - b.start;})
     }
   }
   else {
