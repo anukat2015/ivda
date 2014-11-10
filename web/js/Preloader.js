@@ -6,9 +6,24 @@ function Preloader() {
     this.loaderText = $('#loader-text');
     this.tasks = 0;
     this.finishedTasks = 0;
+    this.init();
 
-    this.loader.hide();
-    this.loaderText.hide();
+
+    this.init = function () {
+        this.loader.hide();
+        this.loaderText.hide();
+
+        var instance = this;
+        $(document).ajaxStart(function () {
+            instance.tasks += count;
+            instance.start();
+        });
+
+        $(document).ajaxStop(function () {
+            instance.finishedTasks++;
+        });
+
+    };
 
     this.updateStatus = function () {
         var text = "Pending requests</br>" + this.finishedTasks + "/" + this.tasks;
