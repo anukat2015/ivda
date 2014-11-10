@@ -4,7 +4,7 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
-import sk.stuba.fiit.perconik.ivda.server.TimeGranularity;
+import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ActivityStats;
 import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ComputeHistogram;

@@ -9,6 +9,7 @@ import sk.stuba.fiit.perconik.ivda.activity.client.ActivityService;
 import sk.stuba.fiit.perconik.ivda.activity.client.EventsRequest;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
+import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 import sk.stuba.fiit.perconik.ivda.util.serialize.IterateOutputStreamForFiles;
 
@@ -17,13 +18,8 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutput;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Seky on 6. 11. 2014.
@@ -34,15 +30,6 @@ public class BankOfChunks {
     private static final Logger LOGGER = Logger.getLogger(BankOfChunks.class.getName());
     private static final File DIR = new File(Configuration.CONFIG_DIR, "dump");
     private static final int SIZE_OF_CHUNK = 1000 * 60 * 60 * 24; // 1 day
-
-    private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy_MM_dd");
-            format.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
-            return format;
-        }
-    };
 
     public static void processChunks(Date start, Date end) throws IOException {
         Date temp = start;
@@ -57,7 +44,7 @@ public class BankOfChunks {
     }
 
     private static void processChunk(Date start, Date end) throws IOException {
-        String name = FORMATTER.get().format(start) + '-' + FORMATTER.get().format(end) + ".gzip";
+        String name = DateUtils.toString(start).substring(0, 10) + '_' + DateUtils.toString(end).substring(0, 10) + ".gzip";
         File file = new File(DIR, name);
         if (file.exists()) {
             LOGGER.warn("Already exist, skipping: " + name);
@@ -80,20 +67,31 @@ public class BankOfChunks {
         out.close();
     }
 
-    public static List<File> loadChunks(Date start, Date end) throws ParseException {
-        String[] dates;
+    public static List<File> loadChunks(Date start, Date end) {
+        Date requestStart = org.apache.commons.lang.time.DateUtils.truncate(start, Calendar.DAY_OF_MONTH);
+        Date requestEnd = org.apache.commons.lang.time.DateUtils.truncate(end, Calendar.DAY_OF_MONTH);
+        String[] names;
         Date itemStart, itemEnd;
         File[] list = DIR.listFiles();
         List<File> touched = new ArrayList<>();
-        for (File file : list) {
-            dates = Files.getNameWithoutExtension(file.getName()).split("-");
-            itemStart = FORMATTER.get().parse(dates[0]);
-            itemEnd = FORMATTER.get().parse(dates[1]);
+        try {
+            for (File file : list) {
+                names = Files.getNameWithoutExtension(file.getName()).split("_");
+                itemStart = DateUtils.fromString(names[0] + "T00:00:00.000Z");
+                itemEnd = DateUtils.fromString(names[1] + "T00:00:00.000Z");
 
-            // Check if is touching
-            if ((start.getTime() <= itemStart.getTime() && itemStart.getTime() <= end.getTime()) || (start.getTime() <= itemEnd.getTime() && itemEnd.getTime() <= end.getTime())) {
-                touched.add(file);
+                // Check if is touching
+                if (itemStart.compareTo(requestEnd) == 0) {
+                    // Berieme do uvahy aj tento posledny element, lebo pri orezani potrebujeme aj tieto data
+                    touched.add(file);
+                    break;
+                }
+                if (itemStart.compareTo(requestStart) == 0 || DateUtils.isOverlaping(itemStart, itemEnd, requestStart, requestEnd)) {
+                    touched.add(file);
+                }
             }
+        } catch (ParseException ex) {
+            LOGGER.error("Cannot parse:" + ex);
         }
         return touched;
     }
@@ -123,11 +121,7 @@ public class BankOfChunks {
             this.start = start;
             this.end = end;
             List<File> files = null;
-            try {
-                files = loadChunks(start, end);
-            } catch (ParseException e) {
-                LOGGER.error("Cannot parse:" + e);
-            }
+            files = loadChunks(start, end);
             savedObjects = new IterateOutputStreamForFiles(files);
         }
 

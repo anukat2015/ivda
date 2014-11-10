@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 3.5.0
- * @date    2014-11-05
+ * @date    2014-11-09
  *
  * @license
  * Copyright (C) 2011-2014 Almende B.V, http://almende.com
@@ -90,9 +90,9 @@ return /******/ (function(modules) { // webpackBootstrap
   // Graph3d
   exports.Graph3d = __webpack_require__(5);
   exports.graph3d = {
-    Camera: __webpack_require__(8),
-    Filter: __webpack_require__(6),
-    Point2d: __webpack_require__(7),
+    Camera: __webpack_require__(6),
+    Filter: __webpack_require__(7),
+    Point2d: __webpack_require__(8),
     Point3d: __webpack_require__(9),
     Slider: __webpack_require__(10),
     StepNumber: __webpack_require__(11)
@@ -2928,9 +2928,9 @@ return /******/ (function(modules) { // webpackBootstrap
   var DataView = __webpack_require__(4);
   var util = __webpack_require__(1);
   var Point3d = __webpack_require__(9);
-  var Point2d = __webpack_require__(7);
-  var Camera = __webpack_require__(8);
-  var Filter = __webpack_require__(6);
+  var Point2d = __webpack_require__(8);
+  var Camera = __webpack_require__(6);
+  var Filter = __webpack_require__(7);
   var Slider = __webpack_require__(10);
   var StepNumber = __webpack_require__(11);
 
@@ -5197,6 +5197,146 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
+  var Point3d = __webpack_require__(9);
+
+  /**
+   * @class Camera
+   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
+   * The camera is always looking in the direction of the origin of the arm.
+   * This way, the camera always rotates around one fixed point, the location
+   * of the camera arm.
+   *
+   * Documentation:
+   *   http://en.wikipedia.org/wiki/3D_projection
+   */
+  Camera = function () {
+    this.armLocation = new Point3d();
+    this.armRotation = {};
+    this.armRotation.horizontal = 0;
+    this.armRotation.vertical = 0;
+    this.armLength = 1.7;
+
+    this.cameraLocation = new Point3d();
+    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Set the location (origin) of the arm
+   * @param {Number} x  Normalized value of x
+   * @param {Number} y  Normalized value of y
+   * @param {Number} z  Normalized value of z
+   */
+  Camera.prototype.setArmLocation = function(x, y, z) {
+    this.armLocation.x = x;
+    this.armLocation.y = y;
+    this.armLocation.z = z;
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Set the rotation of the camera arm
+   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
+   *                Optional, can be left undefined.
+   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
+   *                if vertical=0.5*PI, the graph is shown from the
+   *                top. Optional, can be left undefined.
+   */
+  Camera.prototype.setArmRotation = function(horizontal, vertical) {
+    if (horizontal !== undefined) {
+      this.armRotation.horizontal = horizontal;
+    }
+
+    if (vertical !== undefined) {
+      this.armRotation.vertical = vertical;
+      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
+      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
+    }
+
+    if (horizontal !== undefined || vertical !== undefined) {
+      this.calculateCameraOrientation();
+    }
+  };
+
+  /**
+   * Retrieve the current arm rotation
+   * @return {object}   An object with parameters horizontal and vertical
+   */
+  Camera.prototype.getArmRotation = function() {
+    var rot = {};
+    rot.horizontal = this.armRotation.horizontal;
+    rot.vertical = this.armRotation.vertical;
+
+    return rot;
+  };
+
+  /**
+   * Set the (normalized) length of the camera arm.
+   * @param {Number} length A length between 0.71 and 5.0
+   */
+  Camera.prototype.setArmLength = function(length) {
+    if (length === undefined)
+      return;
+
+    this.armLength = length;
+
+    // Radius must be larger than the corner of the graph,
+    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
+    // graph
+    if (this.armLength < 0.71) this.armLength = 0.71;
+    if (this.armLength > 5.0) this.armLength = 5.0;
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Retrieve the arm length
+   * @return {Number} length
+   */
+  Camera.prototype.getArmLength = function() {
+    return this.armLength;
+  };
+
+  /**
+   * Retrieve the camera location
+   * @return {Point3d} cameraLocation
+   */
+  Camera.prototype.getCameraLocation = function() {
+    return this.cameraLocation;
+  };
+
+  /**
+   * Retrieve the camera rotation
+   * @return {Point3d} cameraRotation
+   */
+  Camera.prototype.getCameraRotation = function() {
+    return this.cameraRotation;
+  };
+
+  /**
+   * Calculate the location and rotation of the camera based on the
+   * position and orientation of the camera arm
+   */
+  Camera.prototype.calculateCameraOrientation = function() {
+    // calculate location of the camera
+    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
+
+    // calculate rotation of the camera
+    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
+    this.cameraRotation.y = 0;
+    this.cameraRotation.z = -this.armRotation.horizontal;
+  };
+
+  module.exports = Camera;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
   var DataView = __webpack_require__(4);
 
   /**
@@ -5418,7 +5558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -5433,146 +5573,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
   module.exports = Point2d;
 
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var Point3d = __webpack_require__(9);
-
-  /**
-   * @class Camera
-   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
-   * The camera is always looking in the direction of the origin of the arm.
-   * This way, the camera always rotates around one fixed point, the location
-   * of the camera arm.
-   *
-   * Documentation:
-   *   http://en.wikipedia.org/wiki/3D_projection
-   */
-  Camera = function () {
-    this.armLocation = new Point3d();
-    this.armRotation = {};
-    this.armRotation.horizontal = 0;
-    this.armRotation.vertical = 0;
-    this.armLength = 1.7;
-
-    this.cameraLocation = new Point3d();
-    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Set the location (origin) of the arm
-   * @param {Number} x  Normalized value of x
-   * @param {Number} y  Normalized value of y
-   * @param {Number} z  Normalized value of z
-   */
-  Camera.prototype.setArmLocation = function(x, y, z) {
-    this.armLocation.x = x;
-    this.armLocation.y = y;
-    this.armLocation.z = z;
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Set the rotation of the camera arm
-   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
-   *                Optional, can be left undefined.
-   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
-   *                if vertical=0.5*PI, the graph is shown from the
-   *                top. Optional, can be left undefined.
-   */
-  Camera.prototype.setArmRotation = function(horizontal, vertical) {
-    if (horizontal !== undefined) {
-      this.armRotation.horizontal = horizontal;
-    }
-
-    if (vertical !== undefined) {
-      this.armRotation.vertical = vertical;
-      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
-      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
-    }
-
-    if (horizontal !== undefined || vertical !== undefined) {
-      this.calculateCameraOrientation();
-    }
-  };
-
-  /**
-   * Retrieve the current arm rotation
-   * @return {object}   An object with parameters horizontal and vertical
-   */
-  Camera.prototype.getArmRotation = function() {
-    var rot = {};
-    rot.horizontal = this.armRotation.horizontal;
-    rot.vertical = this.armRotation.vertical;
-
-    return rot;
-  };
-
-  /**
-   * Set the (normalized) length of the camera arm.
-   * @param {Number} length A length between 0.71 and 5.0
-   */
-  Camera.prototype.setArmLength = function(length) {
-    if (length === undefined)
-      return;
-
-    this.armLength = length;
-
-    // Radius must be larger than the corner of the graph,
-    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
-    // graph
-    if (this.armLength < 0.71) this.armLength = 0.71;
-    if (this.armLength > 5.0) this.armLength = 5.0;
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Retrieve the arm length
-   * @return {Number} length
-   */
-  Camera.prototype.getArmLength = function() {
-    return this.armLength;
-  };
-
-  /**
-   * Retrieve the camera location
-   * @return {Point3d} cameraLocation
-   */
-  Camera.prototype.getCameraLocation = function() {
-    return this.cameraLocation;
-  };
-
-  /**
-   * Retrieve the camera rotation
-   * @return {Point3d} cameraRotation
-   */
-  Camera.prototype.getCameraRotation = function() {
-    return this.cameraRotation;
-  };
-
-  /**
-   * Calculate the location and rotation of the camera based on the
-   * position and orientation of the camera arm
-   */
-  Camera.prototype.calculateCameraOrientation = function() {
-    // calculate location of the camera
-    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
-
-    // calculate rotation of the camera
-    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
-    this.cameraRotation.y = 0;
-    this.cameraRotation.z = -this.armRotation.horizontal;
-  };
-
-  module.exports = Camera;
 
 /***/ },
 /* 9 */
@@ -6684,7 +6684,7 @@ return /******/ (function(modules) { // webpackBootstrap
         if (this.linegraph.groups[groupId].visible == true) {
           for (var i = 0; i < this.linegraph.groups[groupId].itemsData.length; i++) {
             var item = this.linegraph.groups[groupId].itemsData[i];
-            var value = util.convert(item.x, 'Date').valueOf();
+            var value = util.convert(item.start, 'Date').valueOf();
             min = min == null ? value : min > value ? value : min;
             max = max == null ? value : max < value ? value : max;
           }
@@ -9096,7 +9096,7 @@ return /******/ (function(modules) { // webpackBootstrap
     if (items != null) {
       this.itemsData = items;
       if (this.options.sort == true) {
-        this.itemsData.sort(function (a,b) {return a.x - b.x;})
+        this.itemsData.sort(function (a,b) {return a.start - b.start;})
       }
     }
     else {
@@ -11706,7 +11706,7 @@ return /******/ (function(modules) { // webpackBootstrap
           for (var itemId in this.itemsData._data) {
               if (this.itemsData._data.hasOwnProperty(itemId)) {
                   var item = this.itemsData._data[itemId];
-                  item.x = util.convert(item.x, "Date");
+                  item.start = util.convert(item.start, "Date");
                   groupsContent[item.group].push(item);
               }
           }
@@ -11910,7 +11910,7 @@ return /******/ (function(modules) { // webpackBootstrap
                   for (j = guess; j < group.itemsData.length; j++) {
                       item = group.itemsData[j];
                       if (item !== undefined) {
-                          if (item.x > maxDate) {
+                          if (item.start > maxDate) {
                               dataContainer.push(item);
                               break;
                           }
@@ -11924,7 +11924,7 @@ return /******/ (function(modules) { // webpackBootstrap
                   for (j = 0; j < group.itemsData.length; j++) {
                       item = group.itemsData[j];
                       if (item !== undefined) {
-                          if (item.x > minDate && item.x < maxDate) {
+                          if (item.start > minDate && item.start < maxDate) {
                               dataContainer.push(item);
                           }
                       }
@@ -11949,7 +11949,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
                       // the global screen is used because changing the width of the yAxis may affect the increment, resulting in an endless loop
                       // of width changing of the yAxis.
-                      var xDistance = this.body.util.toGlobalScreen(dataContainer[dataContainer.length - 1].x) - this.body.util.toGlobalScreen(dataContainer[0].x);
+                      var xDistance = this.body.util.toGlobalScreen(dataContainer[dataContainer.length - 1].start) - this.body.util.toGlobalScreen(dataContainer[0].start);
                       var pointsPerPixel = amountOfPoints / xDistance;
                       increment = Math.min(Math.ceil(0.2 * amountOfPoints), Math.max(1, Math.round(pointsPerPixel)));
 
@@ -11997,7 +11997,7 @@ return /******/ (function(modules) { // webpackBootstrap
                       // combine data
                       for (j = 0; j < groupData.length; j++) {
                           barCombinedData.push({
-                              x: groupData[j].x,
+                              start: groupData[j].start,
                               y: groupData[j].y,
                               groupId: groupIds[i]
                           });
@@ -12010,10 +12010,10 @@ return /******/ (function(modules) { // webpackBootstrap
           if (barCombinedDataLeft.length > 0) {
               // sort by time and by group
               barCombinedDataLeft.sort(function (a, b) {
-                  if (a.x == b.x) {
+                  if (a.start == b.start) {
                       return a.groupId - b.groupId;
                   } else {
-                      return a.x - b.x;
+                      return a.start - b.start;
                   }
               });
               intersections = {};
@@ -12025,10 +12025,10 @@ return /******/ (function(modules) { // webpackBootstrap
           if (barCombinedDataRight.length > 0) {
               // sort by time and by group
               barCombinedDataRight.sort(function (a, b) {
-                  if (a.x == b.x) {
+                  if (a.start == b.start) {
                       return a.groupId - b.groupId;
                   } else {
-                      return a.x - b.x;
+                      return a.start - b.start;
                   }
               });
               intersections = {};
@@ -12045,7 +12045,7 @@ return /******/ (function(modules) { // webpackBootstrap
       var yMin = combinedData[0].y;
       var yMax = combinedData[0].y;
       for (var i = 0; i < combinedData.length; i++) {
-          key = combinedData[i].x;
+          key = combinedData[i].start;
           if (intersections[key] === undefined) {
               yMin = yMin > combinedData[i].y ? combinedData[i].y : yMin;
               yMax = yMax < combinedData[i].y ? combinedData[i].y : yMax;
@@ -12195,7 +12195,7 @@ return /******/ (function(modules) { // webpackBootstrap
               if (group.visible == true && (this.options.groups.visibility[groupIds[i]] === undefined || this.options.groups.visibility[groupIds[i]] == true)) {
                   for (j = 0; j < processedGroupData[groupIds[i]].length; j++) {
                       combinedData.push({
-                          x: processedGroupData[groupIds[i]][j].x,
+                          start: processedGroupData[groupIds[i]][j].start,
                           end: processedGroupData[groupIds[i]][j].end,
                           y: processedGroupData[groupIds[i]][j].y,
                           oldY: processedGroupData[groupIds[i]][j].oldY,
@@ -12213,10 +12213,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
       // sort by time and by group
       combinedData.sort(function (a, b) {
-          if (a.x == b.x) {
+          if (a.start == b.start) {
               return a.groupId - b.groupId;
           } else {
-              return a.x - b.x;
+              return a.start - b.start;
           }
       });
 
@@ -12228,14 +12228,14 @@ return /******/ (function(modules) { // webpackBootstrap
           group = this.groups[combinedData[i].groupId];
           var minWidth = 0.1 * group.options.barChart.width;
 
-          key = combinedData[i].x;
+          key = combinedData[i].start;
           var heightOffset = 0;
           if (intersections[key] === undefined) {
               if (i + 1 < combinedData.length) {
-                  coreDistance = Math.abs(combinedData[i + 1].x - key);
+                  coreDistance = Math.abs(combinedData[i + 1].start - key);
               }
               if (i > 0) {
-                  coreDistance = Math.min(coreDistance, Math.abs(combinedData[i - 1].x - key));
+                  coreDistance = Math.min(coreDistance, Math.abs(combinedData[i - 1].start - key));
               }
               drawData = this._getSafeDrawData(coreDistance, group, minWidth);
           }
@@ -12243,10 +12243,10 @@ return /******/ (function(modules) { // webpackBootstrap
               var nextKey = i + (intersections[key].amount - intersections[key].resolved);
               var prevKey = i - (intersections[key].resolved + 1);
               if (nextKey < combinedData.length) {
-                  coreDistance = Math.abs(combinedData[nextKey].x - key);
+                  coreDistance = Math.abs(combinedData[nextKey].start - key);
               }
               if (prevKey > 0) {
-                  coreDistance = Math.min(coreDistance, Math.abs(combinedData[prevKey].x - key));
+                  coreDistance = Math.min(coreDistance, Math.abs(combinedData[prevKey].start - key));
               }
               drawData = this._getSafeDrawData(coreDistance, group, minWidth);
               intersections[key].resolved += 1;
@@ -12267,7 +12267,7 @@ return /******/ (function(modules) { // webpackBootstrap
               }
           }
 
-          var start = combinedData[i].x + drawData.offset;
+          var start = combinedData[i].start + drawData.offset;
           var end = combinedData[i].end;
           var title = "Value: " + combinedData[i].oldY;
           var width = drawData.width;
@@ -12300,16 +12300,16 @@ return /******/ (function(modules) { // webpackBootstrap
       var coreDistance;
       for (var i = 0; i < combinedData.length; i++) {
           if (i + 1 < combinedData.length) {
-              coreDistance = Math.abs(combinedData[i + 1].x - combinedData[i].x);
+              coreDistance = Math.abs(combinedData[i + 1].start - combinedData[i].start);
           }
           if (i > 0) {
-              coreDistance = Math.min(coreDistance, Math.abs(combinedData[i - 1].x - combinedData[i].x));
+              coreDistance = Math.min(coreDistance, Math.abs(combinedData[i - 1].start - combinedData[i].start));
           }
           if (coreDistance == 0) {
-              if (intersections[combinedData[i].x] === undefined) {
-                  intersections[combinedData[i].x] = {amount: 0, resolved: 0, accumulated: 0};
+              if (intersections[combinedData[i].start] === undefined) {
+                  intersections[combinedData[i].start] = {amount: 0, resolved: 0, accumulated: 0};
               }
-              intersections[combinedData[i].x].amount += 1;
+              intersections[combinedData[i].start].amount += 1;
           }
       }
   };
@@ -12379,10 +12379,10 @@ return /******/ (function(modules) { // webpackBootstrap
                   var fillPath = DOMutil.getSVGElement('path', this.svgElements, this.svg);
                   var dFill;
                   if (group.options.shaded.orientation == 'top') {
-                      dFill = "M" + dataset[0].x + "," + 0 + " " + d + "L" + dataset[dataset.length - 1].x + "," + 0;
+                      dFill = "M" + dataset[0].start + "," + 0 + " " + d + "L" + dataset[dataset.length - 1].start + "," + 0;
                   }
                   else {
-                      dFill = "M" + dataset[0].x + "," + svgHeight + " " + d + "L" + dataset[dataset.length - 1].x + "," + svgHeight;
+                      dFill = "M" + dataset[0].start + "," + svgHeight + " " + d + "L" + dataset[dataset.length - 1].start + "," + svgHeight;
                   }
                   fillPath.setAttributeNS(null, "class", group.className + " fill");
                   fillPath.setAttributeNS(null, "d", dFill);
@@ -12412,7 +12412,7 @@ return /******/ (function(modules) { // webpackBootstrap
           offset = 0;
       }
       for (var i = 0; i < dataset.length; i++) {
-          DOMutil.drawPoint(dataset[i].x + offset, dataset[i].y, group, JSONcontainer, svg);
+          DOMutil.drawPoint(dataset[i].start + offset, dataset[i].y, group, JSONcontainer, svg);
       }
   };
 
@@ -12432,10 +12432,10 @@ return /******/ (function(modules) { // webpackBootstrap
       var toScreen = this.body.util.toScreen;
 
       for (var i = 0; i < datapoints.length; i++) {
-          xValue = toScreen(datapoints[i].x) + this.width;
+          xValue = toScreen(datapoints[i].start) + this.width;
           xEnd = toScreen(datapoints[i].end) + this.width;
           yValue = datapoints[i].y;
-          extractedData.push({x: xValue, end: xEnd, y: yValue});
+          extractedData.push({start: xValue, end: xEnd, y: yValue});
       }
 
       return extractedData;
@@ -12462,11 +12462,11 @@ return /******/ (function(modules) { // webpackBootstrap
       }
 
       for (var i = 0; i < datapoints.length; i++) {
-          xValue = toScreen(datapoints[i].x) + this.width;
+          xValue = toScreen(datapoints[i].start) + this.width;
           xEnd = toScreen(datapoints[i].end) + this.width;
           y_temp = datapoints[i].y;
           yValue = Math.round(axis.convertValue(y_temp));
-          extractedData.push({x: xValue, end: xEnd, y: yValue, oldY: y_temp}); // added oldY fo title
+          extractedData.push({start: xValue, end: xEnd, y: yValue, oldY: y_temp}); // added oldY fo title
       }
 
       group.setZeroPosition(Math.min(svgHeight, axis.convertValue(0)));
@@ -12484,7 +12484,7 @@ return /******/ (function(modules) { // webpackBootstrap
   LineGraph.prototype._catmullRomUniform = function (data) {
       // catmull rom
       var p0, p1, p2, p3, bp1, bp2;
-      var d = Math.round(data[0].x) + "," + Math.round(data[0].y) + " ";
+      var d = Math.round(data[0].start) + "," + Math.round(data[0].y) + " ";
       var normalization = 1 / 6;
       var length = data.length;
       for (var i = 0; i < length - 1; i++) {
@@ -12501,17 +12501,17 @@ return /******/ (function(modules) { // webpackBootstrap
           //    0      1/6      1     -1/6
           //    0       0       1       0
 
-          //    bp0 = { x: p1.x,                               y: p1.y };
-          bp1 = { x: ((-p0.x + 6 * p1.x + p2.x) * normalization), y: ((-p0.y + 6 * p1.y + p2.y) * normalization)};
-          bp2 = { x: (( p1.x + 6 * p2.x - p3.x) * normalization), y: (( p1.y + 6 * p2.y - p3.y) * normalization)};
-          //    bp0 = { x: p2.x,                               y: p2.y };
+          //    bp0 = { x: p1.start,                               y: p1.y };
+          bp1 = { start: ((-p0.start + 6 * p1.start + p2.start) * normalization), y: ((-p0.y + 6 * p1.y + p2.y) * normalization)};
+          bp2 = { start: (( p1.start + 6 * p2.start - p3.start) * normalization), y: (( p1.y + 6 * p2.y - p3.y) * normalization)};
+          //    bp0 = { x: p2.start,                               y: p2.y };
 
           d += "C" +
-              bp1.x + "," +
+              bp1.start + "," +
               bp1.y + " " +
-              bp2.x + "," +
+              bp2.start + "," +
               bp2.y + " " +
-              p2.x + "," +
+              p2.start + "," +
               p2.y + " ";
       }
 
@@ -12536,7 +12536,7 @@ return /******/ (function(modules) { // webpackBootstrap
       else {
           var p0, p1, p2, p3, bp1, bp2, d1, d2, d3, A, B, N, M;
           var d3powA, d2powA, d3pow2A, d2pow2A, d1pow2A, d1powA;
-          var d = Math.round(data[0].x) + "," + Math.round(data[0].y) + " ";
+          var d = Math.round(data[0].start) + "," + Math.round(data[0].y) + " ";
           var length = data.length;
           for (var i = 0; i < length - 1; i++) {
 
@@ -12545,9 +12545,9 @@ return /******/ (function(modules) { // webpackBootstrap
               p2 = data[i + 1];
               p3 = (i + 2 < length) ? data[i + 2] : p2;
 
-              d1 = Math.sqrt(Math.pow(p0.x - p1.x, 2) + Math.pow(p0.y - p1.y, 2));
-              d2 = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
-              d3 = Math.sqrt(Math.pow(p2.x - p3.x, 2) + Math.pow(p2.y - p3.y, 2));
+              d1 = Math.sqrt(Math.pow(p0.start - p1.start, 2) + Math.pow(p0.y - p1.y, 2));
+              d2 = Math.sqrt(Math.pow(p1.start - p2.start, 2) + Math.pow(p1.y - p2.y, 2));
+              d3 = Math.sqrt(Math.pow(p2.start - p3.start, 2) + Math.pow(p2.y - p3.y, 2));
 
               // Catmull-Rom to Cubic Bezier conversion matrix
               //
@@ -12582,24 +12582,24 @@ return /******/ (function(modules) { // webpackBootstrap
                   M = 1 / M;
               }
 
-              bp1 = { x: ((-d2pow2A * p0.x + A * p1.x + d1pow2A * p2.x) * N),
+              bp1 = { start: ((-d2pow2A * p0.start + A * p1.start + d1pow2A * p2.start) * N),
                   y: ((-d2pow2A * p0.y + A * p1.y + d1pow2A * p2.y) * N)};
 
-              bp2 = { x: (( d3pow2A * p1.x + B * p2.x - d2pow2A * p3.x) * M),
+              bp2 = { start: (( d3pow2A * p1.start + B * p2.start - d2pow2A * p3.start) * M),
                   y: (( d3pow2A * p1.y + B * p2.y - d2pow2A * p3.y) * M)};
 
-              if (bp1.x == 0 && bp1.y == 0) {
+              if (bp1.start == 0 && bp1.y == 0) {
                   bp1 = p1;
               }
-              if (bp2.x == 0 && bp2.y == 0) {
+              if (bp2.start == 0 && bp2.y == 0) {
                   bp2 = p2;
               }
               d += "C" +
-                  bp1.x + "," +
+                  bp1.start + "," +
                   bp1.y + " " +
-                  bp2.x + "," +
+                  bp2.start + "," +
                   bp2.y + " " +
-                  p2.x + "," +
+                  p2.start + "," +
                   p2.y + " ";
           }
 
@@ -12618,10 +12618,10 @@ return /******/ (function(modules) { // webpackBootstrap
       var d = "";
       for (var i = 0; i < data.length; i++) {
           if (i == 0) {
-              d += data[i].x + "," + data[i].y;
+              d += data[i].start + "," + data[i].y;
           }
           else {
-              d += " " + data[i].x + "," + data[i].y;
+              d += " " + data[i].start + "," + data[i].y;
           }
       }
       return d;

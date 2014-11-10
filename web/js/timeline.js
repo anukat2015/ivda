@@ -77,9 +77,9 @@ function Timeline() {
 
     this.onItemMouseClick = function (api, item) {
         var html = 'Loading...';
-        if (item.group == "Web") {
+        if (item.group.content == "Web") {
             html = '<a href="' + item.content + '">' + item.content+ '</a>';
-        } else if (item.group == "Ide") {  // ide
+        } else if (item.group.content == "Ide") {  // ide
             html = 'Changed lines: ' + item.metadata.y + '</br>'
                 + 'Changed in future: ' + item.metadata.changedInFuture + '</br>'
                 + 'Changed in past: ' + item.metadata.changedInHistory + '</br>'

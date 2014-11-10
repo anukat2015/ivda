@@ -56,7 +56,7 @@ function onReSize() {
 function onLoad() {
     gGlobals = new Globals();
     //var end = new Date();
-    var end = gGlobals.service.serverDateFormatter.parse("2014-08-06T12:00:00.000");
+    var end = new Date("2014-08-06T12:00:00.000");
     var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
 
     // Stiahni mena vyvojarov

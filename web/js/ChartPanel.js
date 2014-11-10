@@ -42,7 +42,7 @@ ChartPanel.prototype.computeStats = function () {
                 }
 
                 // Statistiky pre pocet zmenenych riadkov
-                if (item.group == "Ide") {
+                if (item.group.content == "Ide") {
                     var value = item.metadata.y;
                     if (linesMap[label.label] === undefined) {
                         linesMap[label.label] = value;
@@ -55,7 +55,7 @@ ChartPanel.prototype.computeStats = function () {
         }
 
         // Activity histogram
-        var row = item.content;
+        var row = item.group.content;
         if (typesMap[row] === undefined) {
             typesMap[row] = 1;
         } else {

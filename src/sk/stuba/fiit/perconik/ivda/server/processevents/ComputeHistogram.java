@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
-import sk.stuba.fiit.perconik.ivda.server.TimeGranularity;
+import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramBySiblings;
 import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;

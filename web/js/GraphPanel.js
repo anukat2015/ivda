@@ -140,8 +140,8 @@ GraphPanel.prototype.computeData = function () {
         grouping.processItem(item);
 
 
-        if (item.group == "Ide") {
-            label = item.metadata.content;
+        if (item.group.content == "Ide") {
+            label = item.content;
             if (label != undefined) {
                 if (pathsMap[label] === undefined) {
                     pathsMap[label] = 1;
@@ -151,8 +151,8 @@ GraphPanel.prototype.computeData = function () {
             }
         }
 
-        if (item.group == "Web") {
-            label = item.metadata.content;
+        if (item.group.content == "Web") {
+            label = item.content;
             if (label != undefined) {
                 label = new URL(label).hostname;
                 if (domainsMap[label] === undefined) {

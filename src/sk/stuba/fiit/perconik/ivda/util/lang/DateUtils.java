@@ -24,9 +24,7 @@ public final class DateUtils {
     private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-            format.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
-            return format;
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         }
     };
 
@@ -40,7 +38,7 @@ public final class DateUtils {
     }
 
     public static Date getNow() {
-        return new GregorianCalendar(TimeZone.getTimeZone("GMT")).getTime();
+        return new GregorianCalendar(TimeZone.getTimeZone("UTC")).getTime();
     }
 
     public static long diff(Date actual, Date last) {
@@ -49,10 +47,6 @@ public final class DateUtils {
 
     public static boolean isDiff(Date actual, Date last, TimeUnit unit) {
         return diff(actual, last) == unit.toMillis(1);
-    }
-
-    public static boolean isRounded(Date actual, TimeUnit unit) {
-        return actual.getTime() % unit.toMillis(1) == 0;
     }
 
     public static boolean isOverlaping(Date s1, Date e1, Date start2, Date end2) {

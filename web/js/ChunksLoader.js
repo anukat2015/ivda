@@ -23,8 +23,8 @@ ChunksLoader = function () {
 ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
     // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
     // Statistiky sa mu vypocitaju na zaklade prvkov, ktore su viditelne
-    this.actualMin = this.chunkRound2Left(start);
-    this.actualMax = this.chunkRound2Right(end);
+    this.actualMin = start.floor(this.CHUNK_SIZE);
+    this.actualMax = end.ceil(this.CHUNK_SIZE);
 
     var chunks = this.chunksCount(this.actualMax, this.actualMin);
     this.finisherCallback = finishCallback;
@@ -56,7 +56,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
     var chunked, newMin, newMax;
 
     // Vypocitaj offset pre lavu stranu
-    chunked = this.chunksCount(this.chunkRound2Left(start), this.actualMin);
+    chunked = this.chunksCount(start.floor(this.CHUNK_SIZE), this.actualMin);
     newMin = this.actualMin + this.CHUNK_SIZE * chunked;
     if (chunked !== 0) { // Nepohli sme sa o zanedbatelny kusok
         if (newMin > this.actualMin) {
@@ -69,7 +69,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
     }
 
     // Vypocitaj offset pre pravu stranu
-    chunked = this.chunksCount(this.chunkRound2Right(end), this.actualMax);
+    chunked = this.chunksCount(end.ceil(this.CHUNK_SIZE), this.actualMax);
     newMax = this.actualMax + this.CHUNK_SIZE * chunked;
     if (chunked !== 0) {
         if (newMax < this.actualMax) {
@@ -132,6 +132,9 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
     });
 };
 
+ChunksLoader.prototype.chunksCount = function (max, min) {
+    return Math.floor((max - min) / this.CHUNK_SIZE);
+};
 
 /**
  * Prichadzajuce eventy zo sluzby je potrebne spracovat.
@@ -160,18 +163,6 @@ ChunksLoader.prototype.acceptData = function (events) {
     this.prepareEvents(events);
     gGlobals.timeline.panel.addItems(events, true);
     gGlobals.redraw();
-};
-
-ChunksLoader.prototype.chunkRound2Left = function (date) {
-    return ( Math.floor(date.getTime() / this.CHUNK_SIZE) * this.CHUNK_SIZE);
-};
-
-ChunksLoader.prototype.chunkRound2Right = function (date) {
-    return ( Math.ceil(date.getTime() / this.CHUNK_SIZE) * this.CHUNK_SIZE);
-};
-
-ChunksLoader.prototype.chunksCount = function (max, min) {
-    return Math.floor((max - min) / this.CHUNK_SIZE);
 };
 
 /**

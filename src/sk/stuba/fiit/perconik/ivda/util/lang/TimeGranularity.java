@@ -1,4 +1,4 @@
-package sk.stuba.fiit.perconik.ivda.server;
+package sk.stuba.fiit.perconik.ivda.util.lang;
 
 import java.util.Calendar;
 import java.util.Date;

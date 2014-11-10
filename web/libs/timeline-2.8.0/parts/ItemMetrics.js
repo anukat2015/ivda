@@ -4,9 +4,9 @@
 
 links.Timeline.Item.prototype.computeSizeByChangedLines = function () {
     var radius = 12;
-    if (this.metadata != undefined) {
-        if (this.metadata.changedLines != undefined) {
-            radius = Math.max(radius, this.metadata.changedLines);
+    if (this.group.content == "Ide") {
+        if (this.metadata.y != undefined) {
+            radius = Math.max(radius, this.metadata.y);
         }
     }
     return radius;
@@ -14,7 +14,7 @@ links.Timeline.Item.prototype.computeSizeByChangedLines = function () {
 
 links.Timeline.Item.prototype.computeSizeByChangesInFuture = function () {
     var radius = 12;
-    if (this.metadata != undefined) {
+    if (this.group.content == "Ide") {
         if (this.metadata.changedInFuture != undefined) {
             radius = Math.max(radius, this.metadata.changedInFuture);
         }

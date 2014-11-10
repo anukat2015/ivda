@@ -5,6 +5,7 @@ import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -19,17 +20,14 @@ public final class IvdaRequest {
 
     public IvdaRequest(HttpServletRequest req) throws Exception {
         // Vplyv na rozsah ma jedine zoom, ize musime vypocitat sirku okna a poslat to sem
-        start = DateUtils.fromString(UriUtils.decode(req, "start"));
-        end = DateUtils.fromString(UriUtils.decode(req, "end"));
+        Date s = DateUtils.fromString(UriUtils.decode(req, "start"));
+        Date e = DateUtils.fromString(UriUtils.decode(req, "end"));
         developer = Developers.getInstance().getRealName(UriUtils.decode(req, "developer"));
 
+        start = org.apache.commons.lang.time.DateUtils.truncate(s, Calendar.DAY_OF_MONTH);
+        end = org.apache.commons.lang.time.DateUtils.truncate(e, Calendar.DAY_OF_MONTH);
+
         // Skontroluj datumy
-        if (!DateUtils.isRounded(start, SIZE_OF_CHUNK)) {
-            throw new Exception("Start datum nie je zaokruhleny na velkost chunku.");
-        }
-        if (!DateUtils.isRounded(end, SIZE_OF_CHUNK)) {
-            throw new Exception("End datum nie je zaokruhleny na velkost chunku.");
-        }
         if (!DateUtils.isDiff(start, end, SIZE_OF_CHUNK)) {
             throw new Exception("Rozdiel datumov je vacsi ako velkost chunku.");
         }

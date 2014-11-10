@@ -125,7 +125,7 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
         var divBox = this.dom;
 
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        divBox.firstChild.innerHTML = this.group.content;
 
         // update classes
         divBox.className = "timeline-event timeline-event-circle";
@@ -135,9 +135,15 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
         }
 
         // add item specific class name when provided
-        if (this.className) {
-            links.Timeline.addClassName(divBox, this.className);
+        //if (this.className) {
+        var className;
+        if (this.group == undefined) {
+            className = "Unknown";
+        } else {
+            className = this.group.content;
         }
+        links.Timeline.addClassName(divBox, "c" + className);
+        //}
     }
 };
 

@@ -70,7 +70,7 @@ div.timeline-event-cluster {
 
 div.timeline-event {
     /*background-color: #d5ddf6; slabsia verzie pre Web event*/
-    background-color: #97b0f8;
+    background-color: #f8c88b;
 }
 
 /* New timeline */
@@ -113,17 +113,17 @@ div.timeline-event {
     padding: 5px;
 }
 
-div.UNAVAILABLE {
+div.cUnkown {
     background-color: #F03030;
     border-color: #bd2828;
 }
 
-div.AVAILABLE {
+div.cWeb {
     /*background-color: #1AA11A;*/
-    border-color: #136e13;
+    background-color: #97b0f8;
 }
 
-div.MAYBE {
+div.cIde {
     background-color: #FFA500;
     /*border-color: #cc8100;   */
 }

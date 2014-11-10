@@ -1,7 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import sk.stuba.fiit.perconik.ivda.server.Developers;
-import sk.stuba.fiit.perconik.ivda.server.TimeGranularity;
+import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 

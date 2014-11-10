@@ -2,14 +2,13 @@
  * Created by Seky on 31. 10. 2014.
  */
 function IvdaService() {
-    this.serverDateFormatter = new JsSimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
 
     this.getTimelineURL = function (start, end, developer) {
         var restURL = "datatable?";
         var parameters = $.param({
-            start: this.serverDateFormatter.format(this.convertDate(start.getTime())),
-            end: this.serverDateFormatter.format(this.convertDate(end.getTime())),
+            start: this.convertDate(start.getTime()).toISOString(),
+            end: this.convertDate(end.getTime()).toISOString(),
             developer: developer
         });
         return restURL + parameters;
@@ -18,18 +17,21 @@ function IvdaService() {
     this.getProcessesURL = function (start, end, developer) {
         var restURL = "processes?";
         var parameters = $.param({
-            start: this.serverDateFormatter.format(this.convertDate(start.getTime())),
-            end: this.serverDateFormatter.format(this.convertDate(end.getTime())),
+            start: this.convertDate(start.getTime()).toISOString(),
+            end: this.convertDate(end.getTime()).toISOString(),
             developer: developer
         });
         return restURL + parameters;
     };
 
     this.getStatsURL = function (start, end, developer) {
+        var chunkSize = 1000 * 60 * 60 * 24;
+
+        var roundedDate = ( Math.ceil(date.getTime() / chunkSize) * chunkSize)
         var restURL = "stats?";
         var parameters = $.param({
-            start: this.serverDateFormatter.format(this.convertDate(start.getTime())),
-            end: this.serverDateFormatter.format(this.convertDate(end.getTime())),
+            start: this.convertDate(start.getTime()).toISOString(),
+            end: this.convertDate(end.getTime()).toISOString(),
             developer: developer,
             attribute: "count",
             granularity: "DAY"
@@ -42,7 +44,7 @@ function IvdaService() {
     };
 
     this.convertDate = function (date) {
-        return new Date(date + this.timezoneOffset);  // local to utc time
+        return new Date(date);  // local to utc time
     };
 }
 
