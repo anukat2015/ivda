@@ -23,7 +23,6 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-    <script type="text/javascript" src="libs/JS_Simple_Date_Format/JsSimpleDateFormat.js"></script>
     <script type="text/javascript" src="libs/qtip2/jquery.qtip.js"></script>
     <script type="text/javascript" src="libs/datetimepicker/jquery.datetimepicker.js"></script>
     <script type="text/javascript" src="libs/selectize.js/dist/js/standalone/selectize.js"></script>
@@ -45,6 +44,7 @@
     <script type="text/javascript" src="js/grouping/DivideByTimeAndType.js"></script>
     <script type="text/javascript" src="js/grouping/ProcessAsGroup.js"></script>
 
+    <script type="text/javascript" src="js/Util.js"></script>
     <script type="text/javascript" src="js/Preloader.js"></script>
     <script type="text/javascript" src="js/Timeline.js"></script>
     <script type="text/javascript" src="js/ChartPanel.js"></script>
@@ -85,7 +85,7 @@
         <table width="100%" align="center">
             <tr>
                 <td>
-                    <div class="timeline-event timeline-event-circle available">
+                    <div class="timeline-event timeline-event-circle cWeb">
                         <div class="timeline-event-content fixed-size">Web</div>
                     </div>
                 </td>
@@ -95,7 +95,7 @@
             </tr>
             <tr>
                 <td>
-                    <div class="timeline-event timeline-event-circle maybe">
+                    <div class="timeline-event timeline-event-circle cIde">
                         <div class="timeline-event-content fixed-size">Ide</div>
                     </div>
                 </td>
@@ -105,7 +105,7 @@
             </tr>
             <tr>
                 <td>
-                    <div class="timeline-event timeline-event-circle unavailable">
+                    <div class="timeline-event timeline-event-circle cUnkown">
                         <div class="timeline-event-content fixed-size">Unknown</div>
                     </div>
                 </td>
