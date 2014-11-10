@@ -25,6 +25,7 @@ links.Timeline.Item = function (data, options) {
         if (this.metadata == undefined) {
             this.metadata = {};
         }
+        this.metadata.id = data.id;
         this.metadata.y = data.y;
     }
     this.top = 0;

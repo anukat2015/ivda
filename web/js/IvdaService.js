@@ -26,12 +26,12 @@ function IvdaService() {
 
     this.getStatsURL = function (start, end, developer) {
         var chunkSize = 1000 * 60 * 60 * 24;
-
-        var roundedDate = ( Math.ceil(date.getTime() / chunkSize) * chunkSize)
+        var roundedStart = start.floor(chunkSize);
+        var roundedEnd = end.ceil(chunkSize);
         var restURL = "stats?";
         var parameters = $.param({
-            start: this.convertDate(start.getTime()).toISOString(),
-            end: this.convertDate(end.getTime()).toISOString(),
+            start: this.convertDate(roundedStart.getTime()).toISOString(),
+            end: this.convertDate(roundedEnd.getTime()).toISOString(),
             developer: developer,
             attribute: "count",
             granularity: "DAY"

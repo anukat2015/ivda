@@ -30,7 +30,7 @@ public class ComputeHistogramTest extends TestCase {
         ComputeHistogram p = new ComputeHistogram(TimeGranularity.DAY);
         p.proccess(it);
         LOGGER.info("Flushing");
-        saveToFile("hAutory.txt", p.getHistogram());
+        saveToFile("hdni2.txt", p.getHistogram());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -38,10 +38,10 @@ public class ComputeHistogramTest extends TestCase {
         try {
             File file = new File(statsDir, fileName);
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)));
-            Iterator<Map.Entry<String, MutableInt>> zoznam = hist.reduce();
+            Iterator<Map.Entry<Date, MutableInt>> zoznam = hist.reduce();
             //output.write("[['Date', 'Count'],");
             while (zoznam.hasNext()) {
-                Map.Entry<String, MutableInt> entry = zoznam.next();
+                Map.Entry<Date, MutableInt> entry = zoznam.next();
                 //output.write("[" + entry.getKey().getTime() + ",\t" + entry.getValue() + "],\n");
                 output.write(entry.getKey() + "\t" + entry.getValue() + "\n");
             }

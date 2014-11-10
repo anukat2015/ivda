@@ -73,7 +73,9 @@ public class StatsServlet extends HttpServlet {
             IvdaEvent e = new IvdaEvent();
             e.setStart(start);
             e.setGroup("events");
-            e.setEnd(g.addThreshold(start));
+            if (g.compareTo(TimeGranularity.PER_VALUE) != 0){
+                e.setEnd(g.increment(start));
+            }
             e.setY(entry.getValue().toInteger());
             json.write(e);
         }

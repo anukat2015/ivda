@@ -1,5 +1,7 @@
 package sk.stuba.fiit.perconik.ivda.util.lang;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -7,57 +9,31 @@ import java.util.Date;
  * Created by Seky on 9. 11. 2014.
  */
 public enum TimeGranularity {
-    WEEK(1000 * 60 * 60 * 24 * 7) {
-        protected void _roundDate(Calendar c) {
-            c.set(Calendar.DAY_OF_WEEK, 0);
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-        }
-    },
-    DAY(1000 * 60 * 60 * 24) {
-        protected void _roundDate(Calendar c) {
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-        }
-    },
-    HOUR(1000 * 60 * 60) {
-        protected void _roundDate(Calendar c) {
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-        }
-    },
-    MINUTE(1000 * 60) {
-        protected void _roundDate(Calendar c) {
-            c.set(Calendar.SECOND, 0);
-            c.set(Calendar.MILLISECOND, 0);
-        }
-    },
+    WEEK(Calendar.WEEK_OF_MONTH),
+    DAY(Calendar.DATE),
+    HOUR(Calendar.HOUR),
+    MINUTE(Calendar.MINUTE),
     PER_VALUE(0) {
-        protected void _roundDate(Calendar c) {
+        public Date roundDate(Date in) {
+            return in;
+        }
+
+        public Date increment(Date in) {
+            return in;
         }
     };
 
-    private long threshold;
+    private int type;
 
-    TimeGranularity(long threshold) {
-        this.threshold = threshold;
+    TimeGranularity(int type) {
+        this.type = type;
     }
-
-    protected abstract void _roundDate(Calendar c);
 
     public Date roundDate(Date in) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(in);
-        _roundDate(c);
-        return c.getTime();
+        return DateUtils.truncate(in, type);
     }
 
-    public Date addThreshold(Date in) {
-        return new Date(in.getTime() + threshold);
+    public Date increment(Date in) {
+        return DateUtils.add(in, type, 1);
     }
 }

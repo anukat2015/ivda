@@ -3,10 +3,10 @@
  */
 
 Date.prototype.floor = function (chunkSize) {
-    return ( Math.floor(this.getTime() / chunkSize) * chunkSize);
+    return new Date(( Math.floor(this.getTime() / chunkSize) * chunkSize));
 };
 
 Date.prototype.ceil = function (chunkSize) {
-    return ( Math.ceil(this.getTime() / chunkSize) * chunkSize);
+    return new Date(( Math.ceil(this.getTime() / chunkSize) * chunkSize));
 };
 

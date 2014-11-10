@@ -57,9 +57,9 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
 
     // Vypocitaj offset pre lavu stranu
     chunked = this.chunksCount(start.floor(this.CHUNK_SIZE), this.actualMin);
-    newMin = this.actualMin + this.CHUNK_SIZE * chunked;
+    newMin = new Date(this.actualMin.getTime() + this.CHUNK_SIZE * chunked);
     if (chunked !== 0) { // Nepohli sme sa o zanedbatelny kusok
-        if (newMin > this.actualMin) {
+        if (newMin.getTime() > this.actualMin.getTime()) {
             // Pohli sme sa doprava o minimalne chunk, cize zmaz stare udaje
             this.deleteByTime(this.actualMin, newMin);
         } else {
@@ -70,9 +70,9 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
 
     // Vypocitaj offset pre pravu stranu
     chunked = this.chunksCount(end.ceil(this.CHUNK_SIZE), this.actualMax);
-    newMax = this.actualMax + this.CHUNK_SIZE * chunked;
+    newMax = new Date(this.actualMax.getTime() + this.CHUNK_SIZE * chunked);
     if (chunked !== 0) {
-        if (newMax < this.actualMax) {
+        if (newMax.getTime() < this.actualMax.getTime()) {
             // Pohli sme sa dolava o minimalne chunk, cize zmaz stare udaje
             this.deleteByTime(newMax, this.actualMax);
         } else {
@@ -81,7 +81,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
         this.actualMax = newMax;
     }
 
-    console.log("Nove hranice " + new Date(this.actualMin).toString() + " " + new Date(this.actualMax).toString());
+    console.log("Nove hranice " + this.actualMin.toString() + " " +this.actualMax.toString());
 };
 
 /**
@@ -92,7 +92,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
 ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var end;
     var count = chunks > 0 ? chunks : chunks * -1;
-    var temp = min;
+    var temp = min.getTime();
     gGlobals.preloader.tasks += count;
     gGlobals.preloader.start();
     for (var i = 0; i < count; i++) {
@@ -133,7 +133,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
 };
 
 ChunksLoader.prototype.chunksCount = function (max, min) {
-    return Math.floor((max - min) / this.CHUNK_SIZE);
+    return Math.floor((max.getTime() - min.getTime()) / this.CHUNK_SIZE);
 };
 
 /**

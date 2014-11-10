@@ -11,6 +11,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
+import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.util.serialize.IterateOutputStreamForFiles;
 
 import javax.annotation.Nullable;
@@ -29,12 +30,12 @@ import java.util.*;
 public class BankOfChunks {
     private static final Logger LOGGER = Logger.getLogger(BankOfChunks.class.getName());
     private static final File DIR = new File(Configuration.CONFIG_DIR, "dump");
-    private static final int SIZE_OF_CHUNK = 1000 * 60 * 60 * 24; // 1 day
+    private static final TimeGranularity granularity = TimeGranularity.DAY;
 
     public static void processChunks(Date start, Date end) throws IOException {
         Date temp = start;
         while (!temp.equals(end)) {
-            temp = new Date(start.getTime() + SIZE_OF_CHUNK);
+            temp = granularity.increment(start);
             if (temp.after(end)) {
                 temp = end;
             }
@@ -70,6 +71,8 @@ public class BankOfChunks {
     public static List<File> loadChunks(Date start, Date end) {
         Date requestStart = org.apache.commons.lang.time.DateUtils.truncate(start, Calendar.DAY_OF_MONTH);
         Date requestEnd = org.apache.commons.lang.time.DateUtils.truncate(end, Calendar.DAY_OF_MONTH);
+        boolean truncated = end.compareTo(requestEnd) != 0;
+
         String[] names;
         Date itemStart, itemEnd;
         File[] list = DIR.listFiles();
@@ -81,9 +84,12 @@ public class BankOfChunks {
                 itemEnd = DateUtils.fromString(names[1] + "T00:00:00.000Z");
 
                 // Check if is touching
+
                 if (itemStart.compareTo(requestEnd) == 0) {
                     // Berieme do uvahy aj tento posledny element, lebo pri orezani potrebujeme aj tieto data
-                    touched.add(file);
+                    if (truncated) {
+                        touched.add(file);
+                    }
                     break;
                 }
                 if (itemStart.compareTo(requestStart) == 0 || DateUtils.isOverlaping(itemStart, itemEnd, requestStart, requestEnd)) {
