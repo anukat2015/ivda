@@ -6,23 +6,31 @@ function Preloader() {
     this.loaderText = $('#loader-text');
     this.tasks = 0;
     this.finishedTasks = 0;
-    this.init();
+    this.showError = true;
 
+    this.loader.hide();
+    this.loaderText.hide();
 
-    this.init = function () {
-        this.loader.hide();
-        this.loaderText.hide();
+    var instance = this;
+    $(document).ajaxSend(function () {
+        instance.tasks++;
+        instance.start();
+    }).ajaxError(function (event, jqxhr, settings, thrownError) {
+        instance.alertError("IVDA service response status:" + thrownError);
+    }).ajaxStop(function () {
+        instance.finishedTasks++;
+    });
 
-        var instance = this;
-        $(document).ajaxStart(function () {
-            instance.tasks += count;
-            instance.start();
-        });
-
-        $(document).ajaxStop(function () {
-            instance.finishedTasks++;
-        });
-
+    /**
+     * Data sa nepodarilo stiahnut
+     * @param error
+     */
+    this.alertError = function (msg) {
+        console.log(msg);
+        if (this.showError) {
+            alert(msg);
+            this.showError = false;
+        }
     };
 
     this.updateStatus = function () {

@@ -7,7 +7,6 @@ function Globals() {
     this.preloader = new Preloader();
     this.toolbar = new Toolbar();
     this.service = new IvdaService();
-    this.showError = true;
     this.wasInit = false;
 
     this.timeline.init();
@@ -32,19 +31,6 @@ function Globals() {
         this.graph.showProcesses = !this.graph.showProcesses;
         this.graph.redraw();
     };
-
-
-    /**
-     * Data sa nepodarilo stiahnut
-     * @param error
-     */
-    this.alertError = function (msg) {
-        console.log(msg);
-        if (this.showError) {
-            alert(msg);
-            this.showError = false;
-        }
-    };
 }
 
 function onReSize() {
@@ -64,9 +50,6 @@ function onLoad() {
         dataType: "json",
         url: gGlobals.service.getDevelopersURL(),
         cache: false,
-        error: function (jqXHR, textStatus, errorThrown) {
-            gGlobals.alertError("IVDA service not responding:");
-        },
         success: function (developers, textStatus, jqXHR) {
             gGlobals.init(start, end, developers);
         }
