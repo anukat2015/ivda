@@ -2,8 +2,27 @@
  * Created by Seky on 22. 10. 2014.
  */
 GraphPanel = function () {
-    var options;
-    options = {      // Specify options
+    this.savedData = null;
+    this.asynTask = undefined;
+    this.showProcesses = false;
+    this.registerNavigationBar();
+
+    this.graphs = {
+        countEventsPerDay: this.createDynamicHistogram('graph-countEventsPerDay'),
+        countEventsPerHour: this.createDynamicHistogram('graph-countEventsPerHour'),
+        locChangesGlobal: this.createDynamicHistogram('graph-locChangesGlobal'),
+        locChangesLocal: this.createDynamicHistogram('graph-locChangesLocal'),
+        activityHistogram: this.createDynamicHistogram('graph-activityHistogram'),
+        activities: this.createTimeline('graph-activities')
+    };
+
+    // Zatial schovaj
+    //this.hide();
+    console.log("graph created");
+};
+
+GraphPanel.prototype.createDynamicHistogram = function (name) {
+    var options = {      // Specify options
         width: "100%",
         height: "300px",
         // CatmullRom: false
@@ -12,7 +31,7 @@ GraphPanel = function () {
             left: {position: 'top-left'}
         },
         style: 'bar',
-        barChart: {width: 0, align: 'center'}, // align: left, center, right
+        barChart: {width: 1, align: 'center'}, // align: left, center, right
         drawPoints: true,
         dataAxis: {
             icons: false
@@ -20,12 +39,14 @@ GraphPanel = function () {
         orientation: 'top'
     };
 
-    var changes = {
-        component: $('#graph-changes'),
-        graph: new vis.Graph2d(document.getElementById('graph-changes'), new vis.DataSet(), options)
+    return {
+        component: $('#' + name),
+        graph: new vis.Graph2d(document.getElementById(name), new vis.DataSet(), options)
     };
+};
 
-    options = {
+GraphPanel.prototype.createTimeline = function (name) {
+    var options = {
         width: "100%",
         height: "300px",
         stack: false,
@@ -36,24 +57,13 @@ GraphPanel = function () {
         orientation: 'top'
     };
 
-    var activities = {
-        component: $('#graph-activity'),
-        graph: new vis.Timeline(document.getElementById('graph-activity'), new vis.DataSet(), options)
+    return {
+        component: $('#' + name),
+        graph: new vis.Timeline(document.getElementById(name), new vis.DataSet(), options)
     };
+};
 
-    this.graphs = {
-        changes: changes,
-        activities: activities
-    };
-
-    this.savedData = null;
-    this.asynTask = undefined;
-    this.showProcesses = false;
-
-    // Zatial schovaj
-    console.log("graph created");
-    //this.hide();
-
+GraphPanel.prototype.registerNavigationBar = function () {
     $(".vis.timeline .center > .content").append('   \
         <div class="timeline-navigation ui-widget ui-state-highlight ui-corner-all"  \
     style="position: absolute;right: 7px;top: 53%;">                   \
@@ -66,6 +76,7 @@ GraphPanel = function () {
         <div class="timeline-navigation-move-right" title="Move right"><span \
         class="ui-icon ui-icon-circle-arrow-e"></span></div>    \
     </div>');
+
 };
 
 GraphPanel.prototype.redraw = function () {
@@ -123,8 +134,8 @@ GraphPanel.prototype.draw = function () {
 
 GraphPanel.prototype.computeData = function () {
     var changes = new GraphData();
-    changes.createGroup2('changedInFuture', 'Changed in future');
-    changes.createGroup2('changedInHistory', 'Changed in past');
+    changes.createGroup2('changedInFuture', 'Changes of files in future');
+    changes.createGroup2('changedInHistory', 'Changes of files in past');
     changes.groups.add({id: "changedLines", content: "LOC changed"//, options: { yAxisOrientation: 'right' } // sposobuje abnormalne lagovanie
     });
 
@@ -138,7 +149,6 @@ GraphPanel.prototype.computeData = function () {
     for (var i = 0; i < items.length; i++) {
         item = items[i];
         grouping.processItem(item);
-
 
         if (item.group.content == "Ide") {
             label = item.content;
@@ -187,11 +197,19 @@ GraphPanel.prototype.computeData = function () {
     this.graphs.activities.graph.setItems(activities.items);
     this.graphs.activities.graph.redraw();
 
+    this.graphs.locChangesLocal.graph.setGroups(changes.groups);
+    this.graphs.locChangesLocal.graph.setItems(changes.items);
+    this.graphs.locChangesLocal.graph.redraw();
+
 
     // Zaujimave statistiky
     this.loadStats();
+    this.buildValueHistograms(pathsMap, domainsMap);
+};
 
+GraphPanel.prototype.buildValueHistograms = function (pathsMap, domainsMap) {
     var gdata, options, chart;
+
     // Files modifications
     gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Path');
@@ -203,7 +221,7 @@ GraphPanel.prototype.computeData = function () {
         title: 'Files modifications, in counts'
     };
     console.log(gdata);
-    chart = new google.visualization.Histogram(document.getElementById('histogram'));
+    chart = new google.visualization.Histogram(document.getElementById('graph-fileModifications'));
     chart.draw(gdata, options);
 
 
@@ -218,7 +236,7 @@ GraphPanel.prototype.computeData = function () {
         title: 'Domain visit, in counts'
     };
     console.log(gdata);
-    chart = new google.visualization.Histogram(document.getElementById('histogram2'));
+    chart = new google.visualization.Histogram(document.getElementById('graph-domainVisits'));
     chart.draw(gdata, options);
 };
 
@@ -226,25 +244,58 @@ GraphPanel.prototype.normalizeTime = function (value) {
     return value / (1000 * 60); // jednotka v minutach
 };
 
-GraphPanel.prototype.loadStats = function () {
-    var instance = this;
-    var range = gGlobals.timeline.panel.getVisibleChartRange();
-    var developer = gGlobals.toolbar.getDeveloper();
-    var url = gGlobals.service.getStatsURL(new Date(range.start), new Date(range.end), developer);
+GraphPanel.prototype.loadStaticsData = function () {
+    var instance, developer;
+    instance = this;
+    developer = gGlobals.toolbar.getDeveloper();
 
-    var histogram_graph = new GraphData();
-    histogram_graph.createGroup2('events', 'Count of events | Per day');
     $.ajax({
-        url: url,
-        async: false
-    }).then(function (data) {
-        console.log(data);
-        instance.graphs.changes.graph.setGroups(histogram_graph.groups);
-        instance.graphs.changes.graph.setItems(data);
-        instance.graphs.changes.graph.redraw();
-    }, function (xhr, status, error) {
-        gGlobals.alertError(error);
-    });
+        url: gGlobals.service.getStatsURL(new Date("2014-01-01T00:00:00.000"), new Date("2014-10-01T00:00:00.000"), developer, "count", "DAY"),
+        success: function (data, textStatus, jqXHR) {
+            var histogram_graph = new GraphData();
+            histogram_graph.createGroup2('events', 'Count of events | Per day');
+            instance.graphs.countEventsPerDay.graph.setGroups(histogram_graph.groups);
+            instance.graphs.countEventsPerDay.graph.setItems(data);
+            instance.graphs.countEventsPerDay.graph.redraw();
+        }});
+    $.ajax({
+        url: gGlobals.service.getStatsURL(new Date("2014-08-03T00:00:00.000"), new Date("2014-08-07T00:00:00.000"), developer, "count", "HOUR"),
+        success: function (data, textStatus, jqXHR) {
+            var histogram_graph = new GraphData();
+            histogram_graph.createGroup2('events', 'Count of events | Per hour');
+            instance.graphs.countEventsPerHour.graph.setGroups(histogram_graph.groups);
+            instance.graphs.countEventsPerHour.graph.setItems(data);
+            instance.graphs.countEventsPerHour.graph.redraw();
+        }});
+
+    $.ajax({
+        url: gGlobals.service.getStatsURL(new Date("2014-08-02T00:00:00.000"), new Date("2014-08-09T00:00:00.000"), developer, "loc", "PER_VALUE"),
+        success: function (data, textStatus, jqXHR) {
+            histogram_graph = new GraphData();
+            histogram_graph.createGroup2('events', 'Changes of source codes | LOC Per File');
+            instance.graphs.locChangesGlobal.graph.setGroups(histogram_graph.groups);
+            instance.graphs.locChangesGlobal.graph.setItems(data);
+            instance.graphs.locChangesGlobal.graph.redraw();
+        }});
+};
+
+
+GraphPanel.prototype.loadStats = function () {
+    var instance, developer, url;
+    instance = this;
+    developer = gGlobals.toolbar.getDeveloper();
+
+    var range = gGlobals.timeline.panel.getVisibleChartRange();
+    $.ajax({
+        url: gGlobals.service.getStatsURL(new Date(range.start), new Date(range.end), developer, "activity", "DAY"),
+        success: function (data, textStatus, jqXHR) {
+            var histogram_graph = new GraphData();
+            histogram_graph.createGroup2('Web', 'Web activities | Unique domains per duration');
+            histogram_graph.createGroup2('Ide', 'Ide activities | Canged LOC per duration');
+            instance.graphs.activityHistogram.graph.setGroups(histogram_graph.groups);
+            instance.graphs.activityHistogram.graph.setItems(data);
+            instance.graphs.activityHistogram.graph.redraw();
+        }});
 };
 
 /*
@@ -275,6 +326,7 @@ GraphPanel.prototype.loadStats = function () {
  }
  };
  */
+
 GraphPanel.prototype.graphAddGroups = function (grouping) {
     // Prechazaj skupiny a dopis udaje
     var activities = new GraphData();
@@ -296,7 +348,6 @@ GraphPanel.prototype.graphAddGroups = function (grouping) {
             start: group.getFirstEvent().start,
             end: group.getLastEvent().start,
             content: content,
-            x: group.getFirstEvent().start,
             y: group.inGroup
         };
         activities.addItem(obj);

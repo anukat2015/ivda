@@ -93,8 +93,6 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
     var end;
     var count = chunks > 0 ? chunks : chunks * -1;
     var temp = min.getTime();
-    gGlobals.preloader.tasks += count;
-    gGlobals.preloader.start();
     for (var i = 0; i < count; i++) {
         end = temp + this.CHUNK_SIZE;
         this.loadChunk(temp, end);
@@ -113,9 +111,6 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
     $.ajax({
         dataType: "json",
         url: gGlobals.service.getTimelineURL(new Date(start), new Date(end), this.developer),
-        error: function (jqXHR, textStatus, errorThrown) {
-            gGlobals.alertError("Server response status:" + textStatus);
-        },
         success: function (data, textStatus, jqXHR) {
             // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
             // Alebo prisla neskoro a hranice uz su zmenene ..
@@ -124,7 +119,6 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
             instance.acceptData(data);
         }
     }).always(function () {
-        gGlobals.preloader.finishedTasks++;
         instance.finisherCounts--;
         if (instance.finisherCounts === 0) {
             instance.finisherCallback();
@@ -178,6 +172,7 @@ ChunksLoader.prototype.checkDeveloper = function (actual) {
 
     instance.developer = actual;
     gGlobals.timeline.panel.deleteAllItems();
+    gGlobals.graph.loadStaticsData();
     gGlobals.redraw();
 
     var range = gGlobals.timeline.panel.getVisibleChartRange();

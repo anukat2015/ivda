@@ -1156,7 +1156,11 @@ LineGraph.prototype._convertXcoordinates = function (datapoints) {
 
     for (var i = 0; i < datapoints.length; i++) {
         xValue = toScreen(datapoints[i].start) + this.width;
-        xEnd = toScreen(datapoints[i].end) + this.width;
+        if (datapoints[i].end != undefined) {
+            xEnd = toScreen(datapoints[i].end) + this.width;
+        } else {
+            xEnd = undefined;
+        }
         yValue = datapoints[i].y;
         extractedData.push({start: xValue, end: xEnd, y: yValue});
     }
@@ -1186,7 +1190,11 @@ LineGraph.prototype._convertYcoordinates = function (datapoints, group) {
 
     for (var i = 0; i < datapoints.length; i++) {
         xValue = toScreen(datapoints[i].start) + this.width;
-        xEnd = toScreen(datapoints[i].end) + this.width;
+        if(datapoints[i].end != undefined) {
+            xEnd = toScreen(datapoints[i].end) + this.width;
+        } else {
+            xEnd = undefined;
+        }
         y_temp = datapoints[i].y;
         yValue = Math.round(axis.convertValue(y_temp));
         extractedData.push({start: xValue, end: xEnd, y: yValue, oldY: y_temp}); // added oldY fo title

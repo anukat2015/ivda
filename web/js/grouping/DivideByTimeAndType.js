@@ -18,22 +18,20 @@ function DivideByTimeAndType() {
     };
 
     this.divideByType = function (group, actual) {
-        return !(group.getLastEvent().content === actual.content);
+        return !(group.getLastEvent().group.content === actual.group.content);
     };
 
     this.divideForWebTabSpendTime = function (group, actual) {
         var first, url1, url2;
         first = group.getFirstEvent();
-        url1 = first.metadata.link;
-        if (url1 == undefined) {
+        if (first.group.content != "Web") {
             return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie
         }
-        url1 = new URL(url1).hostname;
-        url2 = actual.metadata.link;
-        if (url2 == undefined) {
+        if (actual.group.content != "Web") {
             return true; // druhy prvok je iny typ
         }
-        url2 = new URL(url2).hostname;
+        url1 = new URL(first.content).hostname;
+        url2 = new URL(actual.content).hostname;
         return group.inGroup > 1 && url1 != url2; // tzv prida event na zaciatok a na konci bude druhy event
     };
 

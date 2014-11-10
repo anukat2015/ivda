@@ -3,7 +3,9 @@ package sk.stuba.fiit.perconik.ivda.server.servlets;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
+import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ActivityStats;
 import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
@@ -42,6 +44,10 @@ public class StatsServlet extends HttpServlet {
                     pohladNaAktivity(events, stream);
                     break;
                 }
+                case "loc": {
+                    locChanges(events, stream);
+                    break;
+                }
                 case "count": {
                     pocetPrvkov(events, request.getGranularity(), stream);
                     break;
@@ -73,11 +79,32 @@ public class StatsServlet extends HttpServlet {
             IvdaEvent e = new IvdaEvent();
             e.setStart(start);
             e.setGroup("events");
-            if (g.compareTo(TimeGranularity.PER_VALUE) != 0){
+            if (g.compareTo(TimeGranularity.PER_VALUE) != 0) {
                 e.setEnd(g.increment(start));
             }
             e.setY(entry.getValue().toInteger());
             json.write(e);
+        }
+        json.close();
+    }
+
+    private static void locChanges(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
+        // Posli udaje do vystupu
+        int loc;
+        Array2Json json = new Array2Json(stream);
+        json.start();
+        while (events.hasNext()) {
+            EventDto event = events.next();
+            if (event instanceof IdeCodeEventDto) {
+                IdeCodeEventDto codeEvent = (IdeCodeEventDto) event;
+                loc = EventsUtil.codeWritten(codeEvent.getText());
+
+                IvdaEvent e = new IvdaEvent();
+                e.setStart(event.getTimestamp());
+                e.setGroup("events");
+                e.setY(loc);
+                json.write(e);
+            }
         }
         json.close();
     }

@@ -18,7 +18,7 @@ function GraphData() {
     };
 
     this.addPoint = function (type, date, value) {
-        this.items.add({x: date, y: value, group: type});
+        this.items.add({start: date, y: value, group: type});
     };
 
     this.addItem = function(item) {

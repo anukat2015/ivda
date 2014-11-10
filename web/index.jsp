@@ -128,13 +128,40 @@
 </div>
 <div class="clear"></div>
 <div id="datatable"></div>
-<div class="mytimeline" id="graph-changes">
-</div>
-<div id="graph-activity"></div>
-<div id="histogram"></div>
-<div id="histogram2"></div>
-<div id="histogram3"></div>
 
+<div>
+    <h1>Count of events | Per day</h1>
+
+    <div class="mytimeline" id="graph-countEventsPerDay"></div>
+
+    <h1>Count of events | Per hour</h1>
+
+    <div class="mytimeline" id="graph-countEventsPerHour"></div>
+
+    <h1>Changes of source codes | LOC Per File | Global</h1>
+
+    <div class="mytimeline" id="graph-locChangesGlobal"></div>
+
+    <h1>Changes of source codes | LOC Per File | Local</h1>
+
+    <div class="mytimeline" id="graph-locChangesLocal"></div>
+
+    <h1>Activity dynamic-range-histogram</h1>
+
+    <div class="mytimeline" id="graph-activityHistogram"></div>
+
+    <h1>Activities from local data | Duration of activity</h1>
+
+    <div id="graph-activities"></div>
+
+    <h1>Files modifications | Counts per file</h1>
+
+    <div id="graph-fileModifications"></div>
+
+    <h1>Domain visits | Count per domain</h1>
+
+    <div id="graph-domainVisits"></div>
+</div>
 <div id="loader-wrapper">
     <div id="loader"></div>
 </div>
