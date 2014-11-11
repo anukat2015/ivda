@@ -2,6 +2,7 @@ package sk.stuba.fiit.perconik.ivda.server.processevents;
 
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
 import sk.stuba.fiit.perconik.ivda.server.grouping.ProcessAsGroup;
@@ -14,10 +15,10 @@ import java.io.OutputStream;
 /**
  * Created by Seky on 9. 11. 2014.
  */
-public class ActivityStats extends ProcessAsGroup {
+public final class CreateBaseActivities extends ProcessAsGroup {
     private final Array2Json out;
 
-    public ActivityStats(OutputStream out) {
+    public CreateBaseActivities(OutputStream out) {
         this.out = new Array2Json(out);
     }
 
@@ -33,10 +34,10 @@ public class ActivityStats extends ProcessAsGroup {
         super.started();
     }
 
-    private static class WebGroup extends BoundedGroup {
+    public static class WebGroup extends BoundedGroup {
         private int visitedLinks = 0;
 
-        private WebGroup(EventDto actual) {
+        public WebGroup(EventDto actual) {
             super(actual);
         }
 
@@ -49,10 +50,10 @@ public class ActivityStats extends ProcessAsGroup {
         }
     }
 
-    private static class IdeGroup extends BoundedGroup {
+    public static class IdeGroup extends BoundedGroup {
         private int loc = 0;
 
-        private IdeGroup(EventDto actual) {
+        public IdeGroup(EventDto actual) {
             super(actual);
         }
 
@@ -72,7 +73,7 @@ public class ActivityStats extends ProcessAsGroup {
         if (event instanceof WebEventDto) {
             return new WebGroup(event);
         }
-        if (event instanceof WebEventDto) {
+        if (event instanceof IdeEventDto) {
             return new IdeGroup(event);
         }
         return new BoundedGroup(event);

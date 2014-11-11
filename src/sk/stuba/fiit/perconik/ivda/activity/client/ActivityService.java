@@ -5,14 +5,12 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
-import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -60,15 +58,15 @@ public class ActivityService extends RestClient {
             // Vrat prazdny vysledok ked:
             // poziadavka smeruje na vyber eventov z buducnosti
             // poziadavka smeruje na vyber eventov za poslednu hodinu
-            Date timeTo = DateUtils.fromString(request.getTimeTo());
-            Date now = DateUtils.getNow();
-            long diff = DateUtils.diff(timeTo, now);
-            if (diff >= IGNORE_CACHE_TIME.toMillis(1)) {
-                UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
-                URI uri = UriUtils.addBeanProperties(builder, request).build();
-                return downloadAll(uri, EventsResponse.class, "pageIndex");
-                //return (ImmutableList<EventDto>) cache.get(uri);
-            }
+            //Date timeTo = DateUtils.fromString(request.getTimeTo());
+            //Date now = DateUtils.getNow();
+            //long diff = DateUtils.diff(timeTo, now);
+            // if (diff >= IGNORE_CACHE_TIME.toMillis(1)) {
+            UriBuilder builder = UriBuilder.fromUri(Configuration.getInstance().getUacaLink());
+            URI uri = UriUtils.addBeanProperties(builder, request).build();
+            return downloadAll(uri, EventsResponse.class, "pageIndex");
+            //return (ImmutableList<EventDto>) cache.get(uri);
+            //}
         } catch (Exception e) {
             LOGGER.error("Nemozem vygenerovat adresu alebo doslo k chybe pri stahovani.", e);
         }

@@ -20,11 +20,7 @@ import java.util.concurrent.TimeUnit;
  * Skupiny rozdelujeme na zaklade casu alebo typu.
  */
 @ThreadSafe
-public class DivideByTimeAndType implements IDividing {
-    /**
-     * Tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
-     */
-    private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(6L);
+public class BaseDividing implements IDividing {
 
     @Override
     public boolean canIgnore(EventDto event) {
@@ -42,8 +38,13 @@ public class DivideByTimeAndType implements IDividing {
 
     @Override
     public boolean canDivide(Group group, EventDto actual) {
-        return divideByTime(group, actual) || divideForWebTabSpendTime(group, actual) || divideByType(group, actual);
+        return divideByTime(group, actual) || divideByType(group, actual);
     }
+
+    /**
+     * Tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
+     */
+    private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(6L);
 
     /**
      * Ked interval medzi eventami je priliz velky, rozdel interval.
@@ -52,8 +53,8 @@ public class DivideByTimeAndType implements IDividing {
      * @return
      * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
-    protected boolean divideByTime(Group group, EventDto actual) {
-        return (DateUtils.diff(actual.getTimestamp(), group.getLastEvent().getTimestamp()) > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
+    public static boolean divideByTime(Group group, EventDto actual) {
+        return (DateUtils.diff(group.getLastEvent().getTimestamp(), actual.getTimestamp()) > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
     }
 
     /**
@@ -63,7 +64,7 @@ public class DivideByTimeAndType implements IDividing {
      * @return
      * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
-    protected boolean divideByType(Group group, EventDto actual) {
+    public static boolean divideByType(Group group, EventDto actual) {
         if (group.getLastEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
             return false; // su rovnake
         } else if (group.getLastEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {
@@ -71,11 +72,12 @@ public class DivideByTimeAndType implements IDividing {
         } else if (group.getLastEvent() instanceof BashCommandEventDto && actual instanceof BashCommandEventDto) {
             return false; // su rovnake
         }
+
         // nie su rovnake alebo pojde o novy typ
         return true;
     }
 
-    protected boolean divideForWebTabSpendTime(Group group, EventDto actual) {
+    public static boolean divideForWebTabSpendTime(Group group, EventDto actual) {
         EventDto first = group.getFirstEvent();
         if (!(first instanceof WebEventDto)) {
             return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie

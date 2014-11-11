@@ -161,6 +161,10 @@
     <h1>Domain visits | Count per domain</h1>
 
     <div id="graph-domainVisits"></div>
+
+    <h1>Duration of spending at domain | Minutes per domain</h1>
+
+    <div id="graph-webDuration"></div>
 </div>
 <div id="loader-wrapper">
     <div id="loader"></div>

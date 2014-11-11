@@ -10,11 +10,11 @@ import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
  * Created by Seky on 8. 8. 2014.
  */
 public abstract class ProcessAsGroup extends ProcessIterator<EventDto> {
-    private IDividing divide;
+    protected IDividing divide;
     private Group currentGroup;
 
     protected ProcessAsGroup() {
-        divide = new DivideByTimeAndType();
+        this.divide = new BaseDividing();
     }
 
     /**

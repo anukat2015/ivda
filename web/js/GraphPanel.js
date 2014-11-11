@@ -272,10 +272,31 @@ GraphPanel.prototype.loadStaticsData = function () {
         url: gGlobals.service.getStatsURL(new Date("2014-08-02T00:00:00.000"), new Date("2014-08-09T00:00:00.000"), developer, "loc", "PER_VALUE"),
         success: function (data, textStatus, jqXHR) {
             histogram_graph = new GraphData();
-            histogram_graph.createGroup2('events', 'Changes of source codes | LOC Per File');
+            histogram_graph.createGroup2('events', 'Changes of source codes | LOC per File');
             instance.graphs.locChangesGlobal.graph.setGroups(histogram_graph.groups);
             instance.graphs.locChangesGlobal.graph.setItems(data);
             instance.graphs.locChangesGlobal.graph.redraw();
+        }});
+
+
+    $.ajax({
+        url: gGlobals.service.getStatsURL(new Date("2014-08-01T00:00:00.000"), new Date("2014-08-31T00:00:00.000"), developer, "webDuration", "PER_VALUE"),
+        success: function (data, textStatus, jqXHR) {
+            // Activity at web pages
+            var gdata = new google.visualization.DataTable();
+            gdata.addColumn('string', 'Web domain');
+            gdata.addColumn('number', 'Duration');
+            data.forEach(function (key) {
+                gdata.addRow([key.content, key.y]);
+            });
+            var options = {
+                title: 'Duration of visit | Minutes per domain',
+                height: 600
+                //orientation: 'vertical'
+            };
+            console.log(gdata);
+            chart = new google.visualization.ColumnChart(document.getElementById('graph-webDuration'));
+            chart.draw(gdata, options);
         }});
 };
 

@@ -11,6 +11,7 @@ import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -38,10 +39,9 @@ public class ComputeHistogramTest extends TestCase {
         try {
             File file = new File(statsDir, fileName);
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false)));
-            Iterator<Map.Entry<Date, MutableInt>> zoznam = hist.reduce();
+            Collection<Map.Entry<Date, MutableInt>> zoznam = hist.reduce();
             //output.write("[['Date', 'Count'],");
-            while (zoznam.hasNext()) {
-                Map.Entry<Date, MutableInt> entry = zoznam.next();
+            for (Map.Entry<Date, MutableInt> entry : zoznam) {
                 //output.write("[" + entry.getKey().getTime() + ",\t" + entry.getValue() + "],\n");
                 output.write(entry.getKey() + "\t" + entry.getValue() + "\n");
             }

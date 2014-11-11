@@ -16,8 +16,9 @@ function Preloader() {
         instance.tasks++;
         instance.start();
     }).ajaxError(function (event, jqxhr, settings, thrownError) {
+        instance.finishedTasks++;
         instance.alertError("IVDA service response status:" + thrownError);
-    }).ajaxStop(function () {
+    }).ajaxSuccess(function () {
         instance.finishedTasks++;
     });
 

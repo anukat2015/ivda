@@ -6,11 +6,12 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
-import sk.stuba.fiit.perconik.ivda.server.processevents.ActivityStats;
 import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
 import sk.stuba.fiit.perconik.ivda.server.processevents.ComputeHistogram;
+import sk.stuba.fiit.perconik.ivda.server.processevents.CreateBaseActivities;
+import sk.stuba.fiit.perconik.ivda.server.processevents.DurationPerDomain;
 import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
+import sk.stuba.fiit.perconik.ivda.util.lang.TimeGranularity;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -52,6 +54,10 @@ public class StatsServlet extends HttpServlet {
                     pocetPrvkov(events, request.getGranularity(), stream);
                     break;
                 }
+                case "webDuration": {
+                    webDuration(events, stream);
+                    break;
+                }
                 default: {
                     throw new Exception("Unknown attribute.");
                 }
@@ -67,15 +73,13 @@ public class StatsServlet extends HttpServlet {
         // Vypocitaj histogram udaje
         ComputeHistogram histogram = new ComputeHistogram(g);
         histogram.proccess(events);
-        Iterator<Map.Entry<Date, MutableInt>> data = histogram.getHistogram().reduce();
+        Collection<Map.Entry<Date, MutableInt>> zoznam = histogram.getHistogram().reduce();
 
         // Posli udaje do vystupu
         Array2Json json = new Array2Json(stream);
         json.start();
-        while (data.hasNext()) {
-            Map.Entry<Date, MutableInt> entry = data.next();
+        for (Map.Entry<Date, MutableInt> entry : zoznam) {
             Date start = entry.getKey();
-
             IvdaEvent e = new IvdaEvent();
             e.setStart(start);
             e.setGroup("events");
@@ -111,7 +115,13 @@ public class StatsServlet extends HttpServlet {
 
     private static void pohladNaAktivity(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
         // Vyfiltruj prvky pre pouzivatela
-        ProcessIterator<EventDto> process = new ActivityStats(stream);
+        ProcessIterator<EventDto> process = new CreateBaseActivities(stream);
+        process.proccess(events);
+    }
+
+    private static void webDuration(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
+        // Vyfiltruj prvky pre pouzivatela
+        ProcessIterator<EventDto> process = new DurationPerDomain(stream);
         process.proccess(events);
     }
 

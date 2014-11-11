@@ -10,7 +10,7 @@ import java.util.*;
  * Use this class for keys inserting in sorted position!
  * Usable for distinct keys.
  */
-public class HistogramBySiblings<K extends Comparable<K>> implements Histogram<K> {
+public class HistogramBySiblings<K extends Comparable<K>> extends Histogram<K> {
 
     private final List<Map.Entry<K, MutableInt>> keys = new ArrayList();
 
@@ -41,7 +41,7 @@ public class HistogramBySiblings<K extends Comparable<K>> implements Histogram<K
     }
 
     @Override
-    public void map(K key) {
+    public void map(K key, int count) {
         Map.Entry<K, MutableInt> entry;
         int size = keys.size();
         if (size == 0) {
@@ -50,7 +50,7 @@ public class HistogramBySiblings<K extends Comparable<K>> implements Histogram<K
         } else {
             Map.Entry<K, MutableInt> before = keys.get(size - 1);
             if (before.getKey().equals(key)) {
-                before.getValue().increment();
+                before.getValue().add(count);
             } else {
                 entry = new MyEntry(key);
                 keys.add(entry);
@@ -59,7 +59,7 @@ public class HistogramBySiblings<K extends Comparable<K>> implements Histogram<K
     }
 
     @Override
-    public Iterator<Map.Entry<K, MutableInt>> reduce() {
-        return keys.iterator(); // they are all ready sorted
+    public Collection<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse) {
+        return sort(keys, sorted, byKey, reverse);
     }
 }
