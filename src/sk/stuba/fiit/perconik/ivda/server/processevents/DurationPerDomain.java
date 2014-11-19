@@ -13,6 +13,7 @@ import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramByHashTable;
 
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
@@ -60,8 +61,10 @@ public final class DurationPerDomain extends ProcessAsGroup {
             }
             url = new URL(url).getHost();
             domainDuration.map(url, (int) group.getTimeDiff());
-        } catch (Exception e) {
-            LOGGER.warn("Event je zleho typu / poskodena url.");
+        } catch (MalformedURLException e2) {
+            // poskodena url ignorujeme
+        }catch (Exception e) {
+            LOGGER.warn("Event je zleho typu?");
         }
     }
 

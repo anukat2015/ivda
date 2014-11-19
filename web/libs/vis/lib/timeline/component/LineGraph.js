@@ -629,7 +629,7 @@ LineGraph.prototype._getRelevantData = function (groupIds, groupsData, minDate, 
             var dataContainer = groupsData[groupIds[i]];
             // optimization for sorted data
             if (group.options.sort == true) {
-                var guess = Math.max(0, util.binarySearchGeneric(group.itemsData, minDate, 'x', 'before'));
+                var guess = Math.max(0, util.binarySearchGeneric(group.itemsData, minDate, 'start', 'before'));
                 for (j = guess; j < group.itemsData.length; j++) {
                     item = group.itemsData[j];
                     if (item !== undefined) {
@@ -844,15 +844,15 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
     this.yAxisRight.master = !yAxisLeftUsed;
 
     if (this.yAxisRight.master == false) {
-        if (yAxisRightUsed == true) {
+        /*if (yAxisRightUsed == true) {
             this.yAxisLeft.lineOffset = this.yAxisRight.width;
         }
-        else {
+        else { */
             this.yAxisLeft.lineOffset = 0;
-        }
+        //}
 
         changeCalled = this.yAxisLeft.redraw() || changeCalled;
-        this.yAxisRight.stepPixelsForced = this.yAxisLeft.stepPixels;
+        //this.yAxisRight.stepPixelsForced = this.yAxisLeft.stepPixels;
         changeCalled = this.yAxisRight.redraw() || changeCalled;
     }
     else {

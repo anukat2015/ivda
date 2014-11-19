@@ -8,11 +8,11 @@ GraphPanel = function () {
     this.registerNavigationBar();
 
     this.graphs = {
-        countEventsPerDay: this.createDynamicHistogram('graph-countEventsPerDay'),
-        countEventsPerHour: this.createDynamicHistogram('graph-countEventsPerHour'),
-        locChangesGlobal: this.createDynamicHistogram('graph-locChangesGlobal'),
-        locChangesLocal: this.createDynamicHistogram('graph-locChangesLocal'),
-        activityHistogram: this.createDynamicHistogram('graph-activityHistogram'),
+        countEventsPerDay: this.createDynamicHistogram2('graph-countEventsPerDay'),
+        countEventsPerHour: this.createDynamicHistogram2('graph-countEventsPerHour'),
+        locChangesGlobal: this.createDynamicHistogram2('graph-locChangesGlobal'),
+        locChangesLocal: this.createDynamicHistogram2('graph-locChangesLocal'),
+        activityHistogram: this.createDynamicHistogram2('graph-activityHistogram'),
         activities: this.createTimeline('graph-activities')
     };
 
@@ -20,8 +20,11 @@ GraphPanel = function () {
     //this.hide();
     console.log("graph created");
 };
+GraphPanel.prototype.createDynamicHistogram2 = function (name) {
+    return this.createDynamicHistogram(name, new vis.DataSet(), new vis.DataSet());
+};
 
-GraphPanel.prototype.createDynamicHistogram = function (name) {
+GraphPanel.prototype.createDynamicHistogram = function (name, items, groups) {
     var options = {      // Specify options
         width: "100%",
         height: "300px",
@@ -41,7 +44,7 @@ GraphPanel.prototype.createDynamicHistogram = function (name) {
 
     return {
         component: $('#' + name),
-        graph: new vis.Graph2d(document.getElementById(name), new vis.DataSet(), options)
+        graph: new vis.Graph2d(document.getElementById(name), items, options, groups)
     };
 };
 
@@ -106,15 +109,15 @@ GraphPanel.prototype.hide = function () {
 };
 
 GraphPanel.prototype.draw = function () {
+    // var lines =
+    this.computeData();
+
     // Update position
     var range = gGlobals.timeline.panel.getVisibleChartRange();
     var instance = this;
     Object.keys(this.graphs).forEach(function (key) {
         instance.graphs[key].graph.setOptions(range);   // nastav okno na vidditelnu cast
     });
-
-    // var lines =
-    this.computeData();
     /*if (lines.isEmpty()) {
      this.hide();
      return;
@@ -136,8 +139,7 @@ GraphPanel.prototype.computeData = function () {
     var changes = new GraphData();
     changes.createGroup2('changedInFuture', 'Changes of files in future');
     changes.createGroup2('changedInHistory', 'Changes of files in past');
-    changes.groups.add({id: "changedLines", content: "LOC changed"//, options: { yAxisOrientation: 'right' } // sposobuje abnormalne lagovanie
-    });
+    changes.createGroupRight("changedLines", "LOC changed");
 
     var grouping = new ProcessAsGroup();
     var pathsMap = {};
@@ -197,10 +199,7 @@ GraphPanel.prototype.computeData = function () {
     this.graphs.activities.graph.setItems(activities.items);
     this.graphs.activities.graph.redraw();
 
-    this.graphs.locChangesLocal.graph.setGroups(changes.groups);
-    this.graphs.locChangesLocal.graph.setItems(changes.items);
-    this.graphs.locChangesLocal.graph.redraw();
-
+    this.graphs.locChangesLocal = this.createDynamicHistogram('graph-locChangesLocal', changes.items, changes.groups);
 
     // Zaujimave statistiky
     this.loadStats();
@@ -316,10 +315,8 @@ GraphPanel.prototype.loadStats = function () {
             gGlobals.service.convertDates(data);
             var info = new GraphData();
             info.createGroup2('Web', 'Web activities | Unique domains per duration');
-            info.createGroup2('Ide', 'Ide activities | Changed LOC per duration');
-            instance.graphs.activityHistogram.graph.setGroups(info.groups);
-            instance.graphs.activityHistogram.graph.setItems(data);
-            instance.graphs.activityHistogram.graph.redraw();
+            info.createGroupRight('Ide', 'Ide activities | Changed LOC per duration');
+            instance.graphs.activityHistogram = instance.createDynamicHistogram('graph-activityHistogram', data, info.groups)
         }});
 };
 

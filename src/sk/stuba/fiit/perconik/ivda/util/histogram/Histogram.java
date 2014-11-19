@@ -9,7 +9,6 @@ import java.util.*;
  * Linear histogram - increasing by one
  */
 public abstract class Histogram<K extends Comparable<K>> {
-    // TODO: parameter should be Iterator<Entity>
     public void map(K key) {
         map(key, 1);
     }

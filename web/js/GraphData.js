@@ -13,6 +13,12 @@ function GraphData() {
         }
     };
 
+    this.createGroupRight = function (type, name) {
+        if (!this.groups.get(type)) {
+            this.groups.add({id: type, content: name, options: {yAxisOrientation: 'right'} });
+        }
+    };
+
     this.createGroup = function (type) {
         this.createGroup2(type, type);
     };

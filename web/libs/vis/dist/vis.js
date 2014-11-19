@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 3.5.0
- * @date    2014-11-10
+ * @date    2014-11-19
  *
  * @license
  * Copyright (C) 2011-2014 Almende B.V, http://almende.com
@@ -88,11 +88,11 @@ return /******/ (function(modules) { // webpackBootstrap
   exports.DataView = __webpack_require__(4);
 
   // Graph3d
-  exports.Graph3d = __webpack_require__(5);
+  exports.Graph3d = __webpack_require__(7);
   exports.graph3d = {
-    Camera: __webpack_require__(6),
-    Filter: __webpack_require__(8),
-    Point2d: __webpack_require__(7),
+    Camera: __webpack_require__(5),
+    Filter: __webpack_require__(6),
+    Point2d: __webpack_require__(8),
     Point3d: __webpack_require__(9),
     Slider: __webpack_require__(10),
     StepNumber: __webpack_require__(11)
@@ -2923,14 +2923,378 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(57);
+  var Point3d = __webpack_require__(9);
+
+  /**
+   * @class Camera
+   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
+   * The camera is always looking in the direction of the origin of the arm.
+   * This way, the camera always rotates around one fixed point, the location
+   * of the camera arm.
+   *
+   * Documentation:
+   *   http://en.wikipedia.org/wiki/3D_projection
+   */
+  Camera = function () {
+    this.armLocation = new Point3d();
+    this.armRotation = {};
+    this.armRotation.horizontal = 0;
+    this.armRotation.vertical = 0;
+    this.armLength = 1.7;
+
+    this.cameraLocation = new Point3d();
+    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Set the location (origin) of the arm
+   * @param {Number} x  Normalized value of x
+   * @param {Number} y  Normalized value of y
+   * @param {Number} z  Normalized value of z
+   */
+  Camera.prototype.setArmLocation = function(x, y, z) {
+    this.armLocation.x = x;
+    this.armLocation.y = y;
+    this.armLocation.z = z;
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Set the rotation of the camera arm
+   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
+   *                Optional, can be left undefined.
+   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
+   *                if vertical=0.5*PI, the graph is shown from the
+   *                top. Optional, can be left undefined.
+   */
+  Camera.prototype.setArmRotation = function(horizontal, vertical) {
+    if (horizontal !== undefined) {
+      this.armRotation.horizontal = horizontal;
+    }
+
+    if (vertical !== undefined) {
+      this.armRotation.vertical = vertical;
+      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
+      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
+    }
+
+    if (horizontal !== undefined || vertical !== undefined) {
+      this.calculateCameraOrientation();
+    }
+  };
+
+  /**
+   * Retrieve the current arm rotation
+   * @return {object}   An object with parameters horizontal and vertical
+   */
+  Camera.prototype.getArmRotation = function() {
+    var rot = {};
+    rot.horizontal = this.armRotation.horizontal;
+    rot.vertical = this.armRotation.vertical;
+
+    return rot;
+  };
+
+  /**
+   * Set the (normalized) length of the camera arm.
+   * @param {Number} length A length between 0.71 and 5.0
+   */
+  Camera.prototype.setArmLength = function(length) {
+    if (length === undefined)
+      return;
+
+    this.armLength = length;
+
+    // Radius must be larger than the corner of the graph,
+    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
+    // graph
+    if (this.armLength < 0.71) this.armLength = 0.71;
+    if (this.armLength > 5.0) this.armLength = 5.0;
+
+    this.calculateCameraOrientation();
+  };
+
+  /**
+   * Retrieve the arm length
+   * @return {Number} length
+   */
+  Camera.prototype.getArmLength = function() {
+    return this.armLength;
+  };
+
+  /**
+   * Retrieve the camera location
+   * @return {Point3d} cameraLocation
+   */
+  Camera.prototype.getCameraLocation = function() {
+    return this.cameraLocation;
+  };
+
+  /**
+   * Retrieve the camera rotation
+   * @return {Point3d} cameraRotation
+   */
+  Camera.prototype.getCameraRotation = function() {
+    return this.cameraRotation;
+  };
+
+  /**
+   * Calculate the location and rotation of the camera based on the
+   * position and orientation of the camera arm
+   */
+  Camera.prototype.calculateCameraOrientation = function() {
+    // calculate location of the camera
+    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
+
+    // calculate rotation of the camera
+    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
+    this.cameraRotation.y = 0;
+    this.cameraRotation.z = -this.armRotation.horizontal;
+  };
+
+  module.exports = Camera;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var DataView = __webpack_require__(4);
+
+  /**
+   * @class Filter
+   *
+   * @param {DataSet} data The google data table
+   * @param {Number}  column             The index of the column to be filtered
+   * @param {Graph} graph           The graph
+   */
+  function Filter (data, column, graph) {
+    this.data = data;
+    this.column = column;
+    this.graph = graph; // the parent graph
+
+    this.index = undefined;
+    this.value = undefined;
+
+    // read all distinct values and select the first one
+    this.values = graph.getDistinctValues(data.get(), this.column);
+
+    // sort both numeric and string values correctly
+    this.values.sort(function (a, b) {
+      return a > b ? 1 : a < b ? -1 : 0;
+    });
+
+    if (this.values.length > 0) {
+      this.selectValue(0);
+    }
+
+    // create an array with the filtered datapoints. this will be loaded afterwards
+    this.dataPoints = [];
+
+    this.loaded = false;
+    this.onLoadCallback = undefined;
+
+    if (graph.animationPreload) {
+      this.loaded = false;
+      this.loadInBackground();
+    }
+    else {
+      this.loaded = true;
+    }
+  };
+
+
+  /**
+   * Return the label
+   * @return {string} label
+   */
+  Filter.prototype.isLoaded = function() {
+    return this.loaded;
+  };
+
+
+  /**
+   * Return the loaded progress
+   * @return {Number} percentage between 0 and 100
+   */
+  Filter.prototype.getLoadedProgress = function() {
+    var len = this.values.length;
+
+    var i = 0;
+    while (this.dataPoints[i]) {
+      i++;
+    }
+
+    return Math.round(i / len * 100);
+  };
+
+
+  /**
+   * Return the label
+   * @return {string} label
+   */
+  Filter.prototype.getLabel = function() {
+    return this.graph.filterLabel;
+  };
+
+
+  /**
+   * Return the columnIndex of the filter
+   * @return {Number} columnIndex
+   */
+  Filter.prototype.getColumn = function() {
+    return this.column;
+  };
+
+  /**
+   * Return the currently selected value. Returns undefined if there is no selection
+   * @return {*} value
+   */
+  Filter.prototype.getSelectedValue = function() {
+    if (this.index === undefined)
+      return undefined;
+
+    return this.values[this.index];
+  };
+
+  /**
+   * Retrieve all values of the filter
+   * @return {Array} values
+   */
+  Filter.prototype.getValues = function() {
+    return this.values;
+  };
+
+  /**
+   * Retrieve one value of the filter
+   * @param {Number}  index
+   * @return {*} value
+   */
+  Filter.prototype.getValue = function(index) {
+    if (index >= this.values.length)
+      throw 'Error: index out of range';
+
+    return this.values[index];
+  };
+
+
+  /**
+   * Retrieve the (filtered) dataPoints for the currently selected filter index
+   * @param {Number} [index] (optional)
+   * @return {Array} dataPoints
+   */
+  Filter.prototype._getDataPoints = function(index) {
+    if (index === undefined)
+      index = this.index;
+
+    if (index === undefined)
+      return [];
+
+    var dataPoints;
+    if (this.dataPoints[index]) {
+      dataPoints = this.dataPoints[index];
+    }
+    else {
+      var f = {};
+      f.column = this.column;
+      f.value = this.values[index];
+
+      var dataView = new DataView(this.data,{filter: function (item) {return (item[f.column] == f.value);}}).get();
+      dataPoints = this.graph._getDataPoints(dataView);
+
+      this.dataPoints[index] = dataPoints;
+    }
+
+    return dataPoints;
+  };
+
+
+
+  /**
+   * Set a callback function when the filter is fully loaded.
+   */
+  Filter.prototype.setOnLoadCallback = function(callback) {
+    this.onLoadCallback = callback;
+  };
+
+
+  /**
+   * Add a value to the list with available values for this filter
+   * No double entries will be created.
+   * @param {Number} index
+   */
+  Filter.prototype.selectValue = function(index) {
+    if (index >= this.values.length)
+      throw 'Error: index out of range';
+
+    this.index = index;
+    this.value = this.values[index];
+  };
+
+  /**
+   * Load all filtered rows in the background one by one
+   * Start this method without providing an index!
+   */
+  Filter.prototype.loadInBackground = function(index) {
+    if (index === undefined)
+      index = 0;
+
+    var frame = this.graph.frame;
+
+    if (index < this.values.length) {
+      var dataPointsTemp = this._getDataPoints(index);
+      //this.graph.redrawInfo(); // TODO: not neat
+
+      // create a progress box
+      if (frame.progress === undefined) {
+        frame.progress = document.createElement('DIV');
+        frame.progress.style.position = 'absolute';
+        frame.progress.style.color = 'gray';
+        frame.appendChild(frame.progress);
+      }
+      var progress = this.getLoadedProgress();
+      frame.progress.innerHTML = 'Loading animation... ' + progress + '%';
+      // TODO: this is no nice solution...
+      frame.progress.style.bottom = 60 + 'px'; // TODO: use height of slider
+      frame.progress.style.left = 10 + 'px';
+
+      var me = this;
+      setTimeout(function() {me.loadInBackground(index+1);}, 10);
+      this.loaded = false;
+    }
+    else {
+      this.loaded = true;
+
+      // remove the progress box
+      if (frame.progress !== undefined) {
+        frame.removeChild(frame.progress);
+        frame.progress = undefined;
+      }
+
+      if (this.onLoadCallback)
+        this.onLoadCallback();
+    }
+  };
+
+  module.exports = Filter;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Emitter = __webpack_require__(63);
   var DataSet = __webpack_require__(3);
   var DataView = __webpack_require__(4);
   var util = __webpack_require__(1);
   var Point3d = __webpack_require__(9);
-  var Point2d = __webpack_require__(7);
-  var Camera = __webpack_require__(6);
-  var Filter = __webpack_require__(8);
+  var Point2d = __webpack_require__(8);
+  var Camera = __webpack_require__(5);
+  var Filter = __webpack_require__(6);
   var Slider = __webpack_require__(10);
   var StepNumber = __webpack_require__(11);
 
@@ -5194,147 +5558,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var Point3d = __webpack_require__(9);
-
-  /**
-   * @class Camera
-   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
-   * The camera is always looking in the direction of the origin of the arm.
-   * This way, the camera always rotates around one fixed point, the location
-   * of the camera arm.
-   *
-   * Documentation:
-   *   http://en.wikipedia.org/wiki/3D_projection
-   */
-  Camera = function () {
-    this.armLocation = new Point3d();
-    this.armRotation = {};
-    this.armRotation.horizontal = 0;
-    this.armRotation.vertical = 0;
-    this.armLength = 1.7;
-
-    this.cameraLocation = new Point3d();
-    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Set the location (origin) of the arm
-   * @param {Number} x  Normalized value of x
-   * @param {Number} y  Normalized value of y
-   * @param {Number} z  Normalized value of z
-   */
-  Camera.prototype.setArmLocation = function(x, y, z) {
-    this.armLocation.x = x;
-    this.armLocation.y = y;
-    this.armLocation.z = z;
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Set the rotation of the camera arm
-   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
-   *                Optional, can be left undefined.
-   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
-   *                if vertical=0.5*PI, the graph is shown from the
-   *                top. Optional, can be left undefined.
-   */
-  Camera.prototype.setArmRotation = function(horizontal, vertical) {
-    if (horizontal !== undefined) {
-      this.armRotation.horizontal = horizontal;
-    }
-
-    if (vertical !== undefined) {
-      this.armRotation.vertical = vertical;
-      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
-      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
-    }
-
-    if (horizontal !== undefined || vertical !== undefined) {
-      this.calculateCameraOrientation();
-    }
-  };
-
-  /**
-   * Retrieve the current arm rotation
-   * @return {object}   An object with parameters horizontal and vertical
-   */
-  Camera.prototype.getArmRotation = function() {
-    var rot = {};
-    rot.horizontal = this.armRotation.horizontal;
-    rot.vertical = this.armRotation.vertical;
-
-    return rot;
-  };
-
-  /**
-   * Set the (normalized) length of the camera arm.
-   * @param {Number} length A length between 0.71 and 5.0
-   */
-  Camera.prototype.setArmLength = function(length) {
-    if (length === undefined)
-      return;
-
-    this.armLength = length;
-
-    // Radius must be larger than the corner of the graph,
-    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
-    // graph
-    if (this.armLength < 0.71) this.armLength = 0.71;
-    if (this.armLength > 5.0) this.armLength = 5.0;
-
-    this.calculateCameraOrientation();
-  };
-
-  /**
-   * Retrieve the arm length
-   * @return {Number} length
-   */
-  Camera.prototype.getArmLength = function() {
-    return this.armLength;
-  };
-
-  /**
-   * Retrieve the camera location
-   * @return {Point3d} cameraLocation
-   */
-  Camera.prototype.getCameraLocation = function() {
-    return this.cameraLocation;
-  };
-
-  /**
-   * Retrieve the camera rotation
-   * @return {Point3d} cameraRotation
-   */
-  Camera.prototype.getCameraRotation = function() {
-    return this.cameraRotation;
-  };
-
-  /**
-   * Calculate the location and rotation of the camera based on the
-   * position and orientation of the camera arm
-   */
-  Camera.prototype.calculateCameraOrientation = function() {
-    // calculate location of the camera
-    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
-
-    // calculate rotation of the camera
-    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
-    this.cameraRotation.y = 0;
-    this.cameraRotation.z = -this.armRotation.horizontal;
-  };
-
-  module.exports = Camera;
-
-/***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -5348,230 +5572,6 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   module.exports = Point2d;
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var DataView = __webpack_require__(4);
-
-  /**
-   * @class Filter
-   *
-   * @param {DataSet} data The google data table
-   * @param {Number}  column             The index of the column to be filtered
-   * @param {Graph} graph           The graph
-   */
-  function Filter (data, column, graph) {
-    this.data = data;
-    this.column = column;
-    this.graph = graph; // the parent graph
-
-    this.index = undefined;
-    this.value = undefined;
-
-    // read all distinct values and select the first one
-    this.values = graph.getDistinctValues(data.get(), this.column);
-
-    // sort both numeric and string values correctly
-    this.values.sort(function (a, b) {
-      return a > b ? 1 : a < b ? -1 : 0;
-    });
-
-    if (this.values.length > 0) {
-      this.selectValue(0);
-    }
-
-    // create an array with the filtered datapoints. this will be loaded afterwards
-    this.dataPoints = [];
-
-    this.loaded = false;
-    this.onLoadCallback = undefined;
-
-    if (graph.animationPreload) {
-      this.loaded = false;
-      this.loadInBackground();
-    }
-    else {
-      this.loaded = true;
-    }
-  };
-
-
-  /**
-   * Return the label
-   * @return {string} label
-   */
-  Filter.prototype.isLoaded = function() {
-    return this.loaded;
-  };
-
-
-  /**
-   * Return the loaded progress
-   * @return {Number} percentage between 0 and 100
-   */
-  Filter.prototype.getLoadedProgress = function() {
-    var len = this.values.length;
-
-    var i = 0;
-    while (this.dataPoints[i]) {
-      i++;
-    }
-
-    return Math.round(i / len * 100);
-  };
-
-
-  /**
-   * Return the label
-   * @return {string} label
-   */
-  Filter.prototype.getLabel = function() {
-    return this.graph.filterLabel;
-  };
-
-
-  /**
-   * Return the columnIndex of the filter
-   * @return {Number} columnIndex
-   */
-  Filter.prototype.getColumn = function() {
-    return this.column;
-  };
-
-  /**
-   * Return the currently selected value. Returns undefined if there is no selection
-   * @return {*} value
-   */
-  Filter.prototype.getSelectedValue = function() {
-    if (this.index === undefined)
-      return undefined;
-
-    return this.values[this.index];
-  };
-
-  /**
-   * Retrieve all values of the filter
-   * @return {Array} values
-   */
-  Filter.prototype.getValues = function() {
-    return this.values;
-  };
-
-  /**
-   * Retrieve one value of the filter
-   * @param {Number}  index
-   * @return {*} value
-   */
-  Filter.prototype.getValue = function(index) {
-    if (index >= this.values.length)
-      throw 'Error: index out of range';
-
-    return this.values[index];
-  };
-
-
-  /**
-   * Retrieve the (filtered) dataPoints for the currently selected filter index
-   * @param {Number} [index] (optional)
-   * @return {Array} dataPoints
-   */
-  Filter.prototype._getDataPoints = function(index) {
-    if (index === undefined)
-      index = this.index;
-
-    if (index === undefined)
-      return [];
-
-    var dataPoints;
-    if (this.dataPoints[index]) {
-      dataPoints = this.dataPoints[index];
-    }
-    else {
-      var f = {};
-      f.column = this.column;
-      f.value = this.values[index];
-
-      var dataView = new DataView(this.data,{filter: function (item) {return (item[f.column] == f.value);}}).get();
-      dataPoints = this.graph._getDataPoints(dataView);
-
-      this.dataPoints[index] = dataPoints;
-    }
-
-    return dataPoints;
-  };
-
-
-
-  /**
-   * Set a callback function when the filter is fully loaded.
-   */
-  Filter.prototype.setOnLoadCallback = function(callback) {
-    this.onLoadCallback = callback;
-  };
-
-
-  /**
-   * Add a value to the list with available values for this filter
-   * No double entries will be created.
-   * @param {Number} index
-   */
-  Filter.prototype.selectValue = function(index) {
-    if (index >= this.values.length)
-      throw 'Error: index out of range';
-
-    this.index = index;
-    this.value = this.values[index];
-  };
-
-  /**
-   * Load all filtered rows in the background one by one
-   * Start this method without providing an index!
-   */
-  Filter.prototype.loadInBackground = function(index) {
-    if (index === undefined)
-      index = 0;
-
-    var frame = this.graph.frame;
-
-    if (index < this.values.length) {
-      var dataPointsTemp = this._getDataPoints(index);
-      //this.graph.redrawInfo(); // TODO: not neat
-
-      // create a progress box
-      if (frame.progress === undefined) {
-        frame.progress = document.createElement('DIV');
-        frame.progress.style.position = 'absolute';
-        frame.progress.style.color = 'gray';
-        frame.appendChild(frame.progress);
-      }
-      var progress = this.getLoadedProgress();
-      frame.progress.innerHTML = 'Loading animation... ' + progress + '%';
-      // TODO: this is no nice solution...
-      frame.progress.style.bottom = 60 + 'px'; // TODO: use height of slider
-      frame.progress.style.left = 10 + 'px';
-
-      var me = this;
-      setTimeout(function() {me.loadInBackground(index+1);}, 10);
-      this.loaded = false;
-    }
-    else {
-      this.loaded = true;
-
-      // remove the progress box
-      if (frame.progress !== undefined) {
-        frame.removeChild(frame.progress);
-        frame.progress = undefined;
-      }
-
-      if (this.onLoadCallback)
-        this.onLoadCallback();
-    }
-  };
-
-  module.exports = Filter;
 
 
 /***/ },
@@ -6167,13 +6167,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(57);
+  var Emitter = __webpack_require__(63);
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
   var DataSet = __webpack_require__(3);
   var DataView = __webpack_require__(4);
   var Range = __webpack_require__(15);
-  var Core = __webpack_require__(47);
+  var Core = __webpack_require__(48);
   var TimeAxis = __webpack_require__(27);
   var CurrentTime = __webpack_require__(19);
   var CustomTime = __webpack_require__(20);
@@ -6468,13 +6468,13 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(57);
+  var Emitter = __webpack_require__(63);
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
   var DataSet = __webpack_require__(3);
   var DataView = __webpack_require__(4);
   var Range = __webpack_require__(15);
-  var Core = __webpack_require__(47);
+  var Core = __webpack_require__(48);
   var TimeAxis = __webpack_require__(27);
   var CurrentTime = __webpack_require__(19);
   var CustomTime = __webpack_require__(20);
@@ -8193,7 +8193,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var util = __webpack_require__(1);
   var Component = __webpack_require__(18);
   var moment = __webpack_require__(41);
-  var locales = __webpack_require__(46);
+  var locales = __webpack_require__(49);
 
   /**
    * A current time bar
@@ -8363,7 +8363,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var util = __webpack_require__(1);
   var Component = __webpack_require__(18);
   var moment = __webpack_require__(41);
-  var locales = __webpack_require__(46);
+  var locales = __webpack_require__(49);
 
   /**
    * A custom time bar
@@ -11906,7 +11906,7 @@ return /******/ (function(modules) { // webpackBootstrap
               var dataContainer = groupsData[groupIds[i]];
               // optimization for sorted data
               if (group.options.sort == true) {
-                  var guess = Math.max(0, util.binarySearchGeneric(group.itemsData, minDate, 'x', 'before'));
+                  var guess = Math.max(0, util.binarySearchGeneric(group.itemsData, minDate, 'start', 'before'));
                   for (j = guess; j < group.itemsData.length; j++) {
                       item = group.itemsData[j];
                       if (item !== undefined) {
@@ -12121,15 +12121,15 @@ return /******/ (function(modules) { // webpackBootstrap
       this.yAxisRight.master = !yAxisLeftUsed;
 
       if (this.yAxisRight.master == false) {
-          if (yAxisRightUsed == true) {
+          /*if (yAxisRightUsed == true) {
               this.yAxisLeft.lineOffset = this.yAxisRight.width;
           }
-          else {
+          else { */
               this.yAxisLeft.lineOffset = 0;
-          }
+          //}
 
           changeCalled = this.yAxisLeft.redraw() || changeCalled;
-          this.yAxisRight.stepPixelsForced = this.yAxisLeft.stepPixels;
+          //this.yAxisRight.stepPixelsForced = this.yAxisLeft.stepPixels;
           changeCalled = this.yAxisRight.redraw() || changeCalled;
       }
       else {
@@ -14142,9 +14142,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(57);
+  var Emitter = __webpack_require__(63);
   var Hammer = __webpack_require__(42);
-  var mousetrap = __webpack_require__(56);
+  var mousetrap = __webpack_require__(57);
   var util = __webpack_require__(1);
   var hammerUtil = __webpack_require__(43);
   var DataSet = __webpack_require__(3);
@@ -14156,8 +14156,8 @@ return /******/ (function(modules) { // webpackBootstrap
   var Node = __webpack_require__(37);
   var Edge = __webpack_require__(34);
   var Popup = __webpack_require__(38);
-  var MixinLoader = __webpack_require__(48);
-  var Activator = __webpack_require__(49);
+  var MixinLoader = __webpack_require__(46);
+  var Activator = __webpack_require__(47);
   var locales = __webpack_require__(44);
 
   // Load custom shapes into CanvasRenderingContext2D
@@ -20027,7 +20027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   // first check if moment.js is already loaded in the browser window, if so,
   // use this instance. Else, load via commonjs.
-  module.exports = (typeof window !== 'undefined') && window['moment'] || __webpack_require__(59);
+  module.exports = (typeof window !== 'undefined') && window['moment'] || __webpack_require__(58);
 
 
 /***/ },
@@ -20037,7 +20037,7 @@ return /******/ (function(modules) { // webpackBootstrap
   // Only load hammer.js when in a browser environment
   // (loading hammer.js in a node.js environment gives errors)
   if (typeof window !== 'undefined') {
-    module.exports = window['Hammer'] || __webpack_require__(60);
+    module.exports = window['Hammer'] || __webpack_require__(62);
   }
   else {
     module.exports = function () {
@@ -20356,28 +20356,363 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-  // English
-  exports['en'] = {
-    current: 'current',
-    time: 'time'
-  };
-  exports['en_EN'] = exports['en'];
-  exports['en_US'] = exports['en'];
+  var PhysicsMixin = __webpack_require__(56);
+  var ClusterMixin = __webpack_require__(50);
+  var SectorsMixin = __webpack_require__(51);
+  var SelectionMixin = __webpack_require__(52);
+  var ManipulationMixin = __webpack_require__(53);
+  var NavigationMixin = __webpack_require__(54);
+  var HierarchicalLayoutMixin = __webpack_require__(55);
 
-  // Dutch
-  exports['nl'] = {
-    custom: 'aangepaste',
-    time: 'tijd'
+  /**
+   * Load a mixin into the network object
+   *
+   * @param {Object} sourceVariable | this object has to contain functions.
+   * @private
+   */
+  exports._loadMixin = function (sourceVariable) {
+    for (var mixinFunction in sourceVariable) {
+      if (sourceVariable.hasOwnProperty(mixinFunction)) {
+        this[mixinFunction] = sourceVariable[mixinFunction];
+      }
+    }
   };
-  exports['nl_NL'] = exports['nl'];
-  exports['nl_BE'] = exports['nl'];
+
+
+  /**
+   * removes a mixin from the network object.
+   *
+   * @param {Object} sourceVariable | this object has to contain functions.
+   * @private
+   */
+  exports._clearMixin = function (sourceVariable) {
+    for (var mixinFunction in sourceVariable) {
+      if (sourceVariable.hasOwnProperty(mixinFunction)) {
+        this[mixinFunction] = undefined;
+      }
+    }
+  };
+
+
+  /**
+   * Mixin the physics system and initialize the parameters required.
+   *
+   * @private
+   */
+  exports._loadPhysicsSystem = function () {
+    this._loadMixin(PhysicsMixin);
+    this._loadSelectedForceSolver();
+    if (this.constants.configurePhysics == true) {
+      this._loadPhysicsConfiguration();
+    }
+  };
+
+
+  /**
+   * Mixin the cluster system and initialize the parameters required.
+   *
+   * @private
+   */
+  exports._loadClusterSystem = function () {
+    this.clusterSession = 0;
+    this.hubThreshold = 5;
+    this._loadMixin(ClusterMixin);
+  };
+
+
+  /**
+   * Mixin the sector system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadSectorSystem = function () {
+    this.sectors = {};
+    this.activeSector = ["default"];
+    this.sectors["active"] = {};
+    this.sectors["active"]["default"] = {"nodes": {},
+      "edges": {},
+      "nodeIndices": [],
+      "formationScale": 1.0,
+      "drawingNode": undefined };
+    this.sectors["frozen"] = {};
+    this.sectors["support"] = {"nodes": {},
+      "edges": {},
+      "nodeIndices": [],
+      "formationScale": 1.0,
+      "drawingNode": undefined };
+
+    this.nodeIndices = this.sectors["active"]["default"]["nodeIndices"];  // the node indices list is used to speed up the computation of the repulsion fields
+
+    this._loadMixin(SectorsMixin);
+  };
+
+
+  /**
+   * Mixin the selection system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadSelectionSystem = function () {
+    this.selectionObj = {nodes: {}, edges: {}};
+
+    this._loadMixin(SelectionMixin);
+  };
+
+
+  /**
+   * Mixin the navigationUI (User Interface) system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadManipulationSystem = function () {
+    // reset global variables -- these are used by the selection of nodes and edges.
+    this.blockConnectingEdgeSelection = false;
+    this.forceAppendSelection = false;
+
+    if (this.constants.dataManipulation.enabled == true) {
+      // load the manipulator HTML elements. All styling done in css.
+      if (this.manipulationDiv === undefined) {
+        this.manipulationDiv = document.createElement('div');
+        this.manipulationDiv.className = 'network-manipulationDiv';
+        this.manipulationDiv.id = 'network-manipulationDiv';
+        if (this.editMode == true) {
+          this.manipulationDiv.style.display = "block";
+        }
+        else {
+          this.manipulationDiv.style.display = "none";
+        }
+        this.frame.appendChild(this.manipulationDiv);
+      }
+
+      if (this.editModeDiv === undefined) {
+        this.editModeDiv = document.createElement('div');
+        this.editModeDiv.className = 'network-manipulation-editMode';
+        this.editModeDiv.id = 'network-manipulation-editMode';
+        if (this.editMode == true) {
+          this.editModeDiv.style.display = "none";
+        }
+        else {
+          this.editModeDiv.style.display = "block";
+        }
+        this.frame.appendChild(this.editModeDiv);
+      }
+
+      if (this.closeDiv === undefined) {
+        this.closeDiv = document.createElement('div');
+        this.closeDiv.className = 'network-manipulation-closeDiv';
+        this.closeDiv.id = 'network-manipulation-closeDiv';
+        this.closeDiv.style.display = this.manipulationDiv.style.display;
+        this.frame.appendChild(this.closeDiv);
+      }
+
+      // load the manipulation functions
+      this._loadMixin(ManipulationMixin);
+
+      // create the manipulator toolbar
+      this._createManipulatorBar();
+    }
+    else {
+      if (this.manipulationDiv !== undefined) {
+        // removes all the bindings and overloads
+        this._createManipulatorBar();
+
+        // remove the manipulation divs
+        this.frame.removeChild(this.manipulationDiv);
+        this.frame.removeChild(this.editModeDiv);
+        this.frame.removeChild(this.closeDiv);
+
+        this.manipulationDiv = undefined;
+        this.editModeDiv = undefined;
+        this.closeDiv = undefined;
+        // remove the mixin functions
+        this._clearMixin(ManipulationMixin);
+      }
+    }
+  };
+
+
+  /**
+   * Mixin the navigation (User Interface) system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadNavigationControls = function () {
+    this._loadMixin(NavigationMixin);
+    // the clean function removes the button divs, this is done to remove the bindings.
+    this._cleanNavigation();
+    if (this.constants.navigation.enabled == true) {
+      this._loadNavigationElements();
+    }
+  };
+
+
+  /**
+   * Mixin the hierarchical layout system.
+   *
+   * @private
+   */
+  exports._loadHierarchySystem = function () {
+    this._loadMixin(HierarchicalLayoutMixin);
+  };
 
 
 /***/ },
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(57);
+  var mousetrap = __webpack_require__(57);
+  var Emitter = __webpack_require__(63);
+  var Hammer = __webpack_require__(42);
+  var util = __webpack_require__(1);
+
+  /**
+   * Turn an element into an clickToUse element.
+   * When not active, the element has a transparent overlay. When the overlay is
+   * clicked, the mode is changed to active.
+   * When active, the element is displayed with a blue border around it, and
+   * the interactive contents of the element can be used. When clicked outside
+   * the element, the elements mode is changed to inactive.
+   * @param {Element} container
+   * @constructor
+   */
+  function Activator(container) {
+    this.active = false;
+
+    this.dom = {
+      container: container
+    };
+
+    this.dom.overlay = document.createElement('div');
+    this.dom.overlay.className = 'overlay';
+
+    this.dom.container.appendChild(this.dom.overlay);
+
+    this.hammer = Hammer(this.dom.overlay, {prevent_default: false});
+    this.hammer.on('tap', this._onTapOverlay.bind(this));
+
+    // block all touch events (except tap)
+    var me = this;
+    var events = [
+      'touch', 'pinch',
+      'doubletap', 'hold',
+      'dragstart', 'drag', 'dragend',
+      'mousewheel', 'DOMMouseScroll' // DOMMouseScroll is needed for Firefox
+    ];
+    events.forEach(function (event) {
+      me.hammer.on(event, function (event) {
+        event.stopPropagation();
+      });
+    });
+
+    // attach a tap event to the window, in order to deactivate when clicking outside the timeline
+    this.windowHammer = Hammer(window, {prevent_default: false});
+    this.windowHammer.on('tap', function (event) {
+      // deactivate when clicked outside the container
+      if (!_hasParent(event.target, container)) {
+        me.deactivate();
+      }
+    });
+
+    // mousetrap listener only bounded when active)
+    this.escListener = this.deactivate.bind(this);
+  }
+
+  // turn into an event emitter
+  Emitter(Activator.prototype);
+
+  // The currently active activator
+  Activator.current = null;
+
+  /**
+   * Destroy the activator. Cleans up all created DOM and event listeners
+   */
+  Activator.prototype.destroy = function () {
+    this.deactivate();
+
+    // remove dom
+    this.dom.overlay.parentNode.removeChild(this.dom.overlay);
+
+    // cleanup hammer instances
+    this.hammer = null;
+    this.windowHammer = null;
+    // FIXME: cleaning up hammer instances doesn't work (Timeline not removed from memory)
+  };
+
+  /**
+   * Activate the element
+   * Overlay is hidden, element is decorated with a blue shadow border
+   */
+  Activator.prototype.activate = function () {
+    // we allow only one active activator at a time
+    if (Activator.current) {
+      Activator.current.deactivate();
+    }
+    Activator.current = this;
+
+    this.active = true;
+    this.dom.overlay.style.display = 'none';
+    util.addClassName(this.dom.container, 'vis-active');
+
+    this.emit('change');
+    this.emit('activate');
+
+    // ugly hack: bind ESC after emitting the events, as the Network rebinds all
+    // keyboard events on a 'change' event
+    mousetrap.bind('esc', this.escListener);
+  };
+
+  /**
+   * Deactivate the element
+   * Overlay is displayed on top of the element
+   */
+  Activator.prototype.deactivate = function () {
+    this.active = false;
+    this.dom.overlay.style.display = '';
+    util.removeClassName(this.dom.container, 'vis-active');
+    mousetrap.unbind('esc', this.escListener);
+
+    this.emit('change');
+    this.emit('deactivate');
+  };
+
+  /**
+   * Handle a tap event: activate the container
+   * @param event
+   * @private
+   */
+  Activator.prototype._onTapOverlay = function (event) {
+    // activate the container
+    this.activate();
+    event.stopPropagation();
+  };
+
+  /**
+   * Test whether the element has the requested parent element somewhere in
+   * its chain of parent nodes.
+   * @param {HTMLElement} element
+   * @param {HTMLElement} parent
+   * @returns {boolean} Returns true when the parent is found somewhere in the
+   *                    chain of parent nodes.
+   * @private
+   */
+  function _hasParent(element, parent) {
+    while (element) {
+      if (element === parent) {
+        return true
+      }
+      element = element.parentNode;
+    }
+    return false;
+  }
+
+  module.exports = Activator;
+
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Emitter = __webpack_require__(63);
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
   var DataSet = __webpack_require__(3);
@@ -20387,7 +20722,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var CurrentTime = __webpack_require__(19);
   var CustomTime = __webpack_require__(20);
   var ItemSet = __webpack_require__(24);
-  var Activator = __webpack_require__(49);
+  var Activator = __webpack_require__(47);
 
   /**
    * Create a timeline visualization
@@ -21203,359 +21538,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var PhysicsMixin = __webpack_require__(58);
-  var ClusterMixin = __webpack_require__(50);
-  var SectorsMixin = __webpack_require__(51);
-  var SelectionMixin = __webpack_require__(52);
-  var ManipulationMixin = __webpack_require__(53);
-  var NavigationMixin = __webpack_require__(54);
-  var HierarchicalLayoutMixin = __webpack_require__(55);
-
-  /**
-   * Load a mixin into the network object
-   *
-   * @param {Object} sourceVariable | this object has to contain functions.
-   * @private
-   */
-  exports._loadMixin = function (sourceVariable) {
-    for (var mixinFunction in sourceVariable) {
-      if (sourceVariable.hasOwnProperty(mixinFunction)) {
-        this[mixinFunction] = sourceVariable[mixinFunction];
-      }
-    }
-  };
-
-
-  /**
-   * removes a mixin from the network object.
-   *
-   * @param {Object} sourceVariable | this object has to contain functions.
-   * @private
-   */
-  exports._clearMixin = function (sourceVariable) {
-    for (var mixinFunction in sourceVariable) {
-      if (sourceVariable.hasOwnProperty(mixinFunction)) {
-        this[mixinFunction] = undefined;
-      }
-    }
-  };
-
-
-  /**
-   * Mixin the physics system and initialize the parameters required.
-   *
-   * @private
-   */
-  exports._loadPhysicsSystem = function () {
-    this._loadMixin(PhysicsMixin);
-    this._loadSelectedForceSolver();
-    if (this.constants.configurePhysics == true) {
-      this._loadPhysicsConfiguration();
-    }
-  };
-
-
-  /**
-   * Mixin the cluster system and initialize the parameters required.
-   *
-   * @private
-   */
-  exports._loadClusterSystem = function () {
-    this.clusterSession = 0;
-    this.hubThreshold = 5;
-    this._loadMixin(ClusterMixin);
-  };
-
-
-  /**
-   * Mixin the sector system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadSectorSystem = function () {
-    this.sectors = {};
-    this.activeSector = ["default"];
-    this.sectors["active"] = {};
-    this.sectors["active"]["default"] = {"nodes": {},
-      "edges": {},
-      "nodeIndices": [],
-      "formationScale": 1.0,
-      "drawingNode": undefined };
-    this.sectors["frozen"] = {};
-    this.sectors["support"] = {"nodes": {},
-      "edges": {},
-      "nodeIndices": [],
-      "formationScale": 1.0,
-      "drawingNode": undefined };
-
-    this.nodeIndices = this.sectors["active"]["default"]["nodeIndices"];  // the node indices list is used to speed up the computation of the repulsion fields
-
-    this._loadMixin(SectorsMixin);
-  };
-
-
-  /**
-   * Mixin the selection system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadSelectionSystem = function () {
-    this.selectionObj = {nodes: {}, edges: {}};
-
-    this._loadMixin(SelectionMixin);
-  };
-
-
-  /**
-   * Mixin the navigationUI (User Interface) system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadManipulationSystem = function () {
-    // reset global variables -- these are used by the selection of nodes and edges.
-    this.blockConnectingEdgeSelection = false;
-    this.forceAppendSelection = false;
-
-    if (this.constants.dataManipulation.enabled == true) {
-      // load the manipulator HTML elements. All styling done in css.
-      if (this.manipulationDiv === undefined) {
-        this.manipulationDiv = document.createElement('div');
-        this.manipulationDiv.className = 'network-manipulationDiv';
-        this.manipulationDiv.id = 'network-manipulationDiv';
-        if (this.editMode == true) {
-          this.manipulationDiv.style.display = "block";
-        }
-        else {
-          this.manipulationDiv.style.display = "none";
-        }
-        this.frame.appendChild(this.manipulationDiv);
-      }
-
-      if (this.editModeDiv === undefined) {
-        this.editModeDiv = document.createElement('div');
-        this.editModeDiv.className = 'network-manipulation-editMode';
-        this.editModeDiv.id = 'network-manipulation-editMode';
-        if (this.editMode == true) {
-          this.editModeDiv.style.display = "none";
-        }
-        else {
-          this.editModeDiv.style.display = "block";
-        }
-        this.frame.appendChild(this.editModeDiv);
-      }
-
-      if (this.closeDiv === undefined) {
-        this.closeDiv = document.createElement('div');
-        this.closeDiv.className = 'network-manipulation-closeDiv';
-        this.closeDiv.id = 'network-manipulation-closeDiv';
-        this.closeDiv.style.display = this.manipulationDiv.style.display;
-        this.frame.appendChild(this.closeDiv);
-      }
-
-      // load the manipulation functions
-      this._loadMixin(ManipulationMixin);
-
-      // create the manipulator toolbar
-      this._createManipulatorBar();
-    }
-    else {
-      if (this.manipulationDiv !== undefined) {
-        // removes all the bindings and overloads
-        this._createManipulatorBar();
-
-        // remove the manipulation divs
-        this.frame.removeChild(this.manipulationDiv);
-        this.frame.removeChild(this.editModeDiv);
-        this.frame.removeChild(this.closeDiv);
-
-        this.manipulationDiv = undefined;
-        this.editModeDiv = undefined;
-        this.closeDiv = undefined;
-        // remove the mixin functions
-        this._clearMixin(ManipulationMixin);
-      }
-    }
-  };
-
-
-  /**
-   * Mixin the navigation (User Interface) system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadNavigationControls = function () {
-    this._loadMixin(NavigationMixin);
-    // the clean function removes the button divs, this is done to remove the bindings.
-    this._cleanNavigation();
-    if (this.constants.navigation.enabled == true) {
-      this._loadNavigationElements();
-    }
-  };
-
-
-  /**
-   * Mixin the hierarchical layout system.
-   *
-   * @private
-   */
-  exports._loadHierarchySystem = function () {
-    this._loadMixin(HierarchicalLayoutMixin);
-  };
-
-
-/***/ },
 /* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var mousetrap = __webpack_require__(56);
-  var Emitter = __webpack_require__(57);
-  var Hammer = __webpack_require__(42);
-  var util = __webpack_require__(1);
-
-  /**
-   * Turn an element into an clickToUse element.
-   * When not active, the element has a transparent overlay. When the overlay is
-   * clicked, the mode is changed to active.
-   * When active, the element is displayed with a blue border around it, and
-   * the interactive contents of the element can be used. When clicked outside
-   * the element, the elements mode is changed to inactive.
-   * @param {Element} container
-   * @constructor
-   */
-  function Activator(container) {
-    this.active = false;
-
-    this.dom = {
-      container: container
-    };
-
-    this.dom.overlay = document.createElement('div');
-    this.dom.overlay.className = 'overlay';
-
-    this.dom.container.appendChild(this.dom.overlay);
-
-    this.hammer = Hammer(this.dom.overlay, {prevent_default: false});
-    this.hammer.on('tap', this._onTapOverlay.bind(this));
-
-    // block all touch events (except tap)
-    var me = this;
-    var events = [
-      'touch', 'pinch',
-      'doubletap', 'hold',
-      'dragstart', 'drag', 'dragend',
-      'mousewheel', 'DOMMouseScroll' // DOMMouseScroll is needed for Firefox
-    ];
-    events.forEach(function (event) {
-      me.hammer.on(event, function (event) {
-        event.stopPropagation();
-      });
-    });
-
-    // attach a tap event to the window, in order to deactivate when clicking outside the timeline
-    this.windowHammer = Hammer(window, {prevent_default: false});
-    this.windowHammer.on('tap', function (event) {
-      // deactivate when clicked outside the container
-      if (!_hasParent(event.target, container)) {
-        me.deactivate();
-      }
-    });
-
-    // mousetrap listener only bounded when active)
-    this.escListener = this.deactivate.bind(this);
-  }
-
-  // turn into an event emitter
-  Emitter(Activator.prototype);
-
-  // The currently active activator
-  Activator.current = null;
-
-  /**
-   * Destroy the activator. Cleans up all created DOM and event listeners
-   */
-  Activator.prototype.destroy = function () {
-    this.deactivate();
-
-    // remove dom
-    this.dom.overlay.parentNode.removeChild(this.dom.overlay);
-
-    // cleanup hammer instances
-    this.hammer = null;
-    this.windowHammer = null;
-    // FIXME: cleaning up hammer instances doesn't work (Timeline not removed from memory)
+  // English
+  exports['en'] = {
+    current: 'current',
+    time: 'time'
   };
+  exports['en_EN'] = exports['en'];
+  exports['en_US'] = exports['en'];
 
-  /**
-   * Activate the element
-   * Overlay is hidden, element is decorated with a blue shadow border
-   */
-  Activator.prototype.activate = function () {
-    // we allow only one active activator at a time
-    if (Activator.current) {
-      Activator.current.deactivate();
-    }
-    Activator.current = this;
-
-    this.active = true;
-    this.dom.overlay.style.display = 'none';
-    util.addClassName(this.dom.container, 'vis-active');
-
-    this.emit('change');
-    this.emit('activate');
-
-    // ugly hack: bind ESC after emitting the events, as the Network rebinds all
-    // keyboard events on a 'change' event
-    mousetrap.bind('esc', this.escListener);
+  // Dutch
+  exports['nl'] = {
+    custom: 'aangepaste',
+    time: 'tijd'
   };
-
-  /**
-   * Deactivate the element
-   * Overlay is displayed on top of the element
-   */
-  Activator.prototype.deactivate = function () {
-    this.active = false;
-    this.dom.overlay.style.display = '';
-    util.removeClassName(this.dom.container, 'vis-active');
-    mousetrap.unbind('esc', this.escListener);
-
-    this.emit('change');
-    this.emit('deactivate');
-  };
-
-  /**
-   * Handle a tap event: activate the container
-   * @param event
-   * @private
-   */
-  Activator.prototype._onTapOverlay = function (event) {
-    // activate the container
-    this.activate();
-    event.stopPropagation();
-  };
-
-  /**
-   * Test whether the element has the requested parent element somewhere in
-   * its chain of parent nodes.
-   * @param {HTMLElement} element
-   * @param {HTMLElement} parent
-   * @returns {boolean} Returns true when the parent is found somewhere in the
-   *                    chain of parent nodes.
-   * @private
-   */
-  function _hasParent(element, parent) {
-    while (element) {
-      if (element === parent) {
-        return true
-      }
-      element = element.parentNode;
-    }
-    return false;
-  }
-
-  module.exports = Activator;
+  exports['nl_NL'] = exports['nl'];
+  exports['nl_BE'] = exports['nl'];
 
 
 /***/ },
@@ -25174,6 +25174,720 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
+  var util = __webpack_require__(1);
+  var RepulsionMixin = __webpack_require__(59);
+  var HierarchialRepulsionMixin = __webpack_require__(60);
+  var BarnesHutMixin = __webpack_require__(61);
+
+  /**
+   * Toggling barnes Hut calculation on and off.
+   *
+   * @private
+   */
+  exports._toggleBarnesHut = function () {
+    this.constants.physics.barnesHut.enabled = !this.constants.physics.barnesHut.enabled;
+    this._loadSelectedForceSolver();
+    this.moving = true;
+    this.start();
+  };
+
+
+  /**
+   * This loads the node force solver based on the barnes hut or repulsion algorithm
+   *
+   * @private
+   */
+  exports._loadSelectedForceSolver = function () {
+    // this overloads the this._calculateNodeForces
+    if (this.constants.physics.barnesHut.enabled == true) {
+      this._clearMixin(RepulsionMixin);
+      this._clearMixin(HierarchialRepulsionMixin);
+
+      this.constants.physics.centralGravity = this.constants.physics.barnesHut.centralGravity;
+      this.constants.physics.springLength = this.constants.physics.barnesHut.springLength;
+      this.constants.physics.springConstant = this.constants.physics.barnesHut.springConstant;
+      this.constants.physics.damping = this.constants.physics.barnesHut.damping;
+
+      this._loadMixin(BarnesHutMixin);
+    }
+    else if (this.constants.physics.hierarchicalRepulsion.enabled == true) {
+      this._clearMixin(BarnesHutMixin);
+      this._clearMixin(RepulsionMixin);
+
+      this.constants.physics.centralGravity = this.constants.physics.hierarchicalRepulsion.centralGravity;
+      this.constants.physics.springLength = this.constants.physics.hierarchicalRepulsion.springLength;
+      this.constants.physics.springConstant = this.constants.physics.hierarchicalRepulsion.springConstant;
+      this.constants.physics.damping = this.constants.physics.hierarchicalRepulsion.damping;
+
+      this._loadMixin(HierarchialRepulsionMixin);
+    }
+    else {
+      this._clearMixin(BarnesHutMixin);
+      this._clearMixin(HierarchialRepulsionMixin);
+      this.barnesHutTree = undefined;
+
+      this.constants.physics.centralGravity = this.constants.physics.repulsion.centralGravity;
+      this.constants.physics.springLength = this.constants.physics.repulsion.springLength;
+      this.constants.physics.springConstant = this.constants.physics.repulsion.springConstant;
+      this.constants.physics.damping = this.constants.physics.repulsion.damping;
+
+      this._loadMixin(RepulsionMixin);
+    }
+  };
+
+  /**
+   * Before calculating the forces, we check if we need to cluster to keep up performance and we check
+   * if there is more than one node. If it is just one node, we dont calculate anything.
+   *
+   * @private
+   */
+  exports._initializeForceCalculation = function () {
+    // stop calculation if there is only one node
+    if (this.nodeIndices.length == 1) {
+      this.nodes[this.nodeIndices[0]]._setForce(0, 0);
+    }
+    else {
+      // if there are too many nodes on screen, we cluster without repositioning
+      if (this.nodeIndices.length > this.constants.clustering.clusterThreshold && this.constants.clustering.enabled == true) {
+        this.clusterToFit(this.constants.clustering.reduceToNodes, false);
+      }
+
+      // we now start the force calculation
+      this._calculateForces();
+    }
+  };
+
+
+  /**
+   * Calculate the external forces acting on the nodes
+   * Forces are caused by: edges, repulsing forces between nodes, gravity
+   * @private
+   */
+  exports._calculateForces = function () {
+    // Gravity is required to keep separated groups from floating off
+    // the forces are reset to zero in this loop by using _setForce instead
+    // of _addForce
+
+    this._calculateGravitationalForces();
+    this._calculateNodeForces();
+
+    if (this.constants.physics.springConstant > 0) {
+      if (this.constants.smoothCurves.enabled == true && this.constants.smoothCurves.dynamic == true) {
+        this._calculateSpringForcesWithSupport();
+      }
+      else {
+        if (this.constants.physics.hierarchicalRepulsion.enabled == true) {
+          this._calculateHierarchicalSpringForces();
+        }
+        else {
+          this._calculateSpringForces();
+        }
+      }
+    }
+  };
+
+
+  /**
+   * Smooth curves are created by adding invisible nodes in the center of the edges. These nodes are also
+   * handled in the calculateForces function. We then use a quadratic curve with the center node as control.
+   * This function joins the datanodes and invisible (called support) nodes into one object.
+   * We do this so we do not contaminate this.nodes with the support nodes.
+   *
+   * @private
+   */
+  exports._updateCalculationNodes = function () {
+    if (this.constants.smoothCurves.enabled == true && this.constants.smoothCurves.dynamic == true) {
+      this.calculationNodes = {};
+      this.calculationNodeIndices = [];
+
+      for (var nodeId in this.nodes) {
+        if (this.nodes.hasOwnProperty(nodeId)) {
+          this.calculationNodes[nodeId] = this.nodes[nodeId];
+        }
+      }
+      var supportNodes = this.sectors['support']['nodes'];
+      for (var supportNodeId in supportNodes) {
+        if (supportNodes.hasOwnProperty(supportNodeId)) {
+          if (this.edges.hasOwnProperty(supportNodes[supportNodeId].parentEdgeId)) {
+            this.calculationNodes[supportNodeId] = supportNodes[supportNodeId];
+          }
+          else {
+            supportNodes[supportNodeId]._setForce(0, 0);
+          }
+        }
+      }
+
+      for (var idx in this.calculationNodes) {
+        if (this.calculationNodes.hasOwnProperty(idx)) {
+          this.calculationNodeIndices.push(idx);
+        }
+      }
+    }
+    else {
+      this.calculationNodes = this.nodes;
+      this.calculationNodeIndices = this.nodeIndices;
+    }
+  };
+
+
+  /**
+   * this function applies the central gravity effect to keep groups from floating off
+   *
+   * @private
+   */
+  exports._calculateGravitationalForces = function () {
+    var dx, dy, distance, node, i;
+    var nodes = this.calculationNodes;
+    var gravity = this.constants.physics.centralGravity;
+    var gravityForce = 0;
+
+    for (i = 0; i < this.calculationNodeIndices.length; i++) {
+      node = nodes[this.calculationNodeIndices[i]];
+      node.damping = this.constants.physics.damping; // possibly add function to alter damping properties of clusters.
+      // gravity does not apply when we are in a pocket sector
+      if (this._sector() == "default" && gravity != 0) {
+        dx = -node.x;
+        dy = -node.y;
+        distance = Math.sqrt(dx * dx + dy * dy);
+
+        gravityForce = (distance == 0) ? 0 : (gravity / distance);
+        node.fx = dx * gravityForce;
+        node.fy = dy * gravityForce;
+      }
+      else {
+        node.fx = 0;
+        node.fy = 0;
+      }
+    }
+  };
+
+
+
+
+  /**
+   * this function calculates the effects of the springs in the case of unsmooth curves.
+   *
+   * @private
+   */
+  exports._calculateSpringForces = function () {
+    var edgeLength, edge, edgeId;
+    var dx, dy, fx, fy, springForce, distance;
+    var edges = this.edges;
+
+    // forces caused by the edges, modelled as springs
+    for (edgeId in edges) {
+      if (edges.hasOwnProperty(edgeId)) {
+        edge = edges[edgeId];
+        if (edge.connected) {
+          // only calculate forces if nodes are in the same sector
+          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
+            edgeLength = edge.physics.springLength;
+            // this implies that the edges between big clusters are longer
+            edgeLength += (edge.to.clusterSize + edge.from.clusterSize - 2) * this.constants.clustering.edgeGrowth;
+
+            dx = (edge.from.x - edge.to.x);
+            dy = (edge.from.y - edge.to.y);
+            distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance == 0) {
+              distance = 0.01;
+            }
+
+            // the 1/distance is so the fx and fy can be calculated without sine or cosine.
+            springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
+
+            fx = dx * springForce;
+            fy = dy * springForce;
+
+            edge.from.fx += fx;
+            edge.from.fy += fy;
+            edge.to.fx -= fx;
+            edge.to.fy -= fy;
+          }
+        }
+      }
+    }
+  };
+
+
+
+
+  /**
+   * This function calculates the springforces on the nodes, accounting for the support nodes.
+   *
+   * @private
+   */
+  exports._calculateSpringForcesWithSupport = function () {
+    var edgeLength, edge, edgeId, combinedClusterSize;
+    var edges = this.edges;
+
+    // forces caused by the edges, modelled as springs
+    for (edgeId in edges) {
+      if (edges.hasOwnProperty(edgeId)) {
+        edge = edges[edgeId];
+        if (edge.connected) {
+          // only calculate forces if nodes are in the same sector
+          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
+            if (edge.via != null) {
+              var node1 = edge.to;
+              var node2 = edge.via;
+              var node3 = edge.from;
+
+              edgeLength = edge.physics.springLength;
+
+              combinedClusterSize = node1.clusterSize + node3.clusterSize - 2;
+
+              // this implies that the edges between big clusters are longer
+              edgeLength += combinedClusterSize * this.constants.clustering.edgeGrowth;
+              this._calculateSpringForce(node1, node2, 0.5 * edgeLength);
+              this._calculateSpringForce(node2, node3, 0.5 * edgeLength);
+            }
+          }
+        }
+      }
+    }
+  };
+
+
+  /**
+   * This is the code actually performing the calculation for the function above. It is split out to avoid repetition.
+   *
+   * @param node1
+   * @param node2
+   * @param edgeLength
+   * @private
+   */
+  exports._calculateSpringForce = function (node1, node2, edgeLength) {
+    var dx, dy, fx, fy, springForce, distance;
+
+    dx = (node1.x - node2.x);
+    dy = (node1.y - node2.y);
+    distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance == 0) {
+      distance = 0.01;
+    }
+
+    // the 1/distance is so the fx and fy can be calculated without sine or cosine.
+    springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
+
+    fx = dx * springForce;
+    fy = dy * springForce;
+
+    node1.fx += fx;
+    node1.fy += fy;
+    node2.fx -= fx;
+    node2.fy -= fy;
+  };
+
+
+  /**
+   * Load the HTML for the physics config and bind it
+   * @private
+   */
+  exports._loadPhysicsConfiguration = function () {
+    if (this.physicsConfiguration === undefined) {
+      this.backupConstants = {};
+      util.deepExtend(this.backupConstants,this.constants);
+
+      var hierarchicalLayoutDirections = ["LR", "RL", "UD", "DU"];
+      this.physicsConfiguration = document.createElement('div');
+      this.physicsConfiguration.className = "PhysicsConfiguration";
+      this.physicsConfiguration.innerHTML = '' +
+        '<table><tr><td><b>Simulation Mode:</b></td></tr>' +
+        '<tr>' +
+        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod1" value="BH" checked="checked">Barnes Hut</td>' +
+        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod2" value="R">Repulsion</td>' +
+        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod3" value="H">Hierarchical</td>' +
+        '</tr>' +
+        '</table>' +
+        '<table id="graph_BH_table" style="display:none">' +
+        '<tr><td><b>Barnes Hut</b></td></tr>' +
+        '<tr>' +
+        '<td width="150px">gravitationalConstant</td><td>0</td><td><input type="range" min="0" max="20000" value="' + (-1 * this.constants.physics.barnesHut.gravitationalConstant) + '" step="25" style="width:300px" id="graph_BH_gc"></td><td  width="50px">-20000</td><td><input value="' + (-1 * this.constants.physics.barnesHut.gravitationalConstant) + '" id="graph_BH_gc_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.barnesHut.centralGravity + '" step="0.05"  style="width:300px" id="graph_BH_cg"></td><td>3</td><td><input value="' + this.constants.physics.barnesHut.centralGravity + '" id="graph_BH_cg_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.barnesHut.springLength + '" step="1" style="width:300px" id="graph_BH_sl"></td><td>500</td><td><input value="' + this.constants.physics.barnesHut.springLength + '" id="graph_BH_sl_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.barnesHut.springConstant + '" step="0.001" style="width:300px" id="graph_BH_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.barnesHut.springConstant + '" id="graph_BH_sc_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.barnesHut.damping + '" step="0.005" style="width:300px" id="graph_BH_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.barnesHut.damping + '" id="graph_BH_damp_value" style="width:60px"></td>' +
+        '</tr>' +
+        '</table>' +
+        '<table id="graph_R_table" style="display:none">' +
+        '<tr><td><b>Repulsion</b></td></tr>' +
+        '<tr>' +
+        '<td width="150px">nodeDistance</td><td>0</td><td><input type="range" min="0" max="300" value="' + this.constants.physics.repulsion.nodeDistance + '" step="1" style="width:300px" id="graph_R_nd"></td><td width="50px">300</td><td><input value="' + this.constants.physics.repulsion.nodeDistance + '" id="graph_R_nd_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.repulsion.centralGravity + '" step="0.05"  style="width:300px" id="graph_R_cg"></td><td>3</td><td><input value="' + this.constants.physics.repulsion.centralGravity + '" id="graph_R_cg_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.repulsion.springLength + '" step="1" style="width:300px" id="graph_R_sl"></td><td>500</td><td><input value="' + this.constants.physics.repulsion.springLength + '" id="graph_R_sl_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.repulsion.springConstant + '" step="0.001" style="width:300px" id="graph_R_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.repulsion.springConstant + '" id="graph_R_sc_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.repulsion.damping + '" step="0.005" style="width:300px" id="graph_R_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.repulsion.damping + '" id="graph_R_damp_value" style="width:60px"></td>' +
+        '</tr>' +
+        '</table>' +
+        '<table id="graph_H_table" style="display:none">' +
+        '<tr><td width="150"><b>Hierarchical</b></td></tr>' +
+        '<tr>' +
+        '<td width="150px">nodeDistance</td><td>0</td><td><input type="range" min="0" max="300" value="' + this.constants.physics.hierarchicalRepulsion.nodeDistance + '" step="1" style="width:300px" id="graph_H_nd"></td><td width="50px">300</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.nodeDistance + '" id="graph_H_nd_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.hierarchicalRepulsion.centralGravity + '" step="0.05"  style="width:300px" id="graph_H_cg"></td><td>3</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.centralGravity + '" id="graph_H_cg_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.hierarchicalRepulsion.springLength + '" step="1" style="width:300px" id="graph_H_sl"></td><td>500</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.springLength + '" id="graph_H_sl_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.hierarchicalRepulsion.springConstant + '" step="0.001" style="width:300px" id="graph_H_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.springConstant + '" id="graph_H_sc_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.hierarchicalRepulsion.damping + '" step="0.005" style="width:300px" id="graph_H_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.damping + '" id="graph_H_damp_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">direction</td><td>1</td><td><input type="range" min="0" max="3" value="' + hierarchicalLayoutDirections.indexOf(this.constants.hierarchicalLayout.direction) + '" step="1" style="width:300px" id="graph_H_direction"></td><td>4</td><td><input value="' + this.constants.hierarchicalLayout.direction + '" id="graph_H_direction_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">levelSeparation</td><td>1</td><td><input type="range" min="0" max="500" value="' + this.constants.hierarchicalLayout.levelSeparation + '" step="1" style="width:300px" id="graph_H_levsep"></td><td>500</td><td><input value="' + this.constants.hierarchicalLayout.levelSeparation + '" id="graph_H_levsep_value" style="width:60px"></td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td width="150px">nodeSpacing</td><td>1</td><td><input type="range" min="0" max="500" value="' + this.constants.hierarchicalLayout.nodeSpacing + '" step="1" style="width:300px" id="graph_H_nspac"></td><td>500</td><td><input value="' + this.constants.hierarchicalLayout.nodeSpacing + '" id="graph_H_nspac_value" style="width:60px"></td>' +
+        '</tr>' +
+        '</table>' +
+        '<table><tr><td><b>Options:</b></td></tr>' +
+        '<tr>' +
+        '<td width="180px"><input type="button" id="graph_toggleSmooth" value="Toggle smoothCurves" style="width:150px"></td>' +
+        '<td width="180px"><input type="button" id="graph_repositionNodes" value="Reinitialize" style="width:150px"></td>' +
+        '<td width="180px"><input type="button" id="graph_generateOptions" value="Generate Options" style="width:150px"></td>' +
+        '</tr>' +
+        '</table>'
+      this.containerElement.parentElement.insertBefore(this.physicsConfiguration, this.containerElement);
+      this.optionsDiv = document.createElement("div");
+      this.optionsDiv.style.fontSize = "14px";
+      this.optionsDiv.style.fontFamily = "verdana";
+      this.containerElement.parentElement.insertBefore(this.optionsDiv, this.containerElement);
+
+      var rangeElement;
+      rangeElement = document.getElementById('graph_BH_gc');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_gc', -1, "physics_barnesHut_gravitationalConstant");
+      rangeElement = document.getElementById('graph_BH_cg');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_cg', 1, "physics_centralGravity");
+      rangeElement = document.getElementById('graph_BH_sc');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_sc', 1, "physics_springConstant");
+      rangeElement = document.getElementById('graph_BH_sl');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_sl', 1, "physics_springLength");
+      rangeElement = document.getElementById('graph_BH_damp');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_damp', 1, "physics_damping");
+
+      rangeElement = document.getElementById('graph_R_nd');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_nd', 1, "physics_repulsion_nodeDistance");
+      rangeElement = document.getElementById('graph_R_cg');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_cg', 1, "physics_centralGravity");
+      rangeElement = document.getElementById('graph_R_sc');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_sc', 1, "physics_springConstant");
+      rangeElement = document.getElementById('graph_R_sl');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_sl', 1, "physics_springLength");
+      rangeElement = document.getElementById('graph_R_damp');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_damp', 1, "physics_damping");
+
+      rangeElement = document.getElementById('graph_H_nd');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_nd', 1, "physics_hierarchicalRepulsion_nodeDistance");
+      rangeElement = document.getElementById('graph_H_cg');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_cg', 1, "physics_centralGravity");
+      rangeElement = document.getElementById('graph_H_sc');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_sc', 1, "physics_springConstant");
+      rangeElement = document.getElementById('graph_H_sl');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_sl', 1, "physics_springLength");
+      rangeElement = document.getElementById('graph_H_damp');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_damp', 1, "physics_damping");
+      rangeElement = document.getElementById('graph_H_direction');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_direction', hierarchicalLayoutDirections, "hierarchicalLayout_direction");
+      rangeElement = document.getElementById('graph_H_levsep');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_levsep', 1, "hierarchicalLayout_levelSeparation");
+      rangeElement = document.getElementById('graph_H_nspac');
+      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_nspac', 1, "hierarchicalLayout_nodeSpacing");
+
+      var radioButton1 = document.getElementById("graph_physicsMethod1");
+      var radioButton2 = document.getElementById("graph_physicsMethod2");
+      var radioButton3 = document.getElementById("graph_physicsMethod3");
+      radioButton2.checked = true;
+      if (this.constants.physics.barnesHut.enabled) {
+        radioButton1.checked = true;
+      }
+      if (this.constants.hierarchicalLayout.enabled) {
+        radioButton3.checked = true;
+      }
+
+      var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
+      var graph_repositionNodes = document.getElementById("graph_repositionNodes");
+      var graph_generateOptions = document.getElementById("graph_generateOptions");
+
+      graph_toggleSmooth.onclick = graphToggleSmoothCurves.bind(this);
+      graph_repositionNodes.onclick = graphRepositionNodes.bind(this);
+      graph_generateOptions.onclick = graphGenerateOptions.bind(this);
+      if (this.constants.smoothCurves == true && this.constants.dynamicSmoothCurves == false) {
+        graph_toggleSmooth.style.background = "#A4FF56";
+      }
+      else {
+        graph_toggleSmooth.style.background = "#FF8532";
+      }
+
+
+      switchConfigurations.apply(this);
+
+      radioButton1.onchange = switchConfigurations.bind(this);
+      radioButton2.onchange = switchConfigurations.bind(this);
+      radioButton3.onchange = switchConfigurations.bind(this);
+    }
+  };
+
+  /**
+   * This overwrites the this.constants.
+   *
+   * @param constantsVariableName
+   * @param value
+   * @private
+   */
+  exports._overWriteGraphConstants = function (constantsVariableName, value) {
+    var nameArray = constantsVariableName.split("_");
+    if (nameArray.length == 1) {
+      this.constants[nameArray[0]] = value;
+    }
+    else if (nameArray.length == 2) {
+      this.constants[nameArray[0]][nameArray[1]] = value;
+    }
+    else if (nameArray.length == 3) {
+      this.constants[nameArray[0]][nameArray[1]][nameArray[2]] = value;
+    }
+  };
+
+
+  /**
+   * this function is bound to the toggle smooth curves button. That is also why it is not in the prototype.
+   */
+  function graphToggleSmoothCurves () {
+    this.constants.smoothCurves.enabled = !this.constants.smoothCurves.enabled;
+    var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
+    if (this.constants.smoothCurves.enabled == true) {graph_toggleSmooth.style.background = "#A4FF56";}
+    else                                     {graph_toggleSmooth.style.background = "#FF8532";}
+
+    this._configureSmoothCurves(false);
+  }
+
+  /**
+   * this function is used to scramble the nodes
+   *
+   */
+  function graphRepositionNodes () {
+    for (var nodeId in this.calculationNodes) {
+      if (this.calculationNodes.hasOwnProperty(nodeId)) {
+        this.calculationNodes[nodeId].vx = 0;  this.calculationNodes[nodeId].vy = 0;
+        this.calculationNodes[nodeId].fx = 0;  this.calculationNodes[nodeId].fy = 0;
+      }
+    }
+    if (this.constants.hierarchicalLayout.enabled == true) {
+      this._setupHierarchicalLayout();
+      showValueOfRange.call(this, 'graph_H_nd', 1, "physics_hierarchicalRepulsion_nodeDistance");
+      showValueOfRange.call(this, 'graph_H_cg', 1, "physics_centralGravity");
+      showValueOfRange.call(this, 'graph_H_sc', 1, "physics_springConstant");
+      showValueOfRange.call(this, 'graph_H_sl', 1, "physics_springLength");
+      showValueOfRange.call(this, 'graph_H_damp', 1, "physics_damping");
+    }
+    else {
+      this.repositionNodes();
+    }
+    this.moving = true;
+    this.start();
+  }
+
+  /**
+   *  this is used to generate an options file from the playing with physics system.
+   */
+  function graphGenerateOptions () {
+    var options = "No options are required, default values used.";
+    var optionsSpecific = [];
+    var radioButton1 = document.getElementById("graph_physicsMethod1");
+    var radioButton2 = document.getElementById("graph_physicsMethod2");
+    if (radioButton1.checked == true) {
+      if (this.constants.physics.barnesHut.gravitationalConstant != this.backupConstants.physics.barnesHut.gravitationalConstant) {optionsSpecific.push("gravitationalConstant: " + this.constants.physics.barnesHut.gravitationalConstant);}
+      if (this.constants.physics.centralGravity != this.backupConstants.physics.barnesHut.centralGravity)                         {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
+      if (this.constants.physics.springLength != this.backupConstants.physics.barnesHut.springLength)                             {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
+      if (this.constants.physics.springConstant != this.backupConstants.physics.barnesHut.springConstant)                         {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
+      if (this.constants.physics.damping != this.backupConstants.physics.barnesHut.damping)                                       {optionsSpecific.push("damping: " + this.constants.physics.damping);}
+      if (optionsSpecific.length != 0) {
+        options = "var options = {";
+        options += "physics: {barnesHut: {";
+        for (var i = 0; i < optionsSpecific.length; i++) {
+          options += optionsSpecific[i];
+          if (i < optionsSpecific.length - 1) {
+            options += ", "
+          }
+        }
+        options += '}}'
+      }
+      if (this.constants.smoothCurves.enabled != this.backupConstants.smoothCurves.enabled) {
+        if (optionsSpecific.length == 0) {options = "var options = {";}
+        else {options += ", "}
+        options += "smoothCurves: " + this.constants.smoothCurves.enabled;
+      }
+      if (options != "No options are required, default values used.") {
+        options += '};'
+      }
+    }
+    else if (radioButton2.checked == true) {
+      options = "var options = {";
+      options += "physics: {barnesHut: {enabled: false}";
+      if (this.constants.physics.repulsion.nodeDistance != this.backupConstants.physics.repulsion.nodeDistance)  {optionsSpecific.push("nodeDistance: " + this.constants.physics.repulsion.nodeDistance);}
+      if (this.constants.physics.centralGravity != this.backupConstants.physics.repulsion.centralGravity)        {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
+      if (this.constants.physics.springLength != this.backupConstants.physics.repulsion.springLength)            {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
+      if (this.constants.physics.springConstant != this.backupConstants.physics.repulsion.springConstant)        {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
+      if (this.constants.physics.damping != this.backupConstants.physics.repulsion.damping)                      {optionsSpecific.push("damping: " + this.constants.physics.damping);}
+      if (optionsSpecific.length != 0) {
+        options += ", repulsion: {";
+        for (var i = 0; i < optionsSpecific.length; i++) {
+          options += optionsSpecific[i];
+          if (i < optionsSpecific.length - 1) {
+            options += ", "
+          }
+        }
+        options += '}}'
+      }
+      if (optionsSpecific.length == 0) {options += "}"}
+      if (this.constants.smoothCurves != this.backupConstants.smoothCurves) {
+        options += ", smoothCurves: " + this.constants.smoothCurves;
+      }
+      options += '};'
+    }
+    else {
+      options = "var options = {";
+      if (this.constants.physics.hierarchicalRepulsion.nodeDistance != this.backupConstants.physics.hierarchicalRepulsion.nodeDistance)  {optionsSpecific.push("nodeDistance: " + this.constants.physics.hierarchicalRepulsion.nodeDistance);}
+      if (this.constants.physics.centralGravity != this.backupConstants.physics.hierarchicalRepulsion.centralGravity)        {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
+      if (this.constants.physics.springLength != this.backupConstants.physics.hierarchicalRepulsion.springLength)            {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
+      if (this.constants.physics.springConstant != this.backupConstants.physics.hierarchicalRepulsion.springConstant)        {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
+      if (this.constants.physics.damping != this.backupConstants.physics.hierarchicalRepulsion.damping)                      {optionsSpecific.push("damping: " + this.constants.physics.damping);}
+      if (optionsSpecific.length != 0) {
+        options += "physics: {hierarchicalRepulsion: {";
+        for (var i = 0; i < optionsSpecific.length; i++) {
+          options += optionsSpecific[i];
+          if (i < optionsSpecific.length - 1) {
+            options += ", ";
+          }
+        }
+        options += '}},';
+      }
+      options += 'hierarchicalLayout: {';
+      optionsSpecific = [];
+      if (this.constants.hierarchicalLayout.direction != this.backupConstants.hierarchicalLayout.direction)                       {optionsSpecific.push("direction: " + this.constants.hierarchicalLayout.direction);}
+      if (Math.abs(this.constants.hierarchicalLayout.levelSeparation) != this.backupConstants.hierarchicalLayout.levelSeparation) {optionsSpecific.push("levelSeparation: " + this.constants.hierarchicalLayout.levelSeparation);}
+      if (this.constants.hierarchicalLayout.nodeSpacing != this.backupConstants.hierarchicalLayout.nodeSpacing)                   {optionsSpecific.push("nodeSpacing: " + this.constants.hierarchicalLayout.nodeSpacing);}
+      if (optionsSpecific.length != 0) {
+        for (var i = 0; i < optionsSpecific.length; i++) {
+          options += optionsSpecific[i];
+          if (i < optionsSpecific.length - 1) {
+            options += ", "
+          }
+        }
+        options += '}'
+      }
+      else {
+        options += "enabled:true}";
+      }
+      options += '};'
+    }
+
+
+    this.optionsDiv.innerHTML = options;
+  }
+
+  /**
+   * this is used to switch between barnesHut, repulsion and hierarchical.
+   *
+   */
+  function switchConfigurations () {
+    var ids = ["graph_BH_table", "graph_R_table", "graph_H_table"];
+    var radioButton = document.querySelector('input[name="graph_physicsMethod"]:checked').value;
+    var tableId = "graph_" + radioButton + "_table";
+    var table = document.getElementById(tableId);
+    table.style.display = "block";
+    for (var i = 0; i < ids.length; i++) {
+      if (ids[i] != tableId) {
+        table = document.getElementById(ids[i]);
+        table.style.display = "none";
+      }
+    }
+    this._restoreNodes();
+    if (radioButton == "R") {
+      this.constants.hierarchicalLayout.enabled = false;
+      this.constants.physics.hierarchicalRepulsion.enabled = false;
+      this.constants.physics.barnesHut.enabled = false;
+    }
+    else if (radioButton == "H") {
+      if (this.constants.hierarchicalLayout.enabled == false) {
+        this.constants.hierarchicalLayout.enabled = true;
+        this.constants.physics.hierarchicalRepulsion.enabled = true;
+        this.constants.physics.barnesHut.enabled = false;
+        this.constants.smoothCurves.enabled = false;
+        this._setupHierarchicalLayout();
+      }
+    }
+    else {
+      this.constants.hierarchicalLayout.enabled = false;
+      this.constants.physics.hierarchicalRepulsion.enabled = false;
+      this.constants.physics.barnesHut.enabled = true;
+    }
+    this._loadSelectedForceSolver();
+    var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
+    if (this.constants.smoothCurves.enabled == true) {graph_toggleSmooth.style.background = "#A4FF56";}
+    else                                     {graph_toggleSmooth.style.background = "#FF8532";}
+    this.moving = true;
+    this.start();
+  }
+
+
+  /**
+   * this generates the ranges depending on the iniital values.
+   *
+   * @param id
+   * @param map
+   * @param constantsVariableName
+   */
+  function showValueOfRange (id,map,constantsVariableName) {
+    var valueId = id + "_value";
+    var rangeValue = document.getElementById(id).value;
+
+    if (map instanceof Array) {
+      document.getElementById(valueId).value = map[parseInt(rangeValue)];
+      this._overWriteGraphConstants(constantsVariableName,map[parseInt(rangeValue)]);
+    }
+    else {
+      document.getElementById(valueId).value = parseInt(map) * parseFloat(rangeValue);
+      this._overWriteGraphConstants(constantsVariableName, parseInt(map) * parseFloat(rangeValue));
+    }
+
+    if (constantsVariableName == "hierarchicalLayout_direction" ||
+      constantsVariableName == "hierarchicalLayout_levelSeparation" ||
+      constantsVariableName == "hierarchicalLayout_nodeSpacing") {
+      this._setupHierarchicalLayout();
+    }
+    this.moving = true;
+    this.start();
+  }
+
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
   /**
    * Copyright 2012 Craig Campbell
    *
@@ -25976,891 +26690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 57 */
-/***/ function(module, exports, __webpack_require__) {
-
-  
-  /**
-   * Expose `Emitter`.
-   */
-
-  module.exports = Emitter;
-
-  /**
-   * Initialize a new `Emitter`.
-   *
-   * @api public
-   */
-
-  function Emitter(obj) {
-    if (obj) return mixin(obj);
-  };
-
-  /**
-   * Mixin the emitter properties.
-   *
-   * @param {Object} obj
-   * @return {Object}
-   * @api private
-   */
-
-  function mixin(obj) {
-    for (var key in Emitter.prototype) {
-      obj[key] = Emitter.prototype[key];
-    }
-    return obj;
-  }
-
-  /**
-   * Listen on the given `event` with `fn`.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.on =
-  Emitter.prototype.addEventListener = function(event, fn){
-    this._callbacks = this._callbacks || {};
-    (this._callbacks[event] = this._callbacks[event] || [])
-      .push(fn);
-    return this;
-  };
-
-  /**
-   * Adds an `event` listener that will be invoked a single
-   * time then automatically removed.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.once = function(event, fn){
-    var self = this;
-    this._callbacks = this._callbacks || {};
-
-    function on() {
-      self.off(event, on);
-      fn.apply(this, arguments);
-    }
-
-    on.fn = fn;
-    this.on(event, on);
-    return this;
-  };
-
-  /**
-   * Remove the given callback for `event` or all
-   * registered callbacks.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.off =
-  Emitter.prototype.removeListener =
-  Emitter.prototype.removeAllListeners =
-  Emitter.prototype.removeEventListener = function(event, fn){
-    this._callbacks = this._callbacks || {};
-
-    // all
-    if (0 == arguments.length) {
-      this._callbacks = {};
-      return this;
-    }
-
-    // specific event
-    var callbacks = this._callbacks[event];
-    if (!callbacks) return this;
-
-    // remove all handlers
-    if (1 == arguments.length) {
-      delete this._callbacks[event];
-      return this;
-    }
-
-    // remove specific handler
-    var cb;
-    for (var i = 0; i < callbacks.length; i++) {
-      cb = callbacks[i];
-      if (cb === fn || cb.fn === fn) {
-        callbacks.splice(i, 1);
-        break;
-      }
-    }
-    return this;
-  };
-
-  /**
-   * Emit `event` with the given args.
-   *
-   * @param {String} event
-   * @param {Mixed} ...
-   * @return {Emitter}
-   */
-
-  Emitter.prototype.emit = function(event){
-    this._callbacks = this._callbacks || {};
-    var args = [].slice.call(arguments, 1)
-      , callbacks = this._callbacks[event];
-
-    if (callbacks) {
-      callbacks = callbacks.slice(0);
-      for (var i = 0, len = callbacks.length; i < len; ++i) {
-        callbacks[i].apply(this, args);
-      }
-    }
-
-    return this;
-  };
-
-  /**
-   * Return array of callbacks for `event`.
-   *
-   * @param {String} event
-   * @return {Array}
-   * @api public
-   */
-
-  Emitter.prototype.listeners = function(event){
-    this._callbacks = this._callbacks || {};
-    return this._callbacks[event] || [];
-  };
-
-  /**
-   * Check if this emitter has `event` handlers.
-   *
-   * @param {String} event
-   * @return {Boolean}
-   * @api public
-   */
-
-  Emitter.prototype.hasListeners = function(event){
-    return !! this.listeners(event).length;
-  };
-
-
-/***/ },
 /* 58 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var util = __webpack_require__(1);
-  var RepulsionMixin = __webpack_require__(61);
-  var HierarchialRepulsionMixin = __webpack_require__(62);
-  var BarnesHutMixin = __webpack_require__(63);
-
-  /**
-   * Toggling barnes Hut calculation on and off.
-   *
-   * @private
-   */
-  exports._toggleBarnesHut = function () {
-    this.constants.physics.barnesHut.enabled = !this.constants.physics.barnesHut.enabled;
-    this._loadSelectedForceSolver();
-    this.moving = true;
-    this.start();
-  };
-
-
-  /**
-   * This loads the node force solver based on the barnes hut or repulsion algorithm
-   *
-   * @private
-   */
-  exports._loadSelectedForceSolver = function () {
-    // this overloads the this._calculateNodeForces
-    if (this.constants.physics.barnesHut.enabled == true) {
-      this._clearMixin(RepulsionMixin);
-      this._clearMixin(HierarchialRepulsionMixin);
-
-      this.constants.physics.centralGravity = this.constants.physics.barnesHut.centralGravity;
-      this.constants.physics.springLength = this.constants.physics.barnesHut.springLength;
-      this.constants.physics.springConstant = this.constants.physics.barnesHut.springConstant;
-      this.constants.physics.damping = this.constants.physics.barnesHut.damping;
-
-      this._loadMixin(BarnesHutMixin);
-    }
-    else if (this.constants.physics.hierarchicalRepulsion.enabled == true) {
-      this._clearMixin(BarnesHutMixin);
-      this._clearMixin(RepulsionMixin);
-
-      this.constants.physics.centralGravity = this.constants.physics.hierarchicalRepulsion.centralGravity;
-      this.constants.physics.springLength = this.constants.physics.hierarchicalRepulsion.springLength;
-      this.constants.physics.springConstant = this.constants.physics.hierarchicalRepulsion.springConstant;
-      this.constants.physics.damping = this.constants.physics.hierarchicalRepulsion.damping;
-
-      this._loadMixin(HierarchialRepulsionMixin);
-    }
-    else {
-      this._clearMixin(BarnesHutMixin);
-      this._clearMixin(HierarchialRepulsionMixin);
-      this.barnesHutTree = undefined;
-
-      this.constants.physics.centralGravity = this.constants.physics.repulsion.centralGravity;
-      this.constants.physics.springLength = this.constants.physics.repulsion.springLength;
-      this.constants.physics.springConstant = this.constants.physics.repulsion.springConstant;
-      this.constants.physics.damping = this.constants.physics.repulsion.damping;
-
-      this._loadMixin(RepulsionMixin);
-    }
-  };
-
-  /**
-   * Before calculating the forces, we check if we need to cluster to keep up performance and we check
-   * if there is more than one node. If it is just one node, we dont calculate anything.
-   *
-   * @private
-   */
-  exports._initializeForceCalculation = function () {
-    // stop calculation if there is only one node
-    if (this.nodeIndices.length == 1) {
-      this.nodes[this.nodeIndices[0]]._setForce(0, 0);
-    }
-    else {
-      // if there are too many nodes on screen, we cluster without repositioning
-      if (this.nodeIndices.length > this.constants.clustering.clusterThreshold && this.constants.clustering.enabled == true) {
-        this.clusterToFit(this.constants.clustering.reduceToNodes, false);
-      }
-
-      // we now start the force calculation
-      this._calculateForces();
-    }
-  };
-
-
-  /**
-   * Calculate the external forces acting on the nodes
-   * Forces are caused by: edges, repulsing forces between nodes, gravity
-   * @private
-   */
-  exports._calculateForces = function () {
-    // Gravity is required to keep separated groups from floating off
-    // the forces are reset to zero in this loop by using _setForce instead
-    // of _addForce
-
-    this._calculateGravitationalForces();
-    this._calculateNodeForces();
-
-    if (this.constants.physics.springConstant > 0) {
-      if (this.constants.smoothCurves.enabled == true && this.constants.smoothCurves.dynamic == true) {
-        this._calculateSpringForcesWithSupport();
-      }
-      else {
-        if (this.constants.physics.hierarchicalRepulsion.enabled == true) {
-          this._calculateHierarchicalSpringForces();
-        }
-        else {
-          this._calculateSpringForces();
-        }
-      }
-    }
-  };
-
-
-  /**
-   * Smooth curves are created by adding invisible nodes in the center of the edges. These nodes are also
-   * handled in the calculateForces function. We then use a quadratic curve with the center node as control.
-   * This function joins the datanodes and invisible (called support) nodes into one object.
-   * We do this so we do not contaminate this.nodes with the support nodes.
-   *
-   * @private
-   */
-  exports._updateCalculationNodes = function () {
-    if (this.constants.smoothCurves.enabled == true && this.constants.smoothCurves.dynamic == true) {
-      this.calculationNodes = {};
-      this.calculationNodeIndices = [];
-
-      for (var nodeId in this.nodes) {
-        if (this.nodes.hasOwnProperty(nodeId)) {
-          this.calculationNodes[nodeId] = this.nodes[nodeId];
-        }
-      }
-      var supportNodes = this.sectors['support']['nodes'];
-      for (var supportNodeId in supportNodes) {
-        if (supportNodes.hasOwnProperty(supportNodeId)) {
-          if (this.edges.hasOwnProperty(supportNodes[supportNodeId].parentEdgeId)) {
-            this.calculationNodes[supportNodeId] = supportNodes[supportNodeId];
-          }
-          else {
-            supportNodes[supportNodeId]._setForce(0, 0);
-          }
-        }
-      }
-
-      for (var idx in this.calculationNodes) {
-        if (this.calculationNodes.hasOwnProperty(idx)) {
-          this.calculationNodeIndices.push(idx);
-        }
-      }
-    }
-    else {
-      this.calculationNodes = this.nodes;
-      this.calculationNodeIndices = this.nodeIndices;
-    }
-  };
-
-
-  /**
-   * this function applies the central gravity effect to keep groups from floating off
-   *
-   * @private
-   */
-  exports._calculateGravitationalForces = function () {
-    var dx, dy, distance, node, i;
-    var nodes = this.calculationNodes;
-    var gravity = this.constants.physics.centralGravity;
-    var gravityForce = 0;
-
-    for (i = 0; i < this.calculationNodeIndices.length; i++) {
-      node = nodes[this.calculationNodeIndices[i]];
-      node.damping = this.constants.physics.damping; // possibly add function to alter damping properties of clusters.
-      // gravity does not apply when we are in a pocket sector
-      if (this._sector() == "default" && gravity != 0) {
-        dx = -node.x;
-        dy = -node.y;
-        distance = Math.sqrt(dx * dx + dy * dy);
-
-        gravityForce = (distance == 0) ? 0 : (gravity / distance);
-        node.fx = dx * gravityForce;
-        node.fy = dy * gravityForce;
-      }
-      else {
-        node.fx = 0;
-        node.fy = 0;
-      }
-    }
-  };
-
-
-
-
-  /**
-   * this function calculates the effects of the springs in the case of unsmooth curves.
-   *
-   * @private
-   */
-  exports._calculateSpringForces = function () {
-    var edgeLength, edge, edgeId;
-    var dx, dy, fx, fy, springForce, distance;
-    var edges = this.edges;
-
-    // forces caused by the edges, modelled as springs
-    for (edgeId in edges) {
-      if (edges.hasOwnProperty(edgeId)) {
-        edge = edges[edgeId];
-        if (edge.connected) {
-          // only calculate forces if nodes are in the same sector
-          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
-            edgeLength = edge.physics.springLength;
-            // this implies that the edges between big clusters are longer
-            edgeLength += (edge.to.clusterSize + edge.from.clusterSize - 2) * this.constants.clustering.edgeGrowth;
-
-            dx = (edge.from.x - edge.to.x);
-            dy = (edge.from.y - edge.to.y);
-            distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance == 0) {
-              distance = 0.01;
-            }
-
-            // the 1/distance is so the fx and fy can be calculated without sine or cosine.
-            springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
-
-            fx = dx * springForce;
-            fy = dy * springForce;
-
-            edge.from.fx += fx;
-            edge.from.fy += fy;
-            edge.to.fx -= fx;
-            edge.to.fy -= fy;
-          }
-        }
-      }
-    }
-  };
-
-
-
-
-  /**
-   * This function calculates the springforces on the nodes, accounting for the support nodes.
-   *
-   * @private
-   */
-  exports._calculateSpringForcesWithSupport = function () {
-    var edgeLength, edge, edgeId, combinedClusterSize;
-    var edges = this.edges;
-
-    // forces caused by the edges, modelled as springs
-    for (edgeId in edges) {
-      if (edges.hasOwnProperty(edgeId)) {
-        edge = edges[edgeId];
-        if (edge.connected) {
-          // only calculate forces if nodes are in the same sector
-          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
-            if (edge.via != null) {
-              var node1 = edge.to;
-              var node2 = edge.via;
-              var node3 = edge.from;
-
-              edgeLength = edge.physics.springLength;
-
-              combinedClusterSize = node1.clusterSize + node3.clusterSize - 2;
-
-              // this implies that the edges between big clusters are longer
-              edgeLength += combinedClusterSize * this.constants.clustering.edgeGrowth;
-              this._calculateSpringForce(node1, node2, 0.5 * edgeLength);
-              this._calculateSpringForce(node2, node3, 0.5 * edgeLength);
-            }
-          }
-        }
-      }
-    }
-  };
-
-
-  /**
-   * This is the code actually performing the calculation for the function above. It is split out to avoid repetition.
-   *
-   * @param node1
-   * @param node2
-   * @param edgeLength
-   * @private
-   */
-  exports._calculateSpringForce = function (node1, node2, edgeLength) {
-    var dx, dy, fx, fy, springForce, distance;
-
-    dx = (node1.x - node2.x);
-    dy = (node1.y - node2.y);
-    distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance == 0) {
-      distance = 0.01;
-    }
-
-    // the 1/distance is so the fx and fy can be calculated without sine or cosine.
-    springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
-
-    fx = dx * springForce;
-    fy = dy * springForce;
-
-    node1.fx += fx;
-    node1.fy += fy;
-    node2.fx -= fx;
-    node2.fy -= fy;
-  };
-
-
-  /**
-   * Load the HTML for the physics config and bind it
-   * @private
-   */
-  exports._loadPhysicsConfiguration = function () {
-    if (this.physicsConfiguration === undefined) {
-      this.backupConstants = {};
-      util.deepExtend(this.backupConstants,this.constants);
-
-      var hierarchicalLayoutDirections = ["LR", "RL", "UD", "DU"];
-      this.physicsConfiguration = document.createElement('div');
-      this.physicsConfiguration.className = "PhysicsConfiguration";
-      this.physicsConfiguration.innerHTML = '' +
-        '<table><tr><td><b>Simulation Mode:</b></td></tr>' +
-        '<tr>' +
-        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod1" value="BH" checked="checked">Barnes Hut</td>' +
-        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod2" value="R">Repulsion</td>' +
-        '<td width="120px"><input type="radio" name="graph_physicsMethod" id="graph_physicsMethod3" value="H">Hierarchical</td>' +
-        '</tr>' +
-        '</table>' +
-        '<table id="graph_BH_table" style="display:none">' +
-        '<tr><td><b>Barnes Hut</b></td></tr>' +
-        '<tr>' +
-        '<td width="150px">gravitationalConstant</td><td>0</td><td><input type="range" min="0" max="20000" value="' + (-1 * this.constants.physics.barnesHut.gravitationalConstant) + '" step="25" style="width:300px" id="graph_BH_gc"></td><td  width="50px">-20000</td><td><input value="' + (-1 * this.constants.physics.barnesHut.gravitationalConstant) + '" id="graph_BH_gc_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.barnesHut.centralGravity + '" step="0.05"  style="width:300px" id="graph_BH_cg"></td><td>3</td><td><input value="' + this.constants.physics.barnesHut.centralGravity + '" id="graph_BH_cg_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.barnesHut.springLength + '" step="1" style="width:300px" id="graph_BH_sl"></td><td>500</td><td><input value="' + this.constants.physics.barnesHut.springLength + '" id="graph_BH_sl_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.barnesHut.springConstant + '" step="0.001" style="width:300px" id="graph_BH_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.barnesHut.springConstant + '" id="graph_BH_sc_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.barnesHut.damping + '" step="0.005" style="width:300px" id="graph_BH_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.barnesHut.damping + '" id="graph_BH_damp_value" style="width:60px"></td>' +
-        '</tr>' +
-        '</table>' +
-        '<table id="graph_R_table" style="display:none">' +
-        '<tr><td><b>Repulsion</b></td></tr>' +
-        '<tr>' +
-        '<td width="150px">nodeDistance</td><td>0</td><td><input type="range" min="0" max="300" value="' + this.constants.physics.repulsion.nodeDistance + '" step="1" style="width:300px" id="graph_R_nd"></td><td width="50px">300</td><td><input value="' + this.constants.physics.repulsion.nodeDistance + '" id="graph_R_nd_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.repulsion.centralGravity + '" step="0.05"  style="width:300px" id="graph_R_cg"></td><td>3</td><td><input value="' + this.constants.physics.repulsion.centralGravity + '" id="graph_R_cg_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.repulsion.springLength + '" step="1" style="width:300px" id="graph_R_sl"></td><td>500</td><td><input value="' + this.constants.physics.repulsion.springLength + '" id="graph_R_sl_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.repulsion.springConstant + '" step="0.001" style="width:300px" id="graph_R_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.repulsion.springConstant + '" id="graph_R_sc_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.repulsion.damping + '" step="0.005" style="width:300px" id="graph_R_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.repulsion.damping + '" id="graph_R_damp_value" style="width:60px"></td>' +
-        '</tr>' +
-        '</table>' +
-        '<table id="graph_H_table" style="display:none">' +
-        '<tr><td width="150"><b>Hierarchical</b></td></tr>' +
-        '<tr>' +
-        '<td width="150px">nodeDistance</td><td>0</td><td><input type="range" min="0" max="300" value="' + this.constants.physics.hierarchicalRepulsion.nodeDistance + '" step="1" style="width:300px" id="graph_H_nd"></td><td width="50px">300</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.nodeDistance + '" id="graph_H_nd_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">centralGravity</td><td>0</td><td><input type="range" min="0" max="3"  value="' + this.constants.physics.hierarchicalRepulsion.centralGravity + '" step="0.05"  style="width:300px" id="graph_H_cg"></td><td>3</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.centralGravity + '" id="graph_H_cg_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springLength</td><td>0</td><td><input type="range" min="0" max="500" value="' + this.constants.physics.hierarchicalRepulsion.springLength + '" step="1" style="width:300px" id="graph_H_sl"></td><td>500</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.springLength + '" id="graph_H_sl_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">springConstant</td><td>0</td><td><input type="range" min="0" max="0.5" value="' + this.constants.physics.hierarchicalRepulsion.springConstant + '" step="0.001" style="width:300px" id="graph_H_sc"></td><td>0.5</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.springConstant + '" id="graph_H_sc_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">damping</td><td>0</td><td><input type="range" min="0" max="0.3" value="' + this.constants.physics.hierarchicalRepulsion.damping + '" step="0.005" style="width:300px" id="graph_H_damp"></td><td>0.3</td><td><input value="' + this.constants.physics.hierarchicalRepulsion.damping + '" id="graph_H_damp_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">direction</td><td>1</td><td><input type="range" min="0" max="3" value="' + hierarchicalLayoutDirections.indexOf(this.constants.hierarchicalLayout.direction) + '" step="1" style="width:300px" id="graph_H_direction"></td><td>4</td><td><input value="' + this.constants.hierarchicalLayout.direction + '" id="graph_H_direction_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">levelSeparation</td><td>1</td><td><input type="range" min="0" max="500" value="' + this.constants.hierarchicalLayout.levelSeparation + '" step="1" style="width:300px" id="graph_H_levsep"></td><td>500</td><td><input value="' + this.constants.hierarchicalLayout.levelSeparation + '" id="graph_H_levsep_value" style="width:60px"></td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td width="150px">nodeSpacing</td><td>1</td><td><input type="range" min="0" max="500" value="' + this.constants.hierarchicalLayout.nodeSpacing + '" step="1" style="width:300px" id="graph_H_nspac"></td><td>500</td><td><input value="' + this.constants.hierarchicalLayout.nodeSpacing + '" id="graph_H_nspac_value" style="width:60px"></td>' +
-        '</tr>' +
-        '</table>' +
-        '<table><tr><td><b>Options:</b></td></tr>' +
-        '<tr>' +
-        '<td width="180px"><input type="button" id="graph_toggleSmooth" value="Toggle smoothCurves" style="width:150px"></td>' +
-        '<td width="180px"><input type="button" id="graph_repositionNodes" value="Reinitialize" style="width:150px"></td>' +
-        '<td width="180px"><input type="button" id="graph_generateOptions" value="Generate Options" style="width:150px"></td>' +
-        '</tr>' +
-        '</table>'
-      this.containerElement.parentElement.insertBefore(this.physicsConfiguration, this.containerElement);
-      this.optionsDiv = document.createElement("div");
-      this.optionsDiv.style.fontSize = "14px";
-      this.optionsDiv.style.fontFamily = "verdana";
-      this.containerElement.parentElement.insertBefore(this.optionsDiv, this.containerElement);
-
-      var rangeElement;
-      rangeElement = document.getElementById('graph_BH_gc');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_gc', -1, "physics_barnesHut_gravitationalConstant");
-      rangeElement = document.getElementById('graph_BH_cg');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_cg', 1, "physics_centralGravity");
-      rangeElement = document.getElementById('graph_BH_sc');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_sc', 1, "physics_springConstant");
-      rangeElement = document.getElementById('graph_BH_sl');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_sl', 1, "physics_springLength");
-      rangeElement = document.getElementById('graph_BH_damp');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_BH_damp', 1, "physics_damping");
-
-      rangeElement = document.getElementById('graph_R_nd');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_nd', 1, "physics_repulsion_nodeDistance");
-      rangeElement = document.getElementById('graph_R_cg');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_cg', 1, "physics_centralGravity");
-      rangeElement = document.getElementById('graph_R_sc');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_sc', 1, "physics_springConstant");
-      rangeElement = document.getElementById('graph_R_sl');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_sl', 1, "physics_springLength");
-      rangeElement = document.getElementById('graph_R_damp');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_R_damp', 1, "physics_damping");
-
-      rangeElement = document.getElementById('graph_H_nd');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_nd', 1, "physics_hierarchicalRepulsion_nodeDistance");
-      rangeElement = document.getElementById('graph_H_cg');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_cg', 1, "physics_centralGravity");
-      rangeElement = document.getElementById('graph_H_sc');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_sc', 1, "physics_springConstant");
-      rangeElement = document.getElementById('graph_H_sl');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_sl', 1, "physics_springLength");
-      rangeElement = document.getElementById('graph_H_damp');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_damp', 1, "physics_damping");
-      rangeElement = document.getElementById('graph_H_direction');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_direction', hierarchicalLayoutDirections, "hierarchicalLayout_direction");
-      rangeElement = document.getElementById('graph_H_levsep');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_levsep', 1, "hierarchicalLayout_levelSeparation");
-      rangeElement = document.getElementById('graph_H_nspac');
-      rangeElement.onchange = showValueOfRange.bind(this, 'graph_H_nspac', 1, "hierarchicalLayout_nodeSpacing");
-
-      var radioButton1 = document.getElementById("graph_physicsMethod1");
-      var radioButton2 = document.getElementById("graph_physicsMethod2");
-      var radioButton3 = document.getElementById("graph_physicsMethod3");
-      radioButton2.checked = true;
-      if (this.constants.physics.barnesHut.enabled) {
-        radioButton1.checked = true;
-      }
-      if (this.constants.hierarchicalLayout.enabled) {
-        radioButton3.checked = true;
-      }
-
-      var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
-      var graph_repositionNodes = document.getElementById("graph_repositionNodes");
-      var graph_generateOptions = document.getElementById("graph_generateOptions");
-
-      graph_toggleSmooth.onclick = graphToggleSmoothCurves.bind(this);
-      graph_repositionNodes.onclick = graphRepositionNodes.bind(this);
-      graph_generateOptions.onclick = graphGenerateOptions.bind(this);
-      if (this.constants.smoothCurves == true && this.constants.dynamicSmoothCurves == false) {
-        graph_toggleSmooth.style.background = "#A4FF56";
-      }
-      else {
-        graph_toggleSmooth.style.background = "#FF8532";
-      }
-
-
-      switchConfigurations.apply(this);
-
-      radioButton1.onchange = switchConfigurations.bind(this);
-      radioButton2.onchange = switchConfigurations.bind(this);
-      radioButton3.onchange = switchConfigurations.bind(this);
-    }
-  };
-
-  /**
-   * This overwrites the this.constants.
-   *
-   * @param constantsVariableName
-   * @param value
-   * @private
-   */
-  exports._overWriteGraphConstants = function (constantsVariableName, value) {
-    var nameArray = constantsVariableName.split("_");
-    if (nameArray.length == 1) {
-      this.constants[nameArray[0]] = value;
-    }
-    else if (nameArray.length == 2) {
-      this.constants[nameArray[0]][nameArray[1]] = value;
-    }
-    else if (nameArray.length == 3) {
-      this.constants[nameArray[0]][nameArray[1]][nameArray[2]] = value;
-    }
-  };
-
-
-  /**
-   * this function is bound to the toggle smooth curves button. That is also why it is not in the prototype.
-   */
-  function graphToggleSmoothCurves () {
-    this.constants.smoothCurves.enabled = !this.constants.smoothCurves.enabled;
-    var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
-    if (this.constants.smoothCurves.enabled == true) {graph_toggleSmooth.style.background = "#A4FF56";}
-    else                                     {graph_toggleSmooth.style.background = "#FF8532";}
-
-    this._configureSmoothCurves(false);
-  }
-
-  /**
-   * this function is used to scramble the nodes
-   *
-   */
-  function graphRepositionNodes () {
-    for (var nodeId in this.calculationNodes) {
-      if (this.calculationNodes.hasOwnProperty(nodeId)) {
-        this.calculationNodes[nodeId].vx = 0;  this.calculationNodes[nodeId].vy = 0;
-        this.calculationNodes[nodeId].fx = 0;  this.calculationNodes[nodeId].fy = 0;
-      }
-    }
-    if (this.constants.hierarchicalLayout.enabled == true) {
-      this._setupHierarchicalLayout();
-      showValueOfRange.call(this, 'graph_H_nd', 1, "physics_hierarchicalRepulsion_nodeDistance");
-      showValueOfRange.call(this, 'graph_H_cg', 1, "physics_centralGravity");
-      showValueOfRange.call(this, 'graph_H_sc', 1, "physics_springConstant");
-      showValueOfRange.call(this, 'graph_H_sl', 1, "physics_springLength");
-      showValueOfRange.call(this, 'graph_H_damp', 1, "physics_damping");
-    }
-    else {
-      this.repositionNodes();
-    }
-    this.moving = true;
-    this.start();
-  }
-
-  /**
-   *  this is used to generate an options file from the playing with physics system.
-   */
-  function graphGenerateOptions () {
-    var options = "No options are required, default values used.";
-    var optionsSpecific = [];
-    var radioButton1 = document.getElementById("graph_physicsMethod1");
-    var radioButton2 = document.getElementById("graph_physicsMethod2");
-    if (radioButton1.checked == true) {
-      if (this.constants.physics.barnesHut.gravitationalConstant != this.backupConstants.physics.barnesHut.gravitationalConstant) {optionsSpecific.push("gravitationalConstant: " + this.constants.physics.barnesHut.gravitationalConstant);}
-      if (this.constants.physics.centralGravity != this.backupConstants.physics.barnesHut.centralGravity)                         {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
-      if (this.constants.physics.springLength != this.backupConstants.physics.barnesHut.springLength)                             {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
-      if (this.constants.physics.springConstant != this.backupConstants.physics.barnesHut.springConstant)                         {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
-      if (this.constants.physics.damping != this.backupConstants.physics.barnesHut.damping)                                       {optionsSpecific.push("damping: " + this.constants.physics.damping);}
-      if (optionsSpecific.length != 0) {
-        options = "var options = {";
-        options += "physics: {barnesHut: {";
-        for (var i = 0; i < optionsSpecific.length; i++) {
-          options += optionsSpecific[i];
-          if (i < optionsSpecific.length - 1) {
-            options += ", "
-          }
-        }
-        options += '}}'
-      }
-      if (this.constants.smoothCurves.enabled != this.backupConstants.smoothCurves.enabled) {
-        if (optionsSpecific.length == 0) {options = "var options = {";}
-        else {options += ", "}
-        options += "smoothCurves: " + this.constants.smoothCurves.enabled;
-      }
-      if (options != "No options are required, default values used.") {
-        options += '};'
-      }
-    }
-    else if (radioButton2.checked == true) {
-      options = "var options = {";
-      options += "physics: {barnesHut: {enabled: false}";
-      if (this.constants.physics.repulsion.nodeDistance != this.backupConstants.physics.repulsion.nodeDistance)  {optionsSpecific.push("nodeDistance: " + this.constants.physics.repulsion.nodeDistance);}
-      if (this.constants.physics.centralGravity != this.backupConstants.physics.repulsion.centralGravity)        {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
-      if (this.constants.physics.springLength != this.backupConstants.physics.repulsion.springLength)            {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
-      if (this.constants.physics.springConstant != this.backupConstants.physics.repulsion.springConstant)        {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
-      if (this.constants.physics.damping != this.backupConstants.physics.repulsion.damping)                      {optionsSpecific.push("damping: " + this.constants.physics.damping);}
-      if (optionsSpecific.length != 0) {
-        options += ", repulsion: {";
-        for (var i = 0; i < optionsSpecific.length; i++) {
-          options += optionsSpecific[i];
-          if (i < optionsSpecific.length - 1) {
-            options += ", "
-          }
-        }
-        options += '}}'
-      }
-      if (optionsSpecific.length == 0) {options += "}"}
-      if (this.constants.smoothCurves != this.backupConstants.smoothCurves) {
-        options += ", smoothCurves: " + this.constants.smoothCurves;
-      }
-      options += '};'
-    }
-    else {
-      options = "var options = {";
-      if (this.constants.physics.hierarchicalRepulsion.nodeDistance != this.backupConstants.physics.hierarchicalRepulsion.nodeDistance)  {optionsSpecific.push("nodeDistance: " + this.constants.physics.hierarchicalRepulsion.nodeDistance);}
-      if (this.constants.physics.centralGravity != this.backupConstants.physics.hierarchicalRepulsion.centralGravity)        {optionsSpecific.push("centralGravity: " + this.constants.physics.centralGravity);}
-      if (this.constants.physics.springLength != this.backupConstants.physics.hierarchicalRepulsion.springLength)            {optionsSpecific.push("springLength: " + this.constants.physics.springLength);}
-      if (this.constants.physics.springConstant != this.backupConstants.physics.hierarchicalRepulsion.springConstant)        {optionsSpecific.push("springConstant: " + this.constants.physics.springConstant);}
-      if (this.constants.physics.damping != this.backupConstants.physics.hierarchicalRepulsion.damping)                      {optionsSpecific.push("damping: " + this.constants.physics.damping);}
-      if (optionsSpecific.length != 0) {
-        options += "physics: {hierarchicalRepulsion: {";
-        for (var i = 0; i < optionsSpecific.length; i++) {
-          options += optionsSpecific[i];
-          if (i < optionsSpecific.length - 1) {
-            options += ", ";
-          }
-        }
-        options += '}},';
-      }
-      options += 'hierarchicalLayout: {';
-      optionsSpecific = [];
-      if (this.constants.hierarchicalLayout.direction != this.backupConstants.hierarchicalLayout.direction)                       {optionsSpecific.push("direction: " + this.constants.hierarchicalLayout.direction);}
-      if (Math.abs(this.constants.hierarchicalLayout.levelSeparation) != this.backupConstants.hierarchicalLayout.levelSeparation) {optionsSpecific.push("levelSeparation: " + this.constants.hierarchicalLayout.levelSeparation);}
-      if (this.constants.hierarchicalLayout.nodeSpacing != this.backupConstants.hierarchicalLayout.nodeSpacing)                   {optionsSpecific.push("nodeSpacing: " + this.constants.hierarchicalLayout.nodeSpacing);}
-      if (optionsSpecific.length != 0) {
-        for (var i = 0; i < optionsSpecific.length; i++) {
-          options += optionsSpecific[i];
-          if (i < optionsSpecific.length - 1) {
-            options += ", "
-          }
-        }
-        options += '}'
-      }
-      else {
-        options += "enabled:true}";
-      }
-      options += '};'
-    }
-
-
-    this.optionsDiv.innerHTML = options;
-  }
-
-  /**
-   * this is used to switch between barnesHut, repulsion and hierarchical.
-   *
-   */
-  function switchConfigurations () {
-    var ids = ["graph_BH_table", "graph_R_table", "graph_H_table"];
-    var radioButton = document.querySelector('input[name="graph_physicsMethod"]:checked').value;
-    var tableId = "graph_" + radioButton + "_table";
-    var table = document.getElementById(tableId);
-    table.style.display = "block";
-    for (var i = 0; i < ids.length; i++) {
-      if (ids[i] != tableId) {
-        table = document.getElementById(ids[i]);
-        table.style.display = "none";
-      }
-    }
-    this._restoreNodes();
-    if (radioButton == "R") {
-      this.constants.hierarchicalLayout.enabled = false;
-      this.constants.physics.hierarchicalRepulsion.enabled = false;
-      this.constants.physics.barnesHut.enabled = false;
-    }
-    else if (radioButton == "H") {
-      if (this.constants.hierarchicalLayout.enabled == false) {
-        this.constants.hierarchicalLayout.enabled = true;
-        this.constants.physics.hierarchicalRepulsion.enabled = true;
-        this.constants.physics.barnesHut.enabled = false;
-        this.constants.smoothCurves.enabled = false;
-        this._setupHierarchicalLayout();
-      }
-    }
-    else {
-      this.constants.hierarchicalLayout.enabled = false;
-      this.constants.physics.hierarchicalRepulsion.enabled = false;
-      this.constants.physics.barnesHut.enabled = true;
-    }
-    this._loadSelectedForceSolver();
-    var graph_toggleSmooth = document.getElementById("graph_toggleSmooth");
-    if (this.constants.smoothCurves.enabled == true) {graph_toggleSmooth.style.background = "#A4FF56";}
-    else                                     {graph_toggleSmooth.style.background = "#FF8532";}
-    this.moving = true;
-    this.start();
-  }
-
-
-  /**
-   * this generates the ranges depending on the iniital values.
-   *
-   * @param id
-   * @param map
-   * @param constantsVariableName
-   */
-  function showValueOfRange (id,map,constantsVariableName) {
-    var valueId = id + "_value";
-    var rangeValue = document.getElementById(id).value;
-
-    if (map instanceof Array) {
-      document.getElementById(valueId).value = map[parseInt(rangeValue)];
-      this._overWriteGraphConstants(constantsVariableName,map[parseInt(rangeValue)]);
-    }
-    else {
-      document.getElementById(valueId).value = parseInt(map) * parseFloat(rangeValue);
-      this._overWriteGraphConstants(constantsVariableName, parseInt(map) * parseFloat(rangeValue));
-    }
-
-    if (constantsVariableName == "hierarchicalLayout_direction" ||
-      constantsVariableName == "hierarchicalLayout_levelSeparation" ||
-      constantsVariableName == "hierarchicalLayout_nodeSpacing") {
-      this._setupHierarchicalLayout();
-    }
-    this.moving = true;
-    this.start();
-  }
-
-
-/***/ },
-/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
   var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {//! moment.js
@@ -29723,7 +29553,635 @@ return /******/ (function(modules) { // webpackBootstrap
   /* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(65)(module)))
 
 /***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+  /**
+   * Calculate the forces the nodes apply on each other based on a repulsion field.
+   * This field is linearly approximated.
+   *
+   * @private
+   */
+  exports._calculateNodeForces = function () {
+    var dx, dy, angle, distance, fx, fy, combinedClusterSize,
+      repulsingForce, node1, node2, i, j;
+
+    var nodes = this.calculationNodes;
+    var nodeIndices = this.calculationNodeIndices;
+
+    // approximation constants
+    var a_base = -2 / 3;
+    var b = 4 / 3;
+
+    // repulsing forces between nodes
+    var nodeDistance = this.constants.physics.repulsion.nodeDistance;
+    var minimumDistance = nodeDistance;
+
+    // we loop from i over all but the last entree in the array
+    // j loops from i+1 to the last. This way we do not double count any of the indices, nor i == j
+    for (i = 0; i < nodeIndices.length - 1; i++) {
+      node1 = nodes[nodeIndices[i]];
+      for (j = i + 1; j < nodeIndices.length; j++) {
+        node2 = nodes[nodeIndices[j]];
+        combinedClusterSize = node1.clusterSize + node2.clusterSize - 2;
+
+        dx = node2.x - node1.x;
+        dy = node2.y - node1.y;
+        distance = Math.sqrt(dx * dx + dy * dy);
+
+        minimumDistance = (combinedClusterSize == 0) ? nodeDistance : (nodeDistance * (1 + combinedClusterSize * this.constants.clustering.distanceAmplification));
+        var a = a_base / minimumDistance;
+        if (distance < 2 * minimumDistance) {
+          if (distance < 0.5 * minimumDistance) {
+            repulsingForce = 1.0;
+          }
+          else {
+            repulsingForce = a * distance + b; // linear approx of  1 / (1 + Math.exp((distance / minimumDistance - 1) * steepness))
+          }
+
+          // amplify the repulsion for clusters.
+          repulsingForce *= (combinedClusterSize == 0) ? 1 : 1 + combinedClusterSize * this.constants.clustering.forceAmplification;
+          repulsingForce = repulsingForce / distance;
+
+          fx = dx * repulsingForce;
+          fy = dy * repulsingForce;
+
+          node1.fx -= fx;
+          node1.fy -= fy;
+          node2.fx += fx;
+          node2.fy += fy;
+        }
+      }
+    }
+  };
+
+
+/***/ },
 /* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+  /**
+   * Calculate the forces the nodes apply on eachother based on a repulsion field.
+   * This field is linearly approximated.
+   *
+   * @private
+   */
+  exports._calculateNodeForces = function () {
+    var dx, dy, distance, fx, fy,
+      repulsingForce, node1, node2, i, j;
+
+    var nodes = this.calculationNodes;
+    var nodeIndices = this.calculationNodeIndices;
+
+    // repulsing forces between nodes
+    var nodeDistance = this.constants.physics.hierarchicalRepulsion.nodeDistance;
+
+    // we loop from i over all but the last entree in the array
+    // j loops from i+1 to the last. This way we do not double count any of the indices, nor i == j
+    for (i = 0; i < nodeIndices.length - 1; i++) {
+      node1 = nodes[nodeIndices[i]];
+      for (j = i + 1; j < nodeIndices.length; j++) {
+        node2 = nodes[nodeIndices[j]];
+
+        // nodes only affect nodes on their level
+        if (node1.level == node2.level) {
+
+          dx = node2.x - node1.x;
+          dy = node2.y - node1.y;
+          distance = Math.sqrt(dx * dx + dy * dy);
+
+
+          var steepness = 0.05;
+          if (distance < nodeDistance) {
+            repulsingForce = -Math.pow(steepness*distance,2) + Math.pow(steepness*nodeDistance,2);
+          }
+          else {
+            repulsingForce = 0;
+          }
+            // normalize force with
+            if (distance == 0) {
+              distance = 0.01;
+            }
+            else {
+              repulsingForce = repulsingForce / distance;
+            }
+            fx = dx * repulsingForce;
+            fy = dy * repulsingForce;
+
+            node1.fx -= fx;
+            node1.fy -= fy;
+            node2.fx += fx;
+            node2.fy += fy;
+        }
+      }
+    }
+  };
+
+
+  /**
+   * this function calculates the effects of the springs in the case of unsmooth curves.
+   *
+   * @private
+   */
+  exports._calculateHierarchicalSpringForces = function () {
+    var edgeLength, edge, edgeId;
+    var dx, dy, fx, fy, springForce, distance;
+    var edges = this.edges;
+
+    var nodes = this.calculationNodes;
+    var nodeIndices = this.calculationNodeIndices;
+
+
+    for (var i = 0; i < nodeIndices.length; i++) {
+      var node1 = nodes[nodeIndices[i]];
+      node1.springFx = 0;
+      node1.springFy = 0;
+    }
+
+
+    // forces caused by the edges, modelled as springs
+    for (edgeId in edges) {
+      if (edges.hasOwnProperty(edgeId)) {
+        edge = edges[edgeId];
+        if (edge.connected) {
+          // only calculate forces if nodes are in the same sector
+          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
+            edgeLength = edge.physics.springLength;
+            // this implies that the edges between big clusters are longer
+            edgeLength += (edge.to.clusterSize + edge.from.clusterSize - 2) * this.constants.clustering.edgeGrowth;
+
+            dx = (edge.from.x - edge.to.x);
+            dy = (edge.from.y - edge.to.y);
+            distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance == 0) {
+              distance = 0.01;
+            }
+
+            // the 1/distance is so the fx and fy can be calculated without sine or cosine.
+            springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
+
+            fx = dx * springForce;
+            fy = dy * springForce;
+
+
+
+            if (edge.to.level != edge.from.level) {
+              edge.to.springFx -= fx;
+              edge.to.springFy -= fy;
+              edge.from.springFx += fx;
+              edge.from.springFy += fy;
+            }
+            else {
+              var factor = 0.5;
+              edge.to.fx -= factor*fx;
+              edge.to.fy -= factor*fy;
+              edge.from.fx += factor*fx;
+              edge.from.fy += factor*fy;
+            }
+          }
+        }
+      }
+    }
+
+    // normalize spring forces
+    var springForce = 1;
+    var springFx, springFy;
+    for (i = 0; i < nodeIndices.length; i++) {
+      var node = nodes[nodeIndices[i]];
+      springFx = Math.min(springForce,Math.max(-springForce,node.springFx));
+      springFy = Math.min(springForce,Math.max(-springForce,node.springFy));
+
+      node.fx += springFx;
+      node.fy += springFy;
+    }
+
+    // retain energy balance
+    var totalFx = 0;
+    var totalFy = 0;
+    for (i = 0; i < nodeIndices.length; i++) {
+      var node = nodes[nodeIndices[i]];
+      totalFx += node.fx;
+      totalFy += node.fy;
+    }
+    var correctionFx = totalFx / nodeIndices.length;
+    var correctionFy = totalFy / nodeIndices.length;
+
+    for (i = 0; i < nodeIndices.length; i++) {
+      var node = nodes[nodeIndices[i]];
+      node.fx -= correctionFx;
+      node.fy -= correctionFy;
+    }
+
+  };
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+  /**
+   * This function calculates the forces the nodes apply on eachother based on a gravitational model.
+   * The Barnes Hut method is used to speed up this N-body simulation.
+   *
+   * @private
+   */
+  exports._calculateNodeForces = function() {
+    if (this.constants.physics.barnesHut.gravitationalConstant != 0) {
+      var node;
+      var nodes = this.calculationNodes;
+      var nodeIndices = this.calculationNodeIndices;
+      var nodeCount = nodeIndices.length;
+
+      this._formBarnesHutTree(nodes,nodeIndices);
+
+      var barnesHutTree = this.barnesHutTree;
+
+      // place the nodes one by one recursively
+      for (var i = 0; i < nodeCount; i++) {
+        node = nodes[nodeIndices[i]];
+        if (node.options.mass > 0) {
+        // starting with root is irrelevant, it never passes the BarnesHut condition
+          this._getForceContribution(barnesHutTree.root.children.NW,node);
+          this._getForceContribution(barnesHutTree.root.children.NE,node);
+          this._getForceContribution(barnesHutTree.root.children.SW,node);
+          this._getForceContribution(barnesHutTree.root.children.SE,node);
+        }
+      }
+    }
+  };
+
+
+  /**
+   * This function traverses the barnesHutTree. It checks when it can approximate distant nodes with their center of mass.
+   * If a region contains a single node, we check if it is not itself, then we apply the force.
+   *
+   * @param parentBranch
+   * @param node
+   * @private
+   */
+  exports._getForceContribution = function(parentBranch,node) {
+    // we get no force contribution from an empty region
+    if (parentBranch.childrenCount > 0) {
+      var dx,dy,distance;
+
+      // get the distance from the center of mass to the node.
+      dx = parentBranch.centerOfMass.x - node.x;
+      dy = parentBranch.centerOfMass.y - node.y;
+      distance = Math.sqrt(dx * dx + dy * dy);
+
+      // BarnesHut condition
+      // original condition : s/d < theta = passed  ===  d/s > 1/theta = passed
+      // calcSize = 1/s --> d * 1/s > 1/theta = passed
+      if (distance * parentBranch.calcSize > this.constants.physics.barnesHut.theta) {
+        // duplicate code to reduce function calls to speed up program
+        if (distance == 0) {
+          distance = 0.1*Math.random();
+          dx = distance;
+        }
+        var gravityForce = this.constants.physics.barnesHut.gravitationalConstant * parentBranch.mass * node.options.mass / (distance * distance * distance);
+        var fx = dx * gravityForce;
+        var fy = dy * gravityForce;
+        node.fx += fx;
+        node.fy += fy;
+      }
+      else {
+        // Did not pass the condition, go into children if available
+        if (parentBranch.childrenCount == 4) {
+          this._getForceContribution(parentBranch.children.NW,node);
+          this._getForceContribution(parentBranch.children.NE,node);
+          this._getForceContribution(parentBranch.children.SW,node);
+          this._getForceContribution(parentBranch.children.SE,node);
+        }
+        else { // parentBranch must have only one node, if it was empty we wouldnt be here
+          if (parentBranch.children.data.id != node.id) { // if it is not self
+            // duplicate code to reduce function calls to speed up program
+            if (distance == 0) {
+              distance = 0.5*Math.random();
+              dx = distance;
+            }
+            var gravityForce = this.constants.physics.barnesHut.gravitationalConstant * parentBranch.mass * node.options.mass / (distance * distance * distance);
+            var fx = dx * gravityForce;
+            var fy = dy * gravityForce;
+            node.fx += fx;
+            node.fy += fy;
+          }
+        }
+      }
+    }
+  };
+
+  /**
+   * This function constructs the barnesHut tree recursively. It creates the root, splits it and starts placing the nodes.
+   *
+   * @param nodes
+   * @param nodeIndices
+   * @private
+   */
+  exports._formBarnesHutTree = function(nodes,nodeIndices) {
+    var node;
+    var nodeCount = nodeIndices.length;
+
+    var minX = Number.MAX_VALUE,
+      minY = Number.MAX_VALUE,
+      maxX =-Number.MAX_VALUE,
+      maxY =-Number.MAX_VALUE;
+
+    // get the range of the nodes
+    for (var i = 0; i < nodeCount; i++) {
+      var x = nodes[nodeIndices[i]].x;
+      var y = nodes[nodeIndices[i]].y;
+      if (nodes[nodeIndices[i]].options.mass > 0) {
+        if (x < minX) { minX = x; }
+        if (x > maxX) { maxX = x; }
+        if (y < minY) { minY = y; }
+        if (y > maxY) { maxY = y; }
+      }
+    }
+    // make the range a square
+    var sizeDiff = Math.abs(maxX - minX) - Math.abs(maxY - minY); // difference between X and Y
+    if (sizeDiff > 0) {minY -= 0.5 * sizeDiff; maxY += 0.5 * sizeDiff;} // xSize > ySize
+    else              {minX += 0.5 * sizeDiff; maxX -= 0.5 * sizeDiff;} // xSize < ySize
+
+
+    var minimumTreeSize = 1e-5;
+    var rootSize = Math.max(minimumTreeSize,Math.abs(maxX - minX));
+    var halfRootSize = 0.5 * rootSize;
+    var centerX = 0.5 * (minX + maxX), centerY = 0.5 * (minY + maxY);
+
+    // construct the barnesHutTree
+    var barnesHutTree = {
+      root:{
+        centerOfMass: {x:0, y:0},
+        mass:0,
+        range: {
+          minX: centerX-halfRootSize,maxX:centerX+halfRootSize,
+          minY: centerY-halfRootSize,maxY:centerY+halfRootSize
+        },
+        size: rootSize,
+        calcSize: 1 / rootSize,
+        children: { data:null},
+        maxWidth: 0,
+        level: 0,
+        childrenCount: 4
+      }
+    };
+    this._splitBranch(barnesHutTree.root);
+
+    // place the nodes one by one recursively
+    for (i = 0; i < nodeCount; i++) {
+      node = nodes[nodeIndices[i]];
+      if (node.options.mass > 0) {
+        this._placeInTree(barnesHutTree.root,node);
+      }
+    }
+
+    // make global
+    this.barnesHutTree = barnesHutTree
+  };
+
+
+  /**
+   * this updates the mass of a branch. this is increased by adding a node.
+   *
+   * @param parentBranch
+   * @param node
+   * @private
+   */
+  exports._updateBranchMass = function(parentBranch, node) {
+    var totalMass = parentBranch.mass + node.options.mass;
+    var totalMassInv = 1/totalMass;
+
+    parentBranch.centerOfMass.x = parentBranch.centerOfMass.x * parentBranch.mass + node.x * node.options.mass;
+    parentBranch.centerOfMass.x *= totalMassInv;
+
+    parentBranch.centerOfMass.y = parentBranch.centerOfMass.y * parentBranch.mass + node.y * node.options.mass;
+    parentBranch.centerOfMass.y *= totalMassInv;
+
+    parentBranch.mass = totalMass;
+    var biggestSize = Math.max(Math.max(node.height,node.radius),node.width);
+    parentBranch.maxWidth = (parentBranch.maxWidth < biggestSize) ? biggestSize : parentBranch.maxWidth;
+
+  };
+
+
+  /**
+   * determine in which branch the node will be placed.
+   *
+   * @param parentBranch
+   * @param node
+   * @param skipMassUpdate
+   * @private
+   */
+  exports._placeInTree = function(parentBranch,node,skipMassUpdate) {
+    if (skipMassUpdate != true || skipMassUpdate === undefined) {
+      // update the mass of the branch.
+      this._updateBranchMass(parentBranch,node);
+    }
+
+    if (parentBranch.children.NW.range.maxX > node.x) { // in NW or SW
+      if (parentBranch.children.NW.range.maxY > node.y) { // in NW
+        this._placeInRegion(parentBranch,node,"NW");
+      }
+      else { // in SW
+        this._placeInRegion(parentBranch,node,"SW");
+      }
+    }
+    else { // in NE or SE
+      if (parentBranch.children.NW.range.maxY > node.y) { // in NE
+        this._placeInRegion(parentBranch,node,"NE");
+      }
+      else { // in SE
+        this._placeInRegion(parentBranch,node,"SE");
+      }
+    }
+  };
+
+
+  /**
+   * actually place the node in a region (or branch)
+   *
+   * @param parentBranch
+   * @param node
+   * @param region
+   * @private
+   */
+  exports._placeInRegion = function(parentBranch,node,region) {
+    switch (parentBranch.children[region].childrenCount) {
+      case 0: // place node here
+        parentBranch.children[region].children.data = node;
+        parentBranch.children[region].childrenCount = 1;
+        this._updateBranchMass(parentBranch.children[region],node);
+        break;
+      case 1: // convert into children
+        // if there are two nodes exactly overlapping (on init, on opening of cluster etc.)
+        // we move one node a pixel and we do not put it in the tree.
+        if (parentBranch.children[region].children.data.x == node.x &&
+            parentBranch.children[region].children.data.y == node.y) {
+          node.x += Math.random();
+          node.y += Math.random();
+        }
+        else {
+          this._splitBranch(parentBranch.children[region]);
+          this._placeInTree(parentBranch.children[region],node);
+        }
+        break;
+      case 4: // place in branch
+        this._placeInTree(parentBranch.children[region],node);
+        break;
+    }
+  };
+
+
+  /**
+   * this function splits a branch into 4 sub branches. If the branch contained a node, we place it in the subbranch
+   * after the split is complete.
+   *
+   * @param parentBranch
+   * @private
+   */
+  exports._splitBranch = function(parentBranch) {
+    // if the branch is shaded with a node, replace the node in the new subset.
+    var containedNode = null;
+    if (parentBranch.childrenCount == 1) {
+      containedNode = parentBranch.children.data;
+      parentBranch.mass = 0; parentBranch.centerOfMass.x = 0; parentBranch.centerOfMass.y = 0;
+    }
+    parentBranch.childrenCount = 4;
+    parentBranch.children.data = null;
+    this._insertRegion(parentBranch,"NW");
+    this._insertRegion(parentBranch,"NE");
+    this._insertRegion(parentBranch,"SW");
+    this._insertRegion(parentBranch,"SE");
+
+    if (containedNode != null) {
+      this._placeInTree(parentBranch,containedNode);
+    }
+  };
+
+
+  /**
+   * This function subdivides the region into four new segments.
+   * Specifically, this inserts a single new segment.
+   * It fills the children section of the parentBranch
+   *
+   * @param parentBranch
+   * @param region
+   * @param parentRange
+   * @private
+   */
+  exports._insertRegion = function(parentBranch, region) {
+    var minX,maxX,minY,maxY;
+    var childSize = 0.5 * parentBranch.size;
+    switch (region) {
+      case "NW":
+        minX = parentBranch.range.minX;
+        maxX = parentBranch.range.minX + childSize;
+        minY = parentBranch.range.minY;
+        maxY = parentBranch.range.minY + childSize;
+        break;
+      case "NE":
+        minX = parentBranch.range.minX + childSize;
+        maxX = parentBranch.range.maxX;
+        minY = parentBranch.range.minY;
+        maxY = parentBranch.range.minY + childSize;
+        break;
+      case "SW":
+        minX = parentBranch.range.minX;
+        maxX = parentBranch.range.minX + childSize;
+        minY = parentBranch.range.minY + childSize;
+        maxY = parentBranch.range.maxY;
+        break;
+      case "SE":
+        minX = parentBranch.range.minX + childSize;
+        maxX = parentBranch.range.maxX;
+        minY = parentBranch.range.minY + childSize;
+        maxY = parentBranch.range.maxY;
+        break;
+    }
+
+
+    parentBranch.children[region] = {
+      centerOfMass:{x:0,y:0},
+      mass:0,
+      range:{minX:minX,maxX:maxX,minY:minY,maxY:maxY},
+      size: 0.5 * parentBranch.size,
+      calcSize: 2 * parentBranch.calcSize,
+      children: {data:null},
+      maxWidth: 0,
+      level: parentBranch.level+1,
+      childrenCount: 0
+    };
+  };
+
+
+  /**
+   * This function is for debugging purposed, it draws the tree.
+   *
+   * @param ctx
+   * @param color
+   * @private
+   */
+  exports._drawTree = function(ctx,color) {
+    if (this.barnesHutTree !== undefined) {
+
+      ctx.lineWidth = 1;
+
+      this._drawBranch(this.barnesHutTree.root,ctx,color);
+    }
+  };
+
+
+  /**
+   * This function is for debugging purposes. It draws the branches recursively.
+   *
+   * @param branch
+   * @param ctx
+   * @param color
+   * @private
+   */
+  exports._drawBranch = function(branch,ctx,color) {
+    if (color === undefined) {
+      color = "#FF0000";
+    }
+
+    if (branch.childrenCount == 4) {
+      this._drawBranch(branch.children.NW,ctx);
+      this._drawBranch(branch.children.NE,ctx);
+      this._drawBranch(branch.children.SE,ctx);
+      this._drawBranch(branch.children.SW,ctx);
+    }
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(branch.range.minX,branch.range.minY);
+    ctx.lineTo(branch.range.maxX,branch.range.minY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(branch.range.maxX,branch.range.minY);
+    ctx.lineTo(branch.range.maxX,branch.range.maxY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(branch.range.maxX,branch.range.maxY);
+    ctx.lineTo(branch.range.minX,branch.range.maxY);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(branch.range.minX,branch.range.maxY);
+    ctx.lineTo(branch.range.minX,branch.range.minY);
+    ctx.stroke();
+
+    /*
+     if (branch.mass > 0) {
+     ctx.circle(branch.centerOfMass.x, branch.centerOfMass.y, 3*branch.mass);
+     ctx.stroke();
+     }
+     */
+  };
+
+
+/***/ },
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
   var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v1.1.3 - 2014-05-20
@@ -31890,630 +32348,172 @@ return /******/ (function(modules) { // webpackBootstrap
   })(window);
 
 /***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-  /**
-   * Calculate the forces the nodes apply on each other based on a repulsion field.
-   * This field is linearly approximated.
-   *
-   * @private
-   */
-  exports._calculateNodeForces = function () {
-    var dx, dy, angle, distance, fx, fy, combinedClusterSize,
-      repulsingForce, node1, node2, i, j;
-
-    var nodes = this.calculationNodes;
-    var nodeIndices = this.calculationNodeIndices;
-
-    // approximation constants
-    var a_base = -2 / 3;
-    var b = 4 / 3;
-
-    // repulsing forces between nodes
-    var nodeDistance = this.constants.physics.repulsion.nodeDistance;
-    var minimumDistance = nodeDistance;
-
-    // we loop from i over all but the last entree in the array
-    // j loops from i+1 to the last. This way we do not double count any of the indices, nor i == j
-    for (i = 0; i < nodeIndices.length - 1; i++) {
-      node1 = nodes[nodeIndices[i]];
-      for (j = i + 1; j < nodeIndices.length; j++) {
-        node2 = nodes[nodeIndices[j]];
-        combinedClusterSize = node1.clusterSize + node2.clusterSize - 2;
-
-        dx = node2.x - node1.x;
-        dy = node2.y - node1.y;
-        distance = Math.sqrt(dx * dx + dy * dy);
-
-        minimumDistance = (combinedClusterSize == 0) ? nodeDistance : (nodeDistance * (1 + combinedClusterSize * this.constants.clustering.distanceAmplification));
-        var a = a_base / minimumDistance;
-        if (distance < 2 * minimumDistance) {
-          if (distance < 0.5 * minimumDistance) {
-            repulsingForce = 1.0;
-          }
-          else {
-            repulsingForce = a * distance + b; // linear approx of  1 / (1 + Math.exp((distance / minimumDistance - 1) * steepness))
-          }
-
-          // amplify the repulsion for clusters.
-          repulsingForce *= (combinedClusterSize == 0) ? 1 : 1 + combinedClusterSize * this.constants.clustering.forceAmplification;
-          repulsingForce = repulsingForce / distance;
-
-          fx = dx * repulsingForce;
-          fy = dy * repulsingForce;
-
-          node1.fx -= fx;
-          node1.fy -= fy;
-          node2.fx += fx;
-          node2.fy += fy;
-        }
-      }
-    }
-  };
-
-
-/***/ },
-/* 62 */
-/***/ function(module, exports, __webpack_require__) {
-
-  /**
-   * Calculate the forces the nodes apply on eachother based on a repulsion field.
-   * This field is linearly approximated.
-   *
-   * @private
-   */
-  exports._calculateNodeForces = function () {
-    var dx, dy, distance, fx, fy,
-      repulsingForce, node1, node2, i, j;
-
-    var nodes = this.calculationNodes;
-    var nodeIndices = this.calculationNodeIndices;
-
-    // repulsing forces between nodes
-    var nodeDistance = this.constants.physics.hierarchicalRepulsion.nodeDistance;
-
-    // we loop from i over all but the last entree in the array
-    // j loops from i+1 to the last. This way we do not double count any of the indices, nor i == j
-    for (i = 0; i < nodeIndices.length - 1; i++) {
-      node1 = nodes[nodeIndices[i]];
-      for (j = i + 1; j < nodeIndices.length; j++) {
-        node2 = nodes[nodeIndices[j]];
-
-        // nodes only affect nodes on their level
-        if (node1.level == node2.level) {
-
-          dx = node2.x - node1.x;
-          dy = node2.y - node1.y;
-          distance = Math.sqrt(dx * dx + dy * dy);
-
-
-          var steepness = 0.05;
-          if (distance < nodeDistance) {
-            repulsingForce = -Math.pow(steepness*distance,2) + Math.pow(steepness*nodeDistance,2);
-          }
-          else {
-            repulsingForce = 0;
-          }
-            // normalize force with
-            if (distance == 0) {
-              distance = 0.01;
-            }
-            else {
-              repulsingForce = repulsingForce / distance;
-            }
-            fx = dx * repulsingForce;
-            fy = dy * repulsingForce;
-
-            node1.fx -= fx;
-            node1.fy -= fy;
-            node2.fx += fx;
-            node2.fy += fy;
-        }
-      }
-    }
-  };
-
-
-  /**
-   * this function calculates the effects of the springs in the case of unsmooth curves.
-   *
-   * @private
-   */
-  exports._calculateHierarchicalSpringForces = function () {
-    var edgeLength, edge, edgeId;
-    var dx, dy, fx, fy, springForce, distance;
-    var edges = this.edges;
-
-    var nodes = this.calculationNodes;
-    var nodeIndices = this.calculationNodeIndices;
-
-
-    for (var i = 0; i < nodeIndices.length; i++) {
-      var node1 = nodes[nodeIndices[i]];
-      node1.springFx = 0;
-      node1.springFy = 0;
-    }
-
-
-    // forces caused by the edges, modelled as springs
-    for (edgeId in edges) {
-      if (edges.hasOwnProperty(edgeId)) {
-        edge = edges[edgeId];
-        if (edge.connected) {
-          // only calculate forces if nodes are in the same sector
-          if (this.nodes.hasOwnProperty(edge.toId) && this.nodes.hasOwnProperty(edge.fromId)) {
-            edgeLength = edge.physics.springLength;
-            // this implies that the edges between big clusters are longer
-            edgeLength += (edge.to.clusterSize + edge.from.clusterSize - 2) * this.constants.clustering.edgeGrowth;
-
-            dx = (edge.from.x - edge.to.x);
-            dy = (edge.from.y - edge.to.y);
-            distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance == 0) {
-              distance = 0.01;
-            }
-
-            // the 1/distance is so the fx and fy can be calculated without sine or cosine.
-            springForce = this.constants.physics.springConstant * (edgeLength - distance) / distance;
-
-            fx = dx * springForce;
-            fy = dy * springForce;
-
-
-
-            if (edge.to.level != edge.from.level) {
-              edge.to.springFx -= fx;
-              edge.to.springFy -= fy;
-              edge.from.springFx += fx;
-              edge.from.springFy += fy;
-            }
-            else {
-              var factor = 0.5;
-              edge.to.fx -= factor*fx;
-              edge.to.fy -= factor*fy;
-              edge.from.fx += factor*fx;
-              edge.from.fy += factor*fy;
-            }
-          }
-        }
-      }
-    }
-
-    // normalize spring forces
-    var springForce = 1;
-    var springFx, springFy;
-    for (i = 0; i < nodeIndices.length; i++) {
-      var node = nodes[nodeIndices[i]];
-      springFx = Math.min(springForce,Math.max(-springForce,node.springFx));
-      springFy = Math.min(springForce,Math.max(-springForce,node.springFy));
-
-      node.fx += springFx;
-      node.fy += springFy;
-    }
-
-    // retain energy balance
-    var totalFx = 0;
-    var totalFy = 0;
-    for (i = 0; i < nodeIndices.length; i++) {
-      var node = nodes[nodeIndices[i]];
-      totalFx += node.fx;
-      totalFy += node.fy;
-    }
-    var correctionFx = totalFx / nodeIndices.length;
-    var correctionFy = totalFy / nodeIndices.length;
-
-    for (i = 0; i < nodeIndices.length; i++) {
-      var node = nodes[nodeIndices[i]];
-      node.fx -= correctionFx;
-      node.fy -= correctionFy;
-    }
-
-  };
-
-/***/ },
 /* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
+  
   /**
-   * This function calculates the forces the nodes apply on eachother based on a gravitational model.
-   * The Barnes Hut method is used to speed up this N-body simulation.
-   *
-   * @private
+   * Expose `Emitter`.
    */
-  exports._calculateNodeForces = function() {
-    if (this.constants.physics.barnesHut.gravitationalConstant != 0) {
-      var node;
-      var nodes = this.calculationNodes;
-      var nodeIndices = this.calculationNodeIndices;
-      var nodeCount = nodeIndices.length;
 
-      this._formBarnesHutTree(nodes,nodeIndices);
-
-      var barnesHutTree = this.barnesHutTree;
-
-      // place the nodes one by one recursively
-      for (var i = 0; i < nodeCount; i++) {
-        node = nodes[nodeIndices[i]];
-        if (node.options.mass > 0) {
-        // starting with root is irrelevant, it never passes the BarnesHut condition
-          this._getForceContribution(barnesHutTree.root.children.NW,node);
-          this._getForceContribution(barnesHutTree.root.children.NE,node);
-          this._getForceContribution(barnesHutTree.root.children.SW,node);
-          this._getForceContribution(barnesHutTree.root.children.SE,node);
-        }
-      }
-    }
-  };
-
+  module.exports = Emitter;
 
   /**
-   * This function traverses the barnesHutTree. It checks when it can approximate distant nodes with their center of mass.
-   * If a region contains a single node, we check if it is not itself, then we apply the force.
+   * Initialize a new `Emitter`.
    *
-   * @param parentBranch
-   * @param node
-   * @private
+   * @api public
    */
-  exports._getForceContribution = function(parentBranch,node) {
-    // we get no force contribution from an empty region
-    if (parentBranch.childrenCount > 0) {
-      var dx,dy,distance;
 
-      // get the distance from the center of mass to the node.
-      dx = parentBranch.centerOfMass.x - node.x;
-      dy = parentBranch.centerOfMass.y - node.y;
-      distance = Math.sqrt(dx * dx + dy * dy);
-
-      // BarnesHut condition
-      // original condition : s/d < theta = passed  ===  d/s > 1/theta = passed
-      // calcSize = 1/s --> d * 1/s > 1/theta = passed
-      if (distance * parentBranch.calcSize > this.constants.physics.barnesHut.theta) {
-        // duplicate code to reduce function calls to speed up program
-        if (distance == 0) {
-          distance = 0.1*Math.random();
-          dx = distance;
-        }
-        var gravityForce = this.constants.physics.barnesHut.gravitationalConstant * parentBranch.mass * node.options.mass / (distance * distance * distance);
-        var fx = dx * gravityForce;
-        var fy = dy * gravityForce;
-        node.fx += fx;
-        node.fy += fy;
-      }
-      else {
-        // Did not pass the condition, go into children if available
-        if (parentBranch.childrenCount == 4) {
-          this._getForceContribution(parentBranch.children.NW,node);
-          this._getForceContribution(parentBranch.children.NE,node);
-          this._getForceContribution(parentBranch.children.SW,node);
-          this._getForceContribution(parentBranch.children.SE,node);
-        }
-        else { // parentBranch must have only one node, if it was empty we wouldnt be here
-          if (parentBranch.children.data.id != node.id) { // if it is not self
-            // duplicate code to reduce function calls to speed up program
-            if (distance == 0) {
-              distance = 0.5*Math.random();
-              dx = distance;
-            }
-            var gravityForce = this.constants.physics.barnesHut.gravitationalConstant * parentBranch.mass * node.options.mass / (distance * distance * distance);
-            var fx = dx * gravityForce;
-            var fy = dy * gravityForce;
-            node.fx += fx;
-            node.fy += fy;
-          }
-        }
-      }
-    }
+  function Emitter(obj) {
+    if (obj) return mixin(obj);
   };
 
   /**
-   * This function constructs the barnesHut tree recursively. It creates the root, splits it and starts placing the nodes.
+   * Mixin the emitter properties.
    *
-   * @param nodes
-   * @param nodeIndices
-   * @private
+   * @param {Object} obj
+   * @return {Object}
+   * @api private
    */
-  exports._formBarnesHutTree = function(nodes,nodeIndices) {
-    var node;
-    var nodeCount = nodeIndices.length;
 
-    var minX = Number.MAX_VALUE,
-      minY = Number.MAX_VALUE,
-      maxX =-Number.MAX_VALUE,
-      maxY =-Number.MAX_VALUE;
-
-    // get the range of the nodes
-    for (var i = 0; i < nodeCount; i++) {
-      var x = nodes[nodeIndices[i]].x;
-      var y = nodes[nodeIndices[i]].y;
-      if (nodes[nodeIndices[i]].options.mass > 0) {
-        if (x < minX) { minX = x; }
-        if (x > maxX) { maxX = x; }
-        if (y < minY) { minY = y; }
-        if (y > maxY) { maxY = y; }
-      }
+  function mixin(obj) {
+    for (var key in Emitter.prototype) {
+      obj[key] = Emitter.prototype[key];
     }
-    // make the range a square
-    var sizeDiff = Math.abs(maxX - minX) - Math.abs(maxY - minY); // difference between X and Y
-    if (sizeDiff > 0) {minY -= 0.5 * sizeDiff; maxY += 0.5 * sizeDiff;} // xSize > ySize
-    else              {minX += 0.5 * sizeDiff; maxX -= 0.5 * sizeDiff;} // xSize < ySize
-
-
-    var minimumTreeSize = 1e-5;
-    var rootSize = Math.max(minimumTreeSize,Math.abs(maxX - minX));
-    var halfRootSize = 0.5 * rootSize;
-    var centerX = 0.5 * (minX + maxX), centerY = 0.5 * (minY + maxY);
-
-    // construct the barnesHutTree
-    var barnesHutTree = {
-      root:{
-        centerOfMass: {x:0, y:0},
-        mass:0,
-        range: {
-          minX: centerX-halfRootSize,maxX:centerX+halfRootSize,
-          minY: centerY-halfRootSize,maxY:centerY+halfRootSize
-        },
-        size: rootSize,
-        calcSize: 1 / rootSize,
-        children: { data:null},
-        maxWidth: 0,
-        level: 0,
-        childrenCount: 4
-      }
-    };
-    this._splitBranch(barnesHutTree.root);
-
-    // place the nodes one by one recursively
-    for (i = 0; i < nodeCount; i++) {
-      node = nodes[nodeIndices[i]];
-      if (node.options.mass > 0) {
-        this._placeInTree(barnesHutTree.root,node);
-      }
-    }
-
-    // make global
-    this.barnesHutTree = barnesHutTree
-  };
-
+    return obj;
+  }
 
   /**
-   * this updates the mass of a branch. this is increased by adding a node.
+   * Listen on the given `event` with `fn`.
    *
-   * @param parentBranch
-   * @param node
-   * @private
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
    */
-  exports._updateBranchMass = function(parentBranch, node) {
-    var totalMass = parentBranch.mass + node.options.mass;
-    var totalMassInv = 1/totalMass;
 
-    parentBranch.centerOfMass.x = parentBranch.centerOfMass.x * parentBranch.mass + node.x * node.options.mass;
-    parentBranch.centerOfMass.x *= totalMassInv;
-
-    parentBranch.centerOfMass.y = parentBranch.centerOfMass.y * parentBranch.mass + node.y * node.options.mass;
-    parentBranch.centerOfMass.y *= totalMassInv;
-
-    parentBranch.mass = totalMass;
-    var biggestSize = Math.max(Math.max(node.height,node.radius),node.width);
-    parentBranch.maxWidth = (parentBranch.maxWidth < biggestSize) ? biggestSize : parentBranch.maxWidth;
-
+  Emitter.prototype.on =
+  Emitter.prototype.addEventListener = function(event, fn){
+    this._callbacks = this._callbacks || {};
+    (this._callbacks[event] = this._callbacks[event] || [])
+      .push(fn);
+    return this;
   };
 
-
   /**
-   * determine in which branch the node will be placed.
+   * Adds an `event` listener that will be invoked a single
+   * time then automatically removed.
    *
-   * @param parentBranch
-   * @param node
-   * @param skipMassUpdate
-   * @private
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
    */
-  exports._placeInTree = function(parentBranch,node,skipMassUpdate) {
-    if (skipMassUpdate != true || skipMassUpdate === undefined) {
-      // update the mass of the branch.
-      this._updateBranchMass(parentBranch,node);
+
+  Emitter.prototype.once = function(event, fn){
+    var self = this;
+    this._callbacks = this._callbacks || {};
+
+    function on() {
+      self.off(event, on);
+      fn.apply(this, arguments);
     }
 
-    if (parentBranch.children.NW.range.maxX > node.x) { // in NW or SW
-      if (parentBranch.children.NW.range.maxY > node.y) { // in NW
-        this._placeInRegion(parentBranch,node,"NW");
-      }
-      else { // in SW
-        this._placeInRegion(parentBranch,node,"SW");
-      }
-    }
-    else { // in NE or SE
-      if (parentBranch.children.NW.range.maxY > node.y) { // in NE
-        this._placeInRegion(parentBranch,node,"NE");
-      }
-      else { // in SE
-        this._placeInRegion(parentBranch,node,"SE");
-      }
-    }
+    on.fn = fn;
+    this.on(event, on);
+    return this;
   };
 
-
   /**
-   * actually place the node in a region (or branch)
+   * Remove the given callback for `event` or all
+   * registered callbacks.
    *
-   * @param parentBranch
-   * @param node
-   * @param region
-   * @private
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
    */
-  exports._placeInRegion = function(parentBranch,node,region) {
-    switch (parentBranch.children[region].childrenCount) {
-      case 0: // place node here
-        parentBranch.children[region].children.data = node;
-        parentBranch.children[region].childrenCount = 1;
-        this._updateBranchMass(parentBranch.children[region],node);
+
+  Emitter.prototype.off =
+  Emitter.prototype.removeListener =
+  Emitter.prototype.removeAllListeners =
+  Emitter.prototype.removeEventListener = function(event, fn){
+    this._callbacks = this._callbacks || {};
+
+    // all
+    if (0 == arguments.length) {
+      this._callbacks = {};
+      return this;
+    }
+
+    // specific event
+    var callbacks = this._callbacks[event];
+    if (!callbacks) return this;
+
+    // remove all handlers
+    if (1 == arguments.length) {
+      delete this._callbacks[event];
+      return this;
+    }
+
+    // remove specific handler
+    var cb;
+    for (var i = 0; i < callbacks.length; i++) {
+      cb = callbacks[i];
+      if (cb === fn || cb.fn === fn) {
+        callbacks.splice(i, 1);
         break;
-      case 1: // convert into children
-        // if there are two nodes exactly overlapping (on init, on opening of cluster etc.)
-        // we move one node a pixel and we do not put it in the tree.
-        if (parentBranch.children[region].children.data.x == node.x &&
-            parentBranch.children[region].children.data.y == node.y) {
-          node.x += Math.random();
-          node.y += Math.random();
-        }
-        else {
-          this._splitBranch(parentBranch.children[region]);
-          this._placeInTree(parentBranch.children[region],node);
-        }
-        break;
-      case 4: // place in branch
-        this._placeInTree(parentBranch.children[region],node);
-        break;
+      }
     }
+    return this;
   };
 
-
   /**
-   * this function splits a branch into 4 sub branches. If the branch contained a node, we place it in the subbranch
-   * after the split is complete.
+   * Emit `event` with the given args.
    *
-   * @param parentBranch
-   * @private
+   * @param {String} event
+   * @param {Mixed} ...
+   * @return {Emitter}
    */
-  exports._splitBranch = function(parentBranch) {
-    // if the branch is shaded with a node, replace the node in the new subset.
-    var containedNode = null;
-    if (parentBranch.childrenCount == 1) {
-      containedNode = parentBranch.children.data;
-      parentBranch.mass = 0; parentBranch.centerOfMass.x = 0; parentBranch.centerOfMass.y = 0;
-    }
-    parentBranch.childrenCount = 4;
-    parentBranch.children.data = null;
-    this._insertRegion(parentBranch,"NW");
-    this._insertRegion(parentBranch,"NE");
-    this._insertRegion(parentBranch,"SW");
-    this._insertRegion(parentBranch,"SE");
 
-    if (containedNode != null) {
-      this._placeInTree(parentBranch,containedNode);
+  Emitter.prototype.emit = function(event){
+    this._callbacks = this._callbacks || {};
+    var args = [].slice.call(arguments, 1)
+      , callbacks = this._callbacks[event];
+
+    if (callbacks) {
+      callbacks = callbacks.slice(0);
+      for (var i = 0, len = callbacks.length; i < len; ++i) {
+        callbacks[i].apply(this, args);
+      }
     }
+
+    return this;
   };
 
-
   /**
-   * This function subdivides the region into four new segments.
-   * Specifically, this inserts a single new segment.
-   * It fills the children section of the parentBranch
+   * Return array of callbacks for `event`.
    *
-   * @param parentBranch
-   * @param region
-   * @param parentRange
-   * @private
+   * @param {String} event
+   * @return {Array}
+   * @api public
    */
-  exports._insertRegion = function(parentBranch, region) {
-    var minX,maxX,minY,maxY;
-    var childSize = 0.5 * parentBranch.size;
-    switch (region) {
-      case "NW":
-        minX = parentBranch.range.minX;
-        maxX = parentBranch.range.minX + childSize;
-        minY = parentBranch.range.minY;
-        maxY = parentBranch.range.minY + childSize;
-        break;
-      case "NE":
-        minX = parentBranch.range.minX + childSize;
-        maxX = parentBranch.range.maxX;
-        minY = parentBranch.range.minY;
-        maxY = parentBranch.range.minY + childSize;
-        break;
-      case "SW":
-        minX = parentBranch.range.minX;
-        maxX = parentBranch.range.minX + childSize;
-        minY = parentBranch.range.minY + childSize;
-        maxY = parentBranch.range.maxY;
-        break;
-      case "SE":
-        minX = parentBranch.range.minX + childSize;
-        maxX = parentBranch.range.maxX;
-        minY = parentBranch.range.minY + childSize;
-        maxY = parentBranch.range.maxY;
-        break;
-    }
 
-
-    parentBranch.children[region] = {
-      centerOfMass:{x:0,y:0},
-      mass:0,
-      range:{minX:minX,maxX:maxX,minY:minY,maxY:maxY},
-      size: 0.5 * parentBranch.size,
-      calcSize: 2 * parentBranch.calcSize,
-      children: {data:null},
-      maxWidth: 0,
-      level: parentBranch.level+1,
-      childrenCount: 0
-    };
+  Emitter.prototype.listeners = function(event){
+    this._callbacks = this._callbacks || {};
+    return this._callbacks[event] || [];
   };
 
-
   /**
-   * This function is for debugging purposed, it draws the tree.
+   * Check if this emitter has `event` handlers.
    *
-   * @param ctx
-   * @param color
-   * @private
+   * @param {String} event
+   * @return {Boolean}
+   * @api public
    */
-  exports._drawTree = function(ctx,color) {
-    if (this.barnesHutTree !== undefined) {
 
-      ctx.lineWidth = 1;
-
-      this._drawBranch(this.barnesHutTree.root,ctx,color);
-    }
-  };
-
-
-  /**
-   * This function is for debugging purposes. It draws the branches recursively.
-   *
-   * @param branch
-   * @param ctx
-   * @param color
-   * @private
-   */
-  exports._drawBranch = function(branch,ctx,color) {
-    if (color === undefined) {
-      color = "#FF0000";
-    }
-
-    if (branch.childrenCount == 4) {
-      this._drawBranch(branch.children.NW,ctx);
-      this._drawBranch(branch.children.NE,ctx);
-      this._drawBranch(branch.children.SE,ctx);
-      this._drawBranch(branch.children.SW,ctx);
-    }
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(branch.range.minX,branch.range.minY);
-    ctx.lineTo(branch.range.maxX,branch.range.minY);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(branch.range.maxX,branch.range.minY);
-    ctx.lineTo(branch.range.maxX,branch.range.maxY);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(branch.range.maxX,branch.range.maxY);
-    ctx.lineTo(branch.range.minX,branch.range.maxY);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(branch.range.minX,branch.range.maxY);
-    ctx.lineTo(branch.range.minX,branch.range.minY);
-    ctx.stroke();
-
-    /*
-     if (branch.mass > 0) {
-     ctx.circle(branch.centerOfMass.x, branch.centerOfMass.y, 3*branch.mass);
-     ctx.stroke();
-     }
-     */
+  Emitter.prototype.hasListeners = function(event){
+    return !! this.listeners(event).length;
   };
 
 
