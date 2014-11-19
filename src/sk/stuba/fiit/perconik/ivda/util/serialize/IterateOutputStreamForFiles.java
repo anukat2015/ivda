@@ -5,7 +5,6 @@ import sk.stuba.fiit.perconik.ivda.util.lang.GZIP;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,7 +19,6 @@ public class IterateOutputStreamForFiles implements Iterator<Object> {
 
     // Should be sorted by date
     public IterateOutputStreamForFiles(List<File> files) {
-        Collections.sort(files);
         fileIt = files.iterator();
     }
 

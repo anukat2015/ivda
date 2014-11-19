@@ -19,11 +19,12 @@ import java.io.OutputStream;
  */
 public final class Array2Json {
     private static final Logger LOGGER = Logger.getLogger(Array2Json.class.getName());
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private JsonGenerator generator;
 
     public Array2Json(OutputStream out) {
         try {
-            generator = new ObjectMapper().getFactory().createGenerator(out, JsonEncoding.UTF8);
+            generator = MAPPER.getFactory().createGenerator(out, JsonEncoding.UTF8);
         } catch (IOException e) {
             LOGGER.error("error, ", e);
         }

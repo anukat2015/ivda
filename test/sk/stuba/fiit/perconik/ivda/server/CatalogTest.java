@@ -33,7 +33,7 @@ public class CatalogTest extends TestCase {
         checkFiles();
     }
 
-    public static void checkLists(Catalog.Processes a, Catalog.Processes b) {
+    private static void checkLists(Catalog.Processes a, Catalog.Processes b) {
         Set<String> same = a.getList().getSameValues(b.getList());
         if (same.isEmpty()) {
             return;
@@ -44,7 +44,7 @@ public class CatalogTest extends TestCase {
         }
     }
 
-    public static void checkFiles() {
+    private static void checkFiles() {
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.COMMUNICATION);
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.NODEVELOPER);
         checkLists(Catalog.Processes.BANNED, Catalog.Processes.TYPICAL);

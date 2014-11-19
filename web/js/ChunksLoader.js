@@ -131,30 +131,12 @@ ChunksLoader.prototype.chunksCount = function (max, min) {
 };
 
 /**
- * Prichadzajuce eventy zo sluzby je potrebne spracovat.
- * @param events
- */
-ChunksLoader.prototype.prepareEvents = function (events) {
-    var item;
-    var service = gGlobals.service;
-    for (var i = 0; i < events.length; i++) {
-        item = events[i];
-        if (item.start != null) {
-            item.start = service.convertDate(parseInt(item.start));
-        }
-        if (item.end != null) {
-            item.end = service.convertDate(parseInt(item.end));
-        }
-    }
-};
-
-/**
  * Data prichadzaju vo forme zoznamu eventov pre developera.
  * tzv pride serializovana List<TimelineEvent>
  * @param events
  */
 ChunksLoader.prototype.acceptData = function (events) {
-    this.prepareEvents(events);
+    gGlobals.service.convertDates(events);
     gGlobals.timeline.panel.addItems(events, true);
     gGlobals.redraw();
 };

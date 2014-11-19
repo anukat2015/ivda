@@ -252,18 +252,20 @@ GraphPanel.prototype.loadStaticsData = function () {
     $.ajax({
         url: gGlobals.service.getStatsURL(new Date("2014-01-01T00:00:00.000"), new Date("2014-10-01T00:00:00.000"), developer, "count", "DAY"),
         success: function (data, textStatus, jqXHR) {
-            var histogram_graph = new GraphData();
-            histogram_graph.createGroup2('events', 'Count of events | Per day');
-            instance.graphs.countEventsPerDay.graph.setGroups(histogram_graph.groups);
+            gGlobals.service.convertDates(data);
+            var info = new GraphData();
+            info.createGroup2('events', 'Count of events | Per day');
+            instance.graphs.countEventsPerDay.graph.setGroups(info.groups);
             instance.graphs.countEventsPerDay.graph.setItems(data);
             instance.graphs.countEventsPerDay.graph.redraw();
         }});
     $.ajax({
         url: gGlobals.service.getStatsURL(new Date("2014-08-03T00:00:00.000"), new Date("2014-08-07T00:00:00.000"), developer, "count", "HOUR"),
         success: function (data, textStatus, jqXHR) {
-            var histogram_graph = new GraphData();
-            histogram_graph.createGroup2('events', 'Count of events | Per hour');
-            instance.graphs.countEventsPerHour.graph.setGroups(histogram_graph.groups);
+            gGlobals.service.convertDates(data);
+            var info = new GraphData();
+            info.createGroup2('events', 'Count of events | Per hour');
+            instance.graphs.countEventsPerHour.graph.setGroups(info.groups);
             instance.graphs.countEventsPerHour.graph.setItems(data);
             instance.graphs.countEventsPerHour.graph.redraw();
         }});
@@ -271,9 +273,10 @@ GraphPanel.prototype.loadStaticsData = function () {
     $.ajax({
         url: gGlobals.service.getStatsURL(new Date("2014-08-02T00:00:00.000"), new Date("2014-08-09T00:00:00.000"), developer, "loc", "PER_VALUE"),
         success: function (data, textStatus, jqXHR) {
-            histogram_graph = new GraphData();
-            histogram_graph.createGroup2('events', 'Changes of source codes | LOC per File');
-            instance.graphs.locChangesGlobal.graph.setGroups(histogram_graph.groups);
+            gGlobals.service.convertDates(data);
+            var info = new GraphData();
+            info.createGroup2('events', 'Changes of source codes | LOC per File');
+            instance.graphs.locChangesGlobal.graph.setGroups(info.groups);
             instance.graphs.locChangesGlobal.graph.setItems(data);
             instance.graphs.locChangesGlobal.graph.redraw();
         }});
@@ -310,10 +313,11 @@ GraphPanel.prototype.loadStats = function () {
     $.ajax({
         url: gGlobals.service.getStatsURL(new Date(range.start), new Date(range.end), developer, "activity", "DAY"),
         success: function (data, textStatus, jqXHR) {
-            var histogram_graph = new GraphData();
-            histogram_graph.createGroup2('Web', 'Web activities | Unique domains per duration');
-            histogram_graph.createGroup2('Ide', 'Ide activities | Canged LOC per duration');
-            instance.graphs.activityHistogram.graph.setGroups(histogram_graph.groups);
+            gGlobals.service.convertDates(data);
+            var info = new GraphData();
+            info.createGroup2('Web', 'Web activities | Unique domains per duration');
+            info.createGroup2('Ide', 'Ide activities | Changed LOC per duration');
+            instance.graphs.activityHistogram.graph.setGroups(info.groups);
             instance.graphs.activityHistogram.graph.setItems(data);
             instance.graphs.activityHistogram.graph.redraw();
         }});

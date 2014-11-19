@@ -23,8 +23,10 @@ import java.util.concurrent.TimeUnit;
 public final class DateUtils {
     private static final ThreadLocal<DateFormat> FORMATTER = new ThreadLocal<DateFormat>() {
         @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        protected DateFormat initialValue() {
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            //format.setTimeZone( java.util.TimeZone.getTimeZone("UTC") );
+            return format;
         }
     };
 

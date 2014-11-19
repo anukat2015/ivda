@@ -90,7 +90,7 @@ public class BankOfChunks {
                     if (truncated) {
                         touched.add(file);
                     }
-                    break;
+                    continue; //prvky nemusia byt spravne zoradene
                 }
                 if (itemStart.compareTo(requestStart) == 0 || DateUtils.isOverlaping(itemStart, itemEnd, requestStart, requestEnd)) {
                     touched.add(file);
@@ -126,8 +126,9 @@ public class BankOfChunks {
         private IterateEvents(Date start, Date end) {
             this.start = start;
             this.end = end;
-            List<File> files = null;
-            files = loadChunks(start, end);
+            List<File> files = loadChunks(start, end);
+            Collections.sort(files);
+            //LOGGER.info(files);
             savedObjects = new IterateOutputStreamForFiles(files);
         }
 

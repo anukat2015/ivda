@@ -7,8 +7,8 @@ function IvdaService() {
     this.getTimelineURL = function (start, end, developer) {
         var restURL = "datatable?";
         var parameters = $.param({
-            start: this.convertDate(start.getTime()).toISOString(),
-            end: this.convertDate(end.getTime()).toISOString(),
+            start: start.toISOString(),
+            end: end.toISOString(),
             developer: developer
         });
         return restURL + parameters;
@@ -17,8 +17,8 @@ function IvdaService() {
     this.getProcessesURL = function (start, end, developer) {
         var restURL = "processes?";
         var parameters = $.param({
-            start: this.convertDate(start.getTime()).toISOString(),
-            end: this.convertDate(end.getTime()).toISOString(),
+            start: start.toISOString(),
+            end: end.toISOString(),
             developer: developer
         });
         return restURL + parameters;
@@ -56,8 +56,8 @@ function IvdaService() {
         // Dopis dalsie udaje do requestu
         var restURL = "stats?";
         var parameters = $.param({
-            start: this.convertDate(roundedStart.getTime()).toISOString(),
-            end: this.convertDate(roundedEnd.getTime()).toISOString(),
+            start: roundedStart.toISOString(),
+            end: roundedEnd.toISOString(),
             developer: developer,
             attribute: attribute,
             granularity: granularity
@@ -70,7 +70,24 @@ function IvdaService() {
     };
 
     this.convertDate = function (date) {
-        return new Date(date);  // local to utc time
+        return new Date(date + this.timezoneOffset);  // local to utc time
+    };
+
+    /**
+     * Prichadzajuce eventy zo sluzby je potrebne spracovat.
+     * @param events
+     */
+    this.convertDates = function (events) {
+        var item;
+        for (var i = 0; i < events.length; i++) {
+            item = events[i];
+            if (item.start != null) {
+                item.start = this.convertDate(item.start);
+            }
+            if (item.end != null) {
+                item.end = this.convertDate(item.end);
+            }
+        }
     };
 }
 
