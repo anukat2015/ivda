@@ -44,9 +44,9 @@
     <script type="text/javascript" src="js/grouping/DivideByTimeAndType.js"></script>
     <script type="text/javascript" src="js/grouping/ProcessAsGroup.js"></script>
 
-    <script type="text/javascript" src="js/Util.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="js/Preloader.js"></script>
-    <script type="text/javascript" src="js/Timeline.js"></script>
+    <script type="text/javascript" src="js/timeline.js"></script>
     <script type="text/javascript" src="js/ChartPanel.js"></script>
     <script type="text/javascript" src="js/GraphData.js"></script>
     <script type="text/javascript" src="js/GraphPanel.js"></script>
