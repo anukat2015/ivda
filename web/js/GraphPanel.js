@@ -315,7 +315,8 @@ GraphPanel.prototype.loadStats = function () {
             gGlobals.service.convertDates(data);
             var info = new GraphData();
             info.createGroup2('Web', 'Web activities | Unique domains per duration');
-            info.createGroupRight('Ide', 'Ide activities | Changed LOC per duration');
+            info.createGroup2('Ide', 'Ide activities | Changed LOC per duration');
+            //info.createGroupRight('Ide', 'Ide activities | Changed LOC per duration');
             instance.graphs.activityHistogram = instance.createDynamicHistogram('graph-activityHistogram', data, info.groups)
         }});
 };
