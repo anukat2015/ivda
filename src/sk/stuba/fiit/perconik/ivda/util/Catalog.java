@@ -111,7 +111,8 @@ public final class Catalog implements Serializable {
     }
 
     public enum Web implements Serializable {
-        DEVELOPER("developer.txt");
+        WORK("work.txt"),
+        PERSONAL("personal.txt");
 
         Catalog list;
 

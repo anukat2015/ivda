@@ -10,8 +10,6 @@ import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -85,17 +83,12 @@ public class BaseDividing implements IDividing {
         if (!(actual instanceof WebEventDto)) {
             return true; // druhy prvok je iny typ
         }
-        String url1 = ((WebEventDto) first).getUrl();
-        String url2 = ((WebEventDto) actual).getUrl();
-        try {
-            if (url1 == null || url2 == null) {
-                return true;
-            }
-            url1 = new URL(url1).getHost();
-            url2 = new URL(url2).getHost();
-        } catch (MalformedURLException e) {
-            // url1 ponechaj take ake je, ked je ine ako url2 rozdeli to samo, co je pravdepodobne, inak mohol byt aj na rovnakej neznamen stranke
+        String url1 = ((WebEventDto) first).getDomain();
+        String url2 = ((WebEventDto) actual).getDomain();
+        if (url1 == null || url2 == null) {
+            return true;
         }
+        // url1 ponechaj take ake je, ked je ine ako url2 rozdeli to samo, co je pravdepodobne, inak mohol byt aj na rovnakej neznamen stranke
         return group.size() > 1 && !url1.equals(url2); // tzv prida event na zaciatok a na konci bude druhy event
     }
 }
