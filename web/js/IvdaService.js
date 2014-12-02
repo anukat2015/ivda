@@ -60,7 +60,8 @@ function IvdaService() {
             end: roundedEnd.toISOString(),
             developer: developer,
             attribute: attribute,
-            granularity: granularity
+            granularity: granularity,
+            classify: 1
         });
         return restURL + parameters;
     };

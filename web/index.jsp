@@ -165,6 +165,10 @@
     <h1>Duration of spending at domain | Minutes per domain</h1>
 
     <div id="graph-webDuration"></div>
+
+    <h1>Scatter graph| Pouzivanie prehliadaca voci prepisovaniu kodu</h1>
+
+    <div id="graph-scatter"></div>
 </div>
 <div id="loader-wrapper">
     <div id="loader"></div>

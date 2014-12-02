@@ -1,3 +1,4 @@
+
 /**
  * Created by Seky on 22. 10. 2014.
  */
@@ -13,13 +14,39 @@ GraphPanel = function () {
         locChangesGlobal: this.createDynamicHistogram2('graph-locChangesGlobal'),
         locChangesLocal: this.createDynamicHistogram2('graph-locChangesLocal'),
         activityHistogram: this.createDynamicHistogram2('graph-activityHistogram'),
-        activities: this.createTimeline('graph-activities')
+        activities: this.createTimeline('graph-activities'),
+        scatter: this.scatterChart("graph-scatter")
     };
 
     // Zatial schovaj
     //this.hide();
     console.log("graph created");
 };
+
+GraphPanel.prototype.scatterChart = function(name) {
+    // https://google-developers.appspot.com/chart/interactive/docs/gallery/scatterchart
+    var data = google.visualization.arrayToDataTable([
+        ['Age', 'Weight'],
+        [ 8, 12],
+        [ 4, 5.5],
+        [ 11, 14],
+        [ 4, 5],
+        [ 3, 3.5],
+        [ 6.5, 7]
+    ]);
+
+    var options = {
+        title: 'Age vs. Weight comparison',
+        hAxis: {title: 'Age', minValue: 0, maxValue: 15},
+        vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
+        legend: 'none'
+    };
+
+    var chart = new google.visualization.ScatterChart(document.getElementById(name));
+    chart.draw(data, options);
+    return chart;
+};
+
 GraphPanel.prototype.createDynamicHistogram2 = function (name) {
     return this.createDynamicHistogram(name, new vis.DataSet(), new vis.DataSet());
 };
@@ -37,7 +64,8 @@ GraphPanel.prototype.createDynamicHistogram = function (name, items, groups) {
         barChart: {width: 1, align: 'center'}, // align: left, center, right
         drawPoints: true,
         dataAxis: {
-            icons: false
+            icons: false,
+            popisY: "Pocet"
         },
         orientation: 'top'
     };
@@ -293,7 +321,8 @@ GraphPanel.prototype.loadStaticsData = function () {
             });
             var options = {
                 title: 'Duration of visit | Minutes per domain',
-                height: 600
+                height: 600,
+                vAxis: {title: 'Minutes'}
                 //orientation: 'vertical'
             };
             console.log(gdata);
@@ -378,3 +407,4 @@ GraphPanel.prototype.graphAddGroups = function (grouping) {
     console.log(activities);
     return activities;
 };
+
