@@ -81,10 +81,13 @@ html, body {
 }
 .vis.timeline .graphGroup0 {
     fill: #97b0f8;
+    stroke: #97b0f8;
 }
 .vis.timeline .graphGroupWeb {
     fill: #97b0f8;
+    stroke: #97b0f8;
 }
 .vis.timeline .graphGroupIde {
     fill: #FFA500;
+    stroke: #FFA500;
 }

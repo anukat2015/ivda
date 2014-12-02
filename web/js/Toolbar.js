@@ -40,15 +40,16 @@ function Toolbar() {
             return { name: x };
         });
         this.developerPanel.selectize({
-            plugins: ['remove_button'], // , 'drag_drop'
-            maxItems: 1,
-            delimiter: ',',
-            persist: false,
+            //plugins: ['remove_button'], // , 'drag_drop'
+            //maxItems: 1,
+            //delimiter: ',',
+            //persist: false,
             valueField: 'name',
             labelField: 'name',
             searchField: 'name',
-            createOnBlur: true,
-            create: false,
+            //createOnBlur: true,
+            //create: false,
+            create: true,
             options: items,
             onChange: onchange
         });
