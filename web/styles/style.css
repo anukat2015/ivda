@@ -10,7 +10,7 @@ html, body {
     padding: 0px;
 }
 
-#leftBar {
+.leftBar {
     float: left;
     width: 75%;
 }
@@ -20,7 +20,7 @@ html, body {
     clear: both;
 }
 
-#rightBar {
+.rightBar {
     display: block;
     float: right;
     width: 25%;
@@ -30,18 +30,18 @@ html, body {
     display: none;
 }
 
-#legenda {
+.legenda {
     padding: 15px;
 }
 
-#legenda .title {
+.legenda .title {
     font-style: normal;
     font-size: 22pt;
     font-weight: bold;
     text-align: left;
 }
 
-#legenda .posun {
+.legenda .posun {
     margin-bottom: 30%;
 }
 
@@ -51,12 +51,12 @@ html, body {
     line-height: 20px;
 }
 
-#legenda table p {
+.legenda table p {
     padding-left: 5px;
 }
 
 .selectize-control {
-    min-width: 25%;
+    min-width: 25px;
     display: inline-flex;
     padding-left: 10px;
     padding-right: 10px;
@@ -91,3 +91,17 @@ html, body {
     fill: #FFA500;
     stroke: #FFA500;
 }
+
+#trash {
+    position: fixed;
+    text-align: center;
+    font-weight: bold;
+    font-size: 24px;
+    width: 100%;
+    margin: 0 auto;
+    border-color: #000;
+    border-style: dashed;
+    border-width: 2px;
+    height: 50px;
+}
+

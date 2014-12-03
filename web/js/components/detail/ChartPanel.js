@@ -1,25 +1,29 @@
 // https://developers.google.com/chart/interactive/docs/reference
 
-ChartPanel = function () {
-    this.activityChart = new google.visualization.PieChart(document.getElementById('pieChart1'));
+ChartPanel = function (component) {
+    this.parent = component;
+    this.asynTask = undefined;
+};
+
+ChartPanel.prototype.init = function () {
+    this.activityChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart1')[0]);
     this.activityOptions = {
         title: 'Developer Activities',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
-    this.visibleChart = new google.visualization.PieChart(document.getElementById('pieChart2'));
+    this.visibleChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart2')[0]);
     this.visibleOptions = {
         title: 'Chart of visible objects',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
-    this.metadataChart = new google.visualization.PieChart(document.getElementById('pieChart3'));
+    this.metadataChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart3')[0]);
     this.metadataOptions = {
         title: 'Chart of changed lines',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
-    this.asynTask = undefined;
     this.hideCharts();
 };
 
@@ -29,7 +33,7 @@ ChartPanel.prototype.computeStats = function () {
     var typesMap = {};
     var linesMap = {};
     // getVisibleItems()
-    gGlobals.timeline.panel.getVisibleChartItems(function (index, item) {
+    this.parent.diagram.getVisibleChartItems(function (index, item) {
 
         for (var i = 0; i < labels.length; i++) {
             var label = labels[i];
@@ -69,8 +73,8 @@ ChartPanel.prototype.computeStats = function () {
 
 ChartPanel.prototype.computeLabels = function () {
     //gGlobals.timeline.timeAxis.step
-    var options = gGlobals.timeline.panel.options; // nastavenia neupravuj
-    var step = jQuery.extend(true, {}, gGlobals.timeline.panel.step); // deep copy celeho objektu
+    var options = this.parent.diagram.options; // nastavenia neupravuj
+    var step = jQuery.extend(true, {}, this.parent.diagram.step); // deep copy celeho objektu
     step.start();
     var max = 0;
     var dates = [];
@@ -90,18 +94,14 @@ ChartPanel.prototype.computeLabels = function () {
 };
 
 ChartPanel.prototype.hideCharts = function () {
-    $('#pieChart1').hide();
-    $('#pieChart2').hide();
-    $('#pieChart3').hide();
-    $('#legenda').show();
+    this.parent.find('.charts').hide();
+    this.parent.find('.legenda').show("highlight");
     this.visibleCharts = false;
 };
 
 ChartPanel.prototype.showCharts = function () {
-    $('#pieChart1').show();
-    $('#pieChart2').show();
-    $('#pieChart3').show();
-    $('#legenda').hide();
+    this.parent.find('.charts').show();
+    this.parent.find('.legenda').hide();
     this.visibleCharts = true;
 };
 

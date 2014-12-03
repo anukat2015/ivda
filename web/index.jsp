@@ -16,13 +16,15 @@
     <link rel="stylesheet" type="text/css" href="libs/qtip2/jquery.qtip.css"/>
     <link rel="stylesheet" type="text/css" href="libs/datetimepicker/jquery.datetimepicker.css"/>
     <link rel="stylesheet" type="text/css" href="libs/selectize.js/dist/css/selectize.default.css"/>
+    <link rel="stylesheet" type="text/css" href="libs/jquery-ui/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="styles/loader.css"/>
     <link rel="stylesheet" type="text/css" href="styles/timeline.css"/>
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
 
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
+    <script type="text/javascript" src="libs/jquery-ui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="libs/qtip2/jquery.qtip.js"></script>
     <script type="text/javascript" src="libs/datetimepicker/jquery.datetimepicker.js"></script>
     <script type="text/javascript" src="libs/selectize.js/dist/js/standalone/selectize.js"></script>
@@ -40,17 +42,17 @@
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/StepDate.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/StepDate.js"></script>
 
-    <script type="text/javascript" src="js/grouping/BoundedGroup.js"></script>
-    <script type="text/javascript" src="js/grouping/DivideByTimeAndType.js"></script>
-    <script type="text/javascript" src="js/grouping/ProcessAsGroup.js"></script>
+    <script type="text/javascript" src="js/components/detail/ChartPanel.js"></script>
+    <script type="text/javascript" src="js/components/detail/ChunksLoader.js"></script>
+    <script type="text/javascript" src="js/components/detail/DetailComponent.js"></script>
+    <script type="text/javascript" src="js/components/DiagramComponent.js"></script>
+    <script type="text/javascript" src="js/components/GoogleChartComponent.js"></script>
+    <script type="text/javascript" src="js/components/VisComponent.js"></script>
+    <script type="text/javascript" src="js/components/DiagramManager.js"></script>
 
     <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="js/Preloader.js"></script>
-    <script type="text/javascript" src="js/timeline.js"></script>
-    <script type="text/javascript" src="js/ChartPanel.js"></script>
     <script type="text/javascript" src="js/GraphData.js"></script>
-    <script type="text/javascript" src="js/GraphPanel.js"></script>
-    <script type="text/javascript" src="js/ChunksLoader.js"></script>
     <script type="text/javascript" src="js/Toolbar.js"></script>
     <script type="text/javascript" src="js/IvdaService.js"></script>
     <script type="text/javascript" src="js/Globals.js"></script>
@@ -64,112 +66,20 @@
 
 <body onresize="onReSize();">
 <div id="toolbar">
-    Start time: <input type="text" id="startDate" value=""/>
-    End time: <input type="text" id="endDate" value=""/>
-    <input type="button" id="setRange" value="Set" onclick="onSetTime();"/>
-    <input type="button" id="setCurrentTime" value="Current time" onclick="onSetCurrentTime();"/>
-    <input type="text" id="select-links" class="demo-default" value="" placeholder="Pick some developer..."/>
+    <input type="text" id="t-developer" value="" placeholder="Pick some developer..."/>
+    <label for="t-startDate">Start time:</label>
+    <input type="text" id="t-startDate" value=""/>
+    <label for="t-endDate">End time:</label>
+    <input type="text" id="t-endDate" value=""/>
+    <input type="button" id="t-currentTime" value="Current time"/>
+    <input type="text" id="t-feature" value="" placeholder="Choose tracked feature"/>
+    <input type="text" id="t-granularity" value="Choose granularity"/>
+    <input type="radio" id="t-lockMovement" value="1" checked>
+    <label for="t-lockMovement">Lock movement</label>
+    <input type="submit" id="t-submit" value="Create">
 </div>
-
-<div id="leftBar">
-    <div class="mytimeline" id="mytimeline"></div>
-</div>
-<div id="rightBar">
-    <div id="pieChart1"></div>
-    <div id="pieChart2"></div>
-    <div id="pieChart3"></div>
-    <div id="legenda">
-        <div class="title posun">Nezobrazuju sa ziadne aktivity.</div>
-        <div class="title posun">Preto si vyber developera alebo sa posun na casovej osi.</div>
-        <div class="title">Snaz sa identifikovat tieto aktivity:</div>
-        <table width="100%" align="center">
-            <tr>
-                <td>
-                    <div class="timeline-event timeline-event-circle cWeb">
-                        <div class="timeline-event-content fixed-size">Web</div>
-                    </div>
-                </td>
-                <td>
-                    <p>Udalost vo webovom prehliadaci.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="timeline-event timeline-event-circle cIde">
-                        <div class="timeline-event-content fixed-size">Ide</div>
-                    </div>
-                </td>
-                <td>
-                    <p>Udalost vo vyvojom prostredi.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="timeline-event timeline-event-circle cUnkown">
-                        <div class="timeline-event-content fixed-size">Unknown</div>
-                    </div>
-                </td>
-                <td>
-                    <p>Neznama udalost.</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="timeline-event timeline-event-circle timeline-event-cluster ui-widget-header">
-                        <div class="timeline-event-content fixed-size">46</div>
-                    </div>
-                </td>
-                <td>
-                    <p>Aktivita reprezentuje skupinu udalosti.</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-<div class="clear"></div>
-<div id="datatable"></div>
-
-<div>
-    <h1>Count of events | Per day</h1>
-
-    <div class="mytimeline" id="graph-countEventsPerDay"></div>
-
-    <h1>Count of events | Per hour</h1>
-
-    <div class="mytimeline" id="graph-countEventsPerHour"></div>
-
-    <h1>Changes of source codes | LOC Per File | Global</h1>
-
-    <div class="mytimeline" id="graph-locChangesGlobal"></div>
-
-    <h1>Changes of source codes | LOC Per File | Local</h1>
-
-    <div class="mytimeline" id="graph-locChangesLocal"></div>
-
-    <h1>Activity dynamic-range-histogram</h1>
-
-    <div class="mytimeline" id="graph-activityHistogram"></div>
-
-    <h1>Activities from local data | Duration of activity</h1>
-
-    <div id="graph-activities"></div>
-
-    <h1>Files modifications | Counts per file</h1>
-
-    <div id="graph-fileModifications"></div>
-
-    <h1>Domain visits | Count per domain</h1>
-
-    <div id="graph-domainVisits"></div>
-
-    <h1>Duration of spending at domain | Minutes per domain</h1>
-
-    <div id="graph-webDuration"></div>
-
-    <h1>Scatter graph| Pouzivanie prehliadaca voci prepisovaniu kodu</h1>
-
-    <div id="graph-scatter"></div>
-</div>
+<div id="trash" style="display: none"> </div>
+<div id="graphs"> </div>
 <div id="loader-wrapper">
     <div id="loader"></div>
 </div>
@@ -177,3 +87,5 @@
 
 </body>
 </html>
+
+

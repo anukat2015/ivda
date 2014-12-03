@@ -35,5 +35,4 @@ function GraphData() {
     this.isEmpty = function () {
         return $.isEmptyObject(this.items._data);
     };
-
 }

@@ -4,14 +4,13 @@
  * Eventy v skupine su teda naraz stiahnute, vytvorene a vymazane.
  * @constructor
  */
-ChunksLoader = function () {
+ChunksLoader = function (component) {
+    this.parent = component;
     this.CHUNK_SIZE = (60 * 1000 * 60 * 24); // cely den
-
     this.actualMin = undefined;
     this.actualMax = undefined;
     this.finisherCounts = -1;
     this.finisherCallback = undefined;
-    this.developer = undefined;
 };
 
 /**
@@ -40,7 +39,7 @@ ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
 ChunksLoader.prototype.deleteByTime = function (start, end) {
     //console.log("deleteItems " + new Date(start).toString() + " " + new Date(end).toString());
     // Vymaz eventy z Timelinu
-    var changed = gGlobals.timeline.panel.deleteItems(start, end);
+    var changed = this.parent.diagram.deleteItems(start, end);
     //console.log("deleted " + changed);
 };
 
@@ -110,7 +109,7 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
     var instance = this;
     $.ajax({
         dataType: "json",
-        url: gGlobals.service.getTimelineURL(new Date(start), new Date(end), this.developer),
+        url: gGlobals.service.getTimelineURL(new Date(start), new Date(end), this.parent.attributes.developer),
         success: function (data, textStatus, jqXHR) {
             // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
             // Alebo prisla neskoro a hranice uz su zmenene ..
@@ -136,30 +135,7 @@ ChunksLoader.prototype.chunksCount = function (max, min) {
  * @param events
  */
 ChunksLoader.prototype.acceptData = function (events) {
-    gGlobals.service.convertDates(events);
-    gGlobals.timeline.panel.addItems(events, true);
-    gGlobals.redraw();
-};
-
-/**
- * Handler, ktory zachytava zmenu developerov.
- * Reaguj na zmenu developerov.
- */
-ChunksLoader.prototype.checkDeveloper = function (actual) {
-    var instance = gGlobals.loader;
-    console.log(actual);
-    if (actual == instance.developer) {
-        return;
-    }
-
-    instance.developer = actual;
-    gGlobals.timeline.panel.deleteAllItems();
-    gGlobals.graph.loadStaticsData();
-    gGlobals.redraw();
-
-    var range = gGlobals.timeline.panel.getVisibleChartRange();
-    instance.loadRange(range.start, range.end, function () {
-        console.log("finished loadRange");
-        gGlobals.redraw();
-    });
+    gGlobals.service._convertDates(events);
+    this.parent.diagram.addItems(events, true);
+    this.parent.diagram.redraw();
 };

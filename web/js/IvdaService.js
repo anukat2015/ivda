@@ -14,63 +14,34 @@ function IvdaService() {
         return restURL + parameters;
     };
 
-    this.getProcessesURL = function (start, end, developer) {
-        var restURL = "processes?";
-        var parameters = $.param({
-            start: start.toISOString(),
-            end: end.toISOString(),
-            developer: developer
-        });
-        return restURL + parameters;
-    };
-
-    this.getStatsURL = function (start, end, developer, attribute, granularity) {
-        // Zaokruhli datumy
-        var chunkSize = undefined;
-        switch (granularity) {
-            case "DAY":
-            {
-                chunkSize = 1000 * 60 * 60 * 24;
-                break;
-            }
-            case "HOUR":
-            {
-                chunkSize = 1000 * 60 * 60;
-                break;
-            }
-            default:
-            {
-            }
-        }
-
-        // Su zaokruhlene datumy?
-        var roundedStart, roundedEnd;
-        if (chunkSize != undefined) {
-            roundedStart = start.floor(chunkSize);
-            roundedEnd = end.ceil(chunkSize);
-        } else {
-            roundedStart = start;
-            roundedEnd = end;
-        }
-
+    this.getData = function (name, params, callback) {
         // Dopis dalsie udaje do requestu
-        var restURL = "stats?";
-        var parameters = $.param({
-            start: roundedStart.toISOString(),
-            end: roundedEnd.toISOString(),
-            developer: developer,
-            attribute: attribute,
-            granularity: granularity,
-            classify: 1
-        });
-        return restURL + parameters;
+        var p = {};
+        p.start = params.range.start.toISOString();
+        p.end = params.range.end.toISOString();
+        p.developer = params.developer;
+        p.attribute = name;
+        p.granularity = params.granularity;
+        p.classify = 1;
+
+        var instance = this;
+        $.ajax({
+            url: "stats?" + $.param(p),
+            success: function (data, textStatus, jqXHR) {
+                instance.convertDates(data);
+                callback(data);
+            }});
     };
 
-    this.getDevelopersURL = function () {
-        return "developers";
+    this.getDevelopers = function (callback) {
+        $.ajax({
+            url: "developers?",
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            }});
     };
 
-    this.convertDate = function (date) {
+    this._convertDate = function (date) {
         return new Date(date + this.timezoneOffset);  // local to utc time
     };
 
@@ -78,7 +49,7 @@ function IvdaService() {
      * Prichadzajuce eventy zo sluzby je potrebne spracovat.
      * @param events
      */
-    this.convertDates = function (events) {
+    this._convertDates = function (events) {
         var item;
         for (var i = 0; i < events.length; i++) {
             item = events[i];
