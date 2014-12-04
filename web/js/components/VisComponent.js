@@ -8,19 +8,35 @@ VisComponent = function () {
 
 VisComponent.prototype = new DiagramComponent();
 
-VisComponent.prototype._buildDom = function(manager) {
-    DiagramComponent.prototype.buildDom(manager);
-    this.dom.addClassName("mytimeline") ;
+VisComponent.prototype._buildDom = function () {
+    DiagramComponent.prototype._buildDom.call(this);
+    this.dom.addClass("mytimeline");
 };
 
 VisComponent.prototype.setRange = function (range) {
     this.diagram.setOptions(range);
-    //this.diagram.redraw();
+    this.attributes.range = range;
+    this._updateDescription();
 };
 
 VisComponent.prototype.setData = function (data) {
     this.diagram.setItems(data);
+    this.diagram.fit();
     this.diagram.redraw();
+};
+
+VisComponent.prototype.destroy = function () {
+    this.diagram.clear();
+    this.diagram.destroy();
+    DiagramComponent.prototype.destroy.call(this);
+};
+
+VisComponent.prototype._prepareDiagram = function () {
+    var instance = this;
+    this.diagram.on('rangechanged', function (properties) {
+        instance.onMove(properties);
+    });
+    this.setRange(this.attributes.range);
 };
 
 VisComponent.prototype._createTimeline = function () {
@@ -36,6 +52,7 @@ VisComponent.prototype._createTimeline = function () {
     };
 
     this.diagram = new vis.Timeline(this.getDiagramElement(), new vis.DataSet(), options);
+    this._prepareDiagram();
 };
 
 VisComponent.prototype._registerNavigationBar = function () {
@@ -53,7 +70,6 @@ VisComponent.prototype._registerNavigationBar = function () {
     </div>');
 
 };
-
 
 VisComponent.prototype._createDynamicHistogram = function (items, groups) {
     var options = {
@@ -74,18 +90,24 @@ VisComponent.prototype._createDynamicHistogram = function (items, groups) {
     };
 
     this.diagram = new vis.Graph2d(this.getDiagramElement(), items, options, groups);
+    this._prepareDiagram();
 };
+
+VisComponent.prototype.init = function (attributes, manager) {
+    DiagramComponent.prototype.init.call(this, attributes, manager);
+};
+
 
 // ----- Pocet eventov
 CountEventsCom = function () {
     VisComponent.call();
-    this.title  = "Count of events";
+    this.title = "Count of events";
     this.name = "count";
 };
 CountEventsCom.prototype = new VisComponent();
 
-CountEventsCom.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+CountEventsCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
     info.createGroup2('events', 'Count of events | Per day');
@@ -96,13 +118,13 @@ CountEventsCom.prototype.init = function(attributes, manager) {
 // ----- Pocet eventov divided
 CountEventsDividedCom = function () {
     VisComponent.call();
-    this.title  = "Count of events divided";
+    this.title = "Count of events divided";
     this.name = "countDivided";
 };
 CountEventsDividedCom.prototype = new VisComponent();
 
-CountEventsDividedCom.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+CountEventsDividedCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
     info.createGroup2('events', 'Count of events divided');
@@ -114,13 +136,13 @@ CountEventsDividedCom.prototype.init = function(attributes, manager) {
 // ----- Changes of source codes
 CodeChangesCom = function () {
     VisComponent.call();
-    this.title  = "Changes of source codes";
+    this.title = "Changes of source codes";
     this.name = "loc";
 };
-CodeChanges.prototype = new VisComponent();
+CodeChangesCom.prototype = new VisComponent();
 
-CodeChanges.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+CodeChangesCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
     info.createGroup2('changedInFuture', 'Changes of files in future');
@@ -134,13 +156,13 @@ CodeChanges.prototype.init = function(attributes, manager) {
 // ----- Activity dynamic-range-histogram
 ActivityDynamicCom = function () {
     VisComponent.call();
-    this.title  = "Activity dynamic-range-histogram";
+    this.title = "Activity dynamic-range-histogram";
     this.name = "activityHistogram";
 };
 ActivityDynamicCom.prototype = new VisComponent();
 
-ActivityDynamicCom.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+ActivityDynamicCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
     info.createGroup2('Web', 'Web activities | Unique domains per duration');
@@ -153,13 +175,13 @@ ActivityDynamicCom.prototype.init = function(attributes, manager) {
 // ----- Activity detail
 ActivityDetailCom = function () {
     VisComponent.call();
-    this.title  = "Activity dynamic-range-histogram";
+    this.title = "Activity detail";
     this.name = "activityDetail";
 };
 ActivityDetailCom.prototype = new VisComponent();
 
-ActivityDetailCom.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+ActivityDetailCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createTimeline();
     var info = new GraphData();
     info.groups.add({id: 'A', content: 'Activity', className: 'graphGroupIde', drawPoints: {enabled: false}});
@@ -171,13 +193,13 @@ ActivityDetailCom.prototype.init = function(attributes, manager) {
 // ----- Processes detail
 ProcessesDetailCom = function () {
     VisComponent.call();
-    this.title  = "Processes activity";
+    this.title = "Processes activity";
     this.name = "processDetail";
 };
 ProcessesDetailCom.prototype = new VisComponent();
 
-ProcessesDetailCom.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+ProcessesDetailCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
     this._createTimeline();
     var info = new GraphData();
     this.diagram.setGroups(info.groups);

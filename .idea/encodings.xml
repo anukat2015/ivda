@@ -2,7 +2,6 @@
 <project version="4">
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$/conf/AstRcsWcfSvc.svc.wsdl" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../perconik-uaca/useractivity.app" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../perconik.github.io" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/../perconik/com.gratex.perconik.services" charset="UTF-8" />
   </component>

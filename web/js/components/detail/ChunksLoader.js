@@ -9,8 +9,6 @@ ChunksLoader = function (component) {
     this.CHUNK_SIZE = (60 * 1000 * 60 * 24); // cely den
     this.actualMin = undefined;
     this.actualMax = undefined;
-    this.finisherCounts = -1;
-    this.finisherCallback = undefined;
 };
 
 /**
@@ -19,15 +17,13 @@ ChunksLoader = function (component) {
  * @param end
  * @param finishCallback
  */
-ChunksLoader.prototype.loadRange = function (start, end, finishCallback) {
+ChunksLoader.prototype.loadRange = function (start, end) {
     // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
     // Statistiky sa mu vypocitaju na zaklade prvkov, ktore su viditelne
     this.actualMin = start.floor(this.CHUNK_SIZE);
     this.actualMax = end.ceil(this.CHUNK_SIZE);
 
     var chunks = this.chunksCount(this.actualMax, this.actualMin);
-    this.finisherCallback = finishCallback;
-    this.finisherCounts = chunks;
     this.loadChunks(this.actualMin, chunks);
 };
 
@@ -49,9 +45,6 @@ ChunksLoader.prototype.deleteByTime = function (start, end) {
  * @param end
  */
 ChunksLoader.prototype.onRangeChanged = function (start, end) {
-    if (this.developer == undefined) {
-        return;
-    }
     var chunked, newMin, newMax;
 
     // Vypocitaj offset pre lavu stranu
@@ -80,7 +73,7 @@ ChunksLoader.prototype.onRangeChanged = function (start, end) {
         this.actualMax = newMax;
     }
 
-    console.log("Nove hranice " + this.actualMin.toString() + " " +this.actualMax.toString());
+    console.log("Nove hranice " + this.actualMin.toString() + " " + this.actualMax.toString());
 };
 
 /**
@@ -107,21 +100,12 @@ ChunksLoader.prototype.loadChunks = function (min, chunks) {
  */
 ChunksLoader.prototype.loadChunk = function (start, end) {
     var instance = this;
-    $.ajax({
-        dataType: "json",
-        url: gGlobals.service.getTimelineURL(new Date(start), new Date(end), this.parent.attributes.developer),
-        success: function (data, textStatus, jqXHR) {
-            // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
-            // Alebo prisla neskoro a hranice uz su zmenene ..
-            // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
-            //console.log("addItems " + data.getNumberOfRows());
-            instance.acceptData(data);
-        }
-    }).always(function () {
-        instance.finisherCounts--;
-        if (instance.finisherCounts === 0) {
-            instance.finisherCallback();
-        }
+    gGlobals.service.getTimeline(new Date(start), new Date(end), this.parent.attributes.developer, function (data) {
+        // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
+        // Alebo prisla neskoro a hranice uz su zmenene ..
+        // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
+        //console.log("addItems " + data.getNumberOfRows());
+        instance.acceptData(data);
     });
 };
 
@@ -135,6 +119,9 @@ ChunksLoader.prototype.chunksCount = function (max, min) {
  * @param events
  */
 ChunksLoader.prototype.acceptData = function (events) {
+    if(this.parent.diagram == undefined) {
+        return;
+    }
     gGlobals.service._convertDates(events);
     this.parent.diagram.addItems(events, true);
     this.parent.diagram.redraw();

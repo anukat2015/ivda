@@ -10,18 +10,17 @@ function Toolbar() {
     this.developerPanel = $('#t-developer');
     this.featurePanel = $('#t-feature');
     this.granularityPanel = $('#t-granularity');
+    this.lockButton = $("#t-lockMovement");
+    this.trashVisible = false;
 
     this.init = function () {
         // Stiahni mena vyvojarov
         var instance = this;
-        $.ajax({
-            url: gGlobals.service.getDevelopersURL(),
-            success: function (developers, textStatus, jqXHR) {
-                var data = developers.map(function (x) {
-                    return { name: x };
-                });
-                instance.setDeveloper(data);
-            }
+        gGlobals.service.getDevelopers(function (developers) {
+            var data = developers.map(function (x) {
+                return { name: x };
+            });
+            instance.setDeveloper(data);
         });
 
         // Priprav interaktivne datumy
@@ -45,39 +44,70 @@ function Toolbar() {
                 event.preventDefault();
                 instance.setTime2(new Date());
             });
-        $("t-lockMovement").button();
+        this.lockButton.button({
+            icons: {
+                primary: "ui-icon-locked"
+            }
+        }).click(function (event) {
+            var value = $(this).attr("value");
+            var icon;
+            if (value == "1") {
+                icon = {};
+                value = "0";
+                gGlobals.graphs.lockMove = false;
+            } else {
+                icon = { primary: "ui-icon-locked"};
+                value = "1";
+                gGlobals.graphs.lockMove = true;
+            }
+            instance.lockButton.button("option", "icons", icon);
+            $(this).attr("value", value);
+        });
 
         // Nastav hodnoty pre dropdown menu
         this.setTime2(new Date("2014-08-06T12:00:00.000"));
         this.setFeature(gGlobals.graphs.getGraphs());
-        this.setGranularity(["WEEK", "DAY", "HOUR", "MINUTE", "PER_VALUE"]);
+        var granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
+        this.setGranularity(granularities.map(function (x) {
+            return { name: x };
+        }));
 
 
         // Vybuduj kos
-        $( "#droppable" ).droppable({
-            tolerance: "touch",
-            drop: function( event, ui ) {
-                instance.trash.innerHTML = "TRASHED";
-                var id = ui.draggable.attr('id');
+        this.trash.droppable({
+            accept: ".component",
+            tolerance: "pointer",
+            drop: function (e, ui) {
+                var dropped = ui.draggable;
+                var id = dropped.attr('id');
                 gGlobals.graphs.destroy(id.substr(2));
             }
         });
     };
 
-    this.showTrash = function() {
-        this.trash.innerHTML = "MOVE HERE TO TRASH";
+    this.showTrash = function () {
+        if (this.trashVisible) return;
+        this.trash.text("MOVE HERE TO TRASH");
         this.dom.hide();
         this.trash.show("highlight");
+        this.trashVisible = true;
     };
 
-    this.hideTrash = function() {
+    this.hideTrash = function () {
+        if (!this.trashVisible) return;
         this.trash.hide();
         this.dom.show();
+        this.trashVisible = false;
     };
 
     this.createDiagram = function () {
         // Vytvor diagram
-        gGlobals.graphs.create(this.getDeveloper(), this.getFeature(), this.getTime(), this.getGranularity());
+        var atts = {
+            developer: this.getDeveloper(),
+            range: this.getTime(),
+            granularity: this.getGranularity()
+        };
+        gGlobals.graphs.create(this.getFeature(), atts);
     };
 
     this.setTime = function (start, end) {
@@ -109,9 +139,13 @@ function Toolbar() {
         return this.granularityPanel.val();
     };
 
-    this.setDeveloper = function (developers) {
+    this.setDeveloper = function (items) {
         this.developerPanel.selectize({
+            valueField: 'name',
+            labelField: 'name',
+            searchField: 'name',
             create: true,
+            maxItems: 1,
             options: items
         });
     };
@@ -121,14 +155,19 @@ function Toolbar() {
             valueField: 'id',
             labelField: 'name',
             searchField: 'name',
-            create: true,
+            create: false,
+            maxItems: 1,
             options: items
         });
     };
 
-    this.setGranularity = function (items, onchange) {
-        this.featurePanel.selectize({
-            create: true,
+    this.setGranularity = function (items) {
+        this.granularityPanel.selectize({
+            valueField: 'name',
+            labelField: 'name',
+            searchField: 'name',
+            create: false,
+            maxItems: 1,
             options: items
         });
     };

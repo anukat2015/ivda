@@ -42,12 +42,12 @@
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/StepDate.js"></script>
     <script type="text/javascript" src="libs/timeline-2.8.0/parts/StepDate.js"></script>
 
-    <script type="text/javascript" src="js/components/detail/ChartPanel.js"></script>
-    <script type="text/javascript" src="js/components/detail/ChunksLoader.js"></script>
-    <script type="text/javascript" src="js/components/detail/DetailComponent.js"></script>
     <script type="text/javascript" src="js/components/DiagramComponent.js"></script>
     <script type="text/javascript" src="js/components/GoogleChartComponent.js"></script>
     <script type="text/javascript" src="js/components/VisComponent.js"></script>
+    <script type="text/javascript" src="js/components/detail/ChunksLoader.js"></script>
+    <script type="text/javascript" src="js/components/detail/ChartPanel.js"></script>
+    <script type="text/javascript" src="js/components/detail/DetailComponent.js"></script>
     <script type="text/javascript" src="js/components/DiagramManager.js"></script>
 
     <script type="text/javascript" src="js/util.js"></script>
@@ -66,23 +66,38 @@
 
 <body onresize="onReSize();">
 <div id="toolbar">
-    <input type="text" id="t-developer" value="" placeholder="Pick some developer..."/>
+    <input type="text" id="t-feature" value="" placeholder="Pick tracked feature ..."/>
     <label for="t-startDate">Start time:</label>
-    <input type="text" id="t-startDate" value=""/>
+
+    <div class="selectize-control">
+        <div class="selectize-input items not-full has-options">
+            <input type="text" id="t-startDate" value=""/>
+        </div>
+    </div>
     <label for="t-endDate">End time:</label>
-    <input type="text" id="t-endDate" value=""/>
+
+    <div class="selectize-control">
+        <div class="selectize-input items not-full has-options">
+            <input type="text" id="t-endDate" value=""/>
+        </div>
+    </div>
     <input type="button" id="t-currentTime" value="Current time"/>
-    <input type="text" id="t-feature" value="" placeholder="Choose tracked feature"/>
-    <input type="text" id="t-granularity" value="Choose granularity"/>
-    <input type="radio" id="t-lockMovement" value="1" checked>
-    <label for="t-lockMovement">Lock movement</label>
-    <input type="submit" id="t-submit" value="Create">
+    <input type="text" id="t-developer" value="" placeholder="Choose developer"/>
+    <input type="text" id="t-granularity" value="" placeholder="Choose granularity"/>
+    <input type="checkbox" id="t-lockMovement" value="1" checked/>
+    <label for="t-lockMovement" style="float: right;">Lock movement</label>
+    <input type="submit" id="t-submit" value="Create new graph"/>
+
+    <div class="clear"></div>
 </div>
-<div id="trash" style="display: none"> </div>
-<div id="graphs"> </div>
+
+<div id="trash" style="display: none"></div>
+<div id="graphs"></div>
+
 <div id="loader-wrapper">
     <div id="loader"></div>
 </div>
+
 <div id="loader-text"></div>
 
 </body>

@@ -8,7 +8,19 @@ DiagramManager = function () {
     this.components = {};
     this.visibleComponents = {};
     this.registerComponents();
-    this.dom.sortable();
+    this.lockedMove = true;
+
+    // Sprav zoznam presuvatelny
+    this.dom.sortable({
+        //containment: "parent",
+        handle: "h1",
+        start: function (start, ui) {
+            gGlobals.toolbar.showTrash();
+        },
+        stop: function (event, ui) {
+            gGlobals.toolbar.hideTrash();
+        }
+    });
 };
 
 DiagramManager.prototype.redraw = function () {
@@ -21,7 +33,8 @@ DiagramManager.prototype.redraw = function () {
 };
 
 DiagramManager.prototype.getGraphs = function () {
-    var graphs, com;
+    var com;
+    var graphs = [];
     var instance = this;
     Object.keys(this.components).forEach(function (key) {
         com = instance.components[key];
@@ -30,15 +43,15 @@ DiagramManager.prototype.getGraphs = function () {
     return graphs;
 };
 
-DiagramManager.prototype.create = function (featureName, attributes) {
+DiagramManager.prototype.create = function (id, attributes) {
     // Pridaj do zoznamu viditelnych
-    if (!this.components.hasOwnProperty(featureName)) {
+    if (!this.components.hasOwnProperty(id)) {
         throw new Error("component nenajdeny");
     }
     var com = jQuery.extend(true, {}, this.components[id]);
-    com.id = this.lastID;
+    com.id = this.lastId;
     this.visibleComponents[com.id] = com;
-    this.lastID++;
+    this.lastId++;
 
     // Zobraz to na webe
     com.init(attributes, this);
@@ -51,20 +64,11 @@ DiagramManager.prototype.destroy = function (id) {
     }
     var com = this.visibleComponents[id];
     com.destroy();
-    com.dom.remove();
     delete this.visibleComponents[id];
 };
 
 DiagramManager.prototype.register = function (component) {
-    this.components[component.getName()] = (component);
-};
-
-DiagramManager.prototype.dragStart = function (item) {
-    gGlobals.toolbar.showTrash();
-};
-
-DiagramManager.prototype.dragStop = function (item) {
-    gGlobals.toolbar.hideTrash();
+    this.components[component.getName()] = component;
 };
 
 DiagramManager.prototype.registerComponents = function () {
@@ -77,4 +81,17 @@ DiagramManager.prototype.registerComponents = function () {
     this.register(new DomainVisitCom());
     this.register(new WebDurationComp());
     this.register(new BrowserVsRewrittenCodeCom());
+};
+
+DiagramManager.prototype.onMove = function (item, range) {
+    if (!this.lockedMove) return;
+
+    var com;
+    var instance = this;
+    Object.keys(this.visibleComponents).forEach(function (key) {
+        com = instance.visibleComponents[key];
+        if (com.id != item.id) {
+            com.setRange(range);
+        }
+    });
 };

@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by Seky on 9. 11. 2014.
  */
 public enum TimeGranularity {
-    WEEK(Calendar.WEEK_OF_MONTH),
+    MONTH(Calendar.MONTH),
     DAY(Calendar.DATE),
     HOUR(Calendar.HOUR),
     MINUTE(Calendar.MINUTE),

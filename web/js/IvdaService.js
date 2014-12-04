@@ -4,14 +4,20 @@
 function IvdaService() {
     this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
 
-    this.getTimelineURL = function (start, end, developer) {
+    this.getTimeline = function (start, end, developer, callback) {
         var restURL = "datatable?";
         var parameters = $.param({
             start: start.toISOString(),
             end: end.toISOString(),
             developer: developer
         });
-        return restURL + parameters;
+        $.ajax({
+            dataType: "json",
+            url: "datatable?" + parameters,
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            }
+        });
     };
 
     this.getData = function (name, params, callback) {
@@ -28,7 +34,7 @@ function IvdaService() {
         $.ajax({
             url: "stats?" + $.param(p),
             success: function (data, textStatus, jqXHR) {
-                instance.convertDates(data);
+                instance._convertDates(data);
                 callback(data);
             }});
     };
@@ -54,10 +60,10 @@ function IvdaService() {
         for (var i = 0; i < events.length; i++) {
             item = events[i];
             if (item.start != null) {
-                item.start = this.convertDate(item.start);
+                item.start = this._convertDate(item.start);
             }
             if (item.end != null) {
-                item.end = this.convertDate(item.end);
+                item.end = this._convertDate(item.end);
             }
         }
     };

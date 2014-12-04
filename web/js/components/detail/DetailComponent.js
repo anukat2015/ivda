@@ -5,13 +5,15 @@ DetailComponent = function () {
     DiagramComponent.call();
     this.loader = new ChunksLoader(this);
     this.charts = new ChartPanel(this);
+    this.title = "Action visualization";
+    this.name = "actions";
 };
 DetailComponent.prototype = new DiagramComponent();
 
-DetailComponent.prototype.init = function(atts, manager) {
-    DiagramComponent.prototype.init(atts, manager);
+DetailComponent.prototype.init = function (atts, manager) {
+    DiagramComponent.prototype.init.call(this, atts, manager);
     this.loader.init();
-    this.charts.loadRange(atts.range.start, atts.range.end, function() {    } );
+    this.charts.loadRange(atts.range.start, atts.range.end);
     this._createTimeline();
     this._registerQTip();
     this.diagram.draw();
@@ -20,6 +22,9 @@ DetailComponent.prototype.init = function(atts, manager) {
 };
 
 DetailComponent.prototype._onRangeChanged = function () {
+    if(this.diagram == undefined) {
+        return;
+    }
     var range = this.diagram.getVisibleChartRange();
     this.loader.onRangeChanged(this.attributes.developer, range.start, range.end);
     this.charts.redraw();
@@ -65,6 +70,11 @@ DetailComponent.prototype._onItemMouseClick = function (api, item) {
     return html;
 };
 
+DetailComponent.prototype.destroy = function () {
+    this.diagram.deleteAllItems();
+    DiagramComponent.prototype.destroy.call(this);
+};
+
 DetailComponent.prototype._toggleMetric = function (value) {
     var value;
     var prototyp = links.Timeline.Item.prototype;
@@ -105,12 +115,12 @@ DetailComponent.prototype._registerQTip = function () {
 
 DetailComponent.prototype.setRange = function (range) {
     this.diagram.setVisibleChartRange(range.start, range.end);
-    this.diagram.draw();
+    this.attributes.range = range;
+    this._updateDescription();
 };
 
 DetailComponent.prototype._buildDom = function () {
-    return '\
-    <div> \
+    return this._buildHeader() + '<div> \
      <div class="leftBar">     \
         <div class="mytimeline diagram graph-' + this.getName() + '"></div>  \
     </div>      \

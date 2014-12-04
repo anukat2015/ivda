@@ -2,14 +2,104 @@
 html, body {
     font: 10pt arial;
     margin: 4px;
-    padding: 0px;
+    padding: 0;
 }
 
 #toolbar {
-    margin-bottom: 1%;
-    padding: 0px;
+    padding: 0;
 }
 
+#toolbar label {
+    line-height: 25px;
+}
+
+#toolbar .selectize-control:nth-of-type(1) {
+    width: 240px;
+}
+
+#toolbar .selectize-control:nth-of-type(2) {
+    width: 110px;
+}
+
+#toolbar .selectize-control:nth-of-type(3) {
+    width: 110px;
+}
+
+#toolbar .selectize-control:nth-of-type(4) {
+    width: 140px;
+}
+
+#toolbar .selectize-control:nth-of-type(5) {
+    width: 140px;
+}
+
+#toolbar .ui-widget {
+    font-family: inherit;
+    font-size: 13px;
+}
+
+#toolbar input.ui-button {
+    padding: 3px;
+}
+
+.selectize-control {
+    width: 14%;
+    display: inline-flex;
+/*    padding-left: 10px;
+    padding-right: 10px;*/
+}
+
+.selectize-input {
+    padding: 2px;
+}
+
+.selectize-control.multi .selectize-input.has-items {
+    padding: 0;
+}
+
+.selectize-control.multi .selectize-input > div {
+    margin-bottom: 0;
+}
+
+#trash {
+    text-align: center;
+    font-weight: bold;
+    font-size: 24px;
+    width: 99%;
+    margin: 0 auto;
+    border-color: #000;
+    border-style: dashed;
+    border-width: 2px;
+    height: 30px;
+}
+
+
+/* Grafy vseobecne */
+#graphs h1 {
+    width: 60%;
+    float: left;
+    cursor: move;
+}
+#graphs .description {
+    float: right;
+    color: #ccc;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 12px;
+    width: 20%;
+    padding-top: 33px;
+}
+#graphs .description .time {
+
+}
+#graphs .description .developer {
+    padding-right: 20px;
+}
+
+
+
+
+/* Styles for the timeline detail */
 .leftBar {
     float: left;
     width: 75%;
@@ -55,53 +145,23 @@ html, body {
     padding-left: 5px;
 }
 
-.selectize-control {
-    min-width: 25px;
-    display: inline-flex;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.selectize-input {
-    padding: 2px;
-}
-
-.selectize-control.multi .selectize-input.has-items {
-    padding: 0;
-}
-
-.selectize-control.multi .selectize-input > div {
-    margin-bottom: 0;
-}
-
-
 .vis.timeline .bar {
     fill-opacity: 1.0;
     stroke-width: 0;
 }
+
 .vis.timeline .graphGroup0 {
     fill: #97b0f8;
     stroke: #97b0f8;
 }
+
 .vis.timeline .graphGroupWeb {
     fill: #97b0f8;
     stroke: #97b0f8;
 }
+
 .vis.timeline .graphGroupIde {
     fill: #FFA500;
     stroke: #FFA500;
-}
-
-#trash {
-    position: fixed;
-    text-align: center;
-    font-weight: bold;
-    font-size: 24px;
-    width: 100%;
-    margin: 0 auto;
-    border-color: #000;
-    border-style: dashed;
-    border-width: 2px;
-    height: 50px;
 }
 

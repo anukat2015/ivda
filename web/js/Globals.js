@@ -13,9 +13,7 @@ function Globals() {
 
     this.redraw = function () {
         if (!this.wasInit) return;
-        this.timeline.panel.redraw();
-        this.charts.redraw();
-        this.graph.redraw();
+        this.graphs.redraw();
     };
 }
 

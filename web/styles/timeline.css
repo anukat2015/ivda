@@ -152,10 +152,6 @@ div.timeline-event-cluster {
     background-color: #a9e25c;
 }
 
-#toolbar input {
-    width: 105px;
-}
-
 div.timeline-navigation {
     -moz-border-radius: 2px;
     -moz-box-sizing: border-box;

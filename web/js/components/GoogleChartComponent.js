@@ -7,18 +7,21 @@ GoogleChartComponent = function () {
 };
 GoogleChartComponent.prototype = new DiagramComponent();
 
-GoogleChartComponent.prototype.init = function(attributes, manager) {
-    DiagramComponent.prototype.init(attributes, manager);
+GoogleChartComponent.prototype.init = function (attributes, manager) {
+    DiagramComponent.prototype.init.call(this, attributes, manager);
     // TODO: Options sa moze nacitat tu vypracovat a ulozit
     this.updateData();
 };
 
-
+GoogleChartComponent.prototype.destroy = function () {
+    this.diagram.clearChart();
+    DiagramComponent.prototype.destroy.call(this);
+};
 
 // ------------- Web Duration
 WebDurationComp = function () {
     GoogleChartComponent.call();
-    this.title  = "Duration of visit";
+    this.title = "Duration of visit";
     this.name = "webDuration";
 };
 WebDurationComp.prototype = new GoogleChartComponent();
@@ -42,12 +45,10 @@ WebDurationComp.prototype.setData = function (name) {
 };
 
 
-
-
 // ------------- BrowserVsRewrittenCodeCom
 BrowserVsRewrittenCodeCom = function () {
     GoogleChartComponent.call();
-    this.title  = "Browser vs Rewritten code";
+    this.title = "Browser vs Rewritten code";
     this.name = "browserVsRewrittenCode";
 };
 BrowserVsRewrittenCodeCom.prototype = new GoogleChartComponent();
@@ -79,7 +80,7 @@ BrowserVsRewrittenCodeCom.prototype.setData = function (name) {
 // ------------- Files modifications, in counts
 FilesModificationCom = function () {
     GoogleChartComponent.call();
-    this.title  = "Files modifications, in counts";
+    this.title = "Files modifications, in counts";
     this.name = "fileModifications";
 };
 FilesModificationCom.prototype = new GoogleChartComponent();
@@ -105,7 +106,7 @@ FilesModificationCom.prototype.setData = function (name) {
 // ------------- Files modifications, in counts
 DomainVisitCom = function () {
     GoogleChartComponent.call();
-    this.title  = "Domain visit, in counts";
+    this.title = "Domain visit, in counts";
     this.name = "domainVisits";
 };
 DomainVisitCom.prototype = new GoogleChartComponent();
