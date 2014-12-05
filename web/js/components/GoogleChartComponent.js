@@ -14,7 +14,9 @@ GoogleChartComponent.prototype.init = function (attributes, manager) {
 };
 
 GoogleChartComponent.prototype.destroy = function () {
-    this.diagram.clearChart();
+    if (this.diagram != undefined) {
+        this.diagram.clearChart();
+    }
     DiagramComponent.prototype.destroy.call(this);
 };
 
@@ -23,6 +25,7 @@ WebDurationComp = function () {
     GoogleChartComponent.call();
     this.title = "Duration of visit";
     this.name = "webDuration";
+    this.grouped = true;
 };
 WebDurationComp.prototype = new GoogleChartComponent();
 
@@ -35,9 +38,9 @@ WebDurationComp.prototype.setData = function (name) {
         gdata.addRow([key.content, key.y]);
     });
     var options = {
-        title: 'Duration of visit | Minutes per domain',
-        height: 600,
-        vAxis: {title: 'Minutes'}
+        title: 'Duration of visit | Per domain',
+        height: 500,
+        vAxis: {title: this.attributes.granularity}
     };
 
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
@@ -48,28 +51,27 @@ WebDurationComp.prototype.setData = function (name) {
 // ------------- BrowserVsRewrittenCodeCom
 BrowserVsRewrittenCodeCom = function () {
     GoogleChartComponent.call();
-    this.title = "Browser vs Rewritten code";
+    this.title = "Browser activity duration vs Written code";
     this.name = "browserVsRewrittenCode";
+    this.grouped = false;
 };
 BrowserVsRewrittenCodeCom.prototype = new GoogleChartComponent();
 
 BrowserVsRewrittenCodeCom.prototype.setData = function (name) {
     // https://google-developers.appspot.com/chart/interactive/docs/gallery/scatterchart
-    var data = google.visualization.arrayToDataTable([
-        ['Age', 'Weight'],
-        [ 8, 12],
-        [ 4, 5.5],
-        [ 11, 14],
-        [ 4, 5],
-        [ 3, 3.5],
-        [ 6.5, 7]
-    ]);
+    var gdata = new google.visualization.DataTable();
+    gdata.addColumn('number', 'Browser activity duration');
+    gdata.addColumn('number', 'Written code');
+    data.forEach(function (key) {
+        gdata.addRow([parseInt(key.content), key.y]);
+    });
 
     var options = {
-        title: 'Age vs. Weight comparison',
-        hAxis: {title: 'Age', minValue: 0, maxValue: 15},
-        vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
-        legend: 'none'
+        title: 'Browser activity duration vs Written code',
+        hAxis: {title: 'Browser activity duration'},
+        vAxis: {title: 'Written code'},
+        //legend: 'none',
+        height: 500
     };
 
     this.diagram = new google.visualization.ScatterChart(this.getDiagramElement());
@@ -82,6 +84,7 @@ FilesModificationCom = function () {
     GoogleChartComponent.call();
     this.title = "Files modifications, in counts";
     this.name = "fileModifications";
+    this.grouped = false;
 };
 FilesModificationCom.prototype = new GoogleChartComponent();
 
@@ -108,6 +111,7 @@ DomainVisitCom = function () {
     GoogleChartComponent.call();
     this.title = "Domain visit, in counts";
     this.name = "domainVisits";
+    this.grouped = false;
 };
 DomainVisitCom.prototype = new GoogleChartComponent();
 

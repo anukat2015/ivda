@@ -9,11 +9,11 @@ import java.util.Date;
  * Created by Seky on 9. 11. 2014.
  */
 public enum TimeGranularity {
-    MONTH(Calendar.MONTH),
-    DAY(Calendar.DATE),
-    HOUR(Calendar.HOUR),
-    MINUTE(Calendar.MINUTE),
-    PER_VALUE(0) {
+    MONTH(Calendar.MONTH, 1000 * 60 * 60 * 24 * 30),
+    DAY(Calendar.DAY_OF_MONTH, 1000 * 60 * 60 * 24),
+    HOUR(Calendar.HOUR, 1000 * 60 * 60),
+    MINUTE(Calendar.MINUTE, 1000 * 60),
+    PER_VALUE(0, 1) {
         public Date roundDate(Date in) {
             return in;
         }
@@ -24,9 +24,11 @@ public enum TimeGranularity {
     };
 
     private int type;
+    private long size;
 
-    TimeGranularity(int type) {
+    TimeGranularity(int type, long size) {
         this.type = type;
+        this.size = size;
     }
 
     public Date roundDate(Date in) {
@@ -35,5 +37,9 @@ public enum TimeGranularity {
 
     public Date increment(Date in) {
         return DateUtils.add(in, type, 1);
+    }
+
+    public long millis() {
+        return size;
     }
 }

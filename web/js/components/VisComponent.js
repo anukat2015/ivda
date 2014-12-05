@@ -101,8 +101,9 @@ VisComponent.prototype.init = function (attributes, manager) {
 // ----- Pocet eventov
 CountEventsCom = function () {
     VisComponent.call();
-    this.title = "Count of events";
+    this.title = "Pocet eventov histogram";
     this.name = "count";
+    this.grouped = true;
 };
 CountEventsCom.prototype = new VisComponent();
 
@@ -110,7 +111,7 @@ CountEventsCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
-    info.createGroup2('events', 'Count of events | Per day');
+    info.createGroup2('events', 'Count of actions');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -118,8 +119,9 @@ CountEventsCom.prototype.init = function (attributes, manager) {
 // ----- Pocet eventov divided
 CountEventsDividedCom = function () {
     VisComponent.call();
-    this.title = "Count of events divided";
+    this.title = "Pocet eventov rozdelenych podla skupin";
     this.name = "countDivided";
+    this.grouped = true;
 };
 CountEventsDividedCom.prototype = new VisComponent();
 
@@ -127,7 +129,8 @@ CountEventsDividedCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
-    info.createGroup2('events', 'Count of events divided');
+    info.createGroup2('Web', 'Count of Web actions');
+    info.createGroup2('Ide', 'Count of Ide actions');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -136,8 +139,8 @@ CountEventsDividedCom.prototype.init = function (attributes, manager) {
 // ----- Changes of source codes
 CodeChangesCom = function () {
     VisComponent.call();
-    this.title = "Changes of source codes";
-    this.name = "loc";
+    this.title = "Zmeny v zdrojovom kode";
+    this.name = "locChanges";
 };
 CodeChangesCom.prototype = new VisComponent();
 
@@ -147,17 +150,57 @@ CodeChangesCom.prototype.init = function (attributes, manager) {
     var info = new GraphData();
     info.createGroup2('changedInFuture', 'Changes of files in future');
     info.createGroup2('changedInHistory', 'Changes of files in past');
-    info.createGroupRight("changedLines", "LOC changed");
+    info.createGroup2("changedLines", "LOC changed");   // createGroupRight
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
 
 
-// ----- Activity dynamic-range-histogram
+// ----- Activity time grouped
+ActivityTimeGroupedCom = function () {
+    VisComponent.call();
+    this.title = "Zoskupene trvanie pre aktivity";
+    this.name = "activityTimeGrouped";
+    this.grouped = true;
+};
+ActivityTimeGroupedCom.prototype = new VisComponent();
+
+ActivityTimeGroupedCom.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
+    this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
+    var info = new GraphData();
+    info.createGroup2('Web', 'Web activities duration');
+    info.createGroup2('Ide', 'Ide activities duration');
+    this.diagram.setGroups(info.groups);
+    this.updateData();
+};
+
+// ----- Activity time grouped
+ActivityLocDomainVisitsGrouped = function () {
+    VisComponent.call();
+    this.title = "Zoskupene LOC pre Ide, pocet navstivenych webov pre Web pre aktivity";
+    this.name = "activityLocDomainVisitsGrouped";
+    this.grouped = true;
+};
+ActivityLocDomainVisitsGrouped.prototype = new VisComponent();
+
+ActivityLocDomainVisitsGrouped.prototype.init = function (attributes, manager) {
+    VisComponent.prototype.init.call(this, attributes, manager);
+    this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
+    var info = new GraphData();
+    info.createGroup2('Web', 'Unique domains pre Web activities');
+    info.createGroup2('Ide', 'Changed LOC per Ide activities');
+    this.diagram.setGroups(info.groups);
+    this.updateData();
+};
+
+
+// ----- Activity Unique domains vs Changed LOC
 ActivityDynamicCom = function () {
     VisComponent.call();
-    this.title = "Activity dynamic-range-histogram";
+    this.title = "Loc pre Ide, pocet navstivenych webov pre Web pre aktivity";
     this.name = "activityHistogram";
+    this.grouped = false;
 };
 ActivityDynamicCom.prototype = new VisComponent();
 
@@ -165,18 +208,18 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet());
     var info = new GraphData();
-    info.createGroup2('Web', 'Web activities | Unique domains per duration');
-    info.createGroup2('Ide', 'Ide activities | Changed LOC per duration');
+    info.createGroup2('Web', 'Unique domains pre Web activityy');
+    info.createGroup2('Ide', 'Changed LOC per IDe activityy');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
 
-
 // ----- Activity detail
 ActivityDetailCom = function () {
     VisComponent.call();
-    this.title = "Activity detail";
+    this.title = "Vizualizacia detailu aktivit";
     this.name = "activityDetail";
+    this.grouped = false;
 };
 ActivityDetailCom.prototype = new VisComponent();
 
@@ -193,8 +236,9 @@ ActivityDetailCom.prototype.init = function (attributes, manager) {
 // ----- Processes detail
 ProcessesDetailCom = function () {
     VisComponent.call();
-    this.title = "Processes activity";
+    this.title = "Vizualizacia detailu procesov";
     this.name = "processDetail";
+    this.grouped = false;
 };
 ProcessesDetailCom.prototype = new VisComponent();
 

@@ -43,12 +43,17 @@ DiagramManager.prototype.getGraphs = function () {
     return graphs;
 };
 
-DiagramManager.prototype.create = function (id, attributes) {
-    // Pridaj do zoznamu viditelnych
+DiagramManager.prototype.find = function (id) {
     if (!this.components.hasOwnProperty(id)) {
         throw new Error("component nenajdeny");
     }
-    var com = jQuery.extend(true, {}, this.components[id]);
+    return this.components[id];
+};
+
+
+DiagramManager.prototype.create = function (id, attributes) {
+    // Pridaj do zoznamu viditelnych
+    var com = jQuery.extend(true, {}, this.find(id));
     com.id = this.lastId;
     this.visibleComponents[com.id] = com;
     this.lastId++;
@@ -77,10 +82,12 @@ DiagramManager.prototype.registerComponents = function () {
     this.register(new CodeChangesCom());
     this.register(new ActivityDynamicCom());
     this.register(new ActivityDetailCom());
+    this.register(new activityTimeGroupedCom());
     this.register(new FilesModificationCom());
     this.register(new DomainVisitCom());
     this.register(new WebDurationComp());
     this.register(new BrowserVsRewrittenCodeCom());
+    this.register(new DetailComponent());
 };
 
 DiagramManager.prototype.onMove = function (item, range) {

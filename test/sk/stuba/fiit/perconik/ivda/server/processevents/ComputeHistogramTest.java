@@ -28,7 +28,7 @@ public class ComputeHistogramTest extends TestCase {
         Iterator<EventDto> it = BankOfChunks.getEvents(start, end);
 
         LOGGER.info("Starting computing");
-        ComputeHistogram p = new ComputeHistogram(TimeGranularity.DAY);
+        CountEventsHistogram p = new CountEventsHistogram(TimeGranularity.DAY);
         p.proccess(it);
         LOGGER.info("Flushing");
         saveToFile("hdni2.txt", p.getHistogram());

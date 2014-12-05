@@ -15,6 +15,7 @@ DiagramComponent = function () {
     this.dom = undefined;
     this.diagram = undefined;
     this.manager = undefined;
+    this.grouped = undefined;
 };
 
 DiagramComponent.prototype.setRange = function (range) {
@@ -66,10 +67,11 @@ DiagramComponent.prototype.destroy = function () {
 DiagramComponent.prototype.updateData = function () {
     var instance = this;
     gGlobals.service.getData(this.name, this.attributes, function (data) {
-        if (instance.diagram == undefined) {
-            return;
+        if (instance.diagram == undefined ||  instance.attributes == undefined) {
+            // Diagram bol zniceny
+        } else {
+            instance.setData(data);
         }
-        instance.setData(data);
     });
 };
 

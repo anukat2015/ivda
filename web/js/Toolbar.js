@@ -68,10 +68,7 @@ function Toolbar() {
         this.setTime2(new Date("2014-08-06T12:00:00.000"));
         this.setFeature(gGlobals.graphs.getGraphs());
         var granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
-        this.setGranularity(granularities.map(function (x) {
-            return { name: x };
-        }));
-
+        this.setGranularity(granularities);
 
         // Vybuduj kos
         this.trash.droppable({
@@ -157,7 +154,19 @@ function Toolbar() {
             searchField: 'name',
             create: false,
             maxItems: 1,
-            options: items
+            options: items,
+            onChange: function (id) {
+                var com = gGlobals.graphs.find(id);
+                var granularities;
+                if (com.grouped === true) {
+                    granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
+                } else if (com.grouped === false) {
+                    granularities = ["PER_VALUE"];
+                } else {
+                    granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
+                }
+                this.setGranularity(granularities);
+            }
         });
     };
 
@@ -168,7 +177,9 @@ function Toolbar() {
             searchField: 'name',
             create: false,
             maxItems: 1,
-            options: items
+            options: items.map(function (x) {
+                return { name: x };
+            })
         });
     };
 }

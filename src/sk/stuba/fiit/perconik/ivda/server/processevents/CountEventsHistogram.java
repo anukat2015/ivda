@@ -11,11 +11,11 @@ import java.util.Date;
 /**
  * Created by Seky on 1. 11. 2014.
  */
-public class ComputeHistogram extends ProcessIterator<EventDto> {
+public class CountEventsHistogram extends ProcessIterator<EventDto> {
     private final Histogram<Date> histogram = new HistogramBySiblings<>();
     private final TimeGranularity granularity;
 
-    public ComputeHistogram(TimeGranularity granularity) {
+    public CountEventsHistogram(TimeGranularity granularity) {
         this.granularity = granularity;
     }
 

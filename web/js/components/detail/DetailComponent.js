@@ -71,7 +71,9 @@ DetailComponent.prototype._onItemMouseClick = function (api, item) {
 };
 
 DetailComponent.prototype.destroy = function () {
-    this.diagram.deleteAllItems();
+    //this.diagram.deleteAllItems();
+    this.loader = undefined;
+    this.charts = undefined;
     DiagramComponent.prototype.destroy.call(this);
 };
 
