@@ -5,7 +5,7 @@ DetailComponent = function () {
     DiagramComponent.call();
     this.loader = new ChunksLoader();
     this.charts = new ChartPanel();
-    this.title = "Action visualization";
+    this.title = "Vizualizacia akcii";
     this.name = "actions";
     this.groups = ["Size by changes in future", "Size by LOC", "Constant size"];
 };

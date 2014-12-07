@@ -219,7 +219,7 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
 // ----- Activity detail
 ActivityDetailCom = function () {
     VisComponent.call();
-    this.title = "Detailu aktivit";
+    this.title = "Detaily aktivit";
     this.name = "activityDetail";
     this.groups = ["PER_VALUE"];
 };

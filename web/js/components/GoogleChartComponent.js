@@ -38,7 +38,6 @@ WebDurationComp.prototype.setData = function (data) {
         gdata.addRow([key.content, key.y]);
     });
     var options = {
-        title: 'Dlzka navstivenych webov | Podla domeny',
         height: 500,
         vAxis: {title: this.attributes.granularity + "S"},
         legend: { position: 'none' } ,
@@ -56,7 +55,7 @@ WebDurationComp.prototype.setData = function (data) {
 // ------------- BrowserVsRewrittenCodeCom
 BrowserVsRewrittenCodeCom = function () {
     GoogleChartComponent.call();
-    this.title = "Aktivita v prehliadaci voci napisanemu kodu";
+    this.title = "Aktivita v prehliadaci voci naslednemu napisanemu kodu";
     this.name = "browserVsRewrittenCode";
     this.groups = ["HOUR", "MINUTE"];
 };
@@ -66,16 +65,14 @@ BrowserVsRewrittenCodeCom.prototype.setData = function (data) {
     // https://google-developers.appspot.com/chart/interactive/docs/gallery/scatterchart
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('number', 'Aktivita v prehliadaci');
-    gdata.addColumn('number', 'Napisany kod');
+    gdata.addColumn('number', 'Aktivita v prehliadaci v minutach, Zmeny v zdrojovom kode podla LOC metriky');
     data.forEach(function (key) {
         gdata.addRow([parseInt(key.content), key.y]);
     });
 
     var options = {
-        title: 'Browser activity duration vs Written code',
         hAxis: {title: 'Aktivita v prehliadaci v ' + this.attributes.granularity + "S"},
         vAxis: {title: 'Napisany kod v LOC metrike'},
-        //legend: 'none',
         height: 500,
         legend: { position: 'none' } ,
         explorer: {
@@ -101,14 +98,12 @@ FilesModificationCom.prototype.setData = function (data) {
     // Files modifications
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Path');
-    gdata.addColumn('number', 'Edits');
+    gdata.addColumn('number', 'Pocet modifikacii');
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y]);
     });
-
     var options = {
-        title: 'Modifikovane subory',
-        hAxis: {title: 'Pocet modifikacii suboru'},
+        vAxis: {title: 'Pocet modifikacii suboru'},
         legend: { position: 'none' } ,
         explorer: {
             maxZoomOut:2,
@@ -137,8 +132,8 @@ DomainVisitCom.prototype.setData = function (data) {
         gdata.addRow([key.content, key.y]);
     });
     var options = {
-        title: 'Navstivene domeny',
-        hAxis: {title: 'Pocet navstev (domena navstivena kliknutim, zadanim url, vybranim z oblubenych, ...)'},
+        vAxis: {title: 'Pocet navstev'},
+        hAxis: {title: 'Domena navstivena kliknutim, zadanim url, vybranim z oblubenych, ...'},
         legend: { position: 'none' } ,
         explorer: {
             maxZoomOut:2,
