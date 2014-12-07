@@ -4,11 +4,12 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.grouping.PerWebDividing;
+import sk.stuba.fiit.perconik.ivda.server.grouping.BaseDividing;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
 import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
 import sk.stuba.fiit.perconik.ivda.server.processevents.BrowserVsWrittenCode;
@@ -39,22 +40,22 @@ public class StatsServlet extends HttpServlet {
     private static final long serialVersionUID = -6246210501504519167L;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws IOException {
         try {
-            final StatsRequest request = new StatsRequest(req);
-            LOGGER.info("Request: " + request);
+            final StatsRequest req = new StatsRequest(request);
+            LOGGER.info("Request: " + req);
 
             resp.setContentType(MediaType.APPLICATION_JSON);
             ServletOutputStream stream = resp.getOutputStream();
-            Iterator<EventDto> events = BankOfChunks.getEvents(request.getStart(), request.getEnd(), request.getDeveloper());
+            Iterator<EventDto> events = BankOfChunks.getEvents(req.getStart(), req.getEnd(), req.getDeveloper());
 
-            switch (request.getAttribute()) {
-                case "activityLocDomainVisitsGrouped ": {
-                    activityLocDomainVisitsGrouped(events, request.getGranularity(), stream);
+            switch (req.getAttribute()) {
+                case "activityLocDomainVisitsGrouped": {
+                    activityLocDomainVisitsGrouped(events, req.getGranularity(), stream);
                     break;
                 }
                 case "activityTimeGrouped": {
-                    activityTimeGrouped(events, request.getGranularity(), stream);
+                    activityTimeGrouped(events, req.getGranularity(), stream);
                     break;
                 }
                 case "activityHistogram": {
@@ -62,7 +63,7 @@ public class StatsServlet extends HttpServlet {
                     break;
                 }
                 case "activityDetail": {
-                    activityHistogram(events, stream);
+                    activityDetail(events, stream);
                     break;
                 }
                 case "domainVisits": {
@@ -73,20 +74,24 @@ public class StatsServlet extends HttpServlet {
                     fileModifications(events, stream);
                     break;
                 }
-                case "loc": {
-                    locChanges(events, request.getGranularity(), stream);
+                case "locChanges": {
+                    locChanges(events, req.getGranularity(), stream);
                     break;
                 }
                 case "countEvents": {
-                    countEvents(events, request.getGranularity(), stream);
+                    countEvents(events, req.getGranularity(), stream);
+                    break;
+                }
+                case "countEventsDivided": {
+                    countEventsDivided(events, req.getGranularity(), stream);
                     break;
                 }
                 case "webDuration": {
-                    webDuration(events, request.getGranularity(), stream);
+                    webDuration(events, req.getGranularity(), stream);
                     break;
                 }
                 case "browserVsRewrittenCode": {
-                    browserVsRewrittenCode(events, stream);
+                    browserVsRewrittenCode(events, req.getGranularity(), stream);
                     break;
                 }
                 default: {
@@ -116,7 +121,7 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, false);
+        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
@@ -134,7 +139,10 @@ public class StatsServlet extends HttpServlet {
             protected void proccessItem(EventDto event) {
                 if (event instanceof IdeCodeEventDto) {
                     IdeCodeEventDto cevent = (IdeCodeEventDto) event;
-                    histogram.map(cevent.getDocument().getServerPath());
+                    String path = cevent.getDocument().getServerPath();
+                    if (path != null) {
+                        histogram.map(path);
+                    }
                 }
             }
         };
@@ -142,7 +150,7 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, false);
+        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
@@ -165,6 +173,34 @@ public class StatsServlet extends HttpServlet {
         json.close();
     }
 
+    private static void countEventsDivided(Iterator<EventDto> events, TimeGranularity g, ServletOutputStream stream) throws IOException {
+        // Posli udaje do vystupu
+        final Histogram<Date> webH = new HistogramBySiblings<>();
+        final Histogram<Date> ideH = new HistogramBySiblings<>();
+        final Histogram<Date> mixH = new HistogramBySiblings<>();
+        Array2Json json = new Array2Json(stream);
+        json.start();
+        while (events.hasNext()) {
+            EventDto event = events.next();
+            Date date = g.roundDate(event.getTimestamp());
+            if (event instanceof IdeEventDto) {
+                ideH.map(date);
+            } else if (event instanceof WebEventDto) {
+                webH.map(date);
+            } else {
+                mixH.map(date);
+            }
+        }
+        Collection<Map.Entry<Date, MutableInt>> zoznam;
+        zoznam = webH.reduce();
+        flushMapEntry(json, zoznam, g, "Web");
+        zoznam = ideH.reduce();
+        flushMapEntry(json, zoznam, g, "Ide");
+        zoznam = mixH.reduce();
+        flushMapEntry(json, zoznam, g, "Mix");
+        json.close();
+    }
+
     private static void locChanges(Iterator<EventDto> events, TimeGranularity g, ServletOutputStream stream) throws IOException {
         // Posli udaje do vystupu
         final Histogram<Date> histogram = new HistogramBySiblings<>();
@@ -182,14 +218,14 @@ public class StatsServlet extends HttpServlet {
                     // Bud sa udaje ulozia do histogramu alebo sa rovno vypisu
                     IvdaEvent e = new IvdaEvent();
                     e.setStart(event.getTimestamp());
-                    e.setGroup("events");
+                    e.setGroup("changedLines");
                     e.setY(loc);
                     json.write(e);
                 }
             }
         }
         Collection<Map.Entry<Date, MutableInt>> zoznam = histogram.reduce();
-        flushMapEntry(json, zoznam, g, "events");
+        flushMapEntry(json, zoznam, g, "changedLines");
         json.close();
     }
 
@@ -198,6 +234,10 @@ public class StatsServlet extends HttpServlet {
         ProcessIterator<EventDto> process = new CreateBaseActivities() {
             @Override
             protected void foundEndOfGroup(Group group) {
+                if (!group.isInterval()) {
+                    return;
+                }
+
                 // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
                 EventDto first = group.getFirstEvent();
                 EventDto last = group.getLastEvent();
@@ -225,6 +265,53 @@ public class StatsServlet extends HttpServlet {
         out.close();
     }
 
+    private static void activityDetail(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
+        final Array2Json out = new Array2Json(stream);
+        ProcessIterator<EventDto> process = new CreateBaseActivities() {
+            @Override
+            protected void started() {
+                super.started();
+                divide = new BaseDividing.PerWebDividing(); //chceme delenie klasicke + domeny
+            }
+
+            @Override
+            protected void foundEndOfGroup(Group group) {
+                if (!group.isInterval()) {
+                    return;
+                }
+
+                String content;
+                if (group instanceof WebGroup) {
+                    WebEventDto web = (WebEventDto) group.getFirstEvent();
+                    String url = web.getDomain();
+                    if (url == null) {
+                        return;
+                    }
+                    content = url;
+                } else if (group instanceof IdeGroup) {
+                    IdeEventDto ide = (IdeEventDto) group.getFirstEvent();
+                    content = "PATH"; // TODO: dokoncit delenie pre subory
+                } else {
+                    // Bo vytvorena skupina ale nevieme co su dnu za prvky
+                    content = "UNKNOWN";
+                }
+
+                // Store event
+                // Ked bol prave jeden prvok v odpovedi firstEvent a lastEvent je to iste
+                IvdaEvent e = new IvdaEvent();
+                e.setStart(group.getFirstEvent().getTimestamp());
+                e.setEnd(group.getLastEvent().getTimestamp());
+                e.setGroup(EventsUtil.event2name(group.getFirstEvent()));
+                e.setContent(content);
+                out.write(e);
+            }
+        };
+
+        out.start();
+        process.proccess(events);
+        out.close();
+    }
+
     private static void activityTimeGrouped(Iterator<EventDto> events, final TimeGranularity granularity, ServletOutputStream stream) throws IOException {
         // Histogram pre kazdy sledovany atribut
         final Histogram<Date> webHistogram = new HistogramBySiblings<>();
@@ -234,6 +321,9 @@ public class StatsServlet extends HttpServlet {
         ProcessIterator<EventDto> process = new CreateBaseActivities() {
             @Override
             protected void foundEndOfGroup(Group group) {
+                if (!group.isInterval()) {
+                    return;
+                }
                 // Podla typu zapis do atributy
                 EventDto first = group.getFirstEvent();
                 Date date = granularity.roundDate(first.getTimestamp());
@@ -253,10 +343,22 @@ public class StatsServlet extends HttpServlet {
         Array2Json json = new Array2Json(stream);
         json.start();
         zoznam = webHistogram.reduce(false, false, false);
-        flushMapEntry(json, zoznam, granularity, "Web");
+        flushMapEntry2(json, zoznam, granularity, "Web");
         zoznam = ideHistogram.reduce(false, false, false);
-        flushMapEntry(json, zoznam, granularity, "Ide");
+        flushMapEntry2(json, zoznam, granularity, "Ide");
         json.close();
+    }
+
+    private static void flushMapEntry2(Array2Json json, Collection<Map.Entry<Date, MutableInt>> zoznam, TimeGranularity g, String group) {
+        for (Map.Entry<Date, MutableInt> entry : zoznam) {
+            Date start = entry.getKey();
+            IvdaEvent e = new IvdaEvent();
+            e.setStart(start);
+            e.setGroup(group);
+            e.setEnd(g.increment(start));
+            e.setY(entry.getValue().toInteger() / (int) TimeGranularity.MINUTE.millis());
+            json.write(e);
+        }
     }
 
     private static void activityLocDomainVisitsGrouped(Iterator<EventDto> events, final TimeGranularity granularity, ServletOutputStream stream) throws IOException {
@@ -316,12 +418,12 @@ public class StatsServlet extends HttpServlet {
             @Override
             protected void started() {
                 super.started();
-                divide = new PerWebDividing(); //chceme delenie klasicke + domeny
+                divide = new BaseDividing.PerWebDividing(); //chceme delenie klasicke + domeny
             }
 
             @Override
             protected void foundEndOfGroup(Group group) {
-                if (!(group instanceof WebGroup)) {
+                if (!(group instanceof WebGroup) || !group.isInterval()) {
                     return;
                 }
 
@@ -349,7 +451,7 @@ public class StatsServlet extends HttpServlet {
         json.close();
     }
 
-    private static void browserVsRewrittenCode(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
+    private static void browserVsRewrittenCode(Iterator<EventDto> events, final TimeGranularity g, ServletOutputStream stream) throws IOException {
         final Array2Json out = new Array2Json(stream);
 
         ProcessIterator<EventDto> process = new BrowserVsWrittenCode() {
@@ -359,8 +461,8 @@ public class StatsServlet extends HttpServlet {
                 IvdaEvent event = new IvdaEvent();
                 event.setStart(webActivities.get(0).getFirstEvent().getTimestamp());
                 event.setEnd(endOfLastIdeActivity());
-                event.setContent(Long.toString(this.getTimeDuration()));
-                event.setY((int) this.getWrittenCode());
+                event.setContent(Long.toString(this.getTimeDuration() / (int) g.millis()));
+                event.setY(this.getWrittenCode());
                 out.write(event);
             }
         };

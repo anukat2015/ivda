@@ -189,7 +189,7 @@ div.timeline-navigation-new {
 div.timeline-navigation-new-line {
     border-right: 1px solid #bebebe;
 }
-
+/*
 div.timeline-navigation-delete {
     background: url('img/16/delete.png') no-repeat center;
 }
@@ -209,3 +209,4 @@ div.timeline-navigation-move-left {
 div.timeline-navigation-move-right {
     background: url('img/16/moveright.png') no-repeat center;
 }
+*/

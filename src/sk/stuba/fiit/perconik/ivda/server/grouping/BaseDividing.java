@@ -35,8 +35,13 @@ public class BaseDividing implements IDividing {
     }
 
     @Override
+    public boolean canPush(Group currentGroup, EventDto actual) {
+        return !divideByTime(currentGroup, actual);
+    }
+
+    @Override
     public boolean canDivide(Group group, EventDto actual) {
-        return divideByTime(group, actual) || divideByType(group, actual);
+        return divideByType(group, actual);
     }
 
     /**
@@ -51,7 +56,7 @@ public class BaseDividing implements IDividing {
      * @return
      * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
-    public static boolean divideByTime(Group group, EventDto actual) {
+    protected static boolean divideByTime(Group group, EventDto actual) {
         return (DateUtils.diff(group.getLastEvent().getTimestamp(), actual.getTimestamp()) > ACTIVITY_MIN_INTERVAL);  // Je to velky casovy rozdiel
     }
 
@@ -62,12 +67,12 @@ public class BaseDividing implements IDividing {
      * @return
      * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
-    public static boolean divideByType(Group group, EventDto actual) {
-        if (group.getLastEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
+    protected static boolean divideByType(Group group, EventDto actual) {
+        if (group.getFirstEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
             return false; // su rovnake
-        } else if (group.getLastEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {
+        } else if (group.getFirstEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {
             return false; // su rovnake
-        } else if (group.getLastEvent() instanceof BashCommandEventDto && actual instanceof BashCommandEventDto) {
+        } else if (group.getFirstEvent() instanceof BashCommandEventDto && actual instanceof BashCommandEventDto) {
             return false; // su rovnake
         }
 
@@ -75,20 +80,27 @@ public class BaseDividing implements IDividing {
         return true;
     }
 
-    public static boolean divideForWebTabSpendTime(Group group, EventDto actual) {
-        EventDto first = group.getFirstEvent();
-        if (!(first instanceof WebEventDto)) {
-            return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie
+    public static class PerWebDividing extends BaseDividing {
+        @Override
+        public boolean canDivide(Group group, EventDto actual) {    // Zapneme per domain filter
+            return divideForWebTabSpendTime(group, actual) || divideByType(group, actual);
         }
-        if (!(actual instanceof WebEventDto)) {
-            return true; // druhy prvok je iny typ
+
+        protected static boolean divideForWebTabSpendTime(Group group, EventDto actual) {
+            EventDto first = group.getFirstEvent();
+            if (!(first instanceof WebEventDto)) {
+                return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie
+            }
+            if (!(actual instanceof WebEventDto)) {
+                return true; // druhy prvok je iny typ
+            }
+            String url1 = ((WebEventDto) first).getDomain();
+            String url2 = ((WebEventDto) actual).getDomain();
+            if (url1 == null || url2 == null) {
+                return true;
+            }
+            // url1 ponechaj take ake je, ked je ine ako url2 rozdeli to samo, co je pravdepodobne, inak mohol byt aj na rovnakej neznamen stranke
+            return !url1.equals(url2); // tzv prida event na zaciatok a na konci bude druhy event
         }
-        String url1 = ((WebEventDto) first).getDomain();
-        String url2 = ((WebEventDto) actual).getDomain();
-        if (url1 == null || url2 == null) {
-            return true;
-        }
-        // url1 ponechaj take ake je, ked je ine ako url2 rozdeli to samo, co je pravdepodobne, inak mohol byt aj na rovnakej neznamen stranke
-        return group.size() > 1 && !url1.equals(url2); // tzv prida event na zaciatok a na konci bude druhy event
     }
 }

@@ -135,10 +135,10 @@ DataAxis.prototype._create = function() {
   this.dom.lineContainer.style.width = '100%';
   this.dom.lineContainer.style.height = this.height;
 
-  this.dom.popis = document.createElement('div');
+  /*this.dom.popis = document.createElement('div');
   this.dom.popis.style.position = "absolute";
   this.dom.popis.style.top = '60px';
-  this.dom.frame.appendChild(this.dom.popis);
+  this.dom.frame.appendChild(this.dom.popis); */
 
   // create svg element for graph drawing.
   this.svg = document.createElementNS('http://www.w3.org/2000/svg',"svg");
@@ -325,8 +325,8 @@ DataAxis.prototype._redrawLabels = function () {
     amountOfSteps += 0.25;
   }
 
-  var name = this.options['popisY'];
-  this.dom.popis.innerHTML = '<span>' + name.split('').join('</span><span>') + '</span>';
+  //var name = this.options['popisY'];
+  //this.dom.popis.innerHTML = '<span>' + name.split('').join('</span><span>') + '</span>';
 
   this.valueAtZero = step.marginEnd;
   var marginStartPos = 0;

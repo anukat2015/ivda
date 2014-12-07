@@ -105,9 +105,9 @@ public abstract class BrowserVsWrittenCode extends CreateBaseActivities {
         return time;
     }
 
-    protected long getWrittenCode() {
+    protected int getWrittenCode() {
         // Pozerame sa na zachytene aktivity a na to kolko riadkov bolo prepisanych pocas ich trvania
-        long loc = 0;
+        int loc = 0;
         for (IdeGroup g : ideActivities) {
             loc += g.getLoc();
         }

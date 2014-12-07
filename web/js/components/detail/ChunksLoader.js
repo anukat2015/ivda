@@ -4,8 +4,8 @@
  * Eventy v skupine su teda naraz stiahnute, vytvorene a vymazane.
  * @constructor
  */
-ChunksLoader = function (component) {
-    this.parent = component;
+ChunksLoader = function () {
+    this.parent = undefined;
     this.CHUNK_SIZE = (60 * 1000 * 60 * 24); // cely den
     this.actualMin = undefined;
     this.actualMax = undefined;
@@ -17,7 +17,8 @@ ChunksLoader = function (component) {
  * @param end
  * @param finishCallback
  */
-ChunksLoader.prototype.loadRange = function (start, end) {
+ChunksLoader.prototype.loadRange = function (component, start, end) {
+    this.parent = component;
     // Hoci pouzivatel nam povedal ze sa mame pozriet na tu danu oblast, my to zaokruhlime - zoberiem zo sirsej perspektivy
     // Statistiky sa mu vypocitaju na zaklade prvkov, ktore su viditelne
     this.actualMin = start.floor(this.CHUNK_SIZE);
@@ -125,4 +126,5 @@ ChunksLoader.prototype.acceptData = function (events) {
     gGlobals.service._convertDates(events);
     this.parent.diagram.addItems(events, true);
     this.parent.diagram.redraw();
+    this.parent.charts.redraw();
 };

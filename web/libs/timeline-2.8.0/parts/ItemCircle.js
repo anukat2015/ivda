@@ -37,7 +37,7 @@ links.Timeline.ItemCircle.prototype.reflow = function () {
  */
 links.Timeline.ItemCircle.prototype.select = function () {
     var dom = this.dom;
-    links.Timeline.addClassName(dom, 'timeline-event-selected ui-state-active');
+    links.Timeline.addClassName(dom, 'timeline-event-selected'); // ui-state-active
 };
 
 /**
@@ -46,7 +46,7 @@ links.Timeline.ItemCircle.prototype.select = function () {
  */
 links.Timeline.ItemCircle.prototype.unselect = function () {
     var dom = this.dom;
-    links.Timeline.removeClassName(dom, 'timeline-event-selected ui-state-active');
+    links.Timeline.removeClassName(dom, 'timeline-event-selected'); // ui-state-active
 };
 
 /**
@@ -125,7 +125,11 @@ links.Timeline.ItemCircle.prototype.updateDOM = function () {
         var divBox = this.dom;
 
         // update contents
-        divBox.firstChild.innerHTML = this.group.content;
+        if (this.isCluster) {
+            divBox.firstChild.innerHTML = this.content;
+        } else {
+            divBox.firstChild.innerHTML = this.group.content;
+        }
 
         // update classes
         divBox.className = "timeline-event timeline-event-circle";

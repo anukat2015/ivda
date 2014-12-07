@@ -33,26 +33,35 @@ public abstract class ProcessAsGroup extends ProcessIterator<EventDto> {
         // Ak si prvy uloz sa a pokracuj dalej
         if (currentGroup == null) {
             currentGroup = createNewGroup(event);
-            currentGroup.add2Group(event);  // musi sa nastavit skor ako v checkGroup
-            return; // moze pokracovat dalej, checkGroup neovplinvi ked prvya posledny je ten isty ale nemusi :)
+            currentGroup.push(event);
+            return;
         }
 
-        if (divide.canDivide(currentGroup, event)) {
+        boolean canPush = divide.canPush(currentGroup, event);
+        boolean canDivide = false;
+        if(canPush) {
+            canDivide = divide.canDivide(currentGroup, event);
+            currentGroup.push(event);
+        } else {
+            canDivide = true;
+        }
+
+        if (canDivide) {
             foundEndOfGroup(currentGroup);
             currentGroup = createNewGroup(event);
+            currentGroup.push(event);
         }
-        currentGroup.add2Group(event);
     }
 
     protected Group createNewGroup(EventDto event) {
-        return new BoundedGroup(event);
+        return new BoundedGroup();
     }
 
     protected abstract void foundEndOfGroup(Group group);
 
     @Override
     protected void finished() {
-        if (!(currentGroup == null || currentGroup.isEmpty())) {
+        if (currentGroup != null) {
             foundEndOfGroup(currentGroup);
         }
     }

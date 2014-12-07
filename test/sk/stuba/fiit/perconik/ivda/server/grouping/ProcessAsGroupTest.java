@@ -61,7 +61,7 @@ public class ProcessAsGroupTest extends TestCase {
                 event.setStart(first.getTimestamp());
                 event.setEnd(last.getTimestamp());
                 event.setGroup(EventsUtil.event2name(first));
-                event.setY(group.size());
+                event.setY(group.countEvents());
                 out.write(event);
             }
         };

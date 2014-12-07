@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @NotThreadSafe
 public final class ListOfEventsForTimeline extends ProcessIterator<EventDto> {
-    private static final FilesOperationsRepository OP_REPOSITORY;
+    public static final FilesOperationsRepository OP_REPOSITORY;
     private final Array2Json out;
 
     public ListOfEventsForTimeline(OutputStream out) {

@@ -165,22 +165,6 @@ div.timeline-navigation {
     font-weight: bold;
 }
 
-div.timeline-navigation-zoom-in {
-    background: url('/libs/timeline-2.8.0/img/16/zoomin.png') no-repeat center;
-}
-
-div.timeline-navigation-zoom-out {
-    background: url('/libs/timeline-2.8.0/img/16/zoomout.png') no-repeat center;
-}
-
-div.timeline-navigation-move-right {
-    background: url('/libs/timeline-2.8.0/img/16/moveright.png') no-repeat center;
-}
-
-div.timeline-navigation-move-left {
-    background: url('/libs/timeline-2.8.0/img/16/moveleft.png') no-repeat center;
-}
-
 div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-zoom-in, div.timeline-navigation-zoom-out, div.timeline-navigation-move-left, div.timeline-navigation-move-right {
     -moz-box-sizing: border-box;
     box-sizing: border-box;

@@ -64,6 +64,6 @@ function Preloader() {
     };
 
     this.pendingTasks = function () {
-        return this.loader.tasks - this.loader.finishedTasks;
+        return this.tasks - this.finishedTasks;
     };
 }

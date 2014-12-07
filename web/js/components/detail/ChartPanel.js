@@ -1,24 +1,26 @@
 // https://developers.google.com/chart/interactive/docs/reference
 
-ChartPanel = function (component) {
-    this.parent = component;
+ChartPanel = function () {
+    this.parent = undefined;
     this.asynTask = undefined;
 };
 
-ChartPanel.prototype.init = function () {
-    this.activityChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart1')[0]);
+ChartPanel.prototype.init = function (component) {
+    this.parent = component;
+    // gGlobals.graphs.visibleComponents[1].charts.parent.dom
+    this.activityChart = new google.visualization.PieChart(this.parent.dom.find('.pieChart1')[0]);
     this.activityOptions = {
         title: 'Developer Activities',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
-    this.visibleChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart2')[0]);
+    this.visibleChart = new google.visualization.PieChart(this.parent.dom.find('.pieChart2')[0]);
     this.visibleOptions = {
         title: 'Chart of visible objects',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
-    this.metadataChart = new google.visualization.PieChart(this.parent.getElementsByClassName('pieChart3')[0]);
+    this.metadataChart = new google.visualization.PieChart(this.parent.dom.find('.pieChart3')[0]);
     this.metadataOptions = {
         title: 'Chart of changed lines',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
@@ -94,14 +96,14 @@ ChartPanel.prototype.computeLabels = function () {
 };
 
 ChartPanel.prototype.hideCharts = function () {
-    this.parent.find('.charts').hide();
-    this.parent.find('.legenda').show("highlight");
+    this.parent.dom.find('.charts').hide();
+    this.parent.dom.find('.legenda').show("highlight");
     this.visibleCharts = false;
 };
 
 ChartPanel.prototype.showCharts = function () {
-    this.parent.find('.charts').show();
-    this.parent.find('.legenda').hide();
+    this.parent.dom.find('.charts').show();
+    this.parent.dom.find('.legenda').hide();
     this.visibleCharts = true;
 };
 

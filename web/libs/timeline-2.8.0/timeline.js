@@ -984,7 +984,7 @@ links.Timeline.prototype.repaintFrame = function () {
     // main frame
     if (!dom.frame) {
         dom.frame = document.createElement("DIV");
-        dom.frame.className = "timeline-frame ui-widget ui-widget-content ui-corner-all";
+        dom.frame.className = "timeline-frame"; // ui-widget ui-widget-content ui-corner-all
         dom.container.appendChild(dom.frame);
         needsReflow = true;
     }

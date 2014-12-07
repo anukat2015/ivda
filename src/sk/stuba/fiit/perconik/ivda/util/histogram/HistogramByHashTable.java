@@ -14,13 +14,13 @@ public class HistogramByHashTable<K extends Comparable<K>> extends Histogram<K> 
     private final Hashtable<K, MutableInt> map = new Hashtable();
 
     @Override
-    public void map(K key, int count) {
+    public void map(K key, int n) {
         MutableInt finded = map.get(key);
         if (finded == null) {
-            finded = new MutableInt();
+            finded = new MutableInt(0);
             map.put(key, finded);
         }
-        finded.add(count);
+        finded.add(n);
     }
 
     @Override

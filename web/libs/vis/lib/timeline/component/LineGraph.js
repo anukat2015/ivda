@@ -949,8 +949,9 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
     // plot barchart
     for (i = 0; i < combinedData.length; i++) {
         group = this.groups[combinedData[i].groupId];
-        var minWidth = 0.1 * group.options.barChart.width;
+        var minWidth = 0.1 * 100; //group.options.barChart.width;
 
+        var sideOverlap = false;
         key = combinedData[i].start;
         var heightOffset = 0;
         if (intersections[key] === undefined) {
@@ -979,6 +980,7 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
                 intersections[key].accumulated += group.zeroPosition - combinedData[i].y;
             }
             else if (group.options.barChart.handleOverlap == 'sideBySide') {
+                sideOverlap = true;
                 drawData.width = drawData.width / intersections[key].amount;
                 drawData.offset += (intersections[key].resolved) * drawData.width - (0.5 * drawData.width * (intersections[key].amount + 1));
                 /*if (group.options.barChart.align == 'left') {
@@ -996,7 +998,7 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
         var width = drawData.width;
         var className = group.className + ' bar';
         var posY = combinedData[i].y - heightOffset;
-        if (end != undefined) {
+        if (end != undefined && !sideOverlap) {
             end = end + drawData.offset
             width = Math.max(end - start, 0.1);
         }

@@ -19,9 +19,9 @@ public class HistogramBySiblings<K extends Comparable<K>> extends Histogram<K> {
         private final K key;
         private MutableInt count;
 
-        private MyEntry(K key) {
+        private MyEntry(K key, int n) {
             this.key = key;
-            count = new MutableInt(1);
+            count = new MutableInt(n);
         }
 
         @Override
@@ -45,14 +45,14 @@ public class HistogramBySiblings<K extends Comparable<K>> extends Histogram<K> {
         Map.Entry<K, MutableInt> entry;
         int size = keys.size();
         if (size == 0) {
-            entry = new MyEntry(key);
+            entry = new MyEntry(key, count);
             keys.add(entry);
         } else {
             Map.Entry<K, MutableInt> before = keys.get(size - 1);
             if (before.getKey().equals(key)) {
                 before.getValue().add(count);
             } else {
-                entry = new MyEntry(key);
+                entry = new MyEntry(key, count);
                 keys.add(entry);
             }
         }

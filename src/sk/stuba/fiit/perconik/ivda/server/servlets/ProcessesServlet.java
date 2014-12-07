@@ -1,7 +1,6 @@
 package sk.stuba.fiit.perconik.ivda.server.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.server.processes.PerUserProcesses;
@@ -46,7 +45,8 @@ public class ProcessesServlet extends HttpServlet {
         try {
             ProcessesRequest request = new ProcessesRequest(req);
             LOGGER.info("Request: " + request);
-            ImmutableList<Process> list = findProcesses(request);
+            List<Process> list = findProcesses(request);
+            //List<String> groups = fixOverLapingProccesses(list);
             resp.setContentType(MediaType.APPLICATION_JSON);
             ServletOutputStream stream = resp.getOutputStream();
             MAPPER.writeValue(stream, list);
@@ -56,7 +56,7 @@ public class ProcessesServlet extends HttpServlet {
         }
     }
 
-    private static ImmutableList<Process> findProcesses(ProcessesRequest req) {
+    private static List<Process> findProcesses(ProcessesRequest req) {
         List<Process> saved = new ArrayList<>(128);
         PerUserProcesses info = PROCESSES.get(req.getDeveloper());
         if (info != null) {
@@ -66,12 +66,11 @@ public class ProcessesServlet extends HttpServlet {
                 }
             }
         }
-
-        fixOverLapingProccesses(saved);
-        return ImmutableList.copyOf(saved);
+        return saved;
     }
-
+     /*
     private static void fixOverLapingProccesses(List<Process> list) {
+        String group = "processes";
         for (Process p1 : list) {
             Integer number = 1;
             for (Process p2 : list) {
@@ -82,4 +81,5 @@ public class ProcessesServlet extends HttpServlet {
             }
         }
     }
+    */
 }

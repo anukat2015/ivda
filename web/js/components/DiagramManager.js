@@ -77,17 +77,19 @@ DiagramManager.prototype.register = function (component) {
 };
 
 DiagramManager.prototype.registerComponents = function () {
-    this.register(new CountEventsCom());
+    //this.register(new CountEventsCom());
     this.register(new CountEventsDividedCom());
     this.register(new CodeChangesCom());
     this.register(new ActivityDynamicCom());
     this.register(new ActivityDetailCom());
-    this.register(new activityTimeGroupedCom());
+    this.register(new ActivityTimeGroupedCom());
+    this.register(new ActivityLocDomainVisitsGrouped());
     this.register(new FilesModificationCom());
     this.register(new DomainVisitCom());
     this.register(new WebDurationComp());
     this.register(new BrowserVsRewrittenCodeCom());
     this.register(new DetailComponent());
+    this.register(new ProcessesDetailCom());
 };
 
 DiagramManager.prototype.onMove = function (item, range) {

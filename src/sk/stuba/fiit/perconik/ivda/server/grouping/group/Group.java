@@ -9,18 +9,20 @@ import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
  * Skupina eventov.
  */
 public abstract class Group {
-    public abstract void add2Group(EventDto event);
+    public abstract void push(EventDto event);
 
     public abstract EventDto getLastEvent();
 
     public abstract EventDto getFirstEvent();
 
-    public abstract boolean isEmpty();
+    public boolean isInterval() {
+        return countEvents() > 1;
+    }
 
-    public abstract int size();
+    public abstract int countEvents();
 
     public long getTimeDiff() {
-        if (isEmpty()) {
+        if (!isInterval()) {
             return 0;
         }
         return DateUtils.diff(getFirstEvent().getTimestamp(), getLastEvent().getTimestamp());

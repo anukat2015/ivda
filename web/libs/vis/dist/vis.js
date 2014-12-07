@@ -5,7 +5,7 @@
  * A dynamic, browser-based visualization library.
  *
  * @version 3.5.0
- * @date    2014-11-19
+ * @date    2014-12-07
  *
  * @license
  * Copyright (C) 2011-2014 Almende B.V, http://almende.com
@@ -81,29 +81,29 @@ return /******/ (function(modules) { // webpackBootstrap
 
   // utils
   exports.util = __webpack_require__(1);
-  exports.DOMutil = __webpack_require__(2);
+  exports.DOMutil = __webpack_require__(4);
 
   // data
-  exports.DataSet = __webpack_require__(3);
-  exports.DataView = __webpack_require__(4);
+  exports.DataSet = __webpack_require__(2);
+  exports.DataView = __webpack_require__(3);
 
   // Graph3d
-  exports.Graph3d = __webpack_require__(7);
+  exports.Graph3d = __webpack_require__(8);
   exports.graph3d = {
-    Camera: __webpack_require__(5),
-    Filter: __webpack_require__(6),
-    Point2d: __webpack_require__(8),
-    Point3d: __webpack_require__(9),
+    Camera: __webpack_require__(11),
+    Filter: __webpack_require__(7),
+    Point2d: __webpack_require__(6),
+    Point3d: __webpack_require__(5),
     Slider: __webpack_require__(10),
-    StepNumber: __webpack_require__(11)
+    StepNumber: __webpack_require__(9)
   };
 
   // Timeline
   exports.Timeline = __webpack_require__(12);
-  exports.Graph2d = __webpack_require__(13);
+  exports.Graph2d = __webpack_require__(15);
   exports.timeline = {
     DataStep: __webpack_require__(14),
-    Range: __webpack_require__(15),
+    Range: __webpack_require__(13),
     stack: __webpack_require__(16),
     TimeStep: __webpack_require__(17),
 
@@ -111,9 +111,9 @@ return /******/ (function(modules) { // webpackBootstrap
       items: {
         Item: __webpack_require__(28),
         BackgroundItem: __webpack_require__(29),
-        BoxItem: __webpack_require__(30),
+        BoxItem: __webpack_require__(32),
         PointItem: __webpack_require__(31),
-        RangeItem: __webpack_require__(32)
+        RangeItem: __webpack_require__(30)
       },
 
       Component: __webpack_require__(18),
@@ -130,9 +130,9 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   // Network
-  exports.Network = __webpack_require__(33);
+  exports.Network = __webpack_require__(34);
   exports.network = {
-    Edge: __webpack_require__(34),
+    Edge: __webpack_require__(33),
     Groups: __webpack_require__(35),
     Images: __webpack_require__(36),
     Node: __webpack_require__(37),
@@ -1485,184 +1485,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-  // DOM utility methods
-
-  /**
-   * this prepares the JSON container for allocating SVG elements
-   * @param JSONcontainer
-   * @private
-   */
-  exports.prepareElements = function (JSONcontainer) {
-      // cleanup the redundant svgElements;
-      for (var elementType in JSONcontainer) {
-          if (JSONcontainer.hasOwnProperty(elementType)) {
-              JSONcontainer[elementType].redundant = JSONcontainer[elementType].used;
-              JSONcontainer[elementType].used = [];
-          }
-      }
-  };
-
-  /**
-   * this cleans up all the unused SVG elements. By asking for the parentNode, we only need to supply the JSON container from
-   * which to remove the redundant elements.
-   *
-   * @param JSONcontainer
-   * @private
-   */
-  exports.cleanupElements = function (JSONcontainer) {
-      // cleanup the redundant svgElements;
-      for (var elementType in JSONcontainer) {
-          if (JSONcontainer.hasOwnProperty(elementType)) {
-              if (JSONcontainer[elementType].redundant) {
-                  for (var i = 0; i < JSONcontainer[elementType].redundant.length; i++) {
-                      JSONcontainer[elementType].redundant[i].parentNode.removeChild(JSONcontainer[elementType].redundant[i]);
-                  }
-                  JSONcontainer[elementType].redundant = [];
-              }
-          }
-      }
-  };
-
-  /**
-   * Allocate or generate an SVG element if needed. Store a reference to it in the JSON container and draw it in the svgContainer
-   * the JSON container and the SVG container have to be supplied so other svg containers (like the legend) can use this.
-   *
-   * @param elementType
-   * @param JSONcontainer
-   * @param svgContainer
-   * @returns {*}
-   * @private
-   */
-  exports.getSVGElement = function (elementType, JSONcontainer, svgContainer) {
-      var element;
-      // allocate SVG element, if it doesnt yet exist, create one.
-      if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
-          // check if there is an redundant element
-          if (JSONcontainer[elementType].redundant.length > 0) {
-              element = JSONcontainer[elementType].redundant[0];
-              JSONcontainer[elementType].redundant.shift();
-          }
-          else {
-              // create a new element and add it to the SVG
-              element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
-              svgContainer.appendChild(element);
-          }
-      }
-      else {
-          // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
-          element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
-          JSONcontainer[elementType] = {used: [], redundant: []};
-          svgContainer.appendChild(element);
-      }
-      JSONcontainer[elementType].used.push(element);
-      return element;
-  };
-
-
-  /**
-   * Allocate or generate an SVG element if needed. Store a reference to it in the JSON container and draw it in the svgContainer
-   * the JSON container and the SVG container have to be supplied so other svg containers (like the legend) can use this.
-   *
-   * @param elementType
-   * @param JSONcontainer
-   * @param DOMContainer
-   * @returns {*}
-   * @private
-   */
-  exports.getDOMElement = function (elementType, JSONcontainer, DOMContainer, insertBefore) {
-      var element;
-      // allocate DOM element, if it doesnt yet exist, create one.
-      if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
-          // check if there is an redundant element
-          if (JSONcontainer[elementType].redundant.length > 0) {
-              element = JSONcontainer[elementType].redundant[0];
-              JSONcontainer[elementType].redundant.shift();
-          }
-          else {
-              // create a new element and add it to the SVG
-              element = document.createElement(elementType);
-              if (insertBefore !== undefined) {
-                  DOMContainer.insertBefore(element, insertBefore);
-              }
-              else {
-                  DOMContainer.appendChild(element);
-              }
-          }
-      }
-      else {
-          // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
-          element = document.createElement(elementType);
-          JSONcontainer[elementType] = {used: [], redundant: []};
-          if (insertBefore !== undefined) {
-              DOMContainer.insertBefore(element, insertBefore);
-          }
-          else {
-              DOMContainer.appendChild(element);
-          }
-      }
-      JSONcontainer[elementType].used.push(element);
-      return element;
-  };
-
-
-  /**
-   * draw a point object. this is a seperate function because it can also be called by the legend.
-   * The reason the JSONcontainer and the target SVG svgContainer have to be supplied is so the legend can use these functions
-   * as well.
-   *
-   * @param x
-   * @param y
-   * @param group
-   * @param JSONcontainer
-   * @param svgContainer
-   * @returns {*}
-   */
-  exports.drawPoint = function (x, y, group, JSONcontainer, svgContainer) {
-      var point;
-      if (group.options.drawPoints.style == 'circle') {
-          point = exports.getSVGElement('circle', JSONcontainer, svgContainer);
-          point.setAttributeNS(null, "cx", x);
-          point.setAttributeNS(null, "cy", y);
-          point.setAttributeNS(null, "r", 0.5 * group.options.drawPoints.size);
-          point.setAttributeNS(null, "class", group.className + " point");
-      }
-      else {
-          point = exports.getSVGElement('rect', JSONcontainer, svgContainer);
-          point.setAttributeNS(null, "x", x - 0.5 * group.options.drawPoints.size);
-          point.setAttributeNS(null, "y", y - 0.5 * group.options.drawPoints.size);
-          point.setAttributeNS(null, "width", group.options.drawPoints.size);
-          point.setAttributeNS(null, "height", group.options.drawPoints.size);
-          point.setAttributeNS(null, "class", group.className + " point");
-      }
-      return point;
-  };
-
-  /**
-   * draw a bar SVG element centered on the X coordinate
-   *
-   * @param x
-   * @param y
-   * @param className
-   */
-  exports.drawBar = function (x, y, width, height, className, JSONcontainer, svgContainer, end, title) {
-  //  if (height != 0) {
-      var rect = exports.getSVGElement('rect', JSONcontainer, svgContainer);
-      rect.setAttributeNS(null, "x", x);
-      rect.setAttributeNS(null, "y", y);
-      rect.setAttributeNS(null, "width", width);
-      rect.setAttributeNS(null, "height", height);
-      rect.setAttributeNS(null, "class", className);
-      if (title != undefined) {
-          rect.innerHTML = "<title>" + title + "</title>";
-      }
-  //  }
-  };
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
   var util = __webpack_require__(1);
 
   /**
@@ -2614,11 +2436,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var DataSet = __webpack_require__(3);
+  var DataSet = __webpack_require__(2);
 
   /**
    * DataView
@@ -2920,150 +2742,296 @@ return /******/ (function(modules) { // webpackBootstrap
   module.exports = DataView;
 
 /***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+  // DOM utility methods
+
+  /**
+   * this prepares the JSON container for allocating SVG elements
+   * @param JSONcontainer
+   * @private
+   */
+  exports.prepareElements = function (JSONcontainer) {
+      // cleanup the redundant svgElements;
+      for (var elementType in JSONcontainer) {
+          if (JSONcontainer.hasOwnProperty(elementType)) {
+              JSONcontainer[elementType].redundant = JSONcontainer[elementType].used;
+              JSONcontainer[elementType].used = [];
+          }
+      }
+  };
+
+  /**
+   * this cleans up all the unused SVG elements. By asking for the parentNode, we only need to supply the JSON container from
+   * which to remove the redundant elements.
+   *
+   * @param JSONcontainer
+   * @private
+   */
+  exports.cleanupElements = function (JSONcontainer) {
+      // cleanup the redundant svgElements;
+      for (var elementType in JSONcontainer) {
+          if (JSONcontainer.hasOwnProperty(elementType)) {
+              if (JSONcontainer[elementType].redundant) {
+                  for (var i = 0; i < JSONcontainer[elementType].redundant.length; i++) {
+                      JSONcontainer[elementType].redundant[i].parentNode.removeChild(JSONcontainer[elementType].redundant[i]);
+                  }
+                  JSONcontainer[elementType].redundant = [];
+              }
+          }
+      }
+  };
+
+  /**
+   * Allocate or generate an SVG element if needed. Store a reference to it in the JSON container and draw it in the svgContainer
+   * the JSON container and the SVG container have to be supplied so other svg containers (like the legend) can use this.
+   *
+   * @param elementType
+   * @param JSONcontainer
+   * @param svgContainer
+   * @returns {*}
+   * @private
+   */
+  exports.getSVGElement = function (elementType, JSONcontainer, svgContainer) {
+      var element;
+      // allocate SVG element, if it doesnt yet exist, create one.
+      if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
+          // check if there is an redundant element
+          if (JSONcontainer[elementType].redundant.length > 0) {
+              element = JSONcontainer[elementType].redundant[0];
+              JSONcontainer[elementType].redundant.shift();
+          }
+          else {
+              // create a new element and add it to the SVG
+              element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
+              svgContainer.appendChild(element);
+          }
+      }
+      else {
+          // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
+          element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
+          JSONcontainer[elementType] = {used: [], redundant: []};
+          svgContainer.appendChild(element);
+      }
+      JSONcontainer[elementType].used.push(element);
+      return element;
+  };
+
+
+  /**
+   * Allocate or generate an SVG element if needed. Store a reference to it in the JSON container and draw it in the svgContainer
+   * the JSON container and the SVG container have to be supplied so other svg containers (like the legend) can use this.
+   *
+   * @param elementType
+   * @param JSONcontainer
+   * @param DOMContainer
+   * @returns {*}
+   * @private
+   */
+  exports.getDOMElement = function (elementType, JSONcontainer, DOMContainer, insertBefore) {
+      var element;
+      // allocate DOM element, if it doesnt yet exist, create one.
+      if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
+          // check if there is an redundant element
+          if (JSONcontainer[elementType].redundant.length > 0) {
+              element = JSONcontainer[elementType].redundant[0];
+              JSONcontainer[elementType].redundant.shift();
+          }
+          else {
+              // create a new element and add it to the SVG
+              element = document.createElement(elementType);
+              if (insertBefore !== undefined) {
+                  DOMContainer.insertBefore(element, insertBefore);
+              }
+              else {
+                  DOMContainer.appendChild(element);
+              }
+          }
+      }
+      else {
+          // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
+          element = document.createElement(elementType);
+          JSONcontainer[elementType] = {used: [], redundant: []};
+          if (insertBefore !== undefined) {
+              DOMContainer.insertBefore(element, insertBefore);
+          }
+          else {
+              DOMContainer.appendChild(element);
+          }
+      }
+      JSONcontainer[elementType].used.push(element);
+      return element;
+  };
+
+
+  /**
+   * draw a point object. this is a seperate function because it can also be called by the legend.
+   * The reason the JSONcontainer and the target SVG svgContainer have to be supplied is so the legend can use these functions
+   * as well.
+   *
+   * @param x
+   * @param y
+   * @param group
+   * @param JSONcontainer
+   * @param svgContainer
+   * @returns {*}
+   */
+  exports.drawPoint = function (x, y, group, JSONcontainer, svgContainer) {
+      var point;
+      if (group.options.drawPoints.style == 'circle') {
+          point = exports.getSVGElement('circle', JSONcontainer, svgContainer);
+          point.setAttributeNS(null, "cx", x);
+          point.setAttributeNS(null, "cy", y);
+          point.setAttributeNS(null, "r", 0.5 * group.options.drawPoints.size);
+          point.setAttributeNS(null, "class", group.className + " point");
+      }
+      else {
+          point = exports.getSVGElement('rect', JSONcontainer, svgContainer);
+          point.setAttributeNS(null, "x", x - 0.5 * group.options.drawPoints.size);
+          point.setAttributeNS(null, "y", y - 0.5 * group.options.drawPoints.size);
+          point.setAttributeNS(null, "width", group.options.drawPoints.size);
+          point.setAttributeNS(null, "height", group.options.drawPoints.size);
+          point.setAttributeNS(null, "class", group.className + " point");
+      }
+      return point;
+  };
+
+  /**
+   * draw a bar SVG element centered on the X coordinate
+   *
+   * @param x
+   * @param y
+   * @param className
+   */
+  exports.drawBar = function (x, y, width, height, className, JSONcontainer, svgContainer, end, title) {
+  //  if (height != 0) {
+      var rect = exports.getSVGElement('rect', JSONcontainer, svgContainer);
+      rect.setAttributeNS(null, "x", x);
+      rect.setAttributeNS(null, "y", y);
+      rect.setAttributeNS(null, "width", width);
+      rect.setAttributeNS(null, "height", height);
+      rect.setAttributeNS(null, "class", className);
+      if (title != undefined) {
+          rect.innerHTML = "<title>" + title + "</title>";
+      }
+  //  }
+  };
+
+
+/***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Point3d = __webpack_require__(9);
-
   /**
-   * @class Camera
-   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
-   * The camera is always looking in the direction of the origin of the arm.
-   * This way, the camera always rotates around one fixed point, the location
-   * of the camera arm.
-   *
-   * Documentation:
-   *   http://en.wikipedia.org/wiki/3D_projection
+   * @prototype Point3d
+   * @param {Number} [x]
+   * @param {Number} [y]
+   * @param {Number} [z]
    */
-  Camera = function () {
-    this.armLocation = new Point3d();
-    this.armRotation = {};
-    this.armRotation.horizontal = 0;
-    this.armRotation.vertical = 0;
-    this.armLength = 1.7;
-
-    this.cameraLocation = new Point3d();
-    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
-
-    this.calculateCameraOrientation();
+  function Point3d(x, y, z) {
+    this.x = x !== undefined ? x : 0;
+    this.y = y !== undefined ? y : 0;
+    this.z = z !== undefined ? z : 0;
   };
 
   /**
-   * Set the location (origin) of the arm
-   * @param {Number} x  Normalized value of x
-   * @param {Number} y  Normalized value of y
-   * @param {Number} z  Normalized value of z
+   * Subtract the two provided points, returns a-b
+   * @param {Point3d} a
+   * @param {Point3d} b
+   * @return {Point3d} a-b
    */
-  Camera.prototype.setArmLocation = function(x, y, z) {
-    this.armLocation.x = x;
-    this.armLocation.y = y;
-    this.armLocation.z = z;
-
-    this.calculateCameraOrientation();
+  Point3d.subtract = function(a, b) {
+    var sub = new Point3d();
+    sub.x = a.x - b.x;
+    sub.y = a.y - b.y;
+    sub.z = a.z - b.z;
+    return sub;
   };
 
   /**
-   * Set the rotation of the camera arm
-   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
-   *                Optional, can be left undefined.
-   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
-   *                if vertical=0.5*PI, the graph is shown from the
-   *                top. Optional, can be left undefined.
+   * Add the two provided points, returns a+b
+   * @param {Point3d} a
+   * @param {Point3d} b
+   * @return {Point3d} a+b
    */
-  Camera.prototype.setArmRotation = function(horizontal, vertical) {
-    if (horizontal !== undefined) {
-      this.armRotation.horizontal = horizontal;
-    }
-
-    if (vertical !== undefined) {
-      this.armRotation.vertical = vertical;
-      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
-      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
-    }
-
-    if (horizontal !== undefined || vertical !== undefined) {
-      this.calculateCameraOrientation();
-    }
+  Point3d.add = function(a, b) {
+    var sum = new Point3d();
+    sum.x = a.x + b.x;
+    sum.y = a.y + b.y;
+    sum.z = a.z + b.z;
+    return sum;
   };
 
   /**
-   * Retrieve the current arm rotation
-   * @return {object}   An object with parameters horizontal and vertical
+   * Calculate the average of two 3d points
+   * @param {Point3d} a
+   * @param {Point3d} b
+   * @return {Point3d} The average, (a+b)/2
    */
-  Camera.prototype.getArmRotation = function() {
-    var rot = {};
-    rot.horizontal = this.armRotation.horizontal;
-    rot.vertical = this.armRotation.vertical;
-
-    return rot;
+  Point3d.avg = function(a, b) {
+    return new Point3d(
+            (a.x + b.x) / 2,
+            (a.y + b.y) / 2,
+            (a.z + b.z) / 2
+    );
   };
 
   /**
-   * Set the (normalized) length of the camera arm.
-   * @param {Number} length A length between 0.71 and 5.0
+   * Calculate the cross product of the two provided points, returns axb
+   * Documentation: http://en.wikipedia.org/wiki/Cross_product
+   * @param {Point3d} a
+   * @param {Point3d} b
+   * @return {Point3d} cross product axb
    */
-  Camera.prototype.setArmLength = function(length) {
-    if (length === undefined)
-      return;
+  Point3d.crossProduct = function(a, b) {
+    var crossproduct = new Point3d();
 
-    this.armLength = length;
+    crossproduct.x = a.y * b.z - a.z * b.y;
+    crossproduct.y = a.z * b.x - a.x * b.z;
+    crossproduct.z = a.x * b.y - a.y * b.x;
 
-    // Radius must be larger than the corner of the graph,
-    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
-    // graph
-    if (this.armLength < 0.71) this.armLength = 0.71;
-    if (this.armLength > 5.0) this.armLength = 5.0;
-
-    this.calculateCameraOrientation();
+    return crossproduct;
   };
+
 
   /**
-   * Retrieve the arm length
-   * @return {Number} length
+   * Rtrieve the length of the vector (or the distance from this point to the origin
+   * @return {Number}  length
    */
-  Camera.prototype.getArmLength = function() {
-    return this.armLength;
+  Point3d.prototype.length = function() {
+    return Math.sqrt(
+            this.x * this.x +
+            this.y * this.y +
+            this.z * this.z
+    );
   };
 
-  /**
-   * Retrieve the camera location
-   * @return {Point3d} cameraLocation
-   */
-  Camera.prototype.getCameraLocation = function() {
-    return this.cameraLocation;
-  };
+  module.exports = Point3d;
 
-  /**
-   * Retrieve the camera rotation
-   * @return {Point3d} cameraRotation
-   */
-  Camera.prototype.getCameraRotation = function() {
-    return this.cameraRotation;
-  };
-
-  /**
-   * Calculate the location and rotation of the camera based on the
-   * position and orientation of the camera arm
-   */
-  Camera.prototype.calculateCameraOrientation = function() {
-    // calculate location of the camera
-    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
-    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
-
-    // calculate rotation of the camera
-    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
-    this.cameraRotation.y = 0;
-    this.cameraRotation.z = -this.armRotation.horizontal;
-  };
-
-  module.exports = Camera;
 
 /***/ },
 /* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var DataView = __webpack_require__(4);
+  /**
+   * @prototype Point2d
+   * @param {Number} [x]
+   * @param {Number} [y]
+   */
+  Point2d = function (x, y) {
+    this.x = x !== undefined ? x : 0;
+    this.y = y !== undefined ? y : 0;
+  };
+
+  module.exports = Point2d;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var DataView = __webpack_require__(3);
 
   /**
    * @class Filter
@@ -3284,19 +3252,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(63);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
+  var Emitter = __webpack_require__(50);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
   var util = __webpack_require__(1);
-  var Point3d = __webpack_require__(9);
-  var Point2d = __webpack_require__(8);
-  var Camera = __webpack_require__(5);
-  var Filter = __webpack_require__(6);
+  var Point3d = __webpack_require__(5);
+  var Point2d = __webpack_require__(6);
+  var Camera = __webpack_require__(11);
+  var Filter = __webpack_require__(7);
   var Slider = __webpack_require__(10);
-  var StepNumber = __webpack_require__(11);
+  var StepNumber = __webpack_require__(9);
 
   /**
    * @constructor Graph3d
@@ -5558,111 +5526,149 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-  /**
-   * @prototype Point2d
-   * @param {Number} [x]
-   * @param {Number} [y]
-   */
-  Point2d = function (x, y) {
-    this.x = x !== undefined ? x : 0;
-    this.y = y !== undefined ? y : 0;
-  };
-
-  module.exports = Point2d;
-
-
-/***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
-   * @prototype Point3d
-   * @param {Number} [x]
-   * @param {Number} [y]
-   * @param {Number} [z]
+   * @prototype StepNumber
+   * The class StepNumber is an iterator for Numbers. You provide a start and end
+   * value, and a best step size. StepNumber itself rounds to fixed values and
+   * a finds the step that best fits the provided step.
+   *
+   * If prettyStep is true, the step size is chosen as close as possible to the
+   * provided step, but being a round value like 1, 2, 5, 10, 20, 50, ....
+   *
+   * Example usage:
+   *   var step = new StepNumber(0, 10, 2.5, true);
+   *   step.start();
+   *   while (!step.end()) {
+   *   alert(step.getCurrent());
+   *   step.next();
+   *   }
+   *
+   * Version: 1.0
+   *
+   * @param {Number} start     The start value
+   * @param {Number} end     The end value
+   * @param {Number} step    Optional. Step size. Must be a positive value.
+   * @param {boolean} prettyStep Optional. If true, the step size is rounded
+   *               To a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
    */
-  function Point3d(x, y, z) {
-    this.x = x !== undefined ? x : 0;
-    this.y = y !== undefined ? y : 0;
-    this.z = z !== undefined ? z : 0;
+  function StepNumber(start, end, step, prettyStep) {
+    // set default values
+    this._start = 0;
+    this._end = 0;
+    this._step = 1;
+    this.prettyStep = true;
+    this.precision = 5;
+
+    this._current = 0;
+    this.setRange(start, end, step, prettyStep);
   };
 
   /**
-   * Subtract the two provided points, returns a-b
-   * @param {Point3d} a
-   * @param {Point3d} b
-   * @return {Point3d} a-b
+   * Set a new range: start, end and step.
+   *
+   * @param {Number} start     The start value
+   * @param {Number} end     The end value
+   * @param {Number} step    Optional. Step size. Must be a positive value.
+   * @param {boolean} prettyStep Optional. If true, the step size is rounded
+   *               To a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
    */
-  Point3d.subtract = function(a, b) {
-    var sub = new Point3d();
-    sub.x = a.x - b.x;
-    sub.y = a.y - b.y;
-    sub.z = a.z - b.z;
-    return sub;
+  StepNumber.prototype.setRange = function(start, end, step, prettyStep) {
+    this._start = start ? start : 0;
+    this._end = end ? end : 0;
+
+    this.setStep(step, prettyStep);
   };
 
   /**
-   * Add the two provided points, returns a+b
-   * @param {Point3d} a
-   * @param {Point3d} b
-   * @return {Point3d} a+b
+   * Set a new step size
+   * @param {Number} step    New step size. Must be a positive value
+   * @param {boolean} prettyStep Optional. If true, the provided step is rounded
+   *               to a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
    */
-  Point3d.add = function(a, b) {
-    var sum = new Point3d();
-    sum.x = a.x + b.x;
-    sum.y = a.y + b.y;
-    sum.z = a.z + b.z;
-    return sum;
+  StepNumber.prototype.setStep = function(step, prettyStep) {
+    if (step === undefined || step <= 0)
+      return;
+
+    if (prettyStep !== undefined)
+      this.prettyStep = prettyStep;
+
+    if (this.prettyStep === true)
+      this._step = StepNumber.calculatePrettyStep(step);
+    else
+      this._step = step;
   };
 
   /**
-   * Calculate the average of two 3d points
-   * @param {Point3d} a
-   * @param {Point3d} b
-   * @return {Point3d} The average, (a+b)/2
+   * Calculate a nice step size, closest to the desired step size.
+   * Returns a value in one of the ranges 1*10^n, 2*10^n, or 5*10^n, where n is an
+   * integer Number. For example 1, 2, 5, 10, 20, 50, etc...
+   * @param {Number}  step  Desired step size
+   * @return {Number}     Nice step size
    */
-  Point3d.avg = function(a, b) {
-    return new Point3d(
-            (a.x + b.x) / 2,
-            (a.y + b.y) / 2,
-            (a.z + b.z) / 2
-    );
+  StepNumber.calculatePrettyStep = function (step) {
+    var log10 = function (x) {return Math.log(x) / Math.LN10;};
+
+    // try three steps (multiple of 1, 2, or 5
+    var step1 = Math.pow(10, Math.round(log10(step))),
+        step2 = 2 * Math.pow(10, Math.round(log10(step / 2))),
+        step5 = 5 * Math.pow(10, Math.round(log10(step / 5)));
+
+    // choose the best step (closest to minimum step)
+    var prettyStep = step1;
+    if (Math.abs(step2 - step) <= Math.abs(prettyStep - step)) prettyStep = step2;
+    if (Math.abs(step5 - step) <= Math.abs(prettyStep - step)) prettyStep = step5;
+
+    // for safety
+    if (prettyStep <= 0) {
+      prettyStep = 1;
+    }
+
+    return prettyStep;
   };
 
   /**
-   * Calculate the cross product of the two provided points, returns axb
-   * Documentation: http://en.wikipedia.org/wiki/Cross_product
-   * @param {Point3d} a
-   * @param {Point3d} b
-   * @return {Point3d} cross product axb
+   * returns the current value of the step
+   * @return {Number} current value
    */
-  Point3d.crossProduct = function(a, b) {
-    var crossproduct = new Point3d();
-
-    crossproduct.x = a.y * b.z - a.z * b.y;
-    crossproduct.y = a.z * b.x - a.x * b.z;
-    crossproduct.z = a.x * b.y - a.y * b.x;
-
-    return crossproduct;
+  StepNumber.prototype.getCurrent = function () {
+    return parseFloat(this._current.toPrecision(this.precision));
   };
-
 
   /**
-   * Rtrieve the length of the vector (or the distance from this point to the origin
-   * @return {Number}  length
+   * returns the current step size
+   * @return {Number} current step size
    */
-  Point3d.prototype.length = function() {
-    return Math.sqrt(
-            this.x * this.x +
-            this.y * this.y +
-            this.z * this.z
-    );
+  StepNumber.prototype.getStep = function () {
+    return this._step;
   };
 
-  module.exports = Point3d;
+  /**
+   * Set the current value to the largest value smaller than start, which
+   * is a multiple of the step size
+   */
+  StepNumber.prototype.start = function() {
+    this._current = this._start - this._start % this._step;
+  };
+
+  /**
+   * Do a step, add the step size to the current value
+   */
+  StepNumber.prototype.next = function () {
+    this._current += this._step;
+  };
+
+  /**
+   * Returns true whether the end is reached
+   * @return {boolean}  True if the current value has passed the end value.
+   */
+  StepNumber.prototype.end = function () {
+    return (this._current > this._end);
+  };
+
+  module.exports = StepNumber;
 
 
 /***/ },
@@ -6021,159 +6027,153 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-  /**
-   * @prototype StepNumber
-   * The class StepNumber is an iterator for Numbers. You provide a start and end
-   * value, and a best step size. StepNumber itself rounds to fixed values and
-   * a finds the step that best fits the provided step.
-   *
-   * If prettyStep is true, the step size is chosen as close as possible to the
-   * provided step, but being a round value like 1, 2, 5, 10, 20, 50, ....
-   *
-   * Example usage:
-   *   var step = new StepNumber(0, 10, 2.5, true);
-   *   step.start();
-   *   while (!step.end()) {
-   *   alert(step.getCurrent());
-   *   step.next();
-   *   }
-   *
-   * Version: 1.0
-   *
-   * @param {Number} start     The start value
-   * @param {Number} end     The end value
-   * @param {Number} step    Optional. Step size. Must be a positive value.
-   * @param {boolean} prettyStep Optional. If true, the step size is rounded
-   *               To a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
-   */
-  function StepNumber(start, end, step, prettyStep) {
-    // set default values
-    this._start = 0;
-    this._end = 0;
-    this._step = 1;
-    this.prettyStep = true;
-    this.precision = 5;
+  var Point3d = __webpack_require__(5);
 
-    this._current = 0;
-    this.setRange(start, end, step, prettyStep);
+  /**
+   * @class Camera
+   * The camera is mounted on a (virtual) camera arm. The camera arm can rotate
+   * The camera is always looking in the direction of the origin of the arm.
+   * This way, the camera always rotates around one fixed point, the location
+   * of the camera arm.
+   *
+   * Documentation:
+   *   http://en.wikipedia.org/wiki/3D_projection
+   */
+  Camera = function () {
+    this.armLocation = new Point3d();
+    this.armRotation = {};
+    this.armRotation.horizontal = 0;
+    this.armRotation.vertical = 0;
+    this.armLength = 1.7;
+
+    this.cameraLocation = new Point3d();
+    this.cameraRotation =  new Point3d(0.5*Math.PI, 0, 0);
+
+    this.calculateCameraOrientation();
   };
 
   /**
-   * Set a new range: start, end and step.
-   *
-   * @param {Number} start     The start value
-   * @param {Number} end     The end value
-   * @param {Number} step    Optional. Step size. Must be a positive value.
-   * @param {boolean} prettyStep Optional. If true, the step size is rounded
-   *               To a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
+   * Set the location (origin) of the arm
+   * @param {Number} x  Normalized value of x
+   * @param {Number} y  Normalized value of y
+   * @param {Number} z  Normalized value of z
    */
-  StepNumber.prototype.setRange = function(start, end, step, prettyStep) {
-    this._start = start ? start : 0;
-    this._end = end ? end : 0;
+  Camera.prototype.setArmLocation = function(x, y, z) {
+    this.armLocation.x = x;
+    this.armLocation.y = y;
+    this.armLocation.z = z;
 
-    this.setStep(step, prettyStep);
+    this.calculateCameraOrientation();
   };
 
   /**
-   * Set a new step size
-   * @param {Number} step    New step size. Must be a positive value
-   * @param {boolean} prettyStep Optional. If true, the provided step is rounded
-   *               to a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
+   * Set the rotation of the camera arm
+   * @param {Number} horizontal   The horizontal rotation, between 0 and 2*PI.
+   *                Optional, can be left undefined.
+   * @param {Number} vertical   The vertical rotation, between 0 and 0.5*PI
+   *                if vertical=0.5*PI, the graph is shown from the
+   *                top. Optional, can be left undefined.
    */
-  StepNumber.prototype.setStep = function(step, prettyStep) {
-    if (step === undefined || step <= 0)
-      return;
-
-    if (prettyStep !== undefined)
-      this.prettyStep = prettyStep;
-
-    if (this.prettyStep === true)
-      this._step = StepNumber.calculatePrettyStep(step);
-    else
-      this._step = step;
-  };
-
-  /**
-   * Calculate a nice step size, closest to the desired step size.
-   * Returns a value in one of the ranges 1*10^n, 2*10^n, or 5*10^n, where n is an
-   * integer Number. For example 1, 2, 5, 10, 20, 50, etc...
-   * @param {Number}  step  Desired step size
-   * @return {Number}     Nice step size
-   */
-  StepNumber.calculatePrettyStep = function (step) {
-    var log10 = function (x) {return Math.log(x) / Math.LN10;};
-
-    // try three steps (multiple of 1, 2, or 5
-    var step1 = Math.pow(10, Math.round(log10(step))),
-        step2 = 2 * Math.pow(10, Math.round(log10(step / 2))),
-        step5 = 5 * Math.pow(10, Math.round(log10(step / 5)));
-
-    // choose the best step (closest to minimum step)
-    var prettyStep = step1;
-    if (Math.abs(step2 - step) <= Math.abs(prettyStep - step)) prettyStep = step2;
-    if (Math.abs(step5 - step) <= Math.abs(prettyStep - step)) prettyStep = step5;
-
-    // for safety
-    if (prettyStep <= 0) {
-      prettyStep = 1;
+  Camera.prototype.setArmRotation = function(horizontal, vertical) {
+    if (horizontal !== undefined) {
+      this.armRotation.horizontal = horizontal;
     }
 
-    return prettyStep;
+    if (vertical !== undefined) {
+      this.armRotation.vertical = vertical;
+      if (this.armRotation.vertical < 0) this.armRotation.vertical = 0;
+      if (this.armRotation.vertical > 0.5*Math.PI) this.armRotation.vertical = 0.5*Math.PI;
+    }
+
+    if (horizontal !== undefined || vertical !== undefined) {
+      this.calculateCameraOrientation();
+    }
   };
 
   /**
-   * returns the current value of the step
-   * @return {Number} current value
+   * Retrieve the current arm rotation
+   * @return {object}   An object with parameters horizontal and vertical
    */
-  StepNumber.prototype.getCurrent = function () {
-    return parseFloat(this._current.toPrecision(this.precision));
+  Camera.prototype.getArmRotation = function() {
+    var rot = {};
+    rot.horizontal = this.armRotation.horizontal;
+    rot.vertical = this.armRotation.vertical;
+
+    return rot;
   };
 
   /**
-   * returns the current step size
-   * @return {Number} current step size
+   * Set the (normalized) length of the camera arm.
+   * @param {Number} length A length between 0.71 and 5.0
    */
-  StepNumber.prototype.getStep = function () {
-    return this._step;
+  Camera.prototype.setArmLength = function(length) {
+    if (length === undefined)
+      return;
+
+    this.armLength = length;
+
+    // Radius must be larger than the corner of the graph,
+    // which has a distance of sqrt(0.5^2+0.5^2) = 0.71 from the center of the
+    // graph
+    if (this.armLength < 0.71) this.armLength = 0.71;
+    if (this.armLength > 5.0) this.armLength = 5.0;
+
+    this.calculateCameraOrientation();
   };
 
   /**
-   * Set the current value to the largest value smaller than start, which
-   * is a multiple of the step size
+   * Retrieve the arm length
+   * @return {Number} length
    */
-  StepNumber.prototype.start = function() {
-    this._current = this._start - this._start % this._step;
+  Camera.prototype.getArmLength = function() {
+    return this.armLength;
   };
 
   /**
-   * Do a step, add the step size to the current value
+   * Retrieve the camera location
+   * @return {Point3d} cameraLocation
    */
-  StepNumber.prototype.next = function () {
-    this._current += this._step;
+  Camera.prototype.getCameraLocation = function() {
+    return this.cameraLocation;
   };
 
   /**
-   * Returns true whether the end is reached
-   * @return {boolean}  True if the current value has passed the end value.
+   * Retrieve the camera rotation
+   * @return {Point3d} cameraRotation
    */
-  StepNumber.prototype.end = function () {
-    return (this._current > this._end);
+  Camera.prototype.getCameraRotation = function() {
+    return this.cameraRotation;
   };
 
-  module.exports = StepNumber;
+  /**
+   * Calculate the location and rotation of the camera based on the
+   * position and orientation of the camera arm
+   */
+  Camera.prototype.calculateCameraOrientation = function() {
+    // calculate location of the camera
+    this.cameraLocation.x = this.armLocation.x - this.armLength * Math.sin(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.y = this.armLocation.y - this.armLength * Math.cos(this.armRotation.horizontal) * Math.cos(this.armRotation.vertical);
+    this.cameraLocation.z = this.armLocation.z + this.armLength * Math.sin(this.armRotation.vertical);
 
+    // calculate rotation of the camera
+    this.cameraRotation.x = Math.PI/2 - this.armRotation.vertical;
+    this.cameraRotation.y = 0;
+    this.cameraRotation.z = -this.armRotation.horizontal;
+  };
+
+  module.exports = Camera;
 
 /***/ },
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(63);
+  var Emitter = __webpack_require__(50);
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
-  var Range = __webpack_require__(15);
-  var Core = __webpack_require__(48);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
+  var Range = __webpack_require__(13);
+  var Core = __webpack_require__(47);
   var TimeAxis = __webpack_require__(27);
   var CurrentTime = __webpack_require__(19);
   var CustomTime = __webpack_require__(20);
@@ -6468,475 +6468,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(63);
-  var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
-  var Range = __webpack_require__(15);
-  var Core = __webpack_require__(48);
-  var TimeAxis = __webpack_require__(27);
-  var CurrentTime = __webpack_require__(19);
-  var CustomTime = __webpack_require__(20);
-  var LineGraph = __webpack_require__(26);
-
-  /**
-   * Create a timeline visualization
-   * @param {HTMLElement} container
-   * @param {vis.DataSet | Array | google.visualization.DataTable} [items]
-   * @param {Object} [options]  See Graph2d.setOptions for the available options.
-   * @constructor
-   * @extends Core
-   */
-  function Graph2d (container, items, options, groups) {
-    var me = this;
-    this.defaultOptions = {
-      start: null,
-      end:   null,
-
-      autoResize: true,
-
-      orientation: 'bottom',
-      width: null,
-      height: null,
-      maxHeight: null,
-      minHeight: null
-    };
-    this.options = util.deepExtend({}, this.defaultOptions);
-
-    // Create the DOM, props, and emitter
-    this._create(container);
-
-    // all components listed here will be repainted automatically
-    this.components = [];
-
-    this.body = {
-      dom: this.dom,
-      domProps: this.props,
-      emitter: {
-        on: this.on.bind(this),
-        off: this.off.bind(this),
-        emit: this.emit.bind(this)
-      },
-      util: {
-        snap: null, // will be specified after TimeAxis is created
-        toScreen: me._toScreen.bind(me),
-        toGlobalScreen: me._toGlobalScreen.bind(me), // this refers to the root.width
-        toTime: me._toTime.bind(me),
-        toGlobalTime : me._toGlobalTime.bind(me)
-      }
-    };
-
-    // range
-    this.range = new Range(this.body);
-    this.components.push(this.range);
-    this.body.range = this.range;
-
-    // time axis
-    this.timeAxis = new TimeAxis(this.body);
-    this.components.push(this.timeAxis);
-    this.body.util.snap = this.timeAxis.snap.bind(this.timeAxis);
-
-    // current time bar
-    this.currentTime = new CurrentTime(this.body);
-    this.components.push(this.currentTime);
-
-    // custom time bar
-    // Note: time bar will be attached in this.setOptions when selected
-    this.customTime = new CustomTime(this.body);
-    this.components.push(this.customTime);
-
-    // item set
-    this.linegraph = new LineGraph(this.body);
-    this.components.push(this.linegraph);
-
-    this.itemsData = null;      // DataSet
-    this.groupsData = null;     // DataSet
-
-    // apply options
-    if (options) {
-      this.setOptions(options);
-    }
-
-    // IMPORTANT: THIS HAPPENS BEFORE SET ITEMS!
-    if (groups) {
-      this.setGroups(groups);
-    }
-
-    // create itemset
-    if (items) {
-      this.setItems(items);
-    }
-    else {
-      this.redraw();
-    }
-  }
-
-  // Extend the functionality from Core
-  Graph2d.prototype = new Core();
-
-  /**
-   * Set items
-   * @param {vis.DataSet | Array | google.visualization.DataTable | null} items
-   */
-  Graph2d.prototype.setItems = function(items) {
-    var initialLoad = (this.itemsData == null);
-
-    // convert to type DataSet when needed
-    var newDataSet;
-    if (!items) {
-      newDataSet = null;
-    }
-    else if (items instanceof DataSet || items instanceof DataView) {
-      newDataSet = items;
-    }
-    else {
-      // turn an array into a dataset
-      newDataSet = new DataSet(items, {
-        type: {
-          start: 'Date',
-          end: 'Date'
-        }
-      });
-    }
-
-    // set items
-    this.itemsData = newDataSet;
-    this.linegraph && this.linegraph.setItems(newDataSet);
-
-    if (initialLoad && ('start' in this.options || 'end' in this.options)) {
-      this.fit();
-
-      var start = ('start' in this.options) ? util.convert(this.options.start, 'Date') : null;
-      var end   = ('end' in this.options)   ? util.convert(this.options.end, 'Date') : null;
-
-      this.setWindow(start, end);
-    }
-  };
-
-  /**
-   * Set groups
-   * @param {vis.DataSet | Array | google.visualization.DataTable} groups
-   */
-  Graph2d.prototype.setGroups = function(groups) {
-    // convert to type DataSet when needed
-    var newDataSet;
-    if (!groups) {
-      newDataSet = null;
-    }
-    else if (groups instanceof DataSet || groups instanceof DataView) {
-      newDataSet = groups;
-    }
-    else {
-      // turn an array into a dataset
-      newDataSet = new DataSet(groups);
-    }
-
-    this.groupsData = newDataSet;
-    this.linegraph.setGroups(newDataSet);
-  };
-
-  /**
-   * Returns an object containing an SVG element with the icon of the group (size determined by iconWidth and iconHeight), the label of the group (content) and the yAxisOrientation of the group (left or right).
-   * @param groupId
-   * @param width
-   * @param height
-   */
-  Graph2d.prototype.getLegend = function(groupId, width, height) {
-    if (width  === undefined) {width  = 15;}
-    if (height === undefined) {height = 15;}
-    if (this.linegraph.groups[groupId] !== undefined) {
-      return this.linegraph.groups[groupId].getLegend(width,height);
-    }
-    else {
-      return "cannot find group:" +  groupId;
-    }
-  }
-
-  /**
-   * This checks if the visible option of the supplied group (by ID) is true or false.
-   * @param groupId
-   * @returns {*}
-   */
-  Graph2d.prototype.isGroupVisible = function(groupId) {
-    if (this.linegraph.groups[groupId] !== undefined) {
-      return (this.linegraph.groups[groupId].visible && (this.linegraph.options.groups.visibility[groupId] === undefined || this.linegraph.options.groups.visibility[groupId] == true));
-    }
-    else {
-      return false;
-    }
-  }
-
-
-  /**
-   * Get the data range of the item set.
-   * @returns {{min: Date, max: Date}} range  A range with a start and end Date.
-   *                                          When no minimum is found, min==null
-   *                                          When no maximum is found, max==null
-   */
-  Graph2d.prototype.getItemRange = function() {
-    var min = null;
-    var max = null;
-
-    // calculate min from start filed
-    for (var groupId in this.linegraph.groups) {
-      if (this.linegraph.groups.hasOwnProperty(groupId)) {
-        if (this.linegraph.groups[groupId].visible == true) {
-          for (var i = 0; i < this.linegraph.groups[groupId].itemsData.length; i++) {
-            var item = this.linegraph.groups[groupId].itemsData[i];
-            var value = util.convert(item.start, 'Date').valueOf();
-            min = min == null ? value : min > value ? value : min;
-            max = max == null ? value : max < value ? value : max;
-          }
-        }
-      }
-    }
-
-    return {
-      min: (min != null) ? new Date(min) : null,
-      max: (max != null) ? new Date(max) : null
-    };
-  };
-
-
-
-  module.exports = Graph2d;
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-  /**
-   * @constructor  DataStep
-   * The class DataStep is an iterator for data for the lineGraph. You provide a start data point and an
-   * end data point. The class itself determines the best scale (step size) based on the
-   * provided start Date, end Date, and minimumStep.
-   *
-   * If minimumStep is provided, the step size is chosen as close as possible
-   * to the minimumStep but larger than minimumStep. If minimumStep is not
-   * provided, the scale is set to 1 DAY.
-   * The minimumStep should correspond with the onscreen size of about 6 characters
-   *
-   * Alternatively, you can set a scale by hand.
-   * After creation, you can initialize the class by executing first(). Then you
-   * can iterate from the start date to the end date via next(). You can check if
-   * the end date is reached with the function hasNext(). After each step, you can
-   * retrieve the current date via getCurrent().
-   * The DataStep has scales ranging from milliseconds, seconds, minutes, hours,
-   * days, to years.
-   *
-   * Version: 1.2
-   *
-   * @param {Date} [start]         The start date, for example new Date(2010, 9, 21)
-   *                               or new Date(2010, 9, 21, 23, 45, 00)
-   * @param {Date} [end]           The end date
-   * @param {Number} [minimumStep] Optional. Minimum step size in milliseconds
-   */
-  function DataStep(start, end, minimumStep, containerHeight, customRange) {
-    // variables
-    this.current = 0;
-
-    this.autoScale = true;
-    this.stepIndex = 0;
-    this.step = 1;
-    this.scale = 1;
-
-    this.marginStart;
-    this.marginEnd;
-    this.deadSpace = 0;
-
-    this.majorSteps = [1,     2,    5,  10];
-    this.minorSteps = [0.25,  0.5,  1,  2];
-
-    this.setRange(start, end, minimumStep, containerHeight, customRange);
-  }
-
-
-
-  /**
-   * Set a new range
-   * If minimumStep is provided, the step size is chosen as close as possible
-   * to the minimumStep but larger than minimumStep. If minimumStep is not
-   * provided, the scale is set to 1 DAY.
-   * The minimumStep should correspond with the onscreen size of about 6 characters
-   * @param {Number} [start]      The start date and time.
-   * @param {Number} [end]        The end date and time.
-   * @param {Number} [minimumStep] Optional. Minimum step size in milliseconds
-   */
-  DataStep.prototype.setRange = function(start, end, minimumStep, containerHeight, customRange) {
-    this._start = customRange.min === undefined ? start : customRange.min;
-    this._end = customRange.max === undefined ? end : customRange.max;
-
-    if (this._start == this._end) {
-      this._start -= 0.75;
-      this._end += 1;
-    }
-
-    if (this.autoScale) {
-      this.setMinimumStep(minimumStep, containerHeight);
-    }
-    this.setFirst(customRange);
-  };
-
-  /**
-   * Automatically determine the scale that bests fits the provided minimum step
-   * @param {Number} [minimumStep]  The minimum step size in milliseconds
-   */
-  DataStep.prototype.setMinimumStep = function(minimumStep, containerHeight) {
-    // round to floor
-    var size = this._end - this._start;
-    var safeSize = size * 1.2;
-    var minimumStepValue = minimumStep * (safeSize / containerHeight);
-    var orderOfMagnitude = Math.round(Math.log(safeSize)/Math.LN10);
-
-    var minorStepIdx = -1;
-    var magnitudefactor = Math.pow(10,orderOfMagnitude);
-
-    var start = 0;
-    if (orderOfMagnitude < 0) {
-      start = orderOfMagnitude;
-    }
-
-    var solutionFound = false;
-    for (var i = start; Math.abs(i) <= Math.abs(orderOfMagnitude); i++) {
-      magnitudefactor = Math.pow(10,i);
-      for (var j = 0; j < this.minorSteps.length; j++) {
-        var stepSize = magnitudefactor * this.minorSteps[j];
-        if (stepSize >= minimumStepValue) {
-          solutionFound = true;
-          minorStepIdx = j;
-          break;
-        }
-      }
-      if (solutionFound == true) {
-        break;
-      }
-    }
-    this.stepIndex = minorStepIdx;
-    this.scale = magnitudefactor;
-    this.step = magnitudefactor * this.minorSteps[minorStepIdx];
-  };
-
-
-
-  /**
-   * Round the current date to the first minor date value
-   * This must be executed once when the current date is set to start Date
-   */
-  DataStep.prototype.setFirst = function(customRange) {
-    if (customRange === undefined) {
-      customRange = {};
-    }
-    var niceStart = customRange.min === undefined ? this._start - (this.scale * 2 * this.minorSteps[this.stepIndex]) : customRange.min;
-    var niceEnd = customRange.max === undefined ? this._end + (this.scale * this.minorSteps[this.stepIndex]) : customRange.max;
-
-    this.marginEnd = customRange.max === undefined ? this.roundToMinor(niceEnd) : customRange.max;
-    this.marginStart = customRange.min === undefined ? this.roundToMinor(niceStart) : customRange.min;
-    this.deadSpace = this.roundToMinor(niceEnd) - niceEnd + this.roundToMinor(niceStart) - niceStart;
-    this.marginRange = this.marginEnd - this.marginStart;
-
-    this.current = this.marginEnd;
-
-  };
-
-  DataStep.prototype.roundToMinor = function(value) {
-    var rounded = value - (value % (this.scale * this.minorSteps[this.stepIndex]));
-    if (value % (this.scale * this.minorSteps[this.stepIndex]) > 0.5 * (this.scale * this.minorSteps[this.stepIndex])) {
-      return rounded + (this.scale * this.minorSteps[this.stepIndex]);
-    }
-    else {
-      return rounded;
-    }
-  }
-
-
-  /**
-   * Check if the there is a next step
-   * @return {boolean}  true if the current date has not passed the end date
-   */
-  DataStep.prototype.hasNext = function () {
-    return (this.current >= this.marginStart);
-  };
-
-  /**
-   * Do the next step
-   */
-  DataStep.prototype.next = function() {
-    var prev = this.current;
-    this.current -= this.step;
-
-    // safety mechanism: if current time is still unchanged, move to the end
-    if (this.current == prev) {
-      this.current = this._end;
-    }
-  };
-
-  /**
-   * Do the next step
-   */
-  DataStep.prototype.previous = function() {
-    this.current += this.step;
-    this.marginEnd += this.step;
-    this.marginRange = this.marginEnd - this.marginStart;
-  };
-
-
-
-  /**
-   * Get the current datetime
-   * @return {String}  current The current date
-   */
-  DataStep.prototype.getCurrent = function() {
-    var toPrecision = '' + Number(this.current).toPrecision(5);
-    if (toPrecision.indexOf(",") != -1 || toPrecision.indexOf(".") != -1) {
-      for (var i = toPrecision.length-1; i > 0; i--) {
-        if (toPrecision[i] == "0") {
-          toPrecision = toPrecision.slice(0,i);
-        }
-        else if (toPrecision[i] == "." || toPrecision[i] == ",") {
-          toPrecision = toPrecision.slice(0,i);
-          break;
-        }
-        else{
-          break;
-        }
-      }
-    }
-
-    return toPrecision;
-  };
-
-
-
-  /**
-   * Snap a date to a rounded value.
-   * The snap intervals are dependent on the current scale and step.
-   * @param {Date} date   the date to be snapped.
-   * @return {Date} snappedDate
-   */
-  DataStep.prototype.snap = function(date) {
-
-  };
-
-  /**
-   * Check if the current value is a major value (for example when the step
-   * is DAY, a major value is each first day of the MONTH)
-   * @return {boolean} true if current date is major, else false.
-   */
-  DataStep.prototype.isMajor = function() {
-    return (this.current % (this.scale * this.majorSteps[this.stepIndex]) == 0);
-  };
-
-  module.exports = DataStep;
-
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var util = __webpack_require__(1);
-  var hammerUtil = __webpack_require__(43);
+  var hammerUtil = __webpack_require__(44);
   var moment = __webpack_require__(41);
   var Component = __webpack_require__(18);
 
@@ -7534,6 +7067,473 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
   module.exports = Range;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+  /**
+   * @constructor  DataStep
+   * The class DataStep is an iterator for data for the lineGraph. You provide a start data point and an
+   * end data point. The class itself determines the best scale (step size) based on the
+   * provided start Date, end Date, and minimumStep.
+   *
+   * If minimumStep is provided, the step size is chosen as close as possible
+   * to the minimumStep but larger than minimumStep. If minimumStep is not
+   * provided, the scale is set to 1 DAY.
+   * The minimumStep should correspond with the onscreen size of about 6 characters
+   *
+   * Alternatively, you can set a scale by hand.
+   * After creation, you can initialize the class by executing first(). Then you
+   * can iterate from the start date to the end date via next(). You can check if
+   * the end date is reached with the function hasNext(). After each step, you can
+   * retrieve the current date via getCurrent().
+   * The DataStep has scales ranging from milliseconds, seconds, minutes, hours,
+   * days, to years.
+   *
+   * Version: 1.2
+   *
+   * @param {Date} [start]         The start date, for example new Date(2010, 9, 21)
+   *                               or new Date(2010, 9, 21, 23, 45, 00)
+   * @param {Date} [end]           The end date
+   * @param {Number} [minimumStep] Optional. Minimum step size in milliseconds
+   */
+  function DataStep(start, end, minimumStep, containerHeight, customRange) {
+    // variables
+    this.current = 0;
+
+    this.autoScale = true;
+    this.stepIndex = 0;
+    this.step = 1;
+    this.scale = 1;
+
+    this.marginStart;
+    this.marginEnd;
+    this.deadSpace = 0;
+
+    this.majorSteps = [1,     2,    5,  10];
+    this.minorSteps = [0.25,  0.5,  1,  2];
+
+    this.setRange(start, end, minimumStep, containerHeight, customRange);
+  }
+
+
+
+  /**
+   * Set a new range
+   * If minimumStep is provided, the step size is chosen as close as possible
+   * to the minimumStep but larger than minimumStep. If minimumStep is not
+   * provided, the scale is set to 1 DAY.
+   * The minimumStep should correspond with the onscreen size of about 6 characters
+   * @param {Number} [start]      The start date and time.
+   * @param {Number} [end]        The end date and time.
+   * @param {Number} [minimumStep] Optional. Minimum step size in milliseconds
+   */
+  DataStep.prototype.setRange = function(start, end, minimumStep, containerHeight, customRange) {
+    this._start = customRange.min === undefined ? start : customRange.min;
+    this._end = customRange.max === undefined ? end : customRange.max;
+
+    if (this._start == this._end) {
+      this._start -= 0.75;
+      this._end += 1;
+    }
+
+    if (this.autoScale) {
+      this.setMinimumStep(minimumStep, containerHeight);
+    }
+    this.setFirst(customRange);
+  };
+
+  /**
+   * Automatically determine the scale that bests fits the provided minimum step
+   * @param {Number} [minimumStep]  The minimum step size in milliseconds
+   */
+  DataStep.prototype.setMinimumStep = function(minimumStep, containerHeight) {
+    // round to floor
+    var size = this._end - this._start;
+    var safeSize = size * 1.2;
+    var minimumStepValue = minimumStep * (safeSize / containerHeight);
+    var orderOfMagnitude = Math.round(Math.log(safeSize)/Math.LN10);
+
+    var minorStepIdx = -1;
+    var magnitudefactor = Math.pow(10,orderOfMagnitude);
+
+    var start = 0;
+    if (orderOfMagnitude < 0) {
+      start = orderOfMagnitude;
+    }
+
+    var solutionFound = false;
+    for (var i = start; Math.abs(i) <= Math.abs(orderOfMagnitude); i++) {
+      magnitudefactor = Math.pow(10,i);
+      for (var j = 0; j < this.minorSteps.length; j++) {
+        var stepSize = magnitudefactor * this.minorSteps[j];
+        if (stepSize >= minimumStepValue) {
+          solutionFound = true;
+          minorStepIdx = j;
+          break;
+        }
+      }
+      if (solutionFound == true) {
+        break;
+      }
+    }
+    this.stepIndex = minorStepIdx;
+    this.scale = magnitudefactor;
+    this.step = magnitudefactor * this.minorSteps[minorStepIdx];
+  };
+
+
+
+  /**
+   * Round the current date to the first minor date value
+   * This must be executed once when the current date is set to start Date
+   */
+  DataStep.prototype.setFirst = function(customRange) {
+    if (customRange === undefined) {
+      customRange = {};
+    }
+    var niceStart = customRange.min === undefined ? this._start - (this.scale * 2 * this.minorSteps[this.stepIndex]) : customRange.min;
+    var niceEnd = customRange.max === undefined ? this._end + (this.scale * this.minorSteps[this.stepIndex]) : customRange.max;
+
+    this.marginEnd = customRange.max === undefined ? this.roundToMinor(niceEnd) : customRange.max;
+    this.marginStart = customRange.min === undefined ? this.roundToMinor(niceStart) : customRange.min;
+    this.deadSpace = this.roundToMinor(niceEnd) - niceEnd + this.roundToMinor(niceStart) - niceStart;
+    this.marginRange = this.marginEnd - this.marginStart;
+
+    this.current = this.marginEnd;
+
+  };
+
+  DataStep.prototype.roundToMinor = function(value) {
+    var rounded = value - (value % (this.scale * this.minorSteps[this.stepIndex]));
+    if (value % (this.scale * this.minorSteps[this.stepIndex]) > 0.5 * (this.scale * this.minorSteps[this.stepIndex])) {
+      return rounded + (this.scale * this.minorSteps[this.stepIndex]);
+    }
+    else {
+      return rounded;
+    }
+  }
+
+
+  /**
+   * Check if the there is a next step
+   * @return {boolean}  true if the current date has not passed the end date
+   */
+  DataStep.prototype.hasNext = function () {
+    return (this.current >= this.marginStart);
+  };
+
+  /**
+   * Do the next step
+   */
+  DataStep.prototype.next = function() {
+    var prev = this.current;
+    this.current -= this.step;
+
+    // safety mechanism: if current time is still unchanged, move to the end
+    if (this.current == prev) {
+      this.current = this._end;
+    }
+  };
+
+  /**
+   * Do the next step
+   */
+  DataStep.prototype.previous = function() {
+    this.current += this.step;
+    this.marginEnd += this.step;
+    this.marginRange = this.marginEnd - this.marginStart;
+  };
+
+
+
+  /**
+   * Get the current datetime
+   * @return {String}  current The current date
+   */
+  DataStep.prototype.getCurrent = function() {
+    var toPrecision = '' + Number(this.current).toPrecision(5);
+    if (toPrecision.indexOf(",") != -1 || toPrecision.indexOf(".") != -1) {
+      for (var i = toPrecision.length-1; i > 0; i--) {
+        if (toPrecision[i] == "0") {
+          toPrecision = toPrecision.slice(0,i);
+        }
+        else if (toPrecision[i] == "." || toPrecision[i] == ",") {
+          toPrecision = toPrecision.slice(0,i);
+          break;
+        }
+        else{
+          break;
+        }
+      }
+    }
+
+    return toPrecision;
+  };
+
+
+
+  /**
+   * Snap a date to a rounded value.
+   * The snap intervals are dependent on the current scale and step.
+   * @param {Date} date   the date to be snapped.
+   * @return {Date} snappedDate
+   */
+  DataStep.prototype.snap = function(date) {
+
+  };
+
+  /**
+   * Check if the current value is a major value (for example when the step
+   * is DAY, a major value is each first day of the MONTH)
+   * @return {boolean} true if current date is major, else false.
+   */
+  DataStep.prototype.isMajor = function() {
+    return (this.current % (this.scale * this.majorSteps[this.stepIndex]) == 0);
+  };
+
+  module.exports = DataStep;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Emitter = __webpack_require__(50);
+  var Hammer = __webpack_require__(42);
+  var util = __webpack_require__(1);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
+  var Range = __webpack_require__(13);
+  var Core = __webpack_require__(47);
+  var TimeAxis = __webpack_require__(27);
+  var CurrentTime = __webpack_require__(19);
+  var CustomTime = __webpack_require__(20);
+  var LineGraph = __webpack_require__(26);
+
+  /**
+   * Create a timeline visualization
+   * @param {HTMLElement} container
+   * @param {vis.DataSet | Array | google.visualization.DataTable} [items]
+   * @param {Object} [options]  See Graph2d.setOptions for the available options.
+   * @constructor
+   * @extends Core
+   */
+  function Graph2d (container, items, options, groups) {
+    var me = this;
+    this.defaultOptions = {
+      start: null,
+      end:   null,
+
+      autoResize: true,
+
+      orientation: 'bottom',
+      width: null,
+      height: null,
+      maxHeight: null,
+      minHeight: null
+    };
+    this.options = util.deepExtend({}, this.defaultOptions);
+
+    // Create the DOM, props, and emitter
+    this._create(container);
+
+    // all components listed here will be repainted automatically
+    this.components = [];
+
+    this.body = {
+      dom: this.dom,
+      domProps: this.props,
+      emitter: {
+        on: this.on.bind(this),
+        off: this.off.bind(this),
+        emit: this.emit.bind(this)
+      },
+      util: {
+        snap: null, // will be specified after TimeAxis is created
+        toScreen: me._toScreen.bind(me),
+        toGlobalScreen: me._toGlobalScreen.bind(me), // this refers to the root.width
+        toTime: me._toTime.bind(me),
+        toGlobalTime : me._toGlobalTime.bind(me)
+      }
+    };
+
+    // range
+    this.range = new Range(this.body);
+    this.components.push(this.range);
+    this.body.range = this.range;
+
+    // time axis
+    this.timeAxis = new TimeAxis(this.body);
+    this.components.push(this.timeAxis);
+    this.body.util.snap = this.timeAxis.snap.bind(this.timeAxis);
+
+    // current time bar
+    this.currentTime = new CurrentTime(this.body);
+    this.components.push(this.currentTime);
+
+    // custom time bar
+    // Note: time bar will be attached in this.setOptions when selected
+    this.customTime = new CustomTime(this.body);
+    this.components.push(this.customTime);
+
+    // item set
+    this.linegraph = new LineGraph(this.body);
+    this.components.push(this.linegraph);
+
+    this.itemsData = null;      // DataSet
+    this.groupsData = null;     // DataSet
+
+    // apply options
+    if (options) {
+      this.setOptions(options);
+    }
+
+    // IMPORTANT: THIS HAPPENS BEFORE SET ITEMS!
+    if (groups) {
+      this.setGroups(groups);
+    }
+
+    // create itemset
+    if (items) {
+      this.setItems(items);
+    }
+    else {
+      this.redraw();
+    }
+  }
+
+  // Extend the functionality from Core
+  Graph2d.prototype = new Core();
+
+  /**
+   * Set items
+   * @param {vis.DataSet | Array | google.visualization.DataTable | null} items
+   */
+  Graph2d.prototype.setItems = function(items) {
+    var initialLoad = (this.itemsData == null);
+
+    // convert to type DataSet when needed
+    var newDataSet;
+    if (!items) {
+      newDataSet = null;
+    }
+    else if (items instanceof DataSet || items instanceof DataView) {
+      newDataSet = items;
+    }
+    else {
+      // turn an array into a dataset
+      newDataSet = new DataSet(items, {
+        type: {
+          start: 'Date',
+          end: 'Date'
+        }
+      });
+    }
+
+    // set items
+    this.itemsData = newDataSet;
+    this.linegraph && this.linegraph.setItems(newDataSet);
+
+    if (initialLoad && ('start' in this.options || 'end' in this.options)) {
+      this.fit();
+
+      var start = ('start' in this.options) ? util.convert(this.options.start, 'Date') : null;
+      var end   = ('end' in this.options)   ? util.convert(this.options.end, 'Date') : null;
+
+      this.setWindow(start, end);
+    }
+  };
+
+  /**
+   * Set groups
+   * @param {vis.DataSet | Array | google.visualization.DataTable} groups
+   */
+  Graph2d.prototype.setGroups = function(groups) {
+    // convert to type DataSet when needed
+    var newDataSet;
+    if (!groups) {
+      newDataSet = null;
+    }
+    else if (groups instanceof DataSet || groups instanceof DataView) {
+      newDataSet = groups;
+    }
+    else {
+      // turn an array into a dataset
+      newDataSet = new DataSet(groups);
+    }
+
+    this.groupsData = newDataSet;
+    this.linegraph.setGroups(newDataSet);
+  };
+
+  /**
+   * Returns an object containing an SVG element with the icon of the group (size determined by iconWidth and iconHeight), the label of the group (content) and the yAxisOrientation of the group (left or right).
+   * @param groupId
+   * @param width
+   * @param height
+   */
+  Graph2d.prototype.getLegend = function(groupId, width, height) {
+    if (width  === undefined) {width  = 15;}
+    if (height === undefined) {height = 15;}
+    if (this.linegraph.groups[groupId] !== undefined) {
+      return this.linegraph.groups[groupId].getLegend(width,height);
+    }
+    else {
+      return "cannot find group:" +  groupId;
+    }
+  }
+
+  /**
+   * This checks if the visible option of the supplied group (by ID) is true or false.
+   * @param groupId
+   * @returns {*}
+   */
+  Graph2d.prototype.isGroupVisible = function(groupId) {
+    if (this.linegraph.groups[groupId] !== undefined) {
+      return (this.linegraph.groups[groupId].visible && (this.linegraph.options.groups.visibility[groupId] === undefined || this.linegraph.options.groups.visibility[groupId] == true));
+    }
+    else {
+      return false;
+    }
+  }
+
+
+  /**
+   * Get the data range of the item set.
+   * @returns {{min: Date, max: Date}} range  A range with a start and end Date.
+   *                                          When no minimum is found, min==null
+   *                                          When no maximum is found, max==null
+   */
+  Graph2d.prototype.getItemRange = function() {
+    var min = null;
+    var max = null;
+
+    // calculate min from start filed
+    for (var groupId in this.linegraph.groups) {
+      if (this.linegraph.groups.hasOwnProperty(groupId)) {
+        if (this.linegraph.groups[groupId].visible == true) {
+          for (var i = 0; i < this.linegraph.groups[groupId].itemsData.length; i++) {
+            var item = this.linegraph.groups[groupId].itemsData[i];
+            var value = util.convert(item.start, 'Date').valueOf();
+            min = min == null ? value : min > value ? value : min;
+            max = max == null ? value : max < value ? value : max;
+          }
+        }
+      }
+    }
+
+    return {
+      min: (min != null) ? new Date(min) : null,
+      max: (max != null) ? new Date(max) : null
+    };
+  };
+
+
+
+  module.exports = Graph2d;
 
 
 /***/ },
@@ -8193,7 +8193,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var util = __webpack_require__(1);
   var Component = __webpack_require__(18);
   var moment = __webpack_require__(41);
-  var locales = __webpack_require__(49);
+  var locales = __webpack_require__(43);
 
   /**
    * A current time bar
@@ -8363,7 +8363,7 @@ return /******/ (function(modules) { // webpackBootstrap
   var util = __webpack_require__(1);
   var Component = __webpack_require__(18);
   var moment = __webpack_require__(41);
-  var locales = __webpack_require__(49);
+  var locales = __webpack_require__(43);
 
   /**
    * A custom time bar
@@ -8562,7 +8562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var DOMutil = __webpack_require__(2);
+  var DOMutil = __webpack_require__(4);
   var Component = __webpack_require__(18);
   var DataStep = __webpack_require__(14);
 
@@ -8671,7 +8671,8 @@ return /******/ (function(modules) { // webpackBootstrap
         'iconWidth',
         'width',
         'visible',
-        'customRange'
+        'customRange',
+        'popisY'
       ];
       util.selectiveExtend(fields, this.options, options);
 
@@ -8696,6 +8697,11 @@ return /******/ (function(modules) { // webpackBootstrap
     this.dom.lineContainer = document.createElement('div');
     this.dom.lineContainer.style.width = '100%';
     this.dom.lineContainer.style.height = this.height;
+
+    /*this.dom.popis = document.createElement('div');
+    this.dom.popis.style.position = "absolute";
+    this.dom.popis.style.top = '60px';
+    this.dom.frame.appendChild(this.dom.popis); */
 
     // create svg element for graph drawing.
     this.svg = document.createElementNS('http://www.w3.org/2000/svg',"svg");
@@ -8882,6 +8888,8 @@ return /******/ (function(modules) { // webpackBootstrap
       amountOfSteps += 0.25;
     }
 
+    //var name = this.options['popisY'];
+    //this.dom.popis.innerHTML = '<span>' + name.split('').join('</span><span>') + '</span>';
 
     this.valueAtZero = step.marginEnd;
     var marginStartPos = 0;
@@ -9069,7 +9077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var DOMutil = __webpack_require__(2);
+  var DOMutil = __webpack_require__(4);
 
   /**
    * @constructor Group
@@ -9215,7 +9223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   var util = __webpack_require__(1);
   var stack = __webpack_require__(16);
-  var RangeItem = __webpack_require__(32);
+  var RangeItem = __webpack_require__(30);
 
   /**
    * @constructor Group
@@ -9646,13 +9654,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
   var Component = __webpack_require__(18);
   var Group = __webpack_require__(23);
-  var BoxItem = __webpack_require__(30);
+  var BoxItem = __webpack_require__(32);
   var PointItem = __webpack_require__(31);
-  var RangeItem = __webpack_require__(32);
+  var RangeItem = __webpack_require__(30);
   var BackgroundItem = __webpack_require__(29);
 
 
@@ -11073,7 +11081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var DOMutil = __webpack_require__(2);
+  var DOMutil = __webpack_require__(4);
   var Component = __webpack_require__(18);
 
   /**
@@ -11276,9 +11284,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var DOMutil = __webpack_require__(2);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
+  var DOMutil = __webpack_require__(4);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
   var Component = __webpack_require__(18);
   var DataAxis = __webpack_require__(21);
   var GraphGroup = __webpack_require__(22);
@@ -12226,8 +12234,9 @@ return /******/ (function(modules) { // webpackBootstrap
       // plot barchart
       for (i = 0; i < combinedData.length; i++) {
           group = this.groups[combinedData[i].groupId];
-          var minWidth = 0.1 * group.options.barChart.width;
+          var minWidth = 0.1 * 100; //group.options.barChart.width;
 
+          var sideOverlap = false;
           key = combinedData[i].start;
           var heightOffset = 0;
           if (intersections[key] === undefined) {
@@ -12256,6 +12265,7 @@ return /******/ (function(modules) { // webpackBootstrap
                   intersections[key].accumulated += group.zeroPosition - combinedData[i].y;
               }
               else if (group.options.barChart.handleOverlap == 'sideBySide') {
+                  sideOverlap = true;
                   drawData.width = drawData.width / intersections[key].amount;
                   drawData.offset += (intersections[key].resolved) * drawData.width - (0.5 * drawData.width * (intersections[key].amount + 1));
                   /*if (group.options.barChart.align == 'left') {
@@ -12273,7 +12283,7 @@ return /******/ (function(modules) { // webpackBootstrap
           var width = drawData.width;
           var className = group.className + ' bar';
           var posY = combinedData[i].y - heightOffset;
-          if (end != undefined) {
+          if (end != undefined && !sideOverlap) {
               end = end + drawData.offset
               width = Math.max(end - start, 0.1);
           }
@@ -13282,7 +13292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   var Hammer = __webpack_require__(42);
   var Item = __webpack_require__(28);
-  var RangeItem = __webpack_require__(32);
+  var RangeItem = __webpack_require__(30);
 
   /**
    * @constructor BackgroundItem
@@ -13426,422 +13436,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var Item = __webpack_require__(28);
-
-  /**
-   * @constructor BoxItem
-   * @extends Item
-   * @param {Object} data             Object containing parameters start
-   *                                  content, className.
-   * @param {{toScreen: function, toTime: function}} conversion
-   *                                  Conversion functions from time to screen and vice versa
-   * @param {Object} [options]        Configuration options
-   *                                  // TODO: describe available options
-   */
-  function BoxItem (data, conversion, options) {
-    this.props = {
-      dot: {
-        width: 0,
-        height: 0
-      },
-      line: {
-        width: 0,
-        height: 0
-      }
-    };
-
-    // validate data
-    if (data) {
-      if (data.start == undefined) {
-        throw new Error('Property "start" missing in item ' + data);
-      }
-    }
-
-    Item.call(this, data, conversion, options);
-  }
-
-  BoxItem.prototype = new Item (null, null, null);
-
-  /**
-   * Check whether this item is visible inside given range
-   * @returns {{start: Number, end: Number}} range with a timestamp for start and end
-   * @returns {boolean} True if visible
-   */
-  BoxItem.prototype.isVisible = function(range) {
-    // determine visibility
-    // TODO: account for the real width of the item. Right now we just add 1/4 to the window
-    var interval = (range.end - range.start) / 4;
-    return (this.data.start > range.start - interval) && (this.data.start < range.end + interval);
-  };
-
-  /**
-   * Repaint the item
-   */
-  BoxItem.prototype.redraw = function() {
-    var dom = this.dom;
-    if (!dom) {
-      // create DOM
-      this.dom = {};
-      dom = this.dom;
-
-      // create main box
-      dom.box = document.createElement('DIV');
-
-      // contents box (inside the background box). used for making margins
-      dom.content = document.createElement('DIV');
-      dom.content.className = 'content';
-      dom.box.appendChild(dom.content);
-
-      // line to axis
-      dom.line = document.createElement('DIV');
-      dom.line.className = 'line';
-
-      // dot on axis
-      dom.dot = document.createElement('DIV');
-      dom.dot.className = 'dot';
-
-      // attach this item as attribute
-      dom.box['timeline-item'] = this;
-
-      this.dirty = true;
-    }
-
-    // append DOM to parent DOM
-    if (!this.parent) {
-      throw new Error('Cannot redraw item: no parent attached');
-    }
-    if (!dom.box.parentNode) {
-      var foreground = this.parent.dom.foreground;
-      if (!foreground) throw new Error('Cannot redraw time axis: parent has no foreground container element');
-      foreground.appendChild(dom.box);
-    }
-    if (!dom.line.parentNode) {
-      var background = this.parent.dom.background;
-      if (!background) throw new Error('Cannot redraw time axis: parent has no background container element');
-      background.appendChild(dom.line);
-    }
-    if (!dom.dot.parentNode) {
-      var axis = this.parent.dom.axis;
-      if (!background) throw new Error('Cannot redraw time axis: parent has no axis container element');
-      axis.appendChild(dom.dot);
-    }
-    this.displayed = true;
-
-    // Update DOM when item is marked dirty. An item is marked dirty when:
-    // - the item is not yet rendered
-    // - the item's data is changed
-    // - the item is selected/deselected
-    if (this.dirty) {
-      this._updateContents(this.dom.content);
-      this._updateTitle(this.dom.box);
-      this._updateDataAttributes(this.dom.box);
-
-      // update class
-      var className = (this.data.className? ' ' + this.data.className : '') +
-          (this.selected ? ' selected' : '');
-      dom.box.className = 'item box' + className;
-      dom.line.className = 'item line' + className;
-      dom.dot.className  = 'item dot' + className;
-
-      // recalculate size
-      this.props.dot.height = dom.dot.offsetHeight;
-      this.props.dot.width = dom.dot.offsetWidth;
-      this.props.line.width = dom.line.offsetWidth;
-      this.width = dom.box.offsetWidth;
-      this.height = dom.box.offsetHeight;
-
-      this.dirty = false;
-    }
-
-    this._repaintDeleteButton(dom.box);
-  };
-
-  /**
-   * Show the item in the DOM (when not already displayed). The items DOM will
-   * be created when needed.
-   */
-  BoxItem.prototype.show = function() {
-    if (!this.displayed) {
-      this.redraw();
-    }
-  };
-
-  /**
-   * Hide the item from the DOM (when visible)
-   */
-  BoxItem.prototype.hide = function() {
-    if (this.displayed) {
-      var dom = this.dom;
-
-      if (dom.box.parentNode)   dom.box.parentNode.removeChild(dom.box);
-      if (dom.line.parentNode)  dom.line.parentNode.removeChild(dom.line);
-      if (dom.dot.parentNode)   dom.dot.parentNode.removeChild(dom.dot);
-
-      this.top = null;
-      this.left = null;
-
-      this.displayed = false;
-    }
-  };
-
-  /**
-   * Reposition the item horizontally
-   * @Override
-   */
-  BoxItem.prototype.repositionX = function() {
-    var start = this.conversion.toScreen(this.data.start);
-    var align = this.options.align;
-    var left;
-    var box = this.dom.box;
-    var line = this.dom.line;
-    var dot = this.dom.dot;
-
-    // calculate left position of the box
-    if (align == 'right') {
-      this.left = start - this.width;
-    }
-    else if (align == 'left') {
-      this.left = start;
-    }
-    else {
-      // default or 'center'
-      this.left = start - this.width / 2;
-    }
-
-    // reposition box
-    box.style.left = this.left + 'px';
-
-    // reposition line
-    line.style.left = (start - this.props.line.width / 2) + 'px';
-
-    // reposition dot
-    dot.style.left = (start - this.props.dot.width / 2) + 'px';
-  };
-
-  /**
-   * Reposition the item vertically
-   * @Override
-   */
-  BoxItem.prototype.repositionY = function() {
-    var orientation = this.options.orientation;
-    var box = this.dom.box;
-    var line = this.dom.line;
-    var dot = this.dom.dot;
-
-    if (orientation == 'top') {
-      box.style.top     = (this.top || 0) + 'px';
-
-      line.style.top    = '0';
-      line.style.height = (this.parent.top + this.top + 1) + 'px';
-      line.style.bottom = '';
-    }
-    else { // orientation 'bottom'
-      var itemSetHeight = this.parent.itemSet.props.height; // TODO: this is nasty
-      var lineHeight = itemSetHeight - this.parent.top - this.parent.height + this.top;
-
-      box.style.top     = (this.parent.height - this.top - this.height || 0) + 'px';
-      line.style.top    = (itemSetHeight - lineHeight) + 'px';
-      line.style.bottom = '0';
-    }
-
-    dot.style.top = (-this.props.dot.height / 2) + 'px';
-  };
-
-  module.exports = BoxItem;
-
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var Item = __webpack_require__(28);
-
-  /**
-   * @constructor PointItem
-   * @extends Item
-   * @param {Object} data             Object containing parameters start
-   *                                  content, className.
-   * @param {{toScreen: function, toTime: function}} conversion
-   *                                  Conversion functions from time to screen and vice versa
-   * @param {Object} [options]        Configuration options
-   *                                  // TODO: describe available options
-   */
-  function PointItem (data, conversion, options) {
-    this.props = {
-      dot: {
-        top: 0,
-        width: 0,
-        height: 0
-      },
-      content: {
-        height: 0,
-        marginLeft: 0
-      }
-    };
-
-    // validate data
-    if (data) {
-      if (data.start == undefined) {
-        throw new Error('Property "start" missing in item ' + data);
-      }
-    }
-
-    Item.call(this, data, conversion, options);
-  }
-
-  PointItem.prototype = new Item (null, null, null);
-
-  /**
-   * Check whether this item is visible inside given range
-   * @returns {{start: Number, end: Number}} range with a timestamp for start and end
-   * @returns {boolean} True if visible
-   */
-  PointItem.prototype.isVisible = function(range) {
-    // determine visibility
-    // TODO: account for the real width of the item. Right now we just add 1/4 to the window
-    var interval = (range.end - range.start) / 4;
-    return (this.data.start > range.start - interval) && (this.data.start < range.end + interval);
-  };
-
-  /**
-   * Repaint the item
-   */
-  PointItem.prototype.redraw = function() {
-    var dom = this.dom;
-    if (!dom) {
-      // create DOM
-      this.dom = {};
-      dom = this.dom;
-
-      // background box
-      dom.point = document.createElement('div');
-      // className is updated in redraw()
-
-      // contents box, right from the dot
-      dom.content = document.createElement('div');
-      dom.content.className = 'content';
-      dom.point.appendChild(dom.content);
-
-      // dot at start
-      dom.dot = document.createElement('div');
-      dom.point.appendChild(dom.dot);
-
-      // attach this item as attribute
-      dom.point['timeline-item'] = this;
-
-      this.dirty = true;
-    }
-
-    // append DOM to parent DOM
-    if (!this.parent) {
-      throw new Error('Cannot redraw item: no parent attached');
-    }
-    if (!dom.point.parentNode) {
-      var foreground = this.parent.dom.foreground;
-      if (!foreground) {
-        throw new Error('Cannot redraw time axis: parent has no foreground container element');
-      }
-      foreground.appendChild(dom.point);
-    }
-    this.displayed = true;
-
-    // Update DOM when item is marked dirty. An item is marked dirty when:
-    // - the item is not yet rendered
-    // - the item's data is changed
-    // - the item is selected/deselected
-    if (this.dirty) {
-      this._updateContents(this.dom.content);
-      this._updateTitle(this.dom.point);
-      this._updateDataAttributes(this.dom.point);
-
-      // update class
-      var className = (this.data.className? ' ' + this.data.className : '') +
-          (this.selected ? ' selected' : '');
-      dom.point.className  = 'item point' + className;
-      dom.dot.className  = 'item dot' + className;
-
-      // recalculate size
-      this.width = dom.point.offsetWidth;
-      this.height = dom.point.offsetHeight;
-      this.props.dot.width = dom.dot.offsetWidth;
-      this.props.dot.height = dom.dot.offsetHeight;
-      this.props.content.height = dom.content.offsetHeight;
-
-      // resize contents
-      dom.content.style.marginLeft = 2 * this.props.dot.width + 'px';
-      //dom.content.style.marginRight = ... + 'px'; // TODO: margin right
-
-      dom.dot.style.top = ((this.height - this.props.dot.height) / 2) + 'px';
-      dom.dot.style.left = (this.props.dot.width / 2) + 'px';
-
-      this.dirty = false;
-    }
-
-    this._repaintDeleteButton(dom.point);
-  };
-
-  /**
-   * Show the item in the DOM (when not already visible). The items DOM will
-   * be created when needed.
-   */
-  PointItem.prototype.show = function() {
-    if (!this.displayed) {
-      this.redraw();
-    }
-  };
-
-  /**
-   * Hide the item from the DOM (when visible)
-   */
-  PointItem.prototype.hide = function() {
-    if (this.displayed) {
-      if (this.dom.point.parentNode) {
-        this.dom.point.parentNode.removeChild(this.dom.point);
-      }
-
-      this.top = null;
-      this.left = null;
-
-      this.displayed = false;
-    }
-  };
-
-  /**
-   * Reposition the item horizontally
-   * @Override
-   */
-  PointItem.prototype.repositionX = function() {
-    var start = this.conversion.toScreen(this.data.start);
-
-    this.left = start - this.props.dot.width;
-
-    // reposition point
-    this.dom.point.style.left = this.left + 'px';
-  };
-
-  /**
-   * Reposition the item vertically
-   * @Override
-   */
-  PointItem.prototype.repositionY = function() {
-    var orientation = this.options.orientation,
-        point = this.dom.point;
-
-    if (orientation == 'top') {
-      point.style.top = this.top + 'px';
-    }
-    else {
-      point.style.top = (this.parent.height - this.top - this.height) + 'px';
-    }
-  };
-
-  module.exports = PointItem;
-
-
-/***/ },
-/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
   var Hammer = __webpack_require__(42);
@@ -14139,29 +13733,1637 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Item = __webpack_require__(28);
+
+  /**
+   * @constructor PointItem
+   * @extends Item
+   * @param {Object} data             Object containing parameters start
+   *                                  content, className.
+   * @param {{toScreen: function, toTime: function}} conversion
+   *                                  Conversion functions from time to screen and vice versa
+   * @param {Object} [options]        Configuration options
+   *                                  // TODO: describe available options
+   */
+  function PointItem (data, conversion, options) {
+    this.props = {
+      dot: {
+        top: 0,
+        width: 0,
+        height: 0
+      },
+      content: {
+        height: 0,
+        marginLeft: 0
+      }
+    };
+
+    // validate data
+    if (data) {
+      if (data.start == undefined) {
+        throw new Error('Property "start" missing in item ' + data);
+      }
+    }
+
+    Item.call(this, data, conversion, options);
+  }
+
+  PointItem.prototype = new Item (null, null, null);
+
+  /**
+   * Check whether this item is visible inside given range
+   * @returns {{start: Number, end: Number}} range with a timestamp for start and end
+   * @returns {boolean} True if visible
+   */
+  PointItem.prototype.isVisible = function(range) {
+    // determine visibility
+    // TODO: account for the real width of the item. Right now we just add 1/4 to the window
+    var interval = (range.end - range.start) / 4;
+    return (this.data.start > range.start - interval) && (this.data.start < range.end + interval);
+  };
+
+  /**
+   * Repaint the item
+   */
+  PointItem.prototype.redraw = function() {
+    var dom = this.dom;
+    if (!dom) {
+      // create DOM
+      this.dom = {};
+      dom = this.dom;
+
+      // background box
+      dom.point = document.createElement('div');
+      // className is updated in redraw()
+
+      // contents box, right from the dot
+      dom.content = document.createElement('div');
+      dom.content.className = 'content';
+      dom.point.appendChild(dom.content);
+
+      // dot at start
+      dom.dot = document.createElement('div');
+      dom.point.appendChild(dom.dot);
+
+      // attach this item as attribute
+      dom.point['timeline-item'] = this;
+
+      this.dirty = true;
+    }
+
+    // append DOM to parent DOM
+    if (!this.parent) {
+      throw new Error('Cannot redraw item: no parent attached');
+    }
+    if (!dom.point.parentNode) {
+      var foreground = this.parent.dom.foreground;
+      if (!foreground) {
+        throw new Error('Cannot redraw time axis: parent has no foreground container element');
+      }
+      foreground.appendChild(dom.point);
+    }
+    this.displayed = true;
+
+    // Update DOM when item is marked dirty. An item is marked dirty when:
+    // - the item is not yet rendered
+    // - the item's data is changed
+    // - the item is selected/deselected
+    if (this.dirty) {
+      this._updateContents(this.dom.content);
+      this._updateTitle(this.dom.point);
+      this._updateDataAttributes(this.dom.point);
+
+      // update class
+      var className = (this.data.className? ' ' + this.data.className : '') +
+          (this.selected ? ' selected' : '');
+      dom.point.className  = 'item point' + className;
+      dom.dot.className  = 'item dot' + className;
+
+      // recalculate size
+      this.width = dom.point.offsetWidth;
+      this.height = dom.point.offsetHeight;
+      this.props.dot.width = dom.dot.offsetWidth;
+      this.props.dot.height = dom.dot.offsetHeight;
+      this.props.content.height = dom.content.offsetHeight;
+
+      // resize contents
+      dom.content.style.marginLeft = 2 * this.props.dot.width + 'px';
+      //dom.content.style.marginRight = ... + 'px'; // TODO: margin right
+
+      dom.dot.style.top = ((this.height - this.props.dot.height) / 2) + 'px';
+      dom.dot.style.left = (this.props.dot.width / 2) + 'px';
+
+      this.dirty = false;
+    }
+
+    this._repaintDeleteButton(dom.point);
+  };
+
+  /**
+   * Show the item in the DOM (when not already visible). The items DOM will
+   * be created when needed.
+   */
+  PointItem.prototype.show = function() {
+    if (!this.displayed) {
+      this.redraw();
+    }
+  };
+
+  /**
+   * Hide the item from the DOM (when visible)
+   */
+  PointItem.prototype.hide = function() {
+    if (this.displayed) {
+      if (this.dom.point.parentNode) {
+        this.dom.point.parentNode.removeChild(this.dom.point);
+      }
+
+      this.top = null;
+      this.left = null;
+
+      this.displayed = false;
+    }
+  };
+
+  /**
+   * Reposition the item horizontally
+   * @Override
+   */
+  PointItem.prototype.repositionX = function() {
+    var start = this.conversion.toScreen(this.data.start);
+
+    this.left = start - this.props.dot.width;
+
+    // reposition point
+    this.dom.point.style.left = this.left + 'px';
+  };
+
+  /**
+   * Reposition the item vertically
+   * @Override
+   */
+  PointItem.prototype.repositionY = function() {
+    var orientation = this.options.orientation,
+        point = this.dom.point;
+
+    if (orientation == 'top') {
+      point.style.top = this.top + 'px';
+    }
+    else {
+      point.style.top = (this.parent.height - this.top - this.height) + 'px';
+    }
+  };
+
+  module.exports = PointItem;
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Item = __webpack_require__(28);
+
+  /**
+   * @constructor BoxItem
+   * @extends Item
+   * @param {Object} data             Object containing parameters start
+   *                                  content, className.
+   * @param {{toScreen: function, toTime: function}} conversion
+   *                                  Conversion functions from time to screen and vice versa
+   * @param {Object} [options]        Configuration options
+   *                                  // TODO: describe available options
+   */
+  function BoxItem (data, conversion, options) {
+    this.props = {
+      dot: {
+        width: 0,
+        height: 0
+      },
+      line: {
+        width: 0,
+        height: 0
+      }
+    };
+
+    // validate data
+    if (data) {
+      if (data.start == undefined) {
+        throw new Error('Property "start" missing in item ' + data);
+      }
+    }
+
+    Item.call(this, data, conversion, options);
+  }
+
+  BoxItem.prototype = new Item (null, null, null);
+
+  /**
+   * Check whether this item is visible inside given range
+   * @returns {{start: Number, end: Number}} range with a timestamp for start and end
+   * @returns {boolean} True if visible
+   */
+  BoxItem.prototype.isVisible = function(range) {
+    // determine visibility
+    // TODO: account for the real width of the item. Right now we just add 1/4 to the window
+    var interval = (range.end - range.start) / 4;
+    return (this.data.start > range.start - interval) && (this.data.start < range.end + interval);
+  };
+
+  /**
+   * Repaint the item
+   */
+  BoxItem.prototype.redraw = function() {
+    var dom = this.dom;
+    if (!dom) {
+      // create DOM
+      this.dom = {};
+      dom = this.dom;
+
+      // create main box
+      dom.box = document.createElement('DIV');
+
+      // contents box (inside the background box). used for making margins
+      dom.content = document.createElement('DIV');
+      dom.content.className = 'content';
+      dom.box.appendChild(dom.content);
+
+      // line to axis
+      dom.line = document.createElement('DIV');
+      dom.line.className = 'line';
+
+      // dot on axis
+      dom.dot = document.createElement('DIV');
+      dom.dot.className = 'dot';
+
+      // attach this item as attribute
+      dom.box['timeline-item'] = this;
+
+      this.dirty = true;
+    }
+
+    // append DOM to parent DOM
+    if (!this.parent) {
+      throw new Error('Cannot redraw item: no parent attached');
+    }
+    if (!dom.box.parentNode) {
+      var foreground = this.parent.dom.foreground;
+      if (!foreground) throw new Error('Cannot redraw time axis: parent has no foreground container element');
+      foreground.appendChild(dom.box);
+    }
+    if (!dom.line.parentNode) {
+      var background = this.parent.dom.background;
+      if (!background) throw new Error('Cannot redraw time axis: parent has no background container element');
+      background.appendChild(dom.line);
+    }
+    if (!dom.dot.parentNode) {
+      var axis = this.parent.dom.axis;
+      if (!background) throw new Error('Cannot redraw time axis: parent has no axis container element');
+      axis.appendChild(dom.dot);
+    }
+    this.displayed = true;
+
+    // Update DOM when item is marked dirty. An item is marked dirty when:
+    // - the item is not yet rendered
+    // - the item's data is changed
+    // - the item is selected/deselected
+    if (this.dirty) {
+      this._updateContents(this.dom.content);
+      this._updateTitle(this.dom.box);
+      this._updateDataAttributes(this.dom.box);
+
+      // update class
+      var className = (this.data.className? ' ' + this.data.className : '') +
+          (this.selected ? ' selected' : '');
+      dom.box.className = 'item box' + className;
+      dom.line.className = 'item line' + className;
+      dom.dot.className  = 'item dot' + className;
+
+      // recalculate size
+      this.props.dot.height = dom.dot.offsetHeight;
+      this.props.dot.width = dom.dot.offsetWidth;
+      this.props.line.width = dom.line.offsetWidth;
+      this.width = dom.box.offsetWidth;
+      this.height = dom.box.offsetHeight;
+
+      this.dirty = false;
+    }
+
+    this._repaintDeleteButton(dom.box);
+  };
+
+  /**
+   * Show the item in the DOM (when not already displayed). The items DOM will
+   * be created when needed.
+   */
+  BoxItem.prototype.show = function() {
+    if (!this.displayed) {
+      this.redraw();
+    }
+  };
+
+  /**
+   * Hide the item from the DOM (when visible)
+   */
+  BoxItem.prototype.hide = function() {
+    if (this.displayed) {
+      var dom = this.dom;
+
+      if (dom.box.parentNode)   dom.box.parentNode.removeChild(dom.box);
+      if (dom.line.parentNode)  dom.line.parentNode.removeChild(dom.line);
+      if (dom.dot.parentNode)   dom.dot.parentNode.removeChild(dom.dot);
+
+      this.top = null;
+      this.left = null;
+
+      this.displayed = false;
+    }
+  };
+
+  /**
+   * Reposition the item horizontally
+   * @Override
+   */
+  BoxItem.prototype.repositionX = function() {
+    var start = this.conversion.toScreen(this.data.start);
+    var align = this.options.align;
+    var left;
+    var box = this.dom.box;
+    var line = this.dom.line;
+    var dot = this.dom.dot;
+
+    // calculate left position of the box
+    if (align == 'right') {
+      this.left = start - this.width;
+    }
+    else if (align == 'left') {
+      this.left = start;
+    }
+    else {
+      // default or 'center'
+      this.left = start - this.width / 2;
+    }
+
+    // reposition box
+    box.style.left = this.left + 'px';
+
+    // reposition line
+    line.style.left = (start - this.props.line.width / 2) + 'px';
+
+    // reposition dot
+    dot.style.left = (start - this.props.dot.width / 2) + 'px';
+  };
+
+  /**
+   * Reposition the item vertically
+   * @Override
+   */
+  BoxItem.prototype.repositionY = function() {
+    var orientation = this.options.orientation;
+    var box = this.dom.box;
+    var line = this.dom.line;
+    var dot = this.dom.dot;
+
+    if (orientation == 'top') {
+      box.style.top     = (this.top || 0) + 'px';
+
+      line.style.top    = '0';
+      line.style.height = (this.parent.top + this.top + 1) + 'px';
+      line.style.bottom = '';
+    }
+    else { // orientation 'bottom'
+      var itemSetHeight = this.parent.itemSet.props.height; // TODO: this is nasty
+      var lineHeight = itemSetHeight - this.parent.top - this.parent.height + this.top;
+
+      box.style.top     = (this.parent.height - this.top - this.height || 0) + 'px';
+      line.style.top    = (itemSetHeight - lineHeight) + 'px';
+      line.style.bottom = '0';
+    }
+
+    dot.style.top = (-this.props.dot.height / 2) + 'px';
+  };
+
+  module.exports = BoxItem;
+
+
+/***/ },
 /* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var Emitter = __webpack_require__(63);
-  var Hammer = __webpack_require__(42);
-  var mousetrap = __webpack_require__(57);
   var util = __webpack_require__(1);
-  var hammerUtil = __webpack_require__(43);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
+  var Node = __webpack_require__(37);
+
+  /**
+   * @class Edge
+   *
+   * A edge connects two nodes
+   * @param {Object} properties     Object with properties. Must contain
+   *                                At least properties from and to.
+   *                                Available properties: from (number),
+   *                                to (number), label (string, color (string),
+   *                                width (number), style (string),
+   *                                length (number), title (string)
+   * @param {Network} network       A Network object, used to find and edge to
+   *                                nodes.
+   * @param {Object} constants      An object with default values for
+   *                                example for the color
+   */
+  function Edge (properties, network, networkConstants) {
+    if (!network) {
+      throw "No network provided";
+    }
+    var fields = ['edges','physics'];
+    var constants = util.selectiveBridgeObject(fields,networkConstants);
+    this.options = constants.edges;
+    this.physics = constants.physics;
+    this.options['smoothCurves'] = networkConstants['smoothCurves'];
+
+
+    this.network = network;
+
+    // initialize variables
+    this.id     = undefined;
+    this.fromId = undefined;
+    this.toId   = undefined;
+    this.title  = undefined;
+    this.widthSelected = this.options.width * this.options.widthSelectionMultiplier;
+    this.value  = undefined;
+    this.selected = false;
+    this.hover = false;
+    this.labelDimensions = {top:0,left:0,width:0,height:0};
+
+    this.from = null;   // a node
+    this.to = null;     // a node
+    this.via = null;    // a temp node
+
+    // we use this to be able to reconnect the edge to a cluster if its node is put into a cluster
+    // by storing the original information we can revert to the original connection when the cluser is opened.
+    this.originalFromId = [];
+    this.originalToId = [];
+
+    this.connected = false;
+
+    this.widthFixed  = false;
+    this.lengthFixed = false;
+
+    this.setProperties(properties);
+
+    this.controlNodesEnabled = false;
+    this.controlNodes = {from:null, to:null, positions:{}};
+    this.connectedNode = null;
+  }
+
+  /**
+   * Set or overwrite properties for the edge
+   * @param {Object} properties  an object with properties
+   * @param {Object} constants   and object with default, global properties
+   */
+  Edge.prototype.setProperties = function(properties) {
+    if (!properties) {
+      return;
+    }
+
+    var fields = ['style','fontSize','fontFace','fontColor','fontFill','width',
+      'widthSelectionMultiplier','hoverWidth','arrowScaleFactor','dash','inheritColor'
+    ];
+    util.selectiveDeepExtend(fields, this.options, properties);
+
+    if (properties.from !== undefined)           {this.fromId = properties.from;}
+    if (properties.to !== undefined)             {this.toId = properties.to;}
+
+    if (properties.id !== undefined)             {this.id = properties.id;}
+    if (properties.label !== undefined)          {this.label = properties.label;}
+
+    if (properties.title !== undefined)        {this.title = properties.title;}
+    if (properties.value !== undefined)        {this.value = properties.value;}
+    if (properties.length !== undefined)       {this.physics.springLength = properties.length;}
+
+    if (properties.color !== undefined) {
+      this.options.inheritColor = false;
+      if (util.isString(properties.color)) {
+        this.options.color.color = properties.color;
+        this.options.color.highlight = properties.color;
+      }
+      else {
+        if (properties.color.color !== undefined)     {this.options.color.color = properties.color.color;}
+        if (properties.color.highlight !== undefined) {this.options.color.highlight = properties.color.highlight;}
+        if (properties.color.hover !== undefined)     {this.options.color.hover = properties.color.hover;}
+      }
+    }
+
+    // A node is connected when it has a from and to node.
+    this.connect();
+
+    this.widthFixed = this.widthFixed || (properties.width !== undefined);
+    this.lengthFixed = this.lengthFixed || (properties.length !== undefined);
+
+    this.widthSelected = this.options.width* this.options.widthSelectionMultiplier;
+
+    // set draw method based on style
+    switch (this.options.style) {
+      case 'line':          this.draw = this._drawLine; break;
+      case 'arrow':         this.draw = this._drawArrow; break;
+      case 'arrow-center':  this.draw = this._drawArrowCenter; break;
+      case 'dash-line':     this.draw = this._drawDashLine; break;
+      default:              this.draw = this._drawLine; break;
+    }
+  };
+
+  /**
+   * Connect an edge to its nodes
+   */
+  Edge.prototype.connect = function () {
+    this.disconnect();
+
+    this.from = this.network.nodes[this.fromId] || null;
+    this.to = this.network.nodes[this.toId] || null;
+    this.connected = (this.from && this.to);
+
+    if (this.connected) {
+      this.from.attachEdge(this);
+      this.to.attachEdge(this);
+    }
+    else {
+      if (this.from) {
+        this.from.detachEdge(this);
+      }
+      if (this.to) {
+        this.to.detachEdge(this);
+      }
+    }
+  };
+
+  /**
+   * Disconnect an edge from its nodes
+   */
+  Edge.prototype.disconnect = function () {
+    if (this.from) {
+      this.from.detachEdge(this);
+      this.from = null;
+    }
+    if (this.to) {
+      this.to.detachEdge(this);
+      this.to = null;
+    }
+
+    this.connected = false;
+  };
+
+  /**
+   * get the title of this edge.
+   * @return {string} title    The title of the edge, or undefined when no title
+   *                           has been set.
+   */
+  Edge.prototype.getTitle = function() {
+    return typeof this.title === "function" ? this.title() : this.title;
+  };
+
+
+  /**
+   * Retrieve the value of the edge. Can be undefined
+   * @return {Number} value
+   */
+  Edge.prototype.getValue = function() {
+    return this.value;
+  };
+
+  /**
+   * Adjust the value range of the edge. The edge will adjust it's width
+   * based on its value.
+   * @param {Number} min
+   * @param {Number} max
+   */
+  Edge.prototype.setValueRange = function(min, max) {
+    if (!this.widthFixed && this.value !== undefined) {
+      var scale = (this.options.widthMax - this.options.widthMin) / (max - min);
+      this.options.width= (this.value - min) * scale + this.options.widthMin;
+      this.widthSelected = this.options.width* this.options.widthSelectionMultiplier;
+    }
+  };
+
+  /**
+   * Redraw a edge
+   * Draw this edge in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   */
+  Edge.prototype.draw = function(ctx) {
+    throw "Method draw not initialized in edge";
+  };
+
+  /**
+   * Check if this object is overlapping with the provided object
+   * @param {Object} obj   an object with parameters left, top
+   * @return {boolean}     True if location is located on the edge
+   */
+  Edge.prototype.isOverlappingWith = function(obj) {
+    if (this.connected) {
+      var distMax = 10;
+      var xFrom = this.from.x;
+      var yFrom = this.from.y;
+      var xTo = this.to.x;
+      var yTo = this.to.y;
+      var xObj = obj.left;
+      var yObj = obj.top;
+
+      var dist = this._getDistanceToEdge(xFrom, yFrom, xTo, yTo, xObj, yObj);
+
+      return (dist < distMax);
+    }
+    else {
+      return false
+    }
+  };
+
+  Edge.prototype._getColor = function() {
+    var colorObj = this.options.color;
+    if (this.options.inheritColor == "to") {
+      colorObj = {
+        highlight: this.to.options.color.highlight.border,
+        hover: this.to.options.color.hover.border,
+        color: this.to.options.color.border
+      };
+    }
+    else if (this.options.inheritColor == "from" || this.options.inheritColor == true) {
+      colorObj = {
+        highlight: this.from.options.color.highlight.border,
+        hover: this.from.options.color.hover.border,
+        color: this.from.options.color.border
+      };
+    }
+
+    if (this.selected == true)   {return colorObj.highlight;}
+    else if (this.hover == true) {return colorObj.hover;}
+    else                         {return colorObj.color;}
+  }
+
+
+  /**
+   * Redraw a edge as a line
+   * Draw this edge in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   * @private
+   */
+  Edge.prototype._drawLine = function(ctx) {
+    // set style
+    ctx.strokeStyle = this._getColor();
+    ctx.lineWidth   = this._getLineWidth();
+
+    if (this.from != this.to) {
+      // draw line
+      var via = this._line(ctx);
+
+      // draw label
+      var point;
+      if (this.label) {
+        if (this.options.smoothCurves.enabled == true && via != null) {
+          var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
+          var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
+          point = {x:midpointX, y:midpointY};
+        }
+        else {
+          point = this._pointOnLine(0.5);
+        }
+        this._label(ctx, this.label, point.x, point.y);
+      }
+    }
+    else {
+      var x, y;
+      var radius = this.physics.springLength / 4;
+      var node = this.from;
+      if (!node.width) {
+        node.resize(ctx);
+      }
+      if (node.width > node.height) {
+        x = node.x + node.width / 2;
+        y = node.y - radius;
+      }
+      else {
+        x = node.x + radius;
+        y = node.y - node.height / 2;
+      }
+      this._circle(ctx, x, y, radius);
+      point = this._pointOnCircle(x, y, radius, 0.5);
+      this._label(ctx, this.label, point.x, point.y);
+    }
+  };
+
+  /**
+   * Get the line width of the edge. Depends on width and whether one of the
+   * connected nodes is selected.
+   * @return {Number} width
+   * @private
+   */
+  Edge.prototype._getLineWidth = function() {
+    if (this.selected == true) {
+      return  Math.max(Math.min(this.widthSelected, this.options.widthMax), 0.3*this.networkScaleInv);
+    }
+    else {
+      if (this.hover == true) {
+        return Math.max(Math.min(this.options.hoverWidth, this.options.widthMax), 0.3*this.networkScaleInv);
+      }
+      else {
+        return Math.max(this.options.width, 0.3*this.networkScaleInv);
+      }
+    }
+  };
+
+  Edge.prototype._getViaCoordinates = function () {
+    var xVia = null;
+    var yVia = null;
+    var factor = this.options.smoothCurves.roundness;
+    var type = this.options.smoothCurves.type;
+
+    var dx = Math.abs(this.from.x - this.to.x);
+    var dy = Math.abs(this.from.y - this.to.y);
+    if (type == 'discrete' || type == 'diagonalCross') {
+      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {
+        if (this.from.y > this.to.y) {
+          if (this.from.x < this.to.x) {
+            xVia = this.from.x + factor * dy;
+            yVia = this.from.y - factor * dy;
+          }
+          else if (this.from.x > this.to.x) {
+            xVia = this.from.x - factor * dy;
+            yVia = this.from.y - factor * dy;
+          }
+        }
+        else if (this.from.y < this.to.y) {
+          if (this.from.x < this.to.x) {
+            xVia = this.from.x + factor * dy;
+            yVia = this.from.y + factor * dy;
+          }
+          else if (this.from.x > this.to.x) {
+            xVia = this.from.x - factor * dy;
+            yVia = this.from.y + factor * dy;
+          }
+        }
+        if (type == "discrete") {
+          xVia = dx < factor * dy ? this.from.x : xVia;
+        }
+      }
+      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) {
+        if (this.from.y > this.to.y) {
+          if (this.from.x < this.to.x) {
+            xVia = this.from.x + factor * dx;
+            yVia = this.from.y - factor * dx;
+          }
+          else if (this.from.x > this.to.x) {
+            xVia = this.from.x - factor * dx;
+            yVia = this.from.y - factor * dx;
+          }
+        }
+        else if (this.from.y < this.to.y) {
+          if (this.from.x < this.to.x) {
+            xVia = this.from.x + factor * dx;
+            yVia = this.from.y + factor * dx;
+          }
+          else if (this.from.x > this.to.x) {
+            xVia = this.from.x - factor * dx;
+            yVia = this.from.y + factor * dx;
+          }
+        }
+        if (type == "discrete") {
+          yVia = dy < factor * dx ? this.from.y : yVia;
+        }
+      }
+    }
+    else if (type == "straightCross") {
+      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {  // up - down
+        xVia = this.from.x;
+        if (this.from.y < this.to.y) {
+          yVia = this.to.y - (1-factor) * dy;
+        }
+        else {
+          yVia = this.to.y + (1-factor) * dy;
+        }
+      }
+      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) { // left - right
+        if (this.from.x < this.to.x) {
+          xVia = this.to.x - (1-factor) * dx;
+        }
+        else {
+          xVia = this.to.x + (1-factor) * dx;
+        }
+        yVia = this.from.y;
+      }
+    }
+    else if (type == 'horizontal') {
+      if (this.from.x < this.to.x) {
+        xVia = this.to.x - (1-factor) * dx;
+      }
+      else {
+        xVia = this.to.x + (1-factor) * dx;
+      }
+      yVia = this.from.y;
+    }
+    else if (type == 'vertical') {
+      xVia = this.from.x;
+      if (this.from.y < this.to.y) {
+        yVia = this.to.y - (1-factor) * dy;
+      }
+      else {
+        yVia = this.to.y + (1-factor) * dy;
+      }
+    }
+    else { // continuous
+      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {
+        if (this.from.y > this.to.y) {
+          if (this.from.x < this.to.x) {
+  //          console.log(1)
+            xVia = this.from.x + factor * dy;
+            yVia = this.from.y - factor * dy;
+            xVia = this.to.x < xVia ? this.to.x : xVia;
+          }
+          else if (this.from.x > this.to.x) {
+  //          console.log(2)
+            xVia = this.from.x - factor * dy;
+            yVia = this.from.y - factor * dy;
+            xVia = this.to.x > xVia ? this.to.x :xVia;
+          }
+        }
+        else if (this.from.y < this.to.y) {
+          if (this.from.x < this.to.x) {
+  //          console.log(3)
+            xVia = this.from.x + factor * dy;
+            yVia = this.from.y + factor * dy;
+            xVia = this.to.x < xVia ? this.to.x : xVia;
+          }
+          else if (this.from.x > this.to.x) {
+  //          console.log(4, this.from.x, this.to.x)
+            xVia = this.from.x - factor * dy;
+            yVia = this.from.y + factor * dy;
+            xVia = this.to.x > xVia ? this.to.x : xVia;
+          }
+        }
+      }
+      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) {
+        if (this.from.y > this.to.y) {
+          if (this.from.x < this.to.x) {
+  //          console.log(5)
+            xVia = this.from.x + factor * dx;
+            yVia = this.from.y - factor * dx;
+            yVia = this.to.y > yVia ? this.to.y : yVia;
+          }
+          else if (this.from.x > this.to.x) {
+  //          console.log(6)
+            xVia = this.from.x - factor * dx;
+            yVia = this.from.y - factor * dx;
+            yVia = this.to.y > yVia ? this.to.y : yVia;
+          }
+        }
+        else if (this.from.y < this.to.y) {
+          if (this.from.x < this.to.x) {
+  //          console.log(7)
+            xVia = this.from.x + factor * dx;
+            yVia = this.from.y + factor * dx;
+            yVia = this.to.y < yVia ? this.to.y : yVia;
+          }
+          else if (this.from.x > this.to.x) {
+  //          console.log(8)
+            xVia = this.from.x - factor * dx;
+            yVia = this.from.y + factor * dx;
+            yVia = this.to.y < yVia ? this.to.y : yVia;
+          }
+        }
+      }
+    }
+
+
+    return {x:xVia, y:yVia};
+  }
+
+  /**
+   * Draw a line between two nodes
+   * @param {CanvasRenderingContext2D} ctx
+   * @private
+   */
+  Edge.prototype._line = function (ctx) {
+    // draw a straight line
+    ctx.beginPath();
+    ctx.moveTo(this.from.x, this.from.y);
+    if (this.options.smoothCurves.enabled == true) {
+      if (this.options.smoothCurves.dynamic == false) {
+        var via = this._getViaCoordinates();
+        if (via.x == null) {
+          ctx.lineTo(this.to.x, this.to.y);
+          ctx.stroke();
+          return null;
+        }
+        else {
+  //        this.via.x = via.x;
+  //        this.via.y = via.y;
+          ctx.quadraticCurveTo(via.x,via.y,this.to.x, this.to.y);
+          ctx.stroke();
+          return via;
+        }
+      }
+      else {
+        ctx.quadraticCurveTo(this.via.x,this.via.y,this.to.x, this.to.y);
+        ctx.stroke();
+        return this.via;
+      }
+    }
+    else {
+      ctx.lineTo(this.to.x, this.to.y);
+      ctx.stroke();
+      return null;
+    }
+  };
+
+  /**
+   * Draw a line from a node to itself, a circle
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} radius
+   * @private
+   */
+  Edge.prototype._circle = function (ctx, x, y, radius) {
+    // draw a circle
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+    ctx.stroke();
+  };
+
+  /**
+   * Draw label with white background and with the middle at (x, y)
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {String} text
+   * @param {Number} x
+   * @param {Number} y
+   * @private
+   */
+  Edge.prototype._label = function (ctx, text, x, y) {
+    if (text) {
+      // TODO: cache the calculated size
+      ctx.font = ((this.from.selected || this.to.selected) ? "bold " : "") +
+          this.options.fontSize + "px " + this.options.fontFace;
+
+
+      var lines = String(text).split('\n');
+      var lineCount = lines.length;
+      var fontSize = (Number(this.options.fontSize) + 4);
+      var yLine = y + (1 - lineCount) / 2 * fontSize;
+
+      var width = ctx.measureText(lines[0]).width;
+      for (var i = 1; i < lineCount; i++) {
+        var lineWidth = ctx.measureText(lines[i]).width;
+        width = lineWidth > width ? lineWidth : width;
+      }
+      var height = this.options.fontSize * lineCount;
+      var left = x - width / 2;
+      var top = y - height / 2;
+
+      this.labelDimensions = {top:top,left:left,width:width,height:height};
+
+      if (this.options.fontFill !== undefined && this.options.fontFill !== null && this.options.fontFill !== "none") {
+        ctx.fillStyle = this.options.fontFill;
+        ctx.fillRect(left, top, width, height);
+      }
+
+      // draw text
+      ctx.fillStyle = this.options.fontColor || "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline =  "middle";
+
+      for (var i = 0; i < lineCount; i++) {
+        ctx.fillText(lines[i], x, yLine);
+        yLine += fontSize;
+      }
+    }
+  };
+
+  /**
+   * Redraw a edge as a dashed line
+   * Draw this edge in the given canvas
+   * @author David Jordan
+   * @date 2012-08-08
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   * @private
+   */
+  Edge.prototype._drawDashLine = function(ctx) {
+    // set style
+    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight;}
+    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;}
+    else                         {ctx.strokeStyle = this.options.color.color;}
+
+    ctx.lineWidth = this._getLineWidth();
+
+    var via = null;
+    // only firefox and chrome support this method, else we use the legacy one.
+    if (ctx.mozDash !== undefined || ctx.setLineDash !== undefined) {
+      // configure the dash pattern
+      var pattern = [0];
+      if (this.options.dash.length !== undefined && this.options.dash.gap !== undefined) {
+        pattern = [this.options.dash.length,this.options.dash.gap];
+      }
+      else {
+        pattern = [5,5];
+      }
+
+      // set dash settings for chrome or firefox
+      if (typeof ctx.setLineDash !== 'undefined') { //Chrome
+        ctx.setLineDash(pattern);
+        ctx.lineDashOffset = 0;
+
+      } else { //Firefox
+        ctx.mozDash = pattern;
+        ctx.mozDashOffset = 0;
+      }
+
+      // draw the line
+      via = this._line(ctx);
+
+      // restore the dash settings.
+      if (typeof ctx.setLineDash !== 'undefined') { //Chrome
+        ctx.setLineDash([0]);
+        ctx.lineDashOffset = 0;
+
+      } else { //Firefox
+        ctx.mozDash = [0];
+        ctx.mozDashOffset = 0;
+      }
+    }
+    else { // unsupporting smooth lines
+      // draw dashed line
+      ctx.beginPath();
+      ctx.lineCap = 'round';
+      if (this.options.dash.altLength !== undefined) //If an alt dash value has been set add to the array this value
+      {
+        ctx.dashedLine(this.from.x,this.from.y,this.to.x,this.to.y,
+            [this.options.dash.length,this.options.dash.gap,this.options.dash.altLength,this.options.dash.gap]);
+      }
+      else if (this.options.dash.length !== undefined && this.options.dash.gap !== undefined) //If a dash and gap value has been set add to the array this value
+      {
+        ctx.dashedLine(this.from.x,this.from.y,this.to.x,this.to.y,
+            [this.options.dash.length,this.options.dash.gap]);
+      }
+      else //If all else fails draw a line
+      {
+        ctx.moveTo(this.from.x, this.from.y);
+        ctx.lineTo(this.to.x, this.to.y);
+      }
+      ctx.stroke();
+    }
+
+    // draw label
+    if (this.label) {
+      var point;
+      if (this.options.smoothCurves.enabled == true && via != null) {
+        var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
+        var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
+        point = {x:midpointX, y:midpointY};
+      }
+      else {
+        point = this._pointOnLine(0.5);
+      }
+      this._label(ctx, this.label, point.x, point.y);
+    }
+  };
+
+  /**
+   * Get a point on a line
+   * @param {Number} percentage. Value between 0 (line start) and 1 (line end)
+   * @return {Object} point
+   * @private
+   */
+  Edge.prototype._pointOnLine = function (percentage) {
+    return {
+      x: (1 - percentage) * this.from.x + percentage * this.to.x,
+      y: (1 - percentage) * this.from.y + percentage * this.to.y
+    }
+  };
+
+  /**
+   * Get a point on a circle
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} radius
+   * @param {Number} percentage. Value between 0 (line start) and 1 (line end)
+   * @return {Object} point
+   * @private
+   */
+  Edge.prototype._pointOnCircle = function (x, y, radius, percentage) {
+    var angle = (percentage - 3/8) * 2 * Math.PI;
+    return {
+      x: x + radius * Math.cos(angle),
+      y: y - radius * Math.sin(angle)
+    }
+  };
+
+  /**
+   * Redraw a edge as a line with an arrow halfway the line
+   * Draw this edge in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   * @private
+   */
+  Edge.prototype._drawArrowCenter = function(ctx) {
+    var point;
+    // set style
+    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight; ctx.fillStyle = this.options.color.highlight;}
+    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;     ctx.fillStyle = this.options.color.hover;}
+    else                         {ctx.strokeStyle = this.options.color.color;     ctx.fillStyle = this.options.color.color;}
+    ctx.lineWidth = this._getLineWidth();
+
+    if (this.from != this.to) {
+      // draw line
+      var via = this._line(ctx);
+
+      var angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
+      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
+      // draw an arrow halfway the line
+      if (this.options.smoothCurves.enabled == true && via != null) {
+        var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
+        var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
+        point = {x:midpointX, y:midpointY};
+      }
+      else {
+        point = this._pointOnLine(0.5);
+      }
+
+      ctx.arrow(point.x, point.y, angle, length);
+      ctx.fill();
+      ctx.stroke();
+
+      // draw label
+      if (this.label) {
+        this._label(ctx, this.label, point.x, point.y);
+      }
+    }
+    else {
+      // draw circle
+      var x, y;
+      var radius = 0.25 * Math.max(100,this.physics.springLength);
+      var node = this.from;
+      if (!node.width) {
+        node.resize(ctx);
+      }
+      if (node.width > node.height) {
+        x = node.x + node.width * 0.5;
+        y = node.y - radius;
+      }
+      else {
+        x = node.x + radius;
+        y = node.y - node.height * 0.5;
+      }
+      this._circle(ctx, x, y, radius);
+
+      // draw all arrows
+      var angle = 0.2 * Math.PI;
+      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
+      point = this._pointOnCircle(x, y, radius, 0.5);
+      ctx.arrow(point.x, point.y, angle, length);
+      ctx.fill();
+      ctx.stroke();
+
+      // draw label
+      if (this.label) {
+        point = this._pointOnCircle(x, y, radius, 0.5);
+        this._label(ctx, this.label, point.x, point.y);
+      }
+    }
+  };
+
+
+
+  /**
+   * Redraw a edge as a line with an arrow
+   * Draw this edge in the given canvas
+   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
+   * @param {CanvasRenderingContext2D}   ctx
+   * @private
+   */
+  Edge.prototype._drawArrow = function(ctx) {
+    // set style
+    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight; ctx.fillStyle = this.options.color.highlight;}
+    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;     ctx.fillStyle = this.options.color.hover;}
+    else                         {ctx.strokeStyle = this.options.color.color;     ctx.fillStyle = this.options.color.color;}
+
+    ctx.lineWidth = this._getLineWidth();
+
+    var angle, length;
+    //draw a line
+    if (this.from != this.to) {
+      angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
+      var dx = (this.to.x - this.from.x);
+      var dy = (this.to.y - this.from.y);
+      var edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
+
+      var fromBorderDist = this.from.distanceToBorder(ctx, angle + Math.PI);
+      var fromBorderPoint = (edgeSegmentLength - fromBorderDist) / edgeSegmentLength;
+      var xFrom = (fromBorderPoint) * this.from.x + (1 - fromBorderPoint) * this.to.x;
+      var yFrom = (fromBorderPoint) * this.from.y + (1 - fromBorderPoint) * this.to.y;
+
+      var via;
+      if (this.options.smoothCurves.dynamic == true && this.options.smoothCurves.enabled == true ) {
+        via = this.via;
+      }
+      else if (this.options.smoothCurves.enabled == true) {
+        via = this._getViaCoordinates();
+      }
+
+      if (this.options.smoothCurves.enabled == true && via.x != null) {
+        angle = Math.atan2((this.to.y - via.y), (this.to.x - via.x));
+        dx = (this.to.x - via.x);
+        dy = (this.to.y - via.y);
+        edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
+      }
+      var toBorderDist = this.to.distanceToBorder(ctx, angle);
+      var toBorderPoint = (edgeSegmentLength - toBorderDist) / edgeSegmentLength;
+
+      var xTo,yTo;
+      if (this.options.smoothCurves.enabled == true && via.x != null) {
+       xTo = (1 - toBorderPoint) * via.x + toBorderPoint * this.to.x;
+       yTo = (1 - toBorderPoint) * via.y + toBorderPoint * this.to.y;
+      }
+      else {
+        xTo = (1 - toBorderPoint) * this.from.x + toBorderPoint * this.to.x;
+        yTo = (1 - toBorderPoint) * this.from.y + toBorderPoint * this.to.y;
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(xFrom,yFrom);
+      if (this.options.smoothCurves.enabled == true && via.x != null) {
+        ctx.quadraticCurveTo(via.x,via.y,xTo, yTo);
+      }
+      else {
+        ctx.lineTo(xTo, yTo);
+      }
+      ctx.stroke();
+
+      // draw arrow at the end of the line
+      length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
+      ctx.arrow(xTo, yTo, angle, length);
+      ctx.fill();
+      ctx.stroke();
+
+      // draw label
+      if (this.label) {
+        var point;
+        if (this.options.smoothCurves.enabled == true && via != null) {
+          var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
+          var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
+          point = {x:midpointX, y:midpointY};
+        }
+        else {
+          point = this._pointOnLine(0.5);
+        }
+        this._label(ctx, this.label, point.x, point.y);
+      }
+    }
+    else {
+      // draw circle
+      var node = this.from;
+      var x, y, arrow;
+      var radius = 0.25 * Math.max(100,this.physics.springLength);
+      if (!node.width) {
+        node.resize(ctx);
+      }
+      if (node.width > node.height) {
+        x = node.x + node.width * 0.5;
+        y = node.y - radius;
+        arrow = {
+          x: x,
+          y: node.y,
+          angle: 0.9 * Math.PI
+        };
+      }
+      else {
+        x = node.x + radius;
+        y = node.y - node.height * 0.5;
+        arrow = {
+          x: node.x,
+          y: y,
+          angle: 0.6 * Math.PI
+        };
+      }
+      ctx.beginPath();
+      // TODO: similarly, for a line without arrows, draw to the border of the nodes instead of the center
+      ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+      ctx.stroke();
+
+      // draw all arrows
+      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
+      ctx.arrow(arrow.x, arrow.y, arrow.angle, length);
+      ctx.fill();
+      ctx.stroke();
+
+      // draw label
+      if (this.label) {
+        point = this._pointOnCircle(x, y, radius, 0.5);
+        this._label(ctx, this.label, point.x, point.y);
+      }
+    }
+  };
+
+
+
+  /**
+   * Calculate the distance between a point (x3,y3) and a line segment from
+   * (x1,y1) to (x2,y2).
+   * http://stackoverflow.com/questions/849211/shortest-distancae-between-a-point-and-a-line-segment
+   * @param {number} x1
+   * @param {number} y1
+   * @param {number} x2
+   * @param {number} y2
+   * @param {number} x3
+   * @param {number} y3
+   * @private
+   */
+  Edge.prototype._getDistanceToEdge = function (x1,y1, x2,y2, x3,y3) { // x3,y3 is the point
+    var returnValue = 0;
+    if (this.from != this.to) {
+      if (this.options.smoothCurves.enabled == true) {
+        var xVia, yVia;
+        if (this.options.smoothCurves.enabled == true && this.options.smoothCurves.dynamic == true) {
+          xVia = this.via.x;
+          yVia = this.via.y;
+        }
+        else {
+          var via = this._getViaCoordinates();
+          xVia = via.x;
+          yVia = via.y;
+        }
+        var minDistance = 1e9;
+        var distance;
+        var i,t,x,y, lastX, lastY;
+        for (i = 0; i < 10; i++) {
+          t = 0.1*i;
+          x = Math.pow(1-t,2)*x1 + (2*t*(1 - t))*xVia + Math.pow(t,2)*x2;
+          y = Math.pow(1-t,2)*y1 + (2*t*(1 - t))*yVia + Math.pow(t,2)*y2;
+          if (i > 0) {
+            distance = this._getDistanceToLine(lastX,lastY,x,y, x3,y3);
+            minDistance = distance < minDistance ? distance : minDistance;
+          }
+          lastX = x; lastY = y;
+        }
+        returnValue = minDistance;
+      }
+      else {
+        returnValue = this._getDistanceToLine(x1,y1,x2,y2,x3,y3);
+      }
+    }
+    else {
+      var x, y, dx, dy;
+      var radius = 0.25 * this.physics.springLength;
+      var node = this.from;
+      if (node.width > node.height) {
+        x = node.x + 0.5 * node.width;
+        y = node.y - radius;
+      }
+      else {
+        x = node.x + radius;
+        y = node.y - 0.5 * node.height;
+      }
+      dx = x - x3;
+      dy = y - y3;
+      returnValue = Math.abs(Math.sqrt(dx*dx + dy*dy) - radius);
+    }
+
+    if (this.labelDimensions.left < x3 &&
+      this.labelDimensions.left + this.labelDimensions.width > x3 &&
+      this.labelDimensions.top < y3 &&
+      this.labelDimensions.top + this.labelDimensions.height > y3) {
+      return 0;
+    }
+    else {
+      return returnValue;
+    }
+  };
+
+  Edge.prototype._getDistanceToLine = function(x1,y1,x2,y2,x3,y3) {
+    var px = x2-x1,
+      py = y2-y1,
+      something = px*px + py*py,
+      u =  ((x3 - x1) * px + (y3 - y1) * py) / something;
+
+    if (u > 1) {
+      u = 1;
+    }
+    else if (u < 0) {
+      u = 0;
+    }
+
+    var x = x1 + u * px,
+      y = y1 + u * py,
+      dx = x - x3,
+      dy = y - y3;
+
+    //# Note: If the actual distance does not matter,
+    //# if you only want to compare what this function
+    //# returns to other results of this function, you
+    //# can just return the squared distance instead
+    //# (i.e. remove the sqrt) to gain a little performance
+
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  /**
+   * This allows the zoom level of the network to influence the rendering
+   *
+   * @param scale
+   */
+  Edge.prototype.setScale = function(scale) {
+    this.networkScaleInv = 1.0/scale;
+  };
+
+
+  Edge.prototype.select = function() {
+    this.selected = true;
+  };
+
+  Edge.prototype.unselect = function() {
+    this.selected = false;
+  };
+
+  Edge.prototype.positionBezierNode = function() {
+    if (this.via !== null && this.from !== null && this.to !== null) {
+      this.via.x = 0.5 * (this.from.x + this.to.x);
+      this.via.y = 0.5 * (this.from.y + this.to.y);
+    }
+  };
+
+  /**
+   * This function draws the control nodes for the manipulator. In order to enable this, only set the this.controlNodesEnabled to true.
+   * @param ctx
+   */
+  Edge.prototype._drawControlNodes = function(ctx) {
+    if (this.controlNodesEnabled == true) {
+      if (this.controlNodes.from === null && this.controlNodes.to === null) {
+        var nodeIdFrom = "edgeIdFrom:".concat(this.id);
+        var nodeIdTo = "edgeIdTo:".concat(this.id);
+        var constants = {
+                        nodes:{group:'', radius:8},
+                        physics:{damping:0},
+                        clustering: {maxNodeSizeIncrements: 0 ,nodeScaling: {width:0, height: 0, radius:0}}
+                        };
+        this.controlNodes.from = new Node(
+          {id:nodeIdFrom,
+            shape:'dot',
+              color:{background:'#ff4e00', border:'#3c3c3c', highlight: {background:'#07f968'}}
+          },{},{},constants);
+        this.controlNodes.to = new Node(
+          {id:nodeIdTo,
+            shape:'dot',
+            color:{background:'#ff4e00', border:'#3c3c3c', highlight: {background:'#07f968'}}
+          },{},{},constants);
+      }
+
+      if (this.controlNodes.from.selected == false && this.controlNodes.to.selected == false) {
+        this.controlNodes.positions = this.getControlNodePositions(ctx);
+        this.controlNodes.from.x = this.controlNodes.positions.from.x;
+        this.controlNodes.from.y = this.controlNodes.positions.from.y;
+        this.controlNodes.to.x = this.controlNodes.positions.to.x;
+        this.controlNodes.to.y = this.controlNodes.positions.to.y;
+      }
+
+      this.controlNodes.from.draw(ctx);
+      this.controlNodes.to.draw(ctx);
+    }
+    else {
+      this.controlNodes = {from:null, to:null, positions:{}};
+    }
+  };
+
+  /**
+   * Enable control nodes.
+   * @private
+   */
+  Edge.prototype._enableControlNodes = function() {
+    this.controlNodesEnabled = true;
+  };
+
+  /**
+   * disable control nodes
+   * @private
+   */
+  Edge.prototype._disableControlNodes = function() {
+    this.controlNodesEnabled = false;
+  };
+
+  /**
+   * This checks if one of the control nodes is selected and if so, returns the control node object. Else it returns null.
+   * @param x
+   * @param y
+   * @returns {null}
+   * @private
+   */
+  Edge.prototype._getSelectedControlNode = function(x,y) {
+    var positions = this.controlNodes.positions;
+    var fromDistance = Math.sqrt(Math.pow(x - positions.from.x,2) + Math.pow(y - positions.from.y,2));
+    var toDistance =   Math.sqrt(Math.pow(x - positions.to.x  ,2) + Math.pow(y - positions.to.y  ,2));
+
+    if (fromDistance < 15) {
+      this.connectedNode = this.from;
+      this.from = this.controlNodes.from;
+      return this.controlNodes.from;
+    }
+    else if (toDistance < 15) {
+      this.connectedNode = this.to;
+      this.to = this.controlNodes.to;
+      return this.controlNodes.to;
+    }
+    else {
+      return null;
+    }
+  };
+
+
+  /**
+   * this resets the control nodes to their original position.
+   * @private
+   */
+  Edge.prototype._restoreControlNodes = function() {
+    if (this.controlNodes.from.selected == true) {
+      this.from = this.connectedNode;
+      this.connectedNode = null;
+      this.controlNodes.from.unselect();
+    }
+    if (this.controlNodes.to.selected == true) {
+      this.to = this.connectedNode;
+      this.connectedNode = null;
+      this.controlNodes.to.unselect();
+    }
+  };
+
+  /**
+   * this calculates the position of the control nodes on the edges of the parent nodes.
+   *
+   * @param ctx
+   * @returns {{from: {x: number, y: number}, to: {x: *, y: *}}}
+   */
+  Edge.prototype.getControlNodePositions = function(ctx) {
+    var angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
+    var dx = (this.to.x - this.from.x);
+    var dy = (this.to.y - this.from.y);
+    var edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
+    var fromBorderDist = this.from.distanceToBorder(ctx, angle + Math.PI);
+    var fromBorderPoint = (edgeSegmentLength - fromBorderDist) / edgeSegmentLength;
+    var xFrom = (fromBorderPoint) * this.from.x + (1 - fromBorderPoint) * this.to.x;
+    var yFrom = (fromBorderPoint) * this.from.y + (1 - fromBorderPoint) * this.to.y;
+
+    var via;
+    if (this.options.smoothCurves.dynamic == true && this.options.smoothCurves.enabled == true) {
+      via = this.via;
+    }
+    else if (this.options.smoothCurves.enabled == true) {
+      via = this._getViaCoordinates();
+    }
+
+    if (this.options.smoothCurves.enabled == true && via.x != null) {
+      angle = Math.atan2((this.to.y - via.y), (this.to.x - via.x));
+      dx = (this.to.x - via.x);
+      dy = (this.to.y - via.y);
+      edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
+    }
+    var toBorderDist = this.to.distanceToBorder(ctx, angle);
+    var toBorderPoint = (edgeSegmentLength - toBorderDist) / edgeSegmentLength;
+
+    var xTo,yTo;
+    if (this.options.smoothCurves.enabled == true && via.x != null) {
+      xTo = (1 - toBorderPoint) * via.x + toBorderPoint * this.to.x;
+      yTo = (1 - toBorderPoint) * via.y + toBorderPoint * this.to.y;
+    }
+    else {
+      xTo = (1 - toBorderPoint) * this.from.x + toBorderPoint * this.to.x;
+      yTo = (1 - toBorderPoint) * this.from.y + toBorderPoint * this.to.y;
+    }
+
+    return {from:{x:xFrom,y:yFrom},to:{x:xTo,y:yTo}};
+  };
+
+  module.exports = Edge;
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var Emitter = __webpack_require__(50);
+  var Hammer = __webpack_require__(42);
+  var mousetrap = __webpack_require__(51);
+  var util = __webpack_require__(1);
+  var hammerUtil = __webpack_require__(44);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
   var dotparser = __webpack_require__(39);
   var gephiParser = __webpack_require__(40);
   var Groups = __webpack_require__(35);
   var Images = __webpack_require__(36);
   var Node = __webpack_require__(37);
-  var Edge = __webpack_require__(34);
+  var Edge = __webpack_require__(33);
   var Popup = __webpack_require__(38);
-  var MixinLoader = __webpack_require__(46);
-  var Activator = __webpack_require__(47);
-  var locales = __webpack_require__(44);
+  var MixinLoader = __webpack_require__(49);
+  var Activator = __webpack_require__(48);
+  var locales = __webpack_require__(45);
 
   // Load custom shapes into CanvasRenderingContext2D
-  __webpack_require__(45);
+  __webpack_require__(46);
 
   /**
    * @constructor Network
@@ -16625,1198 +17827,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var util = __webpack_require__(1);
-  var Node = __webpack_require__(37);
-
-  /**
-   * @class Edge
-   *
-   * A edge connects two nodes
-   * @param {Object} properties     Object with properties. Must contain
-   *                                At least properties from and to.
-   *                                Available properties: from (number),
-   *                                to (number), label (string, color (string),
-   *                                width (number), style (string),
-   *                                length (number), title (string)
-   * @param {Network} network       A Network object, used to find and edge to
-   *                                nodes.
-   * @param {Object} constants      An object with default values for
-   *                                example for the color
-   */
-  function Edge (properties, network, networkConstants) {
-    if (!network) {
-      throw "No network provided";
-    }
-    var fields = ['edges','physics'];
-    var constants = util.selectiveBridgeObject(fields,networkConstants);
-    this.options = constants.edges;
-    this.physics = constants.physics;
-    this.options['smoothCurves'] = networkConstants['smoothCurves'];
-
-
-    this.network = network;
-
-    // initialize variables
-    this.id     = undefined;
-    this.fromId = undefined;
-    this.toId   = undefined;
-    this.title  = undefined;
-    this.widthSelected = this.options.width * this.options.widthSelectionMultiplier;
-    this.value  = undefined;
-    this.selected = false;
-    this.hover = false;
-    this.labelDimensions = {top:0,left:0,width:0,height:0};
-
-    this.from = null;   // a node
-    this.to = null;     // a node
-    this.via = null;    // a temp node
-
-    // we use this to be able to reconnect the edge to a cluster if its node is put into a cluster
-    // by storing the original information we can revert to the original connection when the cluser is opened.
-    this.originalFromId = [];
-    this.originalToId = [];
-
-    this.connected = false;
-
-    this.widthFixed  = false;
-    this.lengthFixed = false;
-
-    this.setProperties(properties);
-
-    this.controlNodesEnabled = false;
-    this.controlNodes = {from:null, to:null, positions:{}};
-    this.connectedNode = null;
-  }
-
-  /**
-   * Set or overwrite properties for the edge
-   * @param {Object} properties  an object with properties
-   * @param {Object} constants   and object with default, global properties
-   */
-  Edge.prototype.setProperties = function(properties) {
-    if (!properties) {
-      return;
-    }
-
-    var fields = ['style','fontSize','fontFace','fontColor','fontFill','width',
-      'widthSelectionMultiplier','hoverWidth','arrowScaleFactor','dash','inheritColor'
-    ];
-    util.selectiveDeepExtend(fields, this.options, properties);
-
-    if (properties.from !== undefined)           {this.fromId = properties.from;}
-    if (properties.to !== undefined)             {this.toId = properties.to;}
-
-    if (properties.id !== undefined)             {this.id = properties.id;}
-    if (properties.label !== undefined)          {this.label = properties.label;}
-
-    if (properties.title !== undefined)        {this.title = properties.title;}
-    if (properties.value !== undefined)        {this.value = properties.value;}
-    if (properties.length !== undefined)       {this.physics.springLength = properties.length;}
-
-    if (properties.color !== undefined) {
-      this.options.inheritColor = false;
-      if (util.isString(properties.color)) {
-        this.options.color.color = properties.color;
-        this.options.color.highlight = properties.color;
-      }
-      else {
-        if (properties.color.color !== undefined)     {this.options.color.color = properties.color.color;}
-        if (properties.color.highlight !== undefined) {this.options.color.highlight = properties.color.highlight;}
-        if (properties.color.hover !== undefined)     {this.options.color.hover = properties.color.hover;}
-      }
-    }
-
-    // A node is connected when it has a from and to node.
-    this.connect();
-
-    this.widthFixed = this.widthFixed || (properties.width !== undefined);
-    this.lengthFixed = this.lengthFixed || (properties.length !== undefined);
-
-    this.widthSelected = this.options.width* this.options.widthSelectionMultiplier;
-
-    // set draw method based on style
-    switch (this.options.style) {
-      case 'line':          this.draw = this._drawLine; break;
-      case 'arrow':         this.draw = this._drawArrow; break;
-      case 'arrow-center':  this.draw = this._drawArrowCenter; break;
-      case 'dash-line':     this.draw = this._drawDashLine; break;
-      default:              this.draw = this._drawLine; break;
-    }
-  };
-
-  /**
-   * Connect an edge to its nodes
-   */
-  Edge.prototype.connect = function () {
-    this.disconnect();
-
-    this.from = this.network.nodes[this.fromId] || null;
-    this.to = this.network.nodes[this.toId] || null;
-    this.connected = (this.from && this.to);
-
-    if (this.connected) {
-      this.from.attachEdge(this);
-      this.to.attachEdge(this);
-    }
-    else {
-      if (this.from) {
-        this.from.detachEdge(this);
-      }
-      if (this.to) {
-        this.to.detachEdge(this);
-      }
-    }
-  };
-
-  /**
-   * Disconnect an edge from its nodes
-   */
-  Edge.prototype.disconnect = function () {
-    if (this.from) {
-      this.from.detachEdge(this);
-      this.from = null;
-    }
-    if (this.to) {
-      this.to.detachEdge(this);
-      this.to = null;
-    }
-
-    this.connected = false;
-  };
-
-  /**
-   * get the title of this edge.
-   * @return {string} title    The title of the edge, or undefined when no title
-   *                           has been set.
-   */
-  Edge.prototype.getTitle = function() {
-    return typeof this.title === "function" ? this.title() : this.title;
-  };
-
-
-  /**
-   * Retrieve the value of the edge. Can be undefined
-   * @return {Number} value
-   */
-  Edge.prototype.getValue = function() {
-    return this.value;
-  };
-
-  /**
-   * Adjust the value range of the edge. The edge will adjust it's width
-   * based on its value.
-   * @param {Number} min
-   * @param {Number} max
-   */
-  Edge.prototype.setValueRange = function(min, max) {
-    if (!this.widthFixed && this.value !== undefined) {
-      var scale = (this.options.widthMax - this.options.widthMin) / (max - min);
-      this.options.width= (this.value - min) * scale + this.options.widthMin;
-      this.widthSelected = this.options.width* this.options.widthSelectionMultiplier;
-    }
-  };
-
-  /**
-   * Redraw a edge
-   * Draw this edge in the given canvas
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
-   * @param {CanvasRenderingContext2D}   ctx
-   */
-  Edge.prototype.draw = function(ctx) {
-    throw "Method draw not initialized in edge";
-  };
-
-  /**
-   * Check if this object is overlapping with the provided object
-   * @param {Object} obj   an object with parameters left, top
-   * @return {boolean}     True if location is located on the edge
-   */
-  Edge.prototype.isOverlappingWith = function(obj) {
-    if (this.connected) {
-      var distMax = 10;
-      var xFrom = this.from.x;
-      var yFrom = this.from.y;
-      var xTo = this.to.x;
-      var yTo = this.to.y;
-      var xObj = obj.left;
-      var yObj = obj.top;
-
-      var dist = this._getDistanceToEdge(xFrom, yFrom, xTo, yTo, xObj, yObj);
-
-      return (dist < distMax);
-    }
-    else {
-      return false
-    }
-  };
-
-  Edge.prototype._getColor = function() {
-    var colorObj = this.options.color;
-    if (this.options.inheritColor == "to") {
-      colorObj = {
-        highlight: this.to.options.color.highlight.border,
-        hover: this.to.options.color.hover.border,
-        color: this.to.options.color.border
-      };
-    }
-    else if (this.options.inheritColor == "from" || this.options.inheritColor == true) {
-      colorObj = {
-        highlight: this.from.options.color.highlight.border,
-        hover: this.from.options.color.hover.border,
-        color: this.from.options.color.border
-      };
-    }
-
-    if (this.selected == true)   {return colorObj.highlight;}
-    else if (this.hover == true) {return colorObj.hover;}
-    else                         {return colorObj.color;}
-  }
-
-
-  /**
-   * Redraw a edge as a line
-   * Draw this edge in the given canvas
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
-   * @param {CanvasRenderingContext2D}   ctx
-   * @private
-   */
-  Edge.prototype._drawLine = function(ctx) {
-    // set style
-    ctx.strokeStyle = this._getColor();
-    ctx.lineWidth   = this._getLineWidth();
-
-    if (this.from != this.to) {
-      // draw line
-      var via = this._line(ctx);
-
-      // draw label
-      var point;
-      if (this.label) {
-        if (this.options.smoothCurves.enabled == true && via != null) {
-          var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
-          var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
-          point = {x:midpointX, y:midpointY};
-        }
-        else {
-          point = this._pointOnLine(0.5);
-        }
-        this._label(ctx, this.label, point.x, point.y);
-      }
-    }
-    else {
-      var x, y;
-      var radius = this.physics.springLength / 4;
-      var node = this.from;
-      if (!node.width) {
-        node.resize(ctx);
-      }
-      if (node.width > node.height) {
-        x = node.x + node.width / 2;
-        y = node.y - radius;
-      }
-      else {
-        x = node.x + radius;
-        y = node.y - node.height / 2;
-      }
-      this._circle(ctx, x, y, radius);
-      point = this._pointOnCircle(x, y, radius, 0.5);
-      this._label(ctx, this.label, point.x, point.y);
-    }
-  };
-
-  /**
-   * Get the line width of the edge. Depends on width and whether one of the
-   * connected nodes is selected.
-   * @return {Number} width
-   * @private
-   */
-  Edge.prototype._getLineWidth = function() {
-    if (this.selected == true) {
-      return  Math.max(Math.min(this.widthSelected, this.options.widthMax), 0.3*this.networkScaleInv);
-    }
-    else {
-      if (this.hover == true) {
-        return Math.max(Math.min(this.options.hoverWidth, this.options.widthMax), 0.3*this.networkScaleInv);
-      }
-      else {
-        return Math.max(this.options.width, 0.3*this.networkScaleInv);
-      }
-    }
-  };
-
-  Edge.prototype._getViaCoordinates = function () {
-    var xVia = null;
-    var yVia = null;
-    var factor = this.options.smoothCurves.roundness;
-    var type = this.options.smoothCurves.type;
-
-    var dx = Math.abs(this.from.x - this.to.x);
-    var dy = Math.abs(this.from.y - this.to.y);
-    if (type == 'discrete' || type == 'diagonalCross') {
-      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {
-        if (this.from.y > this.to.y) {
-          if (this.from.x < this.to.x) {
-            xVia = this.from.x + factor * dy;
-            yVia = this.from.y - factor * dy;
-          }
-          else if (this.from.x > this.to.x) {
-            xVia = this.from.x - factor * dy;
-            yVia = this.from.y - factor * dy;
-          }
-        }
-        else if (this.from.y < this.to.y) {
-          if (this.from.x < this.to.x) {
-            xVia = this.from.x + factor * dy;
-            yVia = this.from.y + factor * dy;
-          }
-          else if (this.from.x > this.to.x) {
-            xVia = this.from.x - factor * dy;
-            yVia = this.from.y + factor * dy;
-          }
-        }
-        if (type == "discrete") {
-          xVia = dx < factor * dy ? this.from.x : xVia;
-        }
-      }
-      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) {
-        if (this.from.y > this.to.y) {
-          if (this.from.x < this.to.x) {
-            xVia = this.from.x + factor * dx;
-            yVia = this.from.y - factor * dx;
-          }
-          else if (this.from.x > this.to.x) {
-            xVia = this.from.x - factor * dx;
-            yVia = this.from.y - factor * dx;
-          }
-        }
-        else if (this.from.y < this.to.y) {
-          if (this.from.x < this.to.x) {
-            xVia = this.from.x + factor * dx;
-            yVia = this.from.y + factor * dx;
-          }
-          else if (this.from.x > this.to.x) {
-            xVia = this.from.x - factor * dx;
-            yVia = this.from.y + factor * dx;
-          }
-        }
-        if (type == "discrete") {
-          yVia = dy < factor * dx ? this.from.y : yVia;
-        }
-      }
-    }
-    else if (type == "straightCross") {
-      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {  // up - down
-        xVia = this.from.x;
-        if (this.from.y < this.to.y) {
-          yVia = this.to.y - (1-factor) * dy;
-        }
-        else {
-          yVia = this.to.y + (1-factor) * dy;
-        }
-      }
-      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) { // left - right
-        if (this.from.x < this.to.x) {
-          xVia = this.to.x - (1-factor) * dx;
-        }
-        else {
-          xVia = this.to.x + (1-factor) * dx;
-        }
-        yVia = this.from.y;
-      }
-    }
-    else if (type == 'horizontal') {
-      if (this.from.x < this.to.x) {
-        xVia = this.to.x - (1-factor) * dx;
-      }
-      else {
-        xVia = this.to.x + (1-factor) * dx;
-      }
-      yVia = this.from.y;
-    }
-    else if (type == 'vertical') {
-      xVia = this.from.x;
-      if (this.from.y < this.to.y) {
-        yVia = this.to.y - (1-factor) * dy;
-      }
-      else {
-        yVia = this.to.y + (1-factor) * dy;
-      }
-    }
-    else { // continuous
-      if (Math.abs(this.from.x - this.to.x) < Math.abs(this.from.y - this.to.y)) {
-        if (this.from.y > this.to.y) {
-          if (this.from.x < this.to.x) {
-  //          console.log(1)
-            xVia = this.from.x + factor * dy;
-            yVia = this.from.y - factor * dy;
-            xVia = this.to.x < xVia ? this.to.x : xVia;
-          }
-          else if (this.from.x > this.to.x) {
-  //          console.log(2)
-            xVia = this.from.x - factor * dy;
-            yVia = this.from.y - factor * dy;
-            xVia = this.to.x > xVia ? this.to.x :xVia;
-          }
-        }
-        else if (this.from.y < this.to.y) {
-          if (this.from.x < this.to.x) {
-  //          console.log(3)
-            xVia = this.from.x + factor * dy;
-            yVia = this.from.y + factor * dy;
-            xVia = this.to.x < xVia ? this.to.x : xVia;
-          }
-          else if (this.from.x > this.to.x) {
-  //          console.log(4, this.from.x, this.to.x)
-            xVia = this.from.x - factor * dy;
-            yVia = this.from.y + factor * dy;
-            xVia = this.to.x > xVia ? this.to.x : xVia;
-          }
-        }
-      }
-      else if (Math.abs(this.from.x - this.to.x) > Math.abs(this.from.y - this.to.y)) {
-        if (this.from.y > this.to.y) {
-          if (this.from.x < this.to.x) {
-  //          console.log(5)
-            xVia = this.from.x + factor * dx;
-            yVia = this.from.y - factor * dx;
-            yVia = this.to.y > yVia ? this.to.y : yVia;
-          }
-          else if (this.from.x > this.to.x) {
-  //          console.log(6)
-            xVia = this.from.x - factor * dx;
-            yVia = this.from.y - factor * dx;
-            yVia = this.to.y > yVia ? this.to.y : yVia;
-          }
-        }
-        else if (this.from.y < this.to.y) {
-          if (this.from.x < this.to.x) {
-  //          console.log(7)
-            xVia = this.from.x + factor * dx;
-            yVia = this.from.y + factor * dx;
-            yVia = this.to.y < yVia ? this.to.y : yVia;
-          }
-          else if (this.from.x > this.to.x) {
-  //          console.log(8)
-            xVia = this.from.x - factor * dx;
-            yVia = this.from.y + factor * dx;
-            yVia = this.to.y < yVia ? this.to.y : yVia;
-          }
-        }
-      }
-    }
-
-
-    return {x:xVia, y:yVia};
-  }
-
-  /**
-   * Draw a line between two nodes
-   * @param {CanvasRenderingContext2D} ctx
-   * @private
-   */
-  Edge.prototype._line = function (ctx) {
-    // draw a straight line
-    ctx.beginPath();
-    ctx.moveTo(this.from.x, this.from.y);
-    if (this.options.smoothCurves.enabled == true) {
-      if (this.options.smoothCurves.dynamic == false) {
-        var via = this._getViaCoordinates();
-        if (via.x == null) {
-          ctx.lineTo(this.to.x, this.to.y);
-          ctx.stroke();
-          return null;
-        }
-        else {
-  //        this.via.x = via.x;
-  //        this.via.y = via.y;
-          ctx.quadraticCurveTo(via.x,via.y,this.to.x, this.to.y);
-          ctx.stroke();
-          return via;
-        }
-      }
-      else {
-        ctx.quadraticCurveTo(this.via.x,this.via.y,this.to.x, this.to.y);
-        ctx.stroke();
-        return this.via;
-      }
-    }
-    else {
-      ctx.lineTo(this.to.x, this.to.y);
-      ctx.stroke();
-      return null;
-    }
-  };
-
-  /**
-   * Draw a line from a node to itself, a circle
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} radius
-   * @private
-   */
-  Edge.prototype._circle = function (ctx, x, y, radius) {
-    // draw a circle
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-    ctx.stroke();
-  };
-
-  /**
-   * Draw label with white background and with the middle at (x, y)
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {String} text
-   * @param {Number} x
-   * @param {Number} y
-   * @private
-   */
-  Edge.prototype._label = function (ctx, text, x, y) {
-    if (text) {
-      // TODO: cache the calculated size
-      ctx.font = ((this.from.selected || this.to.selected) ? "bold " : "") +
-          this.options.fontSize + "px " + this.options.fontFace;
-
-
-      var lines = String(text).split('\n');
-      var lineCount = lines.length;
-      var fontSize = (Number(this.options.fontSize) + 4);
-      var yLine = y + (1 - lineCount) / 2 * fontSize;
-
-      var width = ctx.measureText(lines[0]).width;
-      for (var i = 1; i < lineCount; i++) {
-        var lineWidth = ctx.measureText(lines[i]).width;
-        width = lineWidth > width ? lineWidth : width;
-      }
-      var height = this.options.fontSize * lineCount;
-      var left = x - width / 2;
-      var top = y - height / 2;
-
-      this.labelDimensions = {top:top,left:left,width:width,height:height};
-
-      if (this.options.fontFill !== undefined && this.options.fontFill !== null && this.options.fontFill !== "none") {
-        ctx.fillStyle = this.options.fontFill;
-        ctx.fillRect(left, top, width, height);
-      }
-
-      // draw text
-      ctx.fillStyle = this.options.fontColor || "black";
-      ctx.textAlign = "center";
-      ctx.textBaseline =  "middle";
-
-      for (var i = 0; i < lineCount; i++) {
-        ctx.fillText(lines[i], x, yLine);
-        yLine += fontSize;
-      }
-    }
-  };
-
-  /**
-   * Redraw a edge as a dashed line
-   * Draw this edge in the given canvas
-   * @author David Jordan
-   * @date 2012-08-08
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
-   * @param {CanvasRenderingContext2D}   ctx
-   * @private
-   */
-  Edge.prototype._drawDashLine = function(ctx) {
-    // set style
-    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight;}
-    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;}
-    else                         {ctx.strokeStyle = this.options.color.color;}
-
-    ctx.lineWidth = this._getLineWidth();
-
-    var via = null;
-    // only firefox and chrome support this method, else we use the legacy one.
-    if (ctx.mozDash !== undefined || ctx.setLineDash !== undefined) {
-      // configure the dash pattern
-      var pattern = [0];
-      if (this.options.dash.length !== undefined && this.options.dash.gap !== undefined) {
-        pattern = [this.options.dash.length,this.options.dash.gap];
-      }
-      else {
-        pattern = [5,5];
-      }
-
-      // set dash settings for chrome or firefox
-      if (typeof ctx.setLineDash !== 'undefined') { //Chrome
-        ctx.setLineDash(pattern);
-        ctx.lineDashOffset = 0;
-
-      } else { //Firefox
-        ctx.mozDash = pattern;
-        ctx.mozDashOffset = 0;
-      }
-
-      // draw the line
-      via = this._line(ctx);
-
-      // restore the dash settings.
-      if (typeof ctx.setLineDash !== 'undefined') { //Chrome
-        ctx.setLineDash([0]);
-        ctx.lineDashOffset = 0;
-
-      } else { //Firefox
-        ctx.mozDash = [0];
-        ctx.mozDashOffset = 0;
-      }
-    }
-    else { // unsupporting smooth lines
-      // draw dashed line
-      ctx.beginPath();
-      ctx.lineCap = 'round';
-      if (this.options.dash.altLength !== undefined) //If an alt dash value has been set add to the array this value
-      {
-        ctx.dashedLine(this.from.x,this.from.y,this.to.x,this.to.y,
-            [this.options.dash.length,this.options.dash.gap,this.options.dash.altLength,this.options.dash.gap]);
-      }
-      else if (this.options.dash.length !== undefined && this.options.dash.gap !== undefined) //If a dash and gap value has been set add to the array this value
-      {
-        ctx.dashedLine(this.from.x,this.from.y,this.to.x,this.to.y,
-            [this.options.dash.length,this.options.dash.gap]);
-      }
-      else //If all else fails draw a line
-      {
-        ctx.moveTo(this.from.x, this.from.y);
-        ctx.lineTo(this.to.x, this.to.y);
-      }
-      ctx.stroke();
-    }
-
-    // draw label
-    if (this.label) {
-      var point;
-      if (this.options.smoothCurves.enabled == true && via != null) {
-        var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
-        var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
-        point = {x:midpointX, y:midpointY};
-      }
-      else {
-        point = this._pointOnLine(0.5);
-      }
-      this._label(ctx, this.label, point.x, point.y);
-    }
-  };
-
-  /**
-   * Get a point on a line
-   * @param {Number} percentage. Value between 0 (line start) and 1 (line end)
-   * @return {Object} point
-   * @private
-   */
-  Edge.prototype._pointOnLine = function (percentage) {
-    return {
-      x: (1 - percentage) * this.from.x + percentage * this.to.x,
-      y: (1 - percentage) * this.from.y + percentage * this.to.y
-    }
-  };
-
-  /**
-   * Get a point on a circle
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} radius
-   * @param {Number} percentage. Value between 0 (line start) and 1 (line end)
-   * @return {Object} point
-   * @private
-   */
-  Edge.prototype._pointOnCircle = function (x, y, radius, percentage) {
-    var angle = (percentage - 3/8) * 2 * Math.PI;
-    return {
-      x: x + radius * Math.cos(angle),
-      y: y - radius * Math.sin(angle)
-    }
-  };
-
-  /**
-   * Redraw a edge as a line with an arrow halfway the line
-   * Draw this edge in the given canvas
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
-   * @param {CanvasRenderingContext2D}   ctx
-   * @private
-   */
-  Edge.prototype._drawArrowCenter = function(ctx) {
-    var point;
-    // set style
-    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight; ctx.fillStyle = this.options.color.highlight;}
-    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;     ctx.fillStyle = this.options.color.hover;}
-    else                         {ctx.strokeStyle = this.options.color.color;     ctx.fillStyle = this.options.color.color;}
-    ctx.lineWidth = this._getLineWidth();
-
-    if (this.from != this.to) {
-      // draw line
-      var via = this._line(ctx);
-
-      var angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
-      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
-      // draw an arrow halfway the line
-      if (this.options.smoothCurves.enabled == true && via != null) {
-        var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
-        var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
-        point = {x:midpointX, y:midpointY};
-      }
-      else {
-        point = this._pointOnLine(0.5);
-      }
-
-      ctx.arrow(point.x, point.y, angle, length);
-      ctx.fill();
-      ctx.stroke();
-
-      // draw label
-      if (this.label) {
-        this._label(ctx, this.label, point.x, point.y);
-      }
-    }
-    else {
-      // draw circle
-      var x, y;
-      var radius = 0.25 * Math.max(100,this.physics.springLength);
-      var node = this.from;
-      if (!node.width) {
-        node.resize(ctx);
-      }
-      if (node.width > node.height) {
-        x = node.x + node.width * 0.5;
-        y = node.y - radius;
-      }
-      else {
-        x = node.x + radius;
-        y = node.y - node.height * 0.5;
-      }
-      this._circle(ctx, x, y, radius);
-
-      // draw all arrows
-      var angle = 0.2 * Math.PI;
-      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
-      point = this._pointOnCircle(x, y, radius, 0.5);
-      ctx.arrow(point.x, point.y, angle, length);
-      ctx.fill();
-      ctx.stroke();
-
-      // draw label
-      if (this.label) {
-        point = this._pointOnCircle(x, y, radius, 0.5);
-        this._label(ctx, this.label, point.x, point.y);
-      }
-    }
-  };
-
-
-
-  /**
-   * Redraw a edge as a line with an arrow
-   * Draw this edge in the given canvas
-   * The 2d context of a HTML canvas can be retrieved by canvas.getContext("2d");
-   * @param {CanvasRenderingContext2D}   ctx
-   * @private
-   */
-  Edge.prototype._drawArrow = function(ctx) {
-    // set style
-    if (this.selected == true)   {ctx.strokeStyle = this.options.color.highlight; ctx.fillStyle = this.options.color.highlight;}
-    else if (this.hover == true) {ctx.strokeStyle = this.options.color.hover;     ctx.fillStyle = this.options.color.hover;}
-    else                         {ctx.strokeStyle = this.options.color.color;     ctx.fillStyle = this.options.color.color;}
-
-    ctx.lineWidth = this._getLineWidth();
-
-    var angle, length;
-    //draw a line
-    if (this.from != this.to) {
-      angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
-      var dx = (this.to.x - this.from.x);
-      var dy = (this.to.y - this.from.y);
-      var edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
-
-      var fromBorderDist = this.from.distanceToBorder(ctx, angle + Math.PI);
-      var fromBorderPoint = (edgeSegmentLength - fromBorderDist) / edgeSegmentLength;
-      var xFrom = (fromBorderPoint) * this.from.x + (1 - fromBorderPoint) * this.to.x;
-      var yFrom = (fromBorderPoint) * this.from.y + (1 - fromBorderPoint) * this.to.y;
-
-      var via;
-      if (this.options.smoothCurves.dynamic == true && this.options.smoothCurves.enabled == true ) {
-        via = this.via;
-      }
-      else if (this.options.smoothCurves.enabled == true) {
-        via = this._getViaCoordinates();
-      }
-
-      if (this.options.smoothCurves.enabled == true && via.x != null) {
-        angle = Math.atan2((this.to.y - via.y), (this.to.x - via.x));
-        dx = (this.to.x - via.x);
-        dy = (this.to.y - via.y);
-        edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
-      }
-      var toBorderDist = this.to.distanceToBorder(ctx, angle);
-      var toBorderPoint = (edgeSegmentLength - toBorderDist) / edgeSegmentLength;
-
-      var xTo,yTo;
-      if (this.options.smoothCurves.enabled == true && via.x != null) {
-       xTo = (1 - toBorderPoint) * via.x + toBorderPoint * this.to.x;
-       yTo = (1 - toBorderPoint) * via.y + toBorderPoint * this.to.y;
-      }
-      else {
-        xTo = (1 - toBorderPoint) * this.from.x + toBorderPoint * this.to.x;
-        yTo = (1 - toBorderPoint) * this.from.y + toBorderPoint * this.to.y;
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(xFrom,yFrom);
-      if (this.options.smoothCurves.enabled == true && via.x != null) {
-        ctx.quadraticCurveTo(via.x,via.y,xTo, yTo);
-      }
-      else {
-        ctx.lineTo(xTo, yTo);
-      }
-      ctx.stroke();
-
-      // draw arrow at the end of the line
-      length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
-      ctx.arrow(xTo, yTo, angle, length);
-      ctx.fill();
-      ctx.stroke();
-
-      // draw label
-      if (this.label) {
-        var point;
-        if (this.options.smoothCurves.enabled == true && via != null) {
-          var midpointX = 0.5*(0.5*(this.from.x + via.x) + 0.5*(this.to.x + via.x));
-          var midpointY = 0.5*(0.5*(this.from.y + via.y) + 0.5*(this.to.y + via.y));
-          point = {x:midpointX, y:midpointY};
-        }
-        else {
-          point = this._pointOnLine(0.5);
-        }
-        this._label(ctx, this.label, point.x, point.y);
-      }
-    }
-    else {
-      // draw circle
-      var node = this.from;
-      var x, y, arrow;
-      var radius = 0.25 * Math.max(100,this.physics.springLength);
-      if (!node.width) {
-        node.resize(ctx);
-      }
-      if (node.width > node.height) {
-        x = node.x + node.width * 0.5;
-        y = node.y - radius;
-        arrow = {
-          x: x,
-          y: node.y,
-          angle: 0.9 * Math.PI
-        };
-      }
-      else {
-        x = node.x + radius;
-        y = node.y - node.height * 0.5;
-        arrow = {
-          x: node.x,
-          y: y,
-          angle: 0.6 * Math.PI
-        };
-      }
-      ctx.beginPath();
-      // TODO: similarly, for a line without arrows, draw to the border of the nodes instead of the center
-      ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-      ctx.stroke();
-
-      // draw all arrows
-      var length = (10 + 5 * this.options.width) * this.options.arrowScaleFactor;
-      ctx.arrow(arrow.x, arrow.y, arrow.angle, length);
-      ctx.fill();
-      ctx.stroke();
-
-      // draw label
-      if (this.label) {
-        point = this._pointOnCircle(x, y, radius, 0.5);
-        this._label(ctx, this.label, point.x, point.y);
-      }
-    }
-  };
-
-
-
-  /**
-   * Calculate the distance between a point (x3,y3) and a line segment from
-   * (x1,y1) to (x2,y2).
-   * http://stackoverflow.com/questions/849211/shortest-distancae-between-a-point-and-a-line-segment
-   * @param {number} x1
-   * @param {number} y1
-   * @param {number} x2
-   * @param {number} y2
-   * @param {number} x3
-   * @param {number} y3
-   * @private
-   */
-  Edge.prototype._getDistanceToEdge = function (x1,y1, x2,y2, x3,y3) { // x3,y3 is the point
-    var returnValue = 0;
-    if (this.from != this.to) {
-      if (this.options.smoothCurves.enabled == true) {
-        var xVia, yVia;
-        if (this.options.smoothCurves.enabled == true && this.options.smoothCurves.dynamic == true) {
-          xVia = this.via.x;
-          yVia = this.via.y;
-        }
-        else {
-          var via = this._getViaCoordinates();
-          xVia = via.x;
-          yVia = via.y;
-        }
-        var minDistance = 1e9;
-        var distance;
-        var i,t,x,y, lastX, lastY;
-        for (i = 0; i < 10; i++) {
-          t = 0.1*i;
-          x = Math.pow(1-t,2)*x1 + (2*t*(1 - t))*xVia + Math.pow(t,2)*x2;
-          y = Math.pow(1-t,2)*y1 + (2*t*(1 - t))*yVia + Math.pow(t,2)*y2;
-          if (i > 0) {
-            distance = this._getDistanceToLine(lastX,lastY,x,y, x3,y3);
-            minDistance = distance < minDistance ? distance : minDistance;
-          }
-          lastX = x; lastY = y;
-        }
-        returnValue = minDistance;
-      }
-      else {
-        returnValue = this._getDistanceToLine(x1,y1,x2,y2,x3,y3);
-      }
-    }
-    else {
-      var x, y, dx, dy;
-      var radius = 0.25 * this.physics.springLength;
-      var node = this.from;
-      if (node.width > node.height) {
-        x = node.x + 0.5 * node.width;
-        y = node.y - radius;
-      }
-      else {
-        x = node.x + radius;
-        y = node.y - 0.5 * node.height;
-      }
-      dx = x - x3;
-      dy = y - y3;
-      returnValue = Math.abs(Math.sqrt(dx*dx + dy*dy) - radius);
-    }
-
-    if (this.labelDimensions.left < x3 &&
-      this.labelDimensions.left + this.labelDimensions.width > x3 &&
-      this.labelDimensions.top < y3 &&
-      this.labelDimensions.top + this.labelDimensions.height > y3) {
-      return 0;
-    }
-    else {
-      return returnValue;
-    }
-  };
-
-  Edge.prototype._getDistanceToLine = function(x1,y1,x2,y2,x3,y3) {
-    var px = x2-x1,
-      py = y2-y1,
-      something = px*px + py*py,
-      u =  ((x3 - x1) * px + (y3 - y1) * py) / something;
-
-    if (u > 1) {
-      u = 1;
-    }
-    else if (u < 0) {
-      u = 0;
-    }
-
-    var x = x1 + u * px,
-      y = y1 + u * py,
-      dx = x - x3,
-      dy = y - y3;
-
-    //# Note: If the actual distance does not matter,
-    //# if you only want to compare what this function
-    //# returns to other results of this function, you
-    //# can just return the squared distance instead
-    //# (i.e. remove the sqrt) to gain a little performance
-
-    return Math.sqrt(dx*dx + dy*dy);
-  }
-
-  /**
-   * This allows the zoom level of the network to influence the rendering
-   *
-   * @param scale
-   */
-  Edge.prototype.setScale = function(scale) {
-    this.networkScaleInv = 1.0/scale;
-  };
-
-
-  Edge.prototype.select = function() {
-    this.selected = true;
-  };
-
-  Edge.prototype.unselect = function() {
-    this.selected = false;
-  };
-
-  Edge.prototype.positionBezierNode = function() {
-    if (this.via !== null && this.from !== null && this.to !== null) {
-      this.via.x = 0.5 * (this.from.x + this.to.x);
-      this.via.y = 0.5 * (this.from.y + this.to.y);
-    }
-  };
-
-  /**
-   * This function draws the control nodes for the manipulator. In order to enable this, only set the this.controlNodesEnabled to true.
-   * @param ctx
-   */
-  Edge.prototype._drawControlNodes = function(ctx) {
-    if (this.controlNodesEnabled == true) {
-      if (this.controlNodes.from === null && this.controlNodes.to === null) {
-        var nodeIdFrom = "edgeIdFrom:".concat(this.id);
-        var nodeIdTo = "edgeIdTo:".concat(this.id);
-        var constants = {
-                        nodes:{group:'', radius:8},
-                        physics:{damping:0},
-                        clustering: {maxNodeSizeIncrements: 0 ,nodeScaling: {width:0, height: 0, radius:0}}
-                        };
-        this.controlNodes.from = new Node(
-          {id:nodeIdFrom,
-            shape:'dot',
-              color:{background:'#ff4e00', border:'#3c3c3c', highlight: {background:'#07f968'}}
-          },{},{},constants);
-        this.controlNodes.to = new Node(
-          {id:nodeIdTo,
-            shape:'dot',
-            color:{background:'#ff4e00', border:'#3c3c3c', highlight: {background:'#07f968'}}
-          },{},{},constants);
-      }
-
-      if (this.controlNodes.from.selected == false && this.controlNodes.to.selected == false) {
-        this.controlNodes.positions = this.getControlNodePositions(ctx);
-        this.controlNodes.from.x = this.controlNodes.positions.from.x;
-        this.controlNodes.from.y = this.controlNodes.positions.from.y;
-        this.controlNodes.to.x = this.controlNodes.positions.to.x;
-        this.controlNodes.to.y = this.controlNodes.positions.to.y;
-      }
-
-      this.controlNodes.from.draw(ctx);
-      this.controlNodes.to.draw(ctx);
-    }
-    else {
-      this.controlNodes = {from:null, to:null, positions:{}};
-    }
-  };
-
-  /**
-   * Enable control nodes.
-   * @private
-   */
-  Edge.prototype._enableControlNodes = function() {
-    this.controlNodesEnabled = true;
-  };
-
-  /**
-   * disable control nodes
-   * @private
-   */
-  Edge.prototype._disableControlNodes = function() {
-    this.controlNodesEnabled = false;
-  };
-
-  /**
-   * This checks if one of the control nodes is selected and if so, returns the control node object. Else it returns null.
-   * @param x
-   * @param y
-   * @returns {null}
-   * @private
-   */
-  Edge.prototype._getSelectedControlNode = function(x,y) {
-    var positions = this.controlNodes.positions;
-    var fromDistance = Math.sqrt(Math.pow(x - positions.from.x,2) + Math.pow(y - positions.from.y,2));
-    var toDistance =   Math.sqrt(Math.pow(x - positions.to.x  ,2) + Math.pow(y - positions.to.y  ,2));
-
-    if (fromDistance < 15) {
-      this.connectedNode = this.from;
-      this.from = this.controlNodes.from;
-      return this.controlNodes.from;
-    }
-    else if (toDistance < 15) {
-      this.connectedNode = this.to;
-      this.to = this.controlNodes.to;
-      return this.controlNodes.to;
-    }
-    else {
-      return null;
-    }
-  };
-
-
-  /**
-   * this resets the control nodes to their original position.
-   * @private
-   */
-  Edge.prototype._restoreControlNodes = function() {
-    if (this.controlNodes.from.selected == true) {
-      this.from = this.connectedNode;
-      this.connectedNode = null;
-      this.controlNodes.from.unselect();
-    }
-    if (this.controlNodes.to.selected == true) {
-      this.to = this.connectedNode;
-      this.connectedNode = null;
-      this.controlNodes.to.unselect();
-    }
-  };
-
-  /**
-   * this calculates the position of the control nodes on the edges of the parent nodes.
-   *
-   * @param ctx
-   * @returns {{from: {x: number, y: number}, to: {x: *, y: *}}}
-   */
-  Edge.prototype.getControlNodePositions = function(ctx) {
-    var angle = Math.atan2((this.to.y - this.from.y), (this.to.x - this.from.x));
-    var dx = (this.to.x - this.from.x);
-    var dy = (this.to.y - this.from.y);
-    var edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
-    var fromBorderDist = this.from.distanceToBorder(ctx, angle + Math.PI);
-    var fromBorderPoint = (edgeSegmentLength - fromBorderDist) / edgeSegmentLength;
-    var xFrom = (fromBorderPoint) * this.from.x + (1 - fromBorderPoint) * this.to.x;
-    var yFrom = (fromBorderPoint) * this.from.y + (1 - fromBorderPoint) * this.to.y;
-
-    var via;
-    if (this.options.smoothCurves.dynamic == true && this.options.smoothCurves.enabled == true) {
-      via = this.via;
-    }
-    else if (this.options.smoothCurves.enabled == true) {
-      via = this._getViaCoordinates();
-    }
-
-    if (this.options.smoothCurves.enabled == true && via.x != null) {
-      angle = Math.atan2((this.to.y - via.y), (this.to.x - via.x));
-      dx = (this.to.x - via.x);
-      dy = (this.to.y - via.y);
-      edgeSegmentLength = Math.sqrt(dx * dx + dy * dy);
-    }
-    var toBorderDist = this.to.distanceToBorder(ctx, angle);
-    var toBorderPoint = (edgeSegmentLength - toBorderDist) / edgeSegmentLength;
-
-    var xTo,yTo;
-    if (this.options.smoothCurves.enabled == true && via.x != null) {
-      xTo = (1 - toBorderPoint) * via.x + toBorderPoint * this.to.x;
-      yTo = (1 - toBorderPoint) * via.y + toBorderPoint * this.to.y;
-    }
-    else {
-      xTo = (1 - toBorderPoint) * this.from.x + toBorderPoint * this.to.x;
-      yTo = (1 - toBorderPoint) * this.from.y + toBorderPoint * this.to.y;
-    }
-
-    return {from:{x:xFrom,y:yFrom},to:{x:xTo,y:yTo}};
-  };
-
-  module.exports = Edge;
-
-/***/ },
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -20027,7 +20037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   // first check if moment.js is already loaded in the browser window, if so,
   // use this instance. Else, load via commonjs.
-  module.exports = (typeof window !== 'undefined') && window['moment'] || __webpack_require__(58);
+  module.exports = (typeof window !== 'undefined') && window['moment'] || __webpack_require__(60);
 
 
 /***/ },
@@ -20037,7 +20047,7 @@ return /******/ (function(modules) { // webpackBootstrap
   // Only load hammer.js when in a browser environment
   // (loading hammer.js in a node.js environment gives errors)
   if (typeof window !== 'undefined') {
-    module.exports = window['Hammer'] || __webpack_require__(62);
+    module.exports = window['Hammer'] || __webpack_require__(59);
   }
   else {
     module.exports = function () {
@@ -20048,6 +20058,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+  // English
+  exports['en'] = {
+    current: 'current',
+    time: 'time'
+  };
+  exports['en_EN'] = exports['en'];
+  exports['en_US'] = exports['en'];
+
+  // Dutch
+  exports['nl'] = {
+    custom: 'aangepaste',
+    time: 'tijd'
+  };
+  exports['nl_NL'] = exports['nl'];
+  exports['nl_BE'] = exports['nl'];
+
+
+/***/ },
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
   var Hammer = __webpack_require__(42);
@@ -20081,7 +20112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
   // English
@@ -20122,7 +20153,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -20353,376 +20384,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var PhysicsMixin = __webpack_require__(56);
-  var ClusterMixin = __webpack_require__(50);
-  var SectorsMixin = __webpack_require__(51);
-  var SelectionMixin = __webpack_require__(52);
-  var ManipulationMixin = __webpack_require__(53);
-  var NavigationMixin = __webpack_require__(54);
-  var HierarchicalLayoutMixin = __webpack_require__(55);
-
-  /**
-   * Load a mixin into the network object
-   *
-   * @param {Object} sourceVariable | this object has to contain functions.
-   * @private
-   */
-  exports._loadMixin = function (sourceVariable) {
-    for (var mixinFunction in sourceVariable) {
-      if (sourceVariable.hasOwnProperty(mixinFunction)) {
-        this[mixinFunction] = sourceVariable[mixinFunction];
-      }
-    }
-  };
-
-
-  /**
-   * removes a mixin from the network object.
-   *
-   * @param {Object} sourceVariable | this object has to contain functions.
-   * @private
-   */
-  exports._clearMixin = function (sourceVariable) {
-    for (var mixinFunction in sourceVariable) {
-      if (sourceVariable.hasOwnProperty(mixinFunction)) {
-        this[mixinFunction] = undefined;
-      }
-    }
-  };
-
-
-  /**
-   * Mixin the physics system and initialize the parameters required.
-   *
-   * @private
-   */
-  exports._loadPhysicsSystem = function () {
-    this._loadMixin(PhysicsMixin);
-    this._loadSelectedForceSolver();
-    if (this.constants.configurePhysics == true) {
-      this._loadPhysicsConfiguration();
-    }
-  };
-
-
-  /**
-   * Mixin the cluster system and initialize the parameters required.
-   *
-   * @private
-   */
-  exports._loadClusterSystem = function () {
-    this.clusterSession = 0;
-    this.hubThreshold = 5;
-    this._loadMixin(ClusterMixin);
-  };
-
-
-  /**
-   * Mixin the sector system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadSectorSystem = function () {
-    this.sectors = {};
-    this.activeSector = ["default"];
-    this.sectors["active"] = {};
-    this.sectors["active"]["default"] = {"nodes": {},
-      "edges": {},
-      "nodeIndices": [],
-      "formationScale": 1.0,
-      "drawingNode": undefined };
-    this.sectors["frozen"] = {};
-    this.sectors["support"] = {"nodes": {},
-      "edges": {},
-      "nodeIndices": [],
-      "formationScale": 1.0,
-      "drawingNode": undefined };
-
-    this.nodeIndices = this.sectors["active"]["default"]["nodeIndices"];  // the node indices list is used to speed up the computation of the repulsion fields
-
-    this._loadMixin(SectorsMixin);
-  };
-
-
-  /**
-   * Mixin the selection system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadSelectionSystem = function () {
-    this.selectionObj = {nodes: {}, edges: {}};
-
-    this._loadMixin(SelectionMixin);
-  };
-
-
-  /**
-   * Mixin the navigationUI (User Interface) system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadManipulationSystem = function () {
-    // reset global variables -- these are used by the selection of nodes and edges.
-    this.blockConnectingEdgeSelection = false;
-    this.forceAppendSelection = false;
-
-    if (this.constants.dataManipulation.enabled == true) {
-      // load the manipulator HTML elements. All styling done in css.
-      if (this.manipulationDiv === undefined) {
-        this.manipulationDiv = document.createElement('div');
-        this.manipulationDiv.className = 'network-manipulationDiv';
-        this.manipulationDiv.id = 'network-manipulationDiv';
-        if (this.editMode == true) {
-          this.manipulationDiv.style.display = "block";
-        }
-        else {
-          this.manipulationDiv.style.display = "none";
-        }
-        this.frame.appendChild(this.manipulationDiv);
-      }
-
-      if (this.editModeDiv === undefined) {
-        this.editModeDiv = document.createElement('div');
-        this.editModeDiv.className = 'network-manipulation-editMode';
-        this.editModeDiv.id = 'network-manipulation-editMode';
-        if (this.editMode == true) {
-          this.editModeDiv.style.display = "none";
-        }
-        else {
-          this.editModeDiv.style.display = "block";
-        }
-        this.frame.appendChild(this.editModeDiv);
-      }
-
-      if (this.closeDiv === undefined) {
-        this.closeDiv = document.createElement('div');
-        this.closeDiv.className = 'network-manipulation-closeDiv';
-        this.closeDiv.id = 'network-manipulation-closeDiv';
-        this.closeDiv.style.display = this.manipulationDiv.style.display;
-        this.frame.appendChild(this.closeDiv);
-      }
-
-      // load the manipulation functions
-      this._loadMixin(ManipulationMixin);
-
-      // create the manipulator toolbar
-      this._createManipulatorBar();
-    }
-    else {
-      if (this.manipulationDiv !== undefined) {
-        // removes all the bindings and overloads
-        this._createManipulatorBar();
-
-        // remove the manipulation divs
-        this.frame.removeChild(this.manipulationDiv);
-        this.frame.removeChild(this.editModeDiv);
-        this.frame.removeChild(this.closeDiv);
-
-        this.manipulationDiv = undefined;
-        this.editModeDiv = undefined;
-        this.closeDiv = undefined;
-        // remove the mixin functions
-        this._clearMixin(ManipulationMixin);
-      }
-    }
-  };
-
-
-  /**
-   * Mixin the navigation (User Interface) system and initialize the parameters required
-   *
-   * @private
-   */
-  exports._loadNavigationControls = function () {
-    this._loadMixin(NavigationMixin);
-    // the clean function removes the button divs, this is done to remove the bindings.
-    this._cleanNavigation();
-    if (this.constants.navigation.enabled == true) {
-      this._loadNavigationElements();
-    }
-  };
-
-
-  /**
-   * Mixin the hierarchical layout system.
-   *
-   * @private
-   */
-  exports._loadHierarchySystem = function () {
-    this._loadMixin(HierarchicalLayoutMixin);
-  };
-
-
-/***/ },
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
-  var mousetrap = __webpack_require__(57);
-  var Emitter = __webpack_require__(63);
+  var Emitter = __webpack_require__(50);
   var Hammer = __webpack_require__(42);
   var util = __webpack_require__(1);
-
-  /**
-   * Turn an element into an clickToUse element.
-   * When not active, the element has a transparent overlay. When the overlay is
-   * clicked, the mode is changed to active.
-   * When active, the element is displayed with a blue border around it, and
-   * the interactive contents of the element can be used. When clicked outside
-   * the element, the elements mode is changed to inactive.
-   * @param {Element} container
-   * @constructor
-   */
-  function Activator(container) {
-    this.active = false;
-
-    this.dom = {
-      container: container
-    };
-
-    this.dom.overlay = document.createElement('div');
-    this.dom.overlay.className = 'overlay';
-
-    this.dom.container.appendChild(this.dom.overlay);
-
-    this.hammer = Hammer(this.dom.overlay, {prevent_default: false});
-    this.hammer.on('tap', this._onTapOverlay.bind(this));
-
-    // block all touch events (except tap)
-    var me = this;
-    var events = [
-      'touch', 'pinch',
-      'doubletap', 'hold',
-      'dragstart', 'drag', 'dragend',
-      'mousewheel', 'DOMMouseScroll' // DOMMouseScroll is needed for Firefox
-    ];
-    events.forEach(function (event) {
-      me.hammer.on(event, function (event) {
-        event.stopPropagation();
-      });
-    });
-
-    // attach a tap event to the window, in order to deactivate when clicking outside the timeline
-    this.windowHammer = Hammer(window, {prevent_default: false});
-    this.windowHammer.on('tap', function (event) {
-      // deactivate when clicked outside the container
-      if (!_hasParent(event.target, container)) {
-        me.deactivate();
-      }
-    });
-
-    // mousetrap listener only bounded when active)
-    this.escListener = this.deactivate.bind(this);
-  }
-
-  // turn into an event emitter
-  Emitter(Activator.prototype);
-
-  // The currently active activator
-  Activator.current = null;
-
-  /**
-   * Destroy the activator. Cleans up all created DOM and event listeners
-   */
-  Activator.prototype.destroy = function () {
-    this.deactivate();
-
-    // remove dom
-    this.dom.overlay.parentNode.removeChild(this.dom.overlay);
-
-    // cleanup hammer instances
-    this.hammer = null;
-    this.windowHammer = null;
-    // FIXME: cleaning up hammer instances doesn't work (Timeline not removed from memory)
-  };
-
-  /**
-   * Activate the element
-   * Overlay is hidden, element is decorated with a blue shadow border
-   */
-  Activator.prototype.activate = function () {
-    // we allow only one active activator at a time
-    if (Activator.current) {
-      Activator.current.deactivate();
-    }
-    Activator.current = this;
-
-    this.active = true;
-    this.dom.overlay.style.display = 'none';
-    util.addClassName(this.dom.container, 'vis-active');
-
-    this.emit('change');
-    this.emit('activate');
-
-    // ugly hack: bind ESC after emitting the events, as the Network rebinds all
-    // keyboard events on a 'change' event
-    mousetrap.bind('esc', this.escListener);
-  };
-
-  /**
-   * Deactivate the element
-   * Overlay is displayed on top of the element
-   */
-  Activator.prototype.deactivate = function () {
-    this.active = false;
-    this.dom.overlay.style.display = '';
-    util.removeClassName(this.dom.container, 'vis-active');
-    mousetrap.unbind('esc', this.escListener);
-
-    this.emit('change');
-    this.emit('deactivate');
-  };
-
-  /**
-   * Handle a tap event: activate the container
-   * @param event
-   * @private
-   */
-  Activator.prototype._onTapOverlay = function (event) {
-    // activate the container
-    this.activate();
-    event.stopPropagation();
-  };
-
-  /**
-   * Test whether the element has the requested parent element somewhere in
-   * its chain of parent nodes.
-   * @param {HTMLElement} element
-   * @param {HTMLElement} parent
-   * @returns {boolean} Returns true when the parent is found somewhere in the
-   *                    chain of parent nodes.
-   * @private
-   */
-  function _hasParent(element, parent) {
-    while (element) {
-      if (element === parent) {
-        return true
-      }
-      element = element.parentNode;
-    }
-    return false;
-  }
-
-  module.exports = Activator;
-
-
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var Emitter = __webpack_require__(63);
-  var Hammer = __webpack_require__(42);
-  var util = __webpack_require__(1);
-  var DataSet = __webpack_require__(3);
-  var DataView = __webpack_require__(4);
-  var Range = __webpack_require__(15);
+  var DataSet = __webpack_require__(2);
+  var DataView = __webpack_require__(3);
+  var Range = __webpack_require__(13);
   var TimeAxis = __webpack_require__(27);
   var CurrentTime = __webpack_require__(19);
   var CustomTime = __webpack_require__(20);
   var ItemSet = __webpack_require__(24);
-  var Activator = __webpack_require__(47);
+  var Activator = __webpack_require__(48);
 
   /**
    * Create a timeline visualization
@@ -21538,28 +21213,1338 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var mousetrap = __webpack_require__(51);
+  var Emitter = __webpack_require__(50);
+  var Hammer = __webpack_require__(42);
+  var util = __webpack_require__(1);
+
+  /**
+   * Turn an element into an clickToUse element.
+   * When not active, the element has a transparent overlay. When the overlay is
+   * clicked, the mode is changed to active.
+   * When active, the element is displayed with a blue border around it, and
+   * the interactive contents of the element can be used. When clicked outside
+   * the element, the elements mode is changed to inactive.
+   * @param {Element} container
+   * @constructor
+   */
+  function Activator(container) {
+    this.active = false;
+
+    this.dom = {
+      container: container
+    };
+
+    this.dom.overlay = document.createElement('div');
+    this.dom.overlay.className = 'overlay';
+
+    this.dom.container.appendChild(this.dom.overlay);
+
+    this.hammer = Hammer(this.dom.overlay, {prevent_default: false});
+    this.hammer.on('tap', this._onTapOverlay.bind(this));
+
+    // block all touch events (except tap)
+    var me = this;
+    var events = [
+      'touch', 'pinch',
+      'doubletap', 'hold',
+      'dragstart', 'drag', 'dragend',
+      'mousewheel', 'DOMMouseScroll' // DOMMouseScroll is needed for Firefox
+    ];
+    events.forEach(function (event) {
+      me.hammer.on(event, function (event) {
+        event.stopPropagation();
+      });
+    });
+
+    // attach a tap event to the window, in order to deactivate when clicking outside the timeline
+    this.windowHammer = Hammer(window, {prevent_default: false});
+    this.windowHammer.on('tap', function (event) {
+      // deactivate when clicked outside the container
+      if (!_hasParent(event.target, container)) {
+        me.deactivate();
+      }
+    });
+
+    // mousetrap listener only bounded when active)
+    this.escListener = this.deactivate.bind(this);
+  }
+
+  // turn into an event emitter
+  Emitter(Activator.prototype);
+
+  // The currently active activator
+  Activator.current = null;
+
+  /**
+   * Destroy the activator. Cleans up all created DOM and event listeners
+   */
+  Activator.prototype.destroy = function () {
+    this.deactivate();
+
+    // remove dom
+    this.dom.overlay.parentNode.removeChild(this.dom.overlay);
+
+    // cleanup hammer instances
+    this.hammer = null;
+    this.windowHammer = null;
+    // FIXME: cleaning up hammer instances doesn't work (Timeline not removed from memory)
+  };
+
+  /**
+   * Activate the element
+   * Overlay is hidden, element is decorated with a blue shadow border
+   */
+  Activator.prototype.activate = function () {
+    // we allow only one active activator at a time
+    if (Activator.current) {
+      Activator.current.deactivate();
+    }
+    Activator.current = this;
+
+    this.active = true;
+    this.dom.overlay.style.display = 'none';
+    util.addClassName(this.dom.container, 'vis-active');
+
+    this.emit('change');
+    this.emit('activate');
+
+    // ugly hack: bind ESC after emitting the events, as the Network rebinds all
+    // keyboard events on a 'change' event
+    mousetrap.bind('esc', this.escListener);
+  };
+
+  /**
+   * Deactivate the element
+   * Overlay is displayed on top of the element
+   */
+  Activator.prototype.deactivate = function () {
+    this.active = false;
+    this.dom.overlay.style.display = '';
+    util.removeClassName(this.dom.container, 'vis-active');
+    mousetrap.unbind('esc', this.escListener);
+
+    this.emit('change');
+    this.emit('deactivate');
+  };
+
+  /**
+   * Handle a tap event: activate the container
+   * @param event
+   * @private
+   */
+  Activator.prototype._onTapOverlay = function (event) {
+    // activate the container
+    this.activate();
+    event.stopPropagation();
+  };
+
+  /**
+   * Test whether the element has the requested parent element somewhere in
+   * its chain of parent nodes.
+   * @param {HTMLElement} element
+   * @param {HTMLElement} parent
+   * @returns {boolean} Returns true when the parent is found somewhere in the
+   *                    chain of parent nodes.
+   * @private
+   */
+  function _hasParent(element, parent) {
+    while (element) {
+      if (element === parent) {
+        return true
+      }
+      element = element.parentNode;
+    }
+    return false;
+  }
+
+  module.exports = Activator;
+
+
+/***/ },
 /* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
-  // English
-  exports['en'] = {
-    current: 'current',
-    time: 'time'
-  };
-  exports['en_EN'] = exports['en'];
-  exports['en_US'] = exports['en'];
+  var PhysicsMixin = __webpack_require__(58);
+  var ClusterMixin = __webpack_require__(52);
+  var SectorsMixin = __webpack_require__(53);
+  var SelectionMixin = __webpack_require__(55);
+  var ManipulationMixin = __webpack_require__(54);
+  var NavigationMixin = __webpack_require__(56);
+  var HierarchicalLayoutMixin = __webpack_require__(57);
 
-  // Dutch
-  exports['nl'] = {
-    custom: 'aangepaste',
-    time: 'tijd'
+  /**
+   * Load a mixin into the network object
+   *
+   * @param {Object} sourceVariable | this object has to contain functions.
+   * @private
+   */
+  exports._loadMixin = function (sourceVariable) {
+    for (var mixinFunction in sourceVariable) {
+      if (sourceVariable.hasOwnProperty(mixinFunction)) {
+        this[mixinFunction] = sourceVariable[mixinFunction];
+      }
+    }
   };
-  exports['nl_NL'] = exports['nl'];
-  exports['nl_BE'] = exports['nl'];
+
+
+  /**
+   * removes a mixin from the network object.
+   *
+   * @param {Object} sourceVariable | this object has to contain functions.
+   * @private
+   */
+  exports._clearMixin = function (sourceVariable) {
+    for (var mixinFunction in sourceVariable) {
+      if (sourceVariable.hasOwnProperty(mixinFunction)) {
+        this[mixinFunction] = undefined;
+      }
+    }
+  };
+
+
+  /**
+   * Mixin the physics system and initialize the parameters required.
+   *
+   * @private
+   */
+  exports._loadPhysicsSystem = function () {
+    this._loadMixin(PhysicsMixin);
+    this._loadSelectedForceSolver();
+    if (this.constants.configurePhysics == true) {
+      this._loadPhysicsConfiguration();
+    }
+  };
+
+
+  /**
+   * Mixin the cluster system and initialize the parameters required.
+   *
+   * @private
+   */
+  exports._loadClusterSystem = function () {
+    this.clusterSession = 0;
+    this.hubThreshold = 5;
+    this._loadMixin(ClusterMixin);
+  };
+
+
+  /**
+   * Mixin the sector system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadSectorSystem = function () {
+    this.sectors = {};
+    this.activeSector = ["default"];
+    this.sectors["active"] = {};
+    this.sectors["active"]["default"] = {"nodes": {},
+      "edges": {},
+      "nodeIndices": [],
+      "formationScale": 1.0,
+      "drawingNode": undefined };
+    this.sectors["frozen"] = {};
+    this.sectors["support"] = {"nodes": {},
+      "edges": {},
+      "nodeIndices": [],
+      "formationScale": 1.0,
+      "drawingNode": undefined };
+
+    this.nodeIndices = this.sectors["active"]["default"]["nodeIndices"];  // the node indices list is used to speed up the computation of the repulsion fields
+
+    this._loadMixin(SectorsMixin);
+  };
+
+
+  /**
+   * Mixin the selection system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadSelectionSystem = function () {
+    this.selectionObj = {nodes: {}, edges: {}};
+
+    this._loadMixin(SelectionMixin);
+  };
+
+
+  /**
+   * Mixin the navigationUI (User Interface) system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadManipulationSystem = function () {
+    // reset global variables -- these are used by the selection of nodes and edges.
+    this.blockConnectingEdgeSelection = false;
+    this.forceAppendSelection = false;
+
+    if (this.constants.dataManipulation.enabled == true) {
+      // load the manipulator HTML elements. All styling done in css.
+      if (this.manipulationDiv === undefined) {
+        this.manipulationDiv = document.createElement('div');
+        this.manipulationDiv.className = 'network-manipulationDiv';
+        this.manipulationDiv.id = 'network-manipulationDiv';
+        if (this.editMode == true) {
+          this.manipulationDiv.style.display = "block";
+        }
+        else {
+          this.manipulationDiv.style.display = "none";
+        }
+        this.frame.appendChild(this.manipulationDiv);
+      }
+
+      if (this.editModeDiv === undefined) {
+        this.editModeDiv = document.createElement('div');
+        this.editModeDiv.className = 'network-manipulation-editMode';
+        this.editModeDiv.id = 'network-manipulation-editMode';
+        if (this.editMode == true) {
+          this.editModeDiv.style.display = "none";
+        }
+        else {
+          this.editModeDiv.style.display = "block";
+        }
+        this.frame.appendChild(this.editModeDiv);
+      }
+
+      if (this.closeDiv === undefined) {
+        this.closeDiv = document.createElement('div');
+        this.closeDiv.className = 'network-manipulation-closeDiv';
+        this.closeDiv.id = 'network-manipulation-closeDiv';
+        this.closeDiv.style.display = this.manipulationDiv.style.display;
+        this.frame.appendChild(this.closeDiv);
+      }
+
+      // load the manipulation functions
+      this._loadMixin(ManipulationMixin);
+
+      // create the manipulator toolbar
+      this._createManipulatorBar();
+    }
+    else {
+      if (this.manipulationDiv !== undefined) {
+        // removes all the bindings and overloads
+        this._createManipulatorBar();
+
+        // remove the manipulation divs
+        this.frame.removeChild(this.manipulationDiv);
+        this.frame.removeChild(this.editModeDiv);
+        this.frame.removeChild(this.closeDiv);
+
+        this.manipulationDiv = undefined;
+        this.editModeDiv = undefined;
+        this.closeDiv = undefined;
+        // remove the mixin functions
+        this._clearMixin(ManipulationMixin);
+      }
+    }
+  };
+
+
+  /**
+   * Mixin the navigation (User Interface) system and initialize the parameters required
+   *
+   * @private
+   */
+  exports._loadNavigationControls = function () {
+    this._loadMixin(NavigationMixin);
+    // the clean function removes the button divs, this is done to remove the bindings.
+    this._cleanNavigation();
+    if (this.constants.navigation.enabled == true) {
+      this._loadNavigationElements();
+    }
+  };
+
+
+  /**
+   * Mixin the hierarchical layout system.
+   *
+   * @private
+   */
+  exports._loadHierarchySystem = function () {
+    this._loadMixin(HierarchicalLayoutMixin);
+  };
 
 
 /***/ },
 /* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+  
+  /**
+   * Expose `Emitter`.
+   */
+
+  module.exports = Emitter;
+
+  /**
+   * Initialize a new `Emitter`.
+   *
+   * @api public
+   */
+
+  function Emitter(obj) {
+    if (obj) return mixin(obj);
+  };
+
+  /**
+   * Mixin the emitter properties.
+   *
+   * @param {Object} obj
+   * @return {Object}
+   * @api private
+   */
+
+  function mixin(obj) {
+    for (var key in Emitter.prototype) {
+      obj[key] = Emitter.prototype[key];
+    }
+    return obj;
+  }
+
+  /**
+   * Listen on the given `event` with `fn`.
+   *
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
+   */
+
+  Emitter.prototype.on =
+  Emitter.prototype.addEventListener = function(event, fn){
+    this._callbacks = this._callbacks || {};
+    (this._callbacks[event] = this._callbacks[event] || [])
+      .push(fn);
+    return this;
+  };
+
+  /**
+   * Adds an `event` listener that will be invoked a single
+   * time then automatically removed.
+   *
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
+   */
+
+  Emitter.prototype.once = function(event, fn){
+    var self = this;
+    this._callbacks = this._callbacks || {};
+
+    function on() {
+      self.off(event, on);
+      fn.apply(this, arguments);
+    }
+
+    on.fn = fn;
+    this.on(event, on);
+    return this;
+  };
+
+  /**
+   * Remove the given callback for `event` or all
+   * registered callbacks.
+   *
+   * @param {String} event
+   * @param {Function} fn
+   * @return {Emitter}
+   * @api public
+   */
+
+  Emitter.prototype.off =
+  Emitter.prototype.removeListener =
+  Emitter.prototype.removeAllListeners =
+  Emitter.prototype.removeEventListener = function(event, fn){
+    this._callbacks = this._callbacks || {};
+
+    // all
+    if (0 == arguments.length) {
+      this._callbacks = {};
+      return this;
+    }
+
+    // specific event
+    var callbacks = this._callbacks[event];
+    if (!callbacks) return this;
+
+    // remove all handlers
+    if (1 == arguments.length) {
+      delete this._callbacks[event];
+      return this;
+    }
+
+    // remove specific handler
+    var cb;
+    for (var i = 0; i < callbacks.length; i++) {
+      cb = callbacks[i];
+      if (cb === fn || cb.fn === fn) {
+        callbacks.splice(i, 1);
+        break;
+      }
+    }
+    return this;
+  };
+
+  /**
+   * Emit `event` with the given args.
+   *
+   * @param {String} event
+   * @param {Mixed} ...
+   * @return {Emitter}
+   */
+
+  Emitter.prototype.emit = function(event){
+    this._callbacks = this._callbacks || {};
+    var args = [].slice.call(arguments, 1)
+      , callbacks = this._callbacks[event];
+
+    if (callbacks) {
+      callbacks = callbacks.slice(0);
+      for (var i = 0, len = callbacks.length; i < len; ++i) {
+        callbacks[i].apply(this, args);
+      }
+    }
+
+    return this;
+  };
+
+  /**
+   * Return array of callbacks for `event`.
+   *
+   * @param {String} event
+   * @return {Array}
+   * @api public
+   */
+
+  Emitter.prototype.listeners = function(event){
+    this._callbacks = this._callbacks || {};
+    return this._callbacks[event] || [];
+  };
+
+  /**
+   * Check if this emitter has `event` handlers.
+   *
+   * @param {String} event
+   * @return {Boolean}
+   * @api public
+   */
+
+  Emitter.prototype.hasListeners = function(event){
+    return !! this.listeners(event).length;
+  };
+
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+  /**
+   * Copyright 2012 Craig Campbell
+   *
+   * Licensed under the Apache License, Version 2.0 (the "License");
+   * you may not use this file except in compliance with the License.
+   * You may obtain a copy of the License at
+   *
+   * http://www.apache.org/licenses/LICENSE-2.0
+   *
+   * Unless required by applicable law or agreed to in writing, software
+   * distributed under the License is distributed on an "AS IS" BASIS,
+   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   * See the License for the specific language governing permissions and
+   * limitations under the License.
+   *
+   * Mousetrap is a simple keyboard shortcut library for Javascript with
+   * no external dependencies
+   *
+   * @version 1.1.2
+   * @url craig.is/killing/mice
+   */
+
+    /**
+     * mapping of special keycodes to their corresponding keys
+     *
+     * everything in this dictionary cannot use keypress events
+     * so it has to be here to map to the correct keycodes for
+     * keyup/keydown events
+     *
+     * @type {Object}
+     */
+    var _MAP = {
+            8: 'backspace',
+            9: 'tab',
+            13: 'enter',
+            16: 'shift',
+            17: 'ctrl',
+            18: 'alt',
+            20: 'capslock',
+            27: 'esc',
+            32: 'space',
+            33: 'pageup',
+            34: 'pagedown',
+            35: 'end',
+            36: 'home',
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down',
+            45: 'ins',
+            46: 'del',
+            91: 'meta',
+            93: 'meta',
+            224: 'meta'
+        },
+
+        /**
+         * mapping for special characters so they can support
+         *
+         * this dictionary is only used incase you want to bind a
+         * keyup or keydown event to one of these keys
+         *
+         * @type {Object}
+         */
+        _KEYCODE_MAP = {
+            106: '*',
+            107: '+',
+            109: '-',
+            110: '.',
+            111 : '/',
+            186: ';',
+            187: '=',
+            188: ',',
+            189: '-',
+            190: '.',
+            191: '/',
+            192: '`',
+            219: '[',
+            220: '\\',
+            221: ']',
+            222: '\''
+        },
+
+        /**
+         * this is a mapping of keys that require shift on a US keypad
+         * back to the non shift equivelents
+         *
+         * this is so you can use keyup events with these keys
+         *
+         * note that this will only work reliably on US keyboards
+         *
+         * @type {Object}
+         */
+        _SHIFT_MAP = {
+            '~': '`',
+            '!': '1',
+            '@': '2',
+            '#': '3',
+            '$': '4',
+            '%': '5',
+            '^': '6',
+            '&': '7',
+            '*': '8',
+            '(': '9',
+            ')': '0',
+            '_': '-',
+            '+': '=',
+            ':': ';',
+            '\"': '\'',
+            '<': ',',
+            '>': '.',
+            '?': '/',
+            '|': '\\'
+        },
+
+        /**
+         * this is a list of special strings you can use to map
+         * to modifier keys when you specify your keyboard shortcuts
+         *
+         * @type {Object}
+         */
+        _SPECIAL_ALIASES = {
+            'option': 'alt',
+            'command': 'meta',
+            'return': 'enter',
+            'escape': 'esc'
+        },
+
+        /**
+         * variable to store the flipped version of _MAP from above
+         * needed to check if we should use keypress or not when no action
+         * is specified
+         *
+         * @type {Object|undefined}
+         */
+        _REVERSE_MAP,
+
+        /**
+         * a list of all the callbacks setup via Mousetrap.bind()
+         *
+         * @type {Object}
+         */
+        _callbacks = {},
+
+        /**
+         * direct map of string combinations to callbacks used for trigger()
+         *
+         * @type {Object}
+         */
+        _direct_map = {},
+
+        /**
+         * keeps track of what level each sequence is at since multiple
+         * sequences can start out with the same sequence
+         *
+         * @type {Object}
+         */
+        _sequence_levels = {},
+
+        /**
+         * variable to store the setTimeout call
+         *
+         * @type {null|number}
+         */
+        _reset_timer,
+
+        /**
+         * temporary state where we will ignore the next keyup
+         *
+         * @type {boolean|string}
+         */
+        _ignore_next_keyup = false,
+
+        /**
+         * are we currently inside of a sequence?
+         * type of action ("keyup" or "keydown" or "keypress") or false
+         *
+         * @type {boolean|string}
+         */
+        _inside_sequence = false;
+
+    /**
+     * loop through the f keys, f1 to f19 and add them to the map
+     * programatically
+     */
+    for (var i = 1; i < 20; ++i) {
+        _MAP[111 + i] = 'f' + i;
+    }
+
+    /**
+     * loop through to map numbers on the numeric keypad
+     */
+    for (i = 0; i <= 9; ++i) {
+        _MAP[i + 96] = i;
+    }
+
+    /**
+     * cross browser add event method
+     *
+     * @param {Element|HTMLDocument} object
+     * @param {string} type
+     * @param {Function} callback
+     * @returns void
+     */
+    function _addEvent(object, type, callback) {
+        if (object.addEventListener) {
+            return object.addEventListener(type, callback, false);
+        }
+
+        object.attachEvent('on' + type, callback);
+    }
+
+    /**
+     * takes the event and returns the key character
+     *
+     * @param {Event} e
+     * @return {string}
+     */
+    function _characterFromEvent(e) {
+
+        // for keypress events we should return the character as is
+        if (e.type == 'keypress') {
+            return String.fromCharCode(e.which);
+        }
+
+        // for non keypress events the special maps are needed
+        if (_MAP[e.which]) {
+            return _MAP[e.which];
+        }
+
+        if (_KEYCODE_MAP[e.which]) {
+            return _KEYCODE_MAP[e.which];
+        }
+
+        // if it is not in the special map
+        return String.fromCharCode(e.which).toLowerCase();
+    }
+
+    /**
+     * should we stop this event before firing off callbacks
+     *
+     * @param {Event} e
+     * @return {boolean}
+     */
+    function _stop(e) {
+        var element = e.target || e.srcElement,
+            tag_name = element.tagName;
+
+        // if the element has the class "mousetrap" then no need to stop
+        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
+            return false;
+        }
+
+        // stop for input, select, and textarea
+        return tag_name == 'INPUT' || tag_name == 'SELECT' || tag_name == 'TEXTAREA' || (element.contentEditable && element.contentEditable == 'true');
+    }
+
+    /**
+     * checks if two arrays are equal
+     *
+     * @param {Array} modifiers1
+     * @param {Array} modifiers2
+     * @returns {boolean}
+     */
+    function _modifiersMatch(modifiers1, modifiers2) {
+        return modifiers1.sort().join(',') === modifiers2.sort().join(',');
+    }
+
+    /**
+     * resets all sequence counters except for the ones passed in
+     *
+     * @param {Object} do_not_reset
+     * @returns void
+     */
+    function _resetSequences(do_not_reset) {
+        do_not_reset = do_not_reset || {};
+
+        var active_sequences = false,
+            key;
+
+        for (key in _sequence_levels) {
+            if (do_not_reset[key]) {
+                active_sequences = true;
+                continue;
+            }
+            _sequence_levels[key] = 0;
+        }
+
+        if (!active_sequences) {
+            _inside_sequence = false;
+        }
+    }
+
+    /**
+     * finds all callbacks that match based on the keycode, modifiers,
+     * and action
+     *
+     * @param {string} character
+     * @param {Array} modifiers
+     * @param {string} action
+     * @param {boolean=} remove - should we remove any matches
+     * @param {string=} combination
+     * @returns {Array}
+     */
+    function _getMatches(character, modifiers, action, remove, combination) {
+        var i,
+            callback,
+            matches = [];
+
+        // if there are no events related to this keycode
+        if (!_callbacks[character]) {
+            return [];
+        }
+
+        // if a modifier key is coming up on its own we should allow it
+        if (action == 'keyup' && _isModifier(character)) {
+            modifiers = [character];
+        }
+
+        // loop through all callbacks for the key that was pressed
+        // and see if any of them match
+        for (i = 0; i < _callbacks[character].length; ++i) {
+            callback = _callbacks[character][i];
+
+            // if this is a sequence but it is not at the right level
+            // then move onto the next match
+            if (callback.seq && _sequence_levels[callback.seq] != callback.level) {
+                continue;
+            }
+
+            // if the action we are looking for doesn't match the action we got
+            // then we should keep going
+            if (action != callback.action) {
+                continue;
+            }
+
+            // if this is a keypress event that means that we need to only
+            // look at the character, otherwise check the modifiers as
+            // well
+            if (action == 'keypress' || _modifiersMatch(modifiers, callback.modifiers)) {
+
+                // remove is used so if you change your mind and call bind a
+                // second time with a new function the first one is overwritten
+                if (remove && callback.combo == combination) {
+                    _callbacks[character].splice(i, 1);
+                }
+
+                matches.push(callback);
+            }
+        }
+
+        return matches;
+    }
+
+    /**
+     * takes a key event and figures out what the modifiers are
+     *
+     * @param {Event} e
+     * @returns {Array}
+     */
+    function _eventModifiers(e) {
+        var modifiers = [];
+
+        if (e.shiftKey) {
+            modifiers.push('shift');
+        }
+
+        if (e.altKey) {
+            modifiers.push('alt');
+        }
+
+        if (e.ctrlKey) {
+            modifiers.push('ctrl');
+        }
+
+        if (e.metaKey) {
+            modifiers.push('meta');
+        }
+
+        return modifiers;
+    }
+
+    /**
+     * actually calls the callback function
+     *
+     * if your callback function returns false this will use the jquery
+     * convention - prevent default and stop propogation on the event
+     *
+     * @param {Function} callback
+     * @param {Event} e
+     * @returns void
+     */
+    function _fireCallback(callback, e) {
+        if (callback(e) === false) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            e.returnValue = false;
+            e.cancelBubble = true;
+        }
+    }
+
+    /**
+     * handles a character key event
+     *
+     * @param {string} character
+     * @param {Event} e
+     * @returns void
+     */
+    function _handleCharacter(character, e) {
+
+        // if this event should not happen stop here
+        if (_stop(e)) {
+            return;
+        }
+
+        var callbacks = _getMatches(character, _eventModifiers(e), e.type),
+            i,
+            do_not_reset = {},
+            processed_sequence_callback = false;
+
+        // loop through matching callbacks for this key event
+        for (i = 0; i < callbacks.length; ++i) {
+
+            // fire for all sequence callbacks
+            // this is because if for example you have multiple sequences
+            // bound such as "g i" and "g t" they both need to fire the
+            // callback for matching g cause otherwise you can only ever
+            // match the first one
+            if (callbacks[i].seq) {
+                processed_sequence_callback = true;
+
+                // keep a list of which sequences were matches for later
+                do_not_reset[callbacks[i].seq] = 1;
+                _fireCallback(callbacks[i].callback, e);
+                continue;
+            }
+
+            // if there were no sequence matches but we are still here
+            // that means this is a regular match so we should fire that
+            if (!processed_sequence_callback && !_inside_sequence) {
+                _fireCallback(callbacks[i].callback, e);
+            }
+        }
+
+        // if you are inside of a sequence and the key you are pressing
+        // is not a modifier key then we should reset all sequences
+        // that were not matched by this key event
+        if (e.type == _inside_sequence && !_isModifier(character)) {
+            _resetSequences(do_not_reset);
+        }
+    }
+
+    /**
+     * handles a keydown event
+     *
+     * @param {Event} e
+     * @returns void
+     */
+    function _handleKey(e) {
+
+        // normalize e.which for key events
+        // @see http://stackoverflow.com/questions/4285627/javascript-keycode-vs-charcode-utter-confusion
+        e.which = typeof e.which == "number" ? e.which : e.keyCode;
+
+        var character = _characterFromEvent(e);
+
+        // no character found then stop
+        if (!character) {
+            return;
+        }
+
+        if (e.type == 'keyup' && _ignore_next_keyup == character) {
+            _ignore_next_keyup = false;
+            return;
+        }
+
+        _handleCharacter(character, e);
+    }
+
+    /**
+     * determines if the keycode specified is a modifier key or not
+     *
+     * @param {string} key
+     * @returns {boolean}
+     */
+    function _isModifier(key) {
+        return key == 'shift' || key == 'ctrl' || key == 'alt' || key == 'meta';
+    }
+
+    /**
+     * called to set a 1 second timeout on the specified sequence
+     *
+     * this is so after each key press in the sequence you have 1 second
+     * to press the next key before you have to start over
+     *
+     * @returns void
+     */
+    function _resetSequenceTimer() {
+        clearTimeout(_reset_timer);
+        _reset_timer = setTimeout(_resetSequences, 1000);
+    }
+
+    /**
+     * reverses the map lookup so that we can look for specific keys
+     * to see what can and can't use keypress
+     *
+     * @return {Object}
+     */
+    function _getReverseMap() {
+        if (!_REVERSE_MAP) {
+            _REVERSE_MAP = {};
+            for (var key in _MAP) {
+
+                // pull out the numeric keypad from here cause keypress should
+                // be able to detect the keys from the character
+                if (key > 95 && key < 112) {
+                    continue;
+                }
+
+                if (_MAP.hasOwnProperty(key)) {
+                    _REVERSE_MAP[_MAP[key]] = key;
+                }
+            }
+        }
+        return _REVERSE_MAP;
+    }
+
+    /**
+     * picks the best action based on the key combination
+     *
+     * @param {string} key - character for key
+     * @param {Array} modifiers
+     * @param {string=} action passed in
+     */
+    function _pickBestAction(key, modifiers, action) {
+
+        // if no action was picked in we should try to pick the one
+        // that we think would work best for this key
+        if (!action) {
+            action = _getReverseMap()[key] ? 'keydown' : 'keypress';
+        }
+
+        // modifier keys don't work as expected with keypress,
+        // switch to keydown
+        if (action == 'keypress' && modifiers.length) {
+            action = 'keydown';
+        }
+
+        return action;
+    }
+
+    /**
+     * binds a key sequence to an event
+     *
+     * @param {string} combo - combo specified in bind call
+     * @param {Array} keys
+     * @param {Function} callback
+     * @param {string=} action
+     * @returns void
+     */
+    function _bindSequence(combo, keys, callback, action) {
+
+        // start off by adding a sequence level record for this combination
+        // and setting the level to 0
+        _sequence_levels[combo] = 0;
+
+        // if there is no action pick the best one for the first key
+        // in the sequence
+        if (!action) {
+            action = _pickBestAction(keys[0], []);
+        }
+
+        /**
+         * callback to increase the sequence level for this sequence and reset
+         * all other sequences that were active
+         *
+         * @param {Event} e
+         * @returns void
+         */
+        var _increaseSequence = function(e) {
+                _inside_sequence = action;
+                ++_sequence_levels[combo];
+                _resetSequenceTimer();
+            },
+
+            /**
+             * wraps the specified callback inside of another function in order
+             * to reset all sequence counters as soon as this sequence is done
+             *
+             * @param {Event} e
+             * @returns void
+             */
+            _callbackAndReset = function(e) {
+                _fireCallback(callback, e);
+
+                // we should ignore the next key up if the action is key down
+                // or keypress.  this is so if you finish a sequence and
+                // release the key the final key will not trigger a keyup
+                if (action !== 'keyup') {
+                    _ignore_next_keyup = _characterFromEvent(e);
+                }
+
+                // weird race condition if a sequence ends with the key
+                // another sequence begins with
+                setTimeout(_resetSequences, 10);
+            },
+            i;
+
+        // loop through keys one at a time and bind the appropriate callback
+        // function.  for any key leading up to the final one it should
+        // increase the sequence. after the final, it should reset all sequences
+        for (i = 0; i < keys.length; ++i) {
+            _bindSingle(keys[i], i < keys.length - 1 ? _increaseSequence : _callbackAndReset, action, combo, i);
+        }
+    }
+
+    /**
+     * binds a single keyboard combination
+     *
+     * @param {string} combination
+     * @param {Function} callback
+     * @param {string=} action
+     * @param {string=} sequence_name - name of sequence if part of sequence
+     * @param {number=} level - what part of the sequence the command is
+     * @returns void
+     */
+    function _bindSingle(combination, callback, action, sequence_name, level) {
+
+        // make sure multiple spaces in a row become a single space
+        combination = combination.replace(/\s+/g, ' ');
+
+        var sequence = combination.split(' '),
+            i,
+            key,
+            keys,
+            modifiers = [];
+
+        // if this pattern is a sequence of keys then run through this method
+        // to reprocess each pattern one key at a time
+        if (sequence.length > 1) {
+            return _bindSequence(combination, sequence, callback, action);
+        }
+
+        // take the keys from this pattern and figure out what the actual
+        // pattern is all about
+        keys = combination === '+' ? ['+'] : combination.split('+');
+
+        for (i = 0; i < keys.length; ++i) {
+            key = keys[i];
+
+            // normalize key names
+            if (_SPECIAL_ALIASES[key]) {
+                key = _SPECIAL_ALIASES[key];
+            }
+
+            // if this is not a keypress event then we should
+            // be smart about using shift keys
+            // this will only work for US keyboards however
+            if (action && action != 'keypress' && _SHIFT_MAP[key]) {
+                key = _SHIFT_MAP[key];
+                modifiers.push('shift');
+            }
+
+            // if this key is a modifier then add it to the list of modifiers
+            if (_isModifier(key)) {
+                modifiers.push(key);
+            }
+        }
+
+        // depending on what the key combination is
+        // we will try to pick the best event for it
+        action = _pickBestAction(key, modifiers, action);
+
+        // make sure to initialize array if this is the first time
+        // a callback is added for this key
+        if (!_callbacks[key]) {
+            _callbacks[key] = [];
+        }
+
+        // remove an existing match if there is one
+        _getMatches(key, modifiers, action, !sequence_name, combination);
+
+        // add this call back to the array
+        // if it is a sequence put it at the beginning
+        // if not put it at the end
+        //
+        // this is important because the way these are processed expects
+        // the sequence ones to come first
+        _callbacks[key][sequence_name ? 'unshift' : 'push']({
+            callback: callback,
+            modifiers: modifiers,
+            action: action,
+            seq: sequence_name,
+            level: level,
+            combo: combination
+        });
+    }
+
+    /**
+     * binds multiple combinations to the same callback
+     *
+     * @param {Array} combinations
+     * @param {Function} callback
+     * @param {string|undefined} action
+     * @returns void
+     */
+    function _bindMultiple(combinations, callback, action) {
+        for (var i = 0; i < combinations.length; ++i) {
+            _bindSingle(combinations[i], callback, action);
+        }
+    }
+
+    // start!
+    _addEvent(document, 'keypress', _handleKey);
+    _addEvent(document, 'keydown', _handleKey);
+    _addEvent(document, 'keyup', _handleKey);
+
+    var mousetrap = {
+
+        /**
+         * binds an event to mousetrap
+         *
+         * can be a single key, a combination of keys separated with +,
+         * a comma separated list of keys, an array of keys, or
+         * a sequence of keys separated by spaces
+         *
+         * be sure to list the modifier keys first to make sure that the
+         * correct key ends up getting bound (the last key in the pattern)
+         *
+         * @param {string|Array} keys
+         * @param {Function} callback
+         * @param {string=} action - 'keypress', 'keydown', or 'keyup'
+         * @returns void
+         */
+        bind: function(keys, callback, action) {
+            _bindMultiple(keys instanceof Array ? keys : [keys], callback, action);
+            _direct_map[keys + ':' + action] = callback;
+            return this;
+        },
+
+        /**
+         * unbinds an event to mousetrap
+         *
+         * the unbinding sets the callback function of the specified key combo
+         * to an empty function and deletes the corresponding key in the
+         * _direct_map dict.
+         *
+         * the keycombo+action has to be exactly the same as
+         * it was defined in the bind method
+         *
+         * TODO: actually remove this from the _callbacks dictionary instead
+         * of binding an empty function
+         *
+         * @param {string|Array} keys
+         * @param {string} action
+         * @returns void
+         */
+        unbind: function(keys, action) {
+            if (_direct_map[keys + ':' + action]) {
+                delete _direct_map[keys + ':' + action];
+                this.bind(keys, function() {}, action);
+            }
+            return this;
+        },
+
+        /**
+         * triggers an event that has already been bound
+         *
+         * @param {string} keys
+         * @param {string=} action
+         * @returns void
+         */
+        trigger: function(keys, action) {
+            _direct_map[keys + ':' + action]();
+            return this;
+        },
+
+        /**
+         * resets the library back to its initial state.  this is useful
+         * if you want to clear out the current keyboard shortcuts and bind
+         * new ones - for example if you switch to another page
+         *
+         * @returns void
+         */
+        reset: function() {
+            _callbacks = {};
+            _direct_map = {};
+            return this;
+        }
+    };
+
+  module.exports = mousetrap;
+
+
+
+/***/ },
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -22702,7 +23687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
@@ -23260,7 +24245,603 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 52 */
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+  var util = __webpack_require__(1);
+  var Node = __webpack_require__(37);
+  var Edge = __webpack_require__(33);
+
+  /**
+   * clears the toolbar div element of children
+   *
+   * @private
+   */
+  exports._clearManipulatorBar = function() {
+    while (this.manipulationDiv.hasChildNodes()) {
+      this.manipulationDiv.removeChild(this.manipulationDiv.firstChild);
+    }
+  };
+
+  /**
+   * Manipulation UI temporarily overloads certain functions to extend or replace them. To be able to restore
+   * these functions to their original functionality, we saved them in this.cachedFunctions.
+   * This function restores these functions to their original function.
+   *
+   * @private
+   */
+  exports._restoreOverloadedFunctions = function() {
+    for (var functionName in this.cachedFunctions) {
+      if (this.cachedFunctions.hasOwnProperty(functionName)) {
+        this[functionName] = this.cachedFunctions[functionName];
+      }
+    }
+  };
+
+  /**
+   * Enable or disable edit-mode.
+   *
+   * @private
+   */
+  exports._toggleEditMode = function() {
+    this.editMode = !this.editMode;
+    var toolbar = document.getElementById("network-manipulationDiv");
+    var closeDiv = document.getElementById("network-manipulation-closeDiv");
+    var editModeDiv = document.getElementById("network-manipulation-editMode");
+    if (this.editMode == true) {
+      toolbar.style.display="block";
+      closeDiv.style.display="block";
+      editModeDiv.style.display="none";
+      closeDiv.onclick = this._toggleEditMode.bind(this);
+    }
+    else {
+      toolbar.style.display="none";
+      closeDiv.style.display="none";
+      editModeDiv.style.display="block";
+      closeDiv.onclick = null;
+    }
+    this._createManipulatorBar()
+  };
+
+  /**
+   * main function, creates the main toolbar. Removes functions bound to the select event. Binds all the buttons of the toolbar.
+   *
+   * @private
+   */
+  exports._createManipulatorBar = function() {
+    // remove bound functions
+    if (this.boundFunction) {
+      this.off('select', this.boundFunction);
+    }
+
+    var locale = this.constants.locales[this.constants.locale];
+
+    if (this.edgeBeingEdited !== undefined) {
+      this.edgeBeingEdited._disableControlNodes();
+      this.edgeBeingEdited = undefined;
+      this.selectedControlNode = null;
+      this.controlNodesActive = false;
+    }
+
+    // restore overloaded functions
+    this._restoreOverloadedFunctions();
+
+    // resume calculation
+    this.freezeSimulation = false;
+
+    // reset global variables
+    this.blockConnectingEdgeSelection = false;
+    this.forceAppendSelection = false;
+
+    if (this.editMode == true) {
+      while (this.manipulationDiv.hasChildNodes()) {
+        this.manipulationDiv.removeChild(this.manipulationDiv.firstChild);
+      }
+
+      // add the icons to the manipulator div
+      this.manipulationDiv.innerHTML = "" +
+        "<span class='network-manipulationUI add' id='network-manipulate-addNode'>" +
+          "<span class='network-manipulationLabel'>"+locale['addNode'] +"</span></span>" +
+        "<div class='network-seperatorLine'></div>" +
+        "<span class='network-manipulationUI connect' id='network-manipulate-connectNode'>" +
+          "<span class='network-manipulationLabel'>"+locale['addEdge'] +"</span></span>";
+      if (this._getSelectedNodeCount() == 1 && this.triggerFunctions.edit) {
+        this.manipulationDiv.innerHTML += "" +
+          "<div class='network-seperatorLine'></div>" +
+          "<span class='network-manipulationUI edit' id='network-manipulate-editNode'>" +
+            "<span class='network-manipulationLabel'>"+locale['editNode'] +"</span></span>";
+      }
+      else if (this._getSelectedEdgeCount() == 1 && this._getSelectedNodeCount() == 0) {
+        this.manipulationDiv.innerHTML += "" +
+          "<div class='network-seperatorLine'></div>" +
+          "<span class='network-manipulationUI edit' id='network-manipulate-editEdge'>" +
+          "<span class='network-manipulationLabel'>"+locale['editEdge'] +"</span></span>";
+      }
+      if (this._selectionIsEmpty() == false) {
+        this.manipulationDiv.innerHTML += "" +
+          "<div class='network-seperatorLine'></div>" +
+          "<span class='network-manipulationUI delete' id='network-manipulate-delete'>" +
+            "<span class='network-manipulationLabel'>"+locale['del'] +"</span></span>";
+      }
+
+
+      // bind the icons
+      var addNodeButton = document.getElementById("network-manipulate-addNode");
+      addNodeButton.onclick = this._createAddNodeToolbar.bind(this);
+      var addEdgeButton = document.getElementById("network-manipulate-connectNode");
+      addEdgeButton.onclick = this._createAddEdgeToolbar.bind(this);
+      if (this._getSelectedNodeCount() == 1 && this.triggerFunctions.edit) {
+        var editButton = document.getElementById("network-manipulate-editNode");
+        editButton.onclick = this._editNode.bind(this);
+      }
+      else if (this._getSelectedEdgeCount() == 1 && this._getSelectedNodeCount() == 0) {
+        var editButton = document.getElementById("network-manipulate-editEdge");
+        editButton.onclick = this._createEditEdgeToolbar.bind(this);
+      }
+      if (this._selectionIsEmpty() == false) {
+        var deleteButton = document.getElementById("network-manipulate-delete");
+        deleteButton.onclick = this._deleteSelected.bind(this);
+      }
+      var closeDiv = document.getElementById("network-manipulation-closeDiv");
+      closeDiv.onclick = this._toggleEditMode.bind(this);
+
+      this.boundFunction = this._createManipulatorBar.bind(this);
+      this.on('select', this.boundFunction);
+    }
+    else {
+      this.editModeDiv.innerHTML = "" +
+        "<span class='network-manipulationUI edit editmode' id='network-manipulate-editModeButton'>" +
+        "<span class='network-manipulationLabel'>" + locale['edit'] + "</span></span>";
+      var editModeButton = document.getElementById("network-manipulate-editModeButton");
+      editModeButton.onclick = this._toggleEditMode.bind(this);
+    }
+  };
+
+
+
+  /**
+   * Create the toolbar for adding Nodes
+   *
+   * @private
+   */
+  exports._createAddNodeToolbar = function() {
+    // clear the toolbar
+    this._clearManipulatorBar();
+    if (this.boundFunction) {
+      this.off('select', this.boundFunction);
+    }
+
+    var locale = this.constants.locales[this.constants.locale];
+
+    // create the toolbar contents
+    this.manipulationDiv.innerHTML = "" +
+      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
+      "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
+      "<div class='network-seperatorLine'></div>" +
+      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
+      "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['addDescription'] + "</span></span>";
+
+    // bind the icon
+    var backButton = document.getElementById("network-manipulate-back");
+    backButton.onclick = this._createManipulatorBar.bind(this);
+
+    // we use the boundFunction so we can reference it when we unbind it from the "select" event.
+    this.boundFunction = this._addNode.bind(this);
+    this.on('select', this.boundFunction);
+  };
+
+
+  /**
+   * create the toolbar to connect nodes
+   *
+   * @private
+   */
+  exports._createAddEdgeToolbar = function() {
+    // clear the toolbar
+    this._clearManipulatorBar();
+    this._unselectAll(true);
+    this.freezeSimulation = true;
+
+    var locale = this.constants.locales[this.constants.locale];
+
+    if (this.boundFunction) {
+      this.off('select', this.boundFunction);
+    }
+
+    this._unselectAll();
+    this.forceAppendSelection = false;
+    this.blockConnectingEdgeSelection = true;
+
+    this.manipulationDiv.innerHTML = "" +
+      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
+        "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
+      "<div class='network-seperatorLine'></div>" +
+      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
+        "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['edgeDescription'] + "</span></span>";
+
+    // bind the icon
+    var backButton = document.getElementById("network-manipulate-back");
+    backButton.onclick = this._createManipulatorBar.bind(this);
+
+    // we use the boundFunction so we can reference it when we unbind it from the "select" event.
+    this.boundFunction = this._handleConnect.bind(this);
+    this.on('select', this.boundFunction);
+
+    // temporarily overload functions
+    this.cachedFunctions["_handleTouch"] = this._handleTouch;
+    this.cachedFunctions["_handleOnRelease"] = this._handleOnRelease;
+    this.cachedFunctions["_handleDragStart"] = this._handleDragStart;
+    this.cachedFunctions["_handleDragEnd"] = this._handleDragEnd;
+    this._handleTouch = this._handleConnect;
+    this._handleOnRelease = function () {};
+    this._handleDragStart = function () {};
+    this._handleDragEnd = this._finishConnect;
+
+    // redraw to show the unselect
+    this._redraw();
+  };
+
+  /**
+   * create the toolbar to edit edges
+   *
+   * @private
+   */
+  exports._createEditEdgeToolbar = function() {
+    // clear the toolbar
+    this._clearManipulatorBar();
+    this.controlNodesActive = true;
+
+    if (this.boundFunction) {
+      this.off('select', this.boundFunction);
+    }
+
+    this.edgeBeingEdited = this._getSelectedEdge();
+    this.edgeBeingEdited._enableControlNodes();
+
+    var locale = this.constants.locales[this.constants.locale];
+
+    this.manipulationDiv.innerHTML = "" +
+      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
+      "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
+      "<div class='network-seperatorLine'></div>" +
+      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
+      "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['editEdgeDescription'] + "</span></span>";
+
+    // bind the icon
+    var backButton = document.getElementById("network-manipulate-back");
+    backButton.onclick = this._createManipulatorBar.bind(this);
+
+    // temporarily overload functions
+    this.cachedFunctions["_handleTouch"]      = this._handleTouch;
+    this.cachedFunctions["_handleOnRelease"]  = this._handleOnRelease;
+    this.cachedFunctions["_handleTap"]        = this._handleTap;
+    this.cachedFunctions["_handleDragStart"]  = this._handleDragStart;
+    this.cachedFunctions["_handleOnDrag"]     = this._handleOnDrag;
+    this._handleTouch     = this._selectControlNode;
+    this._handleTap       = function () {};
+    this._handleOnDrag    = this._controlNodeDrag;
+    this._handleDragStart = function () {}
+    this._handleOnRelease = this._releaseControlNode;
+
+    // redraw to show the unselect
+    this._redraw();
+  };
+
+
+  /**
+   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
+   * to walk the user through the process.
+   *
+   * @private
+   */
+  exports._selectControlNode = function(pointer) {
+    this.edgeBeingEdited.controlNodes.from.unselect();
+    this.edgeBeingEdited.controlNodes.to.unselect();
+    this.selectedControlNode = this.edgeBeingEdited._getSelectedControlNode(this._XconvertDOMtoCanvas(pointer.x),this._YconvertDOMtoCanvas(pointer.y));
+    if (this.selectedControlNode !== null) {
+      this.selectedControlNode.select();
+      this.freezeSimulation = true;
+    }
+    this._redraw();
+  };
+
+
+  /**
+   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
+   * to walk the user through the process.
+   *
+   * @private
+   */
+  exports._controlNodeDrag = function(event) {
+    var pointer = this._getPointer(event.gesture.center);
+    if (this.selectedControlNode !== null && this.selectedControlNode !== undefined) {
+      this.selectedControlNode.x = this._XconvertDOMtoCanvas(pointer.x);
+      this.selectedControlNode.y = this._YconvertDOMtoCanvas(pointer.y);
+    }
+    this._redraw();
+  };
+
+  exports._releaseControlNode = function(pointer) {
+    var newNode = this._getNodeAt(pointer);
+    if (newNode != null) {
+      if (this.edgeBeingEdited.controlNodes.from.selected == true) {
+        this._editEdge(newNode.id, this.edgeBeingEdited.to.id);
+        this.edgeBeingEdited.controlNodes.from.unselect();
+      }
+      if (this.edgeBeingEdited.controlNodes.to.selected == true) {
+        this._editEdge(this.edgeBeingEdited.from.id, newNode.id);
+        this.edgeBeingEdited.controlNodes.to.unselect();
+      }
+    }
+    else {
+      this.edgeBeingEdited._restoreControlNodes();
+    }
+    this.freezeSimulation = false;
+    this._redraw();
+  };
+
+  /**
+   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
+   * to walk the user through the process.
+   *
+   * @private
+   */
+  exports._handleConnect = function(pointer) {
+    if (this._getSelectedNodeCount() == 0) {
+      var node = this._getNodeAt(pointer);
+
+      if (node != null) {
+        if (node.clusterSize > 1) {
+          alert(this.constants.locales[this.constants.locale]['createEdgeError'])
+        }
+        else {
+          this._selectObject(node,false);
+          var supportNodes = this.sectors['support']['nodes'];
+
+          // create a node the temporary line can look at
+          supportNodes['targetNode'] = new Node({id:'targetNode'},{},{},this.constants);
+          var targetNode = supportNodes['targetNode'];
+          targetNode.x = node.x;
+          targetNode.y = node.y;
+
+          // create a temporary edge
+          this.edges['connectionEdge'] = new Edge({id:"connectionEdge",from:node.id,to:targetNode.id}, this, this.constants);
+          var connectionEdge = this.edges['connectionEdge'];
+          connectionEdge.from = node;
+          connectionEdge.connected = true;
+          connectionEdge.options.smoothCurves = {enabled: true,
+              dynamic: false,
+              type: "continuous",
+              roundness: 0.5
+          };
+          connectionEdge.selected = true;
+          connectionEdge.to = targetNode;
+
+          this.cachedFunctions["_handleOnDrag"] = this._handleOnDrag;
+          this._handleOnDrag = function(event) {
+            var pointer = this._getPointer(event.gesture.center);
+            var connectionEdge = this.edges['connectionEdge'];
+            connectionEdge.to.x = this._XconvertDOMtoCanvas(pointer.x);
+            connectionEdge.to.y = this._YconvertDOMtoCanvas(pointer.y);
+          };
+
+          this.moving = true;
+          this.start();
+        }
+      }
+    }
+  };
+
+  exports._finishConnect = function(event) {
+    if (this._getSelectedNodeCount() == 1) {
+      var pointer = this._getPointer(event.gesture.center);
+      // restore the drag function
+      this._handleOnDrag = this.cachedFunctions["_handleOnDrag"];
+      delete this.cachedFunctions["_handleOnDrag"];
+
+      // remember the edge id
+      var connectFromId = this.edges['connectionEdge'].fromId;
+
+      // remove the temporary nodes and edge
+      delete this.edges['connectionEdge'];
+      delete this.sectors['support']['nodes']['targetNode'];
+      delete this.sectors['support']['nodes']['targetViaNode'];
+
+      var node = this._getNodeAt(pointer);
+      if (node != null) {
+        if (node.clusterSize > 1) {
+          alert(this.constants.locales[this.constants.locale]["createEdgeError"])
+        }
+        else {
+          this._createEdge(connectFromId,node.id);
+          this._createManipulatorBar();
+        }
+      }
+      this._unselectAll();
+    }
+  };
+
+
+  /**
+   * Adds a node on the specified location
+   */
+  exports._addNode = function() {
+    if (this._selectionIsEmpty() && this.editMode == true) {
+      var positionObject = this._pointerToPositionObject(this.pointerPosition);
+      var defaultData = {id:util.randomUUID(),x:positionObject.left,y:positionObject.top,label:"new",allowedToMoveX:true,allowedToMoveY:true};
+      if (this.triggerFunctions.add) {
+        if (this.triggerFunctions.add.length == 2) {
+          var me = this;
+          this.triggerFunctions.add(defaultData, function(finalizedData) {
+            me.nodesData.add(finalizedData);
+            me._createManipulatorBar();
+            me.moving = true;
+            me.start();
+          });
+        }
+        else {
+          throw new Error('The function for add does not support two arguments (data,callback)');
+          this._createManipulatorBar();
+          this.moving = true;
+          this.start();
+        }
+      }
+      else {
+        this.nodesData.add(defaultData);
+        this._createManipulatorBar();
+        this.moving = true;
+        this.start();
+      }
+    }
+  };
+
+
+  /**
+   * connect two nodes with a new edge.
+   *
+   * @private
+   */
+  exports._createEdge = function(sourceNodeId,targetNodeId) {
+    if (this.editMode == true) {
+      var defaultData = {from:sourceNodeId, to:targetNodeId};
+      if (this.triggerFunctions.connect) {
+        if (this.triggerFunctions.connect.length == 2) {
+          var me = this;
+          this.triggerFunctions.connect(defaultData, function(finalizedData) {
+            me.edgesData.add(finalizedData);
+            me.moving = true;
+            me.start();
+          });
+        }
+        else {
+          throw new Error('The function for connect does not support two arguments (data,callback)');
+          this.moving = true;
+          this.start();
+        }
+      }
+      else {
+        this.edgesData.add(defaultData);
+        this.moving = true;
+        this.start();
+      }
+    }
+  };
+
+  /**
+   * connect two nodes with a new edge.
+   *
+   * @private
+   */
+  exports._editEdge = function(sourceNodeId,targetNodeId) {
+    if (this.editMode == true) {
+      var defaultData = {id: this.edgeBeingEdited.id, from:sourceNodeId, to:targetNodeId};
+      if (this.triggerFunctions.editEdge) {
+        if (this.triggerFunctions.editEdge.length == 2) {
+          var me = this;
+          this.triggerFunctions.editEdge(defaultData, function(finalizedData) {
+            me.edgesData.update(finalizedData);
+            me.moving = true;
+            me.start();
+          });
+        }
+        else {
+          throw new Error('The function for edit does not support two arguments (data, callback)');
+          this.moving = true;
+          this.start();
+        }
+      }
+      else {
+        this.edgesData.update(defaultData);
+        this.moving = true;
+        this.start();
+      }
+    }
+  };
+
+  /**
+   * Create the toolbar to edit the selected node. The label and the color can be changed. Other colors are derived from the chosen color.
+   *
+   * @private
+   */
+  exports._editNode = function() {
+    if (this.triggerFunctions.edit && this.editMode == true) {
+      var node = this._getSelectedNode();
+      var data = {id:node.id,
+        label: node.label,
+        group: node.options.group,
+        shape: node.options.shape,
+        color: {
+          background:node.options.color.background,
+          border:node.options.color.border,
+          highlight: {
+            background:node.options.color.highlight.background,
+            border:node.options.color.highlight.border
+          }
+        }};
+      if (this.triggerFunctions.edit.length == 2) {
+        var me = this;
+        this.triggerFunctions.edit(data, function (finalizedData) {
+          me.nodesData.update(finalizedData);
+          me._createManipulatorBar();
+          me.moving = true;
+          me.start();
+        });
+      }
+      else {
+        throw new Error('The function for edit does not support two arguments (data, callback)');
+      }
+    }
+    else {
+      throw new Error('No edit function has been bound to this button');
+    }
+  };
+
+
+
+
+  /**
+   * delete everything in the selection
+   *
+   * @private
+   */
+  exports._deleteSelected = function() {
+    if (!this._selectionIsEmpty() && this.editMode == true) {
+      if (!this._clusterInSelection()) {
+        var selectedNodes = this.getSelectedNodes();
+        var selectedEdges = this.getSelectedEdges();
+        if (this.triggerFunctions.del) {
+          var me = this;
+          var data = {nodes: selectedNodes, edges: selectedEdges};
+          if (this.triggerFunctions.del.length = 2) {
+            this.triggerFunctions.del(data, function (finalizedData) {
+              me.edgesData.remove(finalizedData.edges);
+              me.nodesData.remove(finalizedData.nodes);
+              me._unselectAll();
+              me.moving = true;
+              me.start();
+            });
+          }
+          else {
+            throw new Error('The function for delete does not support two arguments (data, callback)')
+          }
+        }
+        else {
+          this.edgesData.remove(selectedEdges);
+          this.nodesData.remove(selectedNodes);
+          this._unselectAll();
+          this.moving = true;
+          this.start();
+        }
+      }
+      else {
+        alert(this.constants.locales[this.constants.locale]["deleteClusterError"]);
+      }
+    }
+  };
+
+
+/***/ },
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
   var Node = __webpack_require__(37);
@@ -23971,603 +25552,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var util = __webpack_require__(1);
-  var Node = __webpack_require__(37);
-  var Edge = __webpack_require__(34);
-
-  /**
-   * clears the toolbar div element of children
-   *
-   * @private
-   */
-  exports._clearManipulatorBar = function() {
-    while (this.manipulationDiv.hasChildNodes()) {
-      this.manipulationDiv.removeChild(this.manipulationDiv.firstChild);
-    }
-  };
-
-  /**
-   * Manipulation UI temporarily overloads certain functions to extend or replace them. To be able to restore
-   * these functions to their original functionality, we saved them in this.cachedFunctions.
-   * This function restores these functions to their original function.
-   *
-   * @private
-   */
-  exports._restoreOverloadedFunctions = function() {
-    for (var functionName in this.cachedFunctions) {
-      if (this.cachedFunctions.hasOwnProperty(functionName)) {
-        this[functionName] = this.cachedFunctions[functionName];
-      }
-    }
-  };
-
-  /**
-   * Enable or disable edit-mode.
-   *
-   * @private
-   */
-  exports._toggleEditMode = function() {
-    this.editMode = !this.editMode;
-    var toolbar = document.getElementById("network-manipulationDiv");
-    var closeDiv = document.getElementById("network-manipulation-closeDiv");
-    var editModeDiv = document.getElementById("network-manipulation-editMode");
-    if (this.editMode == true) {
-      toolbar.style.display="block";
-      closeDiv.style.display="block";
-      editModeDiv.style.display="none";
-      closeDiv.onclick = this._toggleEditMode.bind(this);
-    }
-    else {
-      toolbar.style.display="none";
-      closeDiv.style.display="none";
-      editModeDiv.style.display="block";
-      closeDiv.onclick = null;
-    }
-    this._createManipulatorBar()
-  };
-
-  /**
-   * main function, creates the main toolbar. Removes functions bound to the select event. Binds all the buttons of the toolbar.
-   *
-   * @private
-   */
-  exports._createManipulatorBar = function() {
-    // remove bound functions
-    if (this.boundFunction) {
-      this.off('select', this.boundFunction);
-    }
-
-    var locale = this.constants.locales[this.constants.locale];
-
-    if (this.edgeBeingEdited !== undefined) {
-      this.edgeBeingEdited._disableControlNodes();
-      this.edgeBeingEdited = undefined;
-      this.selectedControlNode = null;
-      this.controlNodesActive = false;
-    }
-
-    // restore overloaded functions
-    this._restoreOverloadedFunctions();
-
-    // resume calculation
-    this.freezeSimulation = false;
-
-    // reset global variables
-    this.blockConnectingEdgeSelection = false;
-    this.forceAppendSelection = false;
-
-    if (this.editMode == true) {
-      while (this.manipulationDiv.hasChildNodes()) {
-        this.manipulationDiv.removeChild(this.manipulationDiv.firstChild);
-      }
-
-      // add the icons to the manipulator div
-      this.manipulationDiv.innerHTML = "" +
-        "<span class='network-manipulationUI add' id='network-manipulate-addNode'>" +
-          "<span class='network-manipulationLabel'>"+locale['addNode'] +"</span></span>" +
-        "<div class='network-seperatorLine'></div>" +
-        "<span class='network-manipulationUI connect' id='network-manipulate-connectNode'>" +
-          "<span class='network-manipulationLabel'>"+locale['addEdge'] +"</span></span>";
-      if (this._getSelectedNodeCount() == 1 && this.triggerFunctions.edit) {
-        this.manipulationDiv.innerHTML += "" +
-          "<div class='network-seperatorLine'></div>" +
-          "<span class='network-manipulationUI edit' id='network-manipulate-editNode'>" +
-            "<span class='network-manipulationLabel'>"+locale['editNode'] +"</span></span>";
-      }
-      else if (this._getSelectedEdgeCount() == 1 && this._getSelectedNodeCount() == 0) {
-        this.manipulationDiv.innerHTML += "" +
-          "<div class='network-seperatorLine'></div>" +
-          "<span class='network-manipulationUI edit' id='network-manipulate-editEdge'>" +
-          "<span class='network-manipulationLabel'>"+locale['editEdge'] +"</span></span>";
-      }
-      if (this._selectionIsEmpty() == false) {
-        this.manipulationDiv.innerHTML += "" +
-          "<div class='network-seperatorLine'></div>" +
-          "<span class='network-manipulationUI delete' id='network-manipulate-delete'>" +
-            "<span class='network-manipulationLabel'>"+locale['del'] +"</span></span>";
-      }
-
-
-      // bind the icons
-      var addNodeButton = document.getElementById("network-manipulate-addNode");
-      addNodeButton.onclick = this._createAddNodeToolbar.bind(this);
-      var addEdgeButton = document.getElementById("network-manipulate-connectNode");
-      addEdgeButton.onclick = this._createAddEdgeToolbar.bind(this);
-      if (this._getSelectedNodeCount() == 1 && this.triggerFunctions.edit) {
-        var editButton = document.getElementById("network-manipulate-editNode");
-        editButton.onclick = this._editNode.bind(this);
-      }
-      else if (this._getSelectedEdgeCount() == 1 && this._getSelectedNodeCount() == 0) {
-        var editButton = document.getElementById("network-manipulate-editEdge");
-        editButton.onclick = this._createEditEdgeToolbar.bind(this);
-      }
-      if (this._selectionIsEmpty() == false) {
-        var deleteButton = document.getElementById("network-manipulate-delete");
-        deleteButton.onclick = this._deleteSelected.bind(this);
-      }
-      var closeDiv = document.getElementById("network-manipulation-closeDiv");
-      closeDiv.onclick = this._toggleEditMode.bind(this);
-
-      this.boundFunction = this._createManipulatorBar.bind(this);
-      this.on('select', this.boundFunction);
-    }
-    else {
-      this.editModeDiv.innerHTML = "" +
-        "<span class='network-manipulationUI edit editmode' id='network-manipulate-editModeButton'>" +
-        "<span class='network-manipulationLabel'>" + locale['edit'] + "</span></span>";
-      var editModeButton = document.getElementById("network-manipulate-editModeButton");
-      editModeButton.onclick = this._toggleEditMode.bind(this);
-    }
-  };
-
-
-
-  /**
-   * Create the toolbar for adding Nodes
-   *
-   * @private
-   */
-  exports._createAddNodeToolbar = function() {
-    // clear the toolbar
-    this._clearManipulatorBar();
-    if (this.boundFunction) {
-      this.off('select', this.boundFunction);
-    }
-
-    var locale = this.constants.locales[this.constants.locale];
-
-    // create the toolbar contents
-    this.manipulationDiv.innerHTML = "" +
-      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
-      "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
-      "<div class='network-seperatorLine'></div>" +
-      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
-      "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['addDescription'] + "</span></span>";
-
-    // bind the icon
-    var backButton = document.getElementById("network-manipulate-back");
-    backButton.onclick = this._createManipulatorBar.bind(this);
-
-    // we use the boundFunction so we can reference it when we unbind it from the "select" event.
-    this.boundFunction = this._addNode.bind(this);
-    this.on('select', this.boundFunction);
-  };
-
-
-  /**
-   * create the toolbar to connect nodes
-   *
-   * @private
-   */
-  exports._createAddEdgeToolbar = function() {
-    // clear the toolbar
-    this._clearManipulatorBar();
-    this._unselectAll(true);
-    this.freezeSimulation = true;
-
-    var locale = this.constants.locales[this.constants.locale];
-
-    if (this.boundFunction) {
-      this.off('select', this.boundFunction);
-    }
-
-    this._unselectAll();
-    this.forceAppendSelection = false;
-    this.blockConnectingEdgeSelection = true;
-
-    this.manipulationDiv.innerHTML = "" +
-      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
-        "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
-      "<div class='network-seperatorLine'></div>" +
-      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
-        "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['edgeDescription'] + "</span></span>";
-
-    // bind the icon
-    var backButton = document.getElementById("network-manipulate-back");
-    backButton.onclick = this._createManipulatorBar.bind(this);
-
-    // we use the boundFunction so we can reference it when we unbind it from the "select" event.
-    this.boundFunction = this._handleConnect.bind(this);
-    this.on('select', this.boundFunction);
-
-    // temporarily overload functions
-    this.cachedFunctions["_handleTouch"] = this._handleTouch;
-    this.cachedFunctions["_handleOnRelease"] = this._handleOnRelease;
-    this.cachedFunctions["_handleDragStart"] = this._handleDragStart;
-    this.cachedFunctions["_handleDragEnd"] = this._handleDragEnd;
-    this._handleTouch = this._handleConnect;
-    this._handleOnRelease = function () {};
-    this._handleDragStart = function () {};
-    this._handleDragEnd = this._finishConnect;
-
-    // redraw to show the unselect
-    this._redraw();
-  };
-
-  /**
-   * create the toolbar to edit edges
-   *
-   * @private
-   */
-  exports._createEditEdgeToolbar = function() {
-    // clear the toolbar
-    this._clearManipulatorBar();
-    this.controlNodesActive = true;
-
-    if (this.boundFunction) {
-      this.off('select', this.boundFunction);
-    }
-
-    this.edgeBeingEdited = this._getSelectedEdge();
-    this.edgeBeingEdited._enableControlNodes();
-
-    var locale = this.constants.locales[this.constants.locale];
-
-    this.manipulationDiv.innerHTML = "" +
-      "<span class='network-manipulationUI back' id='network-manipulate-back'>" +
-      "<span class='network-manipulationLabel'>" + locale['back'] + " </span></span>" +
-      "<div class='network-seperatorLine'></div>" +
-      "<span class='network-manipulationUI none' id='network-manipulate-back'>" +
-      "<span id='network-manipulatorLabel' class='network-manipulationLabel'>" + locale['editEdgeDescription'] + "</span></span>";
-
-    // bind the icon
-    var backButton = document.getElementById("network-manipulate-back");
-    backButton.onclick = this._createManipulatorBar.bind(this);
-
-    // temporarily overload functions
-    this.cachedFunctions["_handleTouch"]      = this._handleTouch;
-    this.cachedFunctions["_handleOnRelease"]  = this._handleOnRelease;
-    this.cachedFunctions["_handleTap"]        = this._handleTap;
-    this.cachedFunctions["_handleDragStart"]  = this._handleDragStart;
-    this.cachedFunctions["_handleOnDrag"]     = this._handleOnDrag;
-    this._handleTouch     = this._selectControlNode;
-    this._handleTap       = function () {};
-    this._handleOnDrag    = this._controlNodeDrag;
-    this._handleDragStart = function () {}
-    this._handleOnRelease = this._releaseControlNode;
-
-    // redraw to show the unselect
-    this._redraw();
-  };
-
-
-  /**
-   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
-   * to walk the user through the process.
-   *
-   * @private
-   */
-  exports._selectControlNode = function(pointer) {
-    this.edgeBeingEdited.controlNodes.from.unselect();
-    this.edgeBeingEdited.controlNodes.to.unselect();
-    this.selectedControlNode = this.edgeBeingEdited._getSelectedControlNode(this._XconvertDOMtoCanvas(pointer.x),this._YconvertDOMtoCanvas(pointer.y));
-    if (this.selectedControlNode !== null) {
-      this.selectedControlNode.select();
-      this.freezeSimulation = true;
-    }
-    this._redraw();
-  };
-
-
-  /**
-   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
-   * to walk the user through the process.
-   *
-   * @private
-   */
-  exports._controlNodeDrag = function(event) {
-    var pointer = this._getPointer(event.gesture.center);
-    if (this.selectedControlNode !== null && this.selectedControlNode !== undefined) {
-      this.selectedControlNode.x = this._XconvertDOMtoCanvas(pointer.x);
-      this.selectedControlNode.y = this._YconvertDOMtoCanvas(pointer.y);
-    }
-    this._redraw();
-  };
-
-  exports._releaseControlNode = function(pointer) {
-    var newNode = this._getNodeAt(pointer);
-    if (newNode != null) {
-      if (this.edgeBeingEdited.controlNodes.from.selected == true) {
-        this._editEdge(newNode.id, this.edgeBeingEdited.to.id);
-        this.edgeBeingEdited.controlNodes.from.unselect();
-      }
-      if (this.edgeBeingEdited.controlNodes.to.selected == true) {
-        this._editEdge(this.edgeBeingEdited.from.id, newNode.id);
-        this.edgeBeingEdited.controlNodes.to.unselect();
-      }
-    }
-    else {
-      this.edgeBeingEdited._restoreControlNodes();
-    }
-    this.freezeSimulation = false;
-    this._redraw();
-  };
-
-  /**
-   * the function bound to the selection event. It checks if you want to connect a cluster and changes the description
-   * to walk the user through the process.
-   *
-   * @private
-   */
-  exports._handleConnect = function(pointer) {
-    if (this._getSelectedNodeCount() == 0) {
-      var node = this._getNodeAt(pointer);
-
-      if (node != null) {
-        if (node.clusterSize > 1) {
-          alert(this.constants.locales[this.constants.locale]['createEdgeError'])
-        }
-        else {
-          this._selectObject(node,false);
-          var supportNodes = this.sectors['support']['nodes'];
-
-          // create a node the temporary line can look at
-          supportNodes['targetNode'] = new Node({id:'targetNode'},{},{},this.constants);
-          var targetNode = supportNodes['targetNode'];
-          targetNode.x = node.x;
-          targetNode.y = node.y;
-
-          // create a temporary edge
-          this.edges['connectionEdge'] = new Edge({id:"connectionEdge",from:node.id,to:targetNode.id}, this, this.constants);
-          var connectionEdge = this.edges['connectionEdge'];
-          connectionEdge.from = node;
-          connectionEdge.connected = true;
-          connectionEdge.options.smoothCurves = {enabled: true,
-              dynamic: false,
-              type: "continuous",
-              roundness: 0.5
-          };
-          connectionEdge.selected = true;
-          connectionEdge.to = targetNode;
-
-          this.cachedFunctions["_handleOnDrag"] = this._handleOnDrag;
-          this._handleOnDrag = function(event) {
-            var pointer = this._getPointer(event.gesture.center);
-            var connectionEdge = this.edges['connectionEdge'];
-            connectionEdge.to.x = this._XconvertDOMtoCanvas(pointer.x);
-            connectionEdge.to.y = this._YconvertDOMtoCanvas(pointer.y);
-          };
-
-          this.moving = true;
-          this.start();
-        }
-      }
-    }
-  };
-
-  exports._finishConnect = function(event) {
-    if (this._getSelectedNodeCount() == 1) {
-      var pointer = this._getPointer(event.gesture.center);
-      // restore the drag function
-      this._handleOnDrag = this.cachedFunctions["_handleOnDrag"];
-      delete this.cachedFunctions["_handleOnDrag"];
-
-      // remember the edge id
-      var connectFromId = this.edges['connectionEdge'].fromId;
-
-      // remove the temporary nodes and edge
-      delete this.edges['connectionEdge'];
-      delete this.sectors['support']['nodes']['targetNode'];
-      delete this.sectors['support']['nodes']['targetViaNode'];
-
-      var node = this._getNodeAt(pointer);
-      if (node != null) {
-        if (node.clusterSize > 1) {
-          alert(this.constants.locales[this.constants.locale]["createEdgeError"])
-        }
-        else {
-          this._createEdge(connectFromId,node.id);
-          this._createManipulatorBar();
-        }
-      }
-      this._unselectAll();
-    }
-  };
-
-
-  /**
-   * Adds a node on the specified location
-   */
-  exports._addNode = function() {
-    if (this._selectionIsEmpty() && this.editMode == true) {
-      var positionObject = this._pointerToPositionObject(this.pointerPosition);
-      var defaultData = {id:util.randomUUID(),x:positionObject.left,y:positionObject.top,label:"new",allowedToMoveX:true,allowedToMoveY:true};
-      if (this.triggerFunctions.add) {
-        if (this.triggerFunctions.add.length == 2) {
-          var me = this;
-          this.triggerFunctions.add(defaultData, function(finalizedData) {
-            me.nodesData.add(finalizedData);
-            me._createManipulatorBar();
-            me.moving = true;
-            me.start();
-          });
-        }
-        else {
-          throw new Error('The function for add does not support two arguments (data,callback)');
-          this._createManipulatorBar();
-          this.moving = true;
-          this.start();
-        }
-      }
-      else {
-        this.nodesData.add(defaultData);
-        this._createManipulatorBar();
-        this.moving = true;
-        this.start();
-      }
-    }
-  };
-
-
-  /**
-   * connect two nodes with a new edge.
-   *
-   * @private
-   */
-  exports._createEdge = function(sourceNodeId,targetNodeId) {
-    if (this.editMode == true) {
-      var defaultData = {from:sourceNodeId, to:targetNodeId};
-      if (this.triggerFunctions.connect) {
-        if (this.triggerFunctions.connect.length == 2) {
-          var me = this;
-          this.triggerFunctions.connect(defaultData, function(finalizedData) {
-            me.edgesData.add(finalizedData);
-            me.moving = true;
-            me.start();
-          });
-        }
-        else {
-          throw new Error('The function for connect does not support two arguments (data,callback)');
-          this.moving = true;
-          this.start();
-        }
-      }
-      else {
-        this.edgesData.add(defaultData);
-        this.moving = true;
-        this.start();
-      }
-    }
-  };
-
-  /**
-   * connect two nodes with a new edge.
-   *
-   * @private
-   */
-  exports._editEdge = function(sourceNodeId,targetNodeId) {
-    if (this.editMode == true) {
-      var defaultData = {id: this.edgeBeingEdited.id, from:sourceNodeId, to:targetNodeId};
-      if (this.triggerFunctions.editEdge) {
-        if (this.triggerFunctions.editEdge.length == 2) {
-          var me = this;
-          this.triggerFunctions.editEdge(defaultData, function(finalizedData) {
-            me.edgesData.update(finalizedData);
-            me.moving = true;
-            me.start();
-          });
-        }
-        else {
-          throw new Error('The function for edit does not support two arguments (data, callback)');
-          this.moving = true;
-          this.start();
-        }
-      }
-      else {
-        this.edgesData.update(defaultData);
-        this.moving = true;
-        this.start();
-      }
-    }
-  };
-
-  /**
-   * Create the toolbar to edit the selected node. The label and the color can be changed. Other colors are derived from the chosen color.
-   *
-   * @private
-   */
-  exports._editNode = function() {
-    if (this.triggerFunctions.edit && this.editMode == true) {
-      var node = this._getSelectedNode();
-      var data = {id:node.id,
-        label: node.label,
-        group: node.options.group,
-        shape: node.options.shape,
-        color: {
-          background:node.options.color.background,
-          border:node.options.color.border,
-          highlight: {
-            background:node.options.color.highlight.background,
-            border:node.options.color.highlight.border
-          }
-        }};
-      if (this.triggerFunctions.edit.length == 2) {
-        var me = this;
-        this.triggerFunctions.edit(data, function (finalizedData) {
-          me.nodesData.update(finalizedData);
-          me._createManipulatorBar();
-          me.moving = true;
-          me.start();
-        });
-      }
-      else {
-        throw new Error('The function for edit does not support two arguments (data, callback)');
-      }
-    }
-    else {
-      throw new Error('No edit function has been bound to this button');
-    }
-  };
-
-
-
-
-  /**
-   * delete everything in the selection
-   *
-   * @private
-   */
-  exports._deleteSelected = function() {
-    if (!this._selectionIsEmpty() && this.editMode == true) {
-      if (!this._clusterInSelection()) {
-        var selectedNodes = this.getSelectedNodes();
-        var selectedEdges = this.getSelectedEdges();
-        if (this.triggerFunctions.del) {
-          var me = this;
-          var data = {nodes: selectedNodes, edges: selectedEdges};
-          if (this.triggerFunctions.del.length = 2) {
-            this.triggerFunctions.del(data, function (finalizedData) {
-              me.edgesData.remove(finalizedData.edges);
-              me.nodesData.remove(finalizedData.nodes);
-              me._unselectAll();
-              me.moving = true;
-              me.start();
-            });
-          }
-          else {
-            throw new Error('The function for delete does not support two arguments (data, callback)')
-          }
-        }
-        else {
-          this.edgesData.remove(selectedEdges);
-          this.nodesData.remove(selectedNodes);
-          this._unselectAll();
-          this.moving = true;
-          this.start();
-        }
-      }
-      else {
-        alert(this.constants.locales[this.constants.locale]["deleteClusterError"]);
-      }
-    }
-  };
-
-
-/***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
@@ -24754,7 +25739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
   exports._resetLevels = function() {
@@ -25171,13 +26156,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
   var util = __webpack_require__(1);
-  var RepulsionMixin = __webpack_require__(59);
-  var HierarchialRepulsionMixin = __webpack_require__(60);
-  var BarnesHutMixin = __webpack_require__(61);
+  var RepulsionMixin = __webpack_require__(62);
+  var HierarchialRepulsionMixin = __webpack_require__(63);
+  var BarnesHutMixin = __webpack_require__(64);
 
   /**
    * Toggling barnes Hut calculation on and off.
@@ -25885,812 +26870,2174 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
+  var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v1.1.3 - 2014-05-20
+   * http://eightmedia.github.io/hammer.js
+   *
+   * Copyright (c) 2014 Jorik Tangelder <j.tangelder@gmail.com>;
+   * Licensed under the MIT license */
+
+  (function(window, undefined) {
+    'use strict';
+
   /**
-   * Copyright 2012 Craig Campbell
+   * @main
+   * @module hammer
    *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   * http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   *
-   * Mousetrap is a simple keyboard shortcut library for Javascript with
-   * no external dependencies
-   *
-   * @version 1.1.2
-   * @url craig.is/killing/mice
+   * @class Hammer
+   * @static
    */
 
-    /**
-     * mapping of special keycodes to their corresponding keys
-     *
-     * everything in this dictionary cannot use keypress events
-     * so it has to be here to map to the correct keycodes for
-     * keyup/keydown events
-     *
-     * @type {Object}
-     */
-    var _MAP = {
-            8: 'backspace',
-            9: 'tab',
-            13: 'enter',
-            16: 'shift',
-            17: 'ctrl',
-            18: 'alt',
-            20: 'capslock',
-            27: 'esc',
-            32: 'space',
-            33: 'pageup',
-            34: 'pagedown',
-            35: 'end',
-            36: 'home',
-            37: 'left',
-            38: 'up',
-            39: 'right',
-            40: 'down',
-            45: 'ins',
-            46: 'del',
-            91: 'meta',
-            93: 'meta',
-            224: 'meta'
-        },
-
-        /**
-         * mapping for special characters so they can support
-         *
-         * this dictionary is only used incase you want to bind a
-         * keyup or keydown event to one of these keys
-         *
-         * @type {Object}
-         */
-        _KEYCODE_MAP = {
-            106: '*',
-            107: '+',
-            109: '-',
-            110: '.',
-            111 : '/',
-            186: ';',
-            187: '=',
-            188: ',',
-            189: '-',
-            190: '.',
-            191: '/',
-            192: '`',
-            219: '[',
-            220: '\\',
-            221: ']',
-            222: '\''
-        },
-
-        /**
-         * this is a mapping of keys that require shift on a US keypad
-         * back to the non shift equivelents
-         *
-         * this is so you can use keyup events with these keys
-         *
-         * note that this will only work reliably on US keyboards
-         *
-         * @type {Object}
-         */
-        _SHIFT_MAP = {
-            '~': '`',
-            '!': '1',
-            '@': '2',
-            '#': '3',
-            '$': '4',
-            '%': '5',
-            '^': '6',
-            '&': '7',
-            '*': '8',
-            '(': '9',
-            ')': '0',
-            '_': '-',
-            '+': '=',
-            ':': ';',
-            '\"': '\'',
-            '<': ',',
-            '>': '.',
-            '?': '/',
-            '|': '\\'
-        },
-
-        /**
-         * this is a list of special strings you can use to map
-         * to modifier keys when you specify your keyboard shortcuts
-         *
-         * @type {Object}
-         */
-        _SPECIAL_ALIASES = {
-            'option': 'alt',
-            'command': 'meta',
-            'return': 'enter',
-            'escape': 'esc'
-        },
-
-        /**
-         * variable to store the flipped version of _MAP from above
-         * needed to check if we should use keypress or not when no action
-         * is specified
-         *
-         * @type {Object|undefined}
-         */
-        _REVERSE_MAP,
-
-        /**
-         * a list of all the callbacks setup via Mousetrap.bind()
-         *
-         * @type {Object}
-         */
-        _callbacks = {},
-
-        /**
-         * direct map of string combinations to callbacks used for trigger()
-         *
-         * @type {Object}
-         */
-        _direct_map = {},
-
-        /**
-         * keeps track of what level each sequence is at since multiple
-         * sequences can start out with the same sequence
-         *
-         * @type {Object}
-         */
-        _sequence_levels = {},
-
-        /**
-         * variable to store the setTimeout call
-         *
-         * @type {null|number}
-         */
-        _reset_timer,
-
-        /**
-         * temporary state where we will ignore the next keyup
-         *
-         * @type {boolean|string}
-         */
-        _ignore_next_keyup = false,
-
-        /**
-         * are we currently inside of a sequence?
-         * type of action ("keyup" or "keydown" or "keypress") or false
-         *
-         * @type {boolean|string}
-         */
-        _inside_sequence = false;
-
-    /**
-     * loop through the f keys, f1 to f19 and add them to the map
-     * programatically
-     */
-    for (var i = 1; i < 20; ++i) {
-        _MAP[111 + i] = 'f' + i;
-    }
-
-    /**
-     * loop through to map numbers on the numeric keypad
-     */
-    for (i = 0; i <= 9; ++i) {
-        _MAP[i + 96] = i;
-    }
-
-    /**
-     * cross browser add event method
-     *
-     * @param {Element|HTMLDocument} object
-     * @param {string} type
-     * @param {Function} callback
-     * @returns void
-     */
-    function _addEvent(object, type, callback) {
-        if (object.addEventListener) {
-            return object.addEventListener(type, callback, false);
-        }
-
-        object.attachEvent('on' + type, callback);
-    }
-
-    /**
-     * takes the event and returns the key character
-     *
-     * @param {Event} e
-     * @return {string}
-     */
-    function _characterFromEvent(e) {
-
-        // for keypress events we should return the character as is
-        if (e.type == 'keypress') {
-            return String.fromCharCode(e.which);
-        }
-
-        // for non keypress events the special maps are needed
-        if (_MAP[e.which]) {
-            return _MAP[e.which];
-        }
-
-        if (_KEYCODE_MAP[e.which]) {
-            return _KEYCODE_MAP[e.which];
-        }
-
-        // if it is not in the special map
-        return String.fromCharCode(e.which).toLowerCase();
-    }
-
-    /**
-     * should we stop this event before firing off callbacks
-     *
-     * @param {Event} e
-     * @return {boolean}
-     */
-    function _stop(e) {
-        var element = e.target || e.srcElement,
-            tag_name = element.tagName;
-
-        // if the element has the class "mousetrap" then no need to stop
-        if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
-            return false;
-        }
-
-        // stop for input, select, and textarea
-        return tag_name == 'INPUT' || tag_name == 'SELECT' || tag_name == 'TEXTAREA' || (element.contentEditable && element.contentEditable == 'true');
-    }
-
-    /**
-     * checks if two arrays are equal
-     *
-     * @param {Array} modifiers1
-     * @param {Array} modifiers2
-     * @returns {boolean}
-     */
-    function _modifiersMatch(modifiers1, modifiers2) {
-        return modifiers1.sort().join(',') === modifiers2.sort().join(',');
-    }
-
-    /**
-     * resets all sequence counters except for the ones passed in
-     *
-     * @param {Object} do_not_reset
-     * @returns void
-     */
-    function _resetSequences(do_not_reset) {
-        do_not_reset = do_not_reset || {};
-
-        var active_sequences = false,
-            key;
-
-        for (key in _sequence_levels) {
-            if (do_not_reset[key]) {
-                active_sequences = true;
-                continue;
-            }
-            _sequence_levels[key] = 0;
-        }
-
-        if (!active_sequences) {
-            _inside_sequence = false;
-        }
-    }
-
-    /**
-     * finds all callbacks that match based on the keycode, modifiers,
-     * and action
-     *
-     * @param {string} character
-     * @param {Array} modifiers
-     * @param {string} action
-     * @param {boolean=} remove - should we remove any matches
-     * @param {string=} combination
-     * @returns {Array}
-     */
-    function _getMatches(character, modifiers, action, remove, combination) {
-        var i,
-            callback,
-            matches = [];
-
-        // if there are no events related to this keycode
-        if (!_callbacks[character]) {
-            return [];
-        }
-
-        // if a modifier key is coming up on its own we should allow it
-        if (action == 'keyup' && _isModifier(character)) {
-            modifiers = [character];
-        }
-
-        // loop through all callbacks for the key that was pressed
-        // and see if any of them match
-        for (i = 0; i < _callbacks[character].length; ++i) {
-            callback = _callbacks[character][i];
-
-            // if this is a sequence but it is not at the right level
-            // then move onto the next match
-            if (callback.seq && _sequence_levels[callback.seq] != callback.level) {
-                continue;
-            }
-
-            // if the action we are looking for doesn't match the action we got
-            // then we should keep going
-            if (action != callback.action) {
-                continue;
-            }
-
-            // if this is a keypress event that means that we need to only
-            // look at the character, otherwise check the modifiers as
-            // well
-            if (action == 'keypress' || _modifiersMatch(modifiers, callback.modifiers)) {
-
-                // remove is used so if you change your mind and call bind a
-                // second time with a new function the first one is overwritten
-                if (remove && callback.combo == combination) {
-                    _callbacks[character].splice(i, 1);
-                }
-
-                matches.push(callback);
-            }
-        }
-
-        return matches;
-    }
-
-    /**
-     * takes a key event and figures out what the modifiers are
-     *
-     * @param {Event} e
-     * @returns {Array}
-     */
-    function _eventModifiers(e) {
-        var modifiers = [];
-
-        if (e.shiftKey) {
-            modifiers.push('shift');
-        }
-
-        if (e.altKey) {
-            modifiers.push('alt');
-        }
-
-        if (e.ctrlKey) {
-            modifiers.push('ctrl');
-        }
-
-        if (e.metaKey) {
-            modifiers.push('meta');
-        }
-
-        return modifiers;
-    }
-
-    /**
-     * actually calls the callback function
-     *
-     * if your callback function returns false this will use the jquery
-     * convention - prevent default and stop propogation on the event
-     *
-     * @param {Function} callback
-     * @param {Event} e
-     * @returns void
-     */
-    function _fireCallback(callback, e) {
-        if (callback(e) === false) {
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
-
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-
-            e.returnValue = false;
-            e.cancelBubble = true;
-        }
-    }
-
-    /**
-     * handles a character key event
-     *
-     * @param {string} character
-     * @param {Event} e
-     * @returns void
-     */
-    function _handleCharacter(character, e) {
-
-        // if this event should not happen stop here
-        if (_stop(e)) {
-            return;
-        }
-
-        var callbacks = _getMatches(character, _eventModifiers(e), e.type),
-            i,
-            do_not_reset = {},
-            processed_sequence_callback = false;
-
-        // loop through matching callbacks for this key event
-        for (i = 0; i < callbacks.length; ++i) {
-
-            // fire for all sequence callbacks
-            // this is because if for example you have multiple sequences
-            // bound such as "g i" and "g t" they both need to fire the
-            // callback for matching g cause otherwise you can only ever
-            // match the first one
-            if (callbacks[i].seq) {
-                processed_sequence_callback = true;
-
-                // keep a list of which sequences were matches for later
-                do_not_reset[callbacks[i].seq] = 1;
-                _fireCallback(callbacks[i].callback, e);
-                continue;
-            }
-
-            // if there were no sequence matches but we are still here
-            // that means this is a regular match so we should fire that
-            if (!processed_sequence_callback && !_inside_sequence) {
-                _fireCallback(callbacks[i].callback, e);
-            }
-        }
-
-        // if you are inside of a sequence and the key you are pressing
-        // is not a modifier key then we should reset all sequences
-        // that were not matched by this key event
-        if (e.type == _inside_sequence && !_isModifier(character)) {
-            _resetSequences(do_not_reset);
-        }
-    }
-
-    /**
-     * handles a keydown event
-     *
-     * @param {Event} e
-     * @returns void
-     */
-    function _handleKey(e) {
-
-        // normalize e.which for key events
-        // @see http://stackoverflow.com/questions/4285627/javascript-keycode-vs-charcode-utter-confusion
-        e.which = typeof e.which == "number" ? e.which : e.keyCode;
-
-        var character = _characterFromEvent(e);
-
-        // no character found then stop
-        if (!character) {
-            return;
-        }
-
-        if (e.type == 'keyup' && _ignore_next_keyup == character) {
-            _ignore_next_keyup = false;
-            return;
-        }
-
-        _handleCharacter(character, e);
-    }
-
-    /**
-     * determines if the keycode specified is a modifier key or not
-     *
-     * @param {string} key
-     * @returns {boolean}
-     */
-    function _isModifier(key) {
-        return key == 'shift' || key == 'ctrl' || key == 'alt' || key == 'meta';
-    }
-
-    /**
-     * called to set a 1 second timeout on the specified sequence
-     *
-     * this is so after each key press in the sequence you have 1 second
-     * to press the next key before you have to start over
-     *
-     * @returns void
-     */
-    function _resetSequenceTimer() {
-        clearTimeout(_reset_timer);
-        _reset_timer = setTimeout(_resetSequences, 1000);
-    }
-
-    /**
-     * reverses the map lookup so that we can look for specific keys
-     * to see what can and can't use keypress
-     *
-     * @return {Object}
-     */
-    function _getReverseMap() {
-        if (!_REVERSE_MAP) {
-            _REVERSE_MAP = {};
-            for (var key in _MAP) {
-
-                // pull out the numeric keypad from here cause keypress should
-                // be able to detect the keys from the character
-                if (key > 95 && key < 112) {
-                    continue;
-                }
-
-                if (_MAP.hasOwnProperty(key)) {
-                    _REVERSE_MAP[_MAP[key]] = key;
-                }
-            }
-        }
-        return _REVERSE_MAP;
-    }
-
-    /**
-     * picks the best action based on the key combination
-     *
-     * @param {string} key - character for key
-     * @param {Array} modifiers
-     * @param {string=} action passed in
-     */
-    function _pickBestAction(key, modifiers, action) {
-
-        // if no action was picked in we should try to pick the one
-        // that we think would work best for this key
-        if (!action) {
-            action = _getReverseMap()[key] ? 'keydown' : 'keypress';
-        }
-
-        // modifier keys don't work as expected with keypress,
-        // switch to keydown
-        if (action == 'keypress' && modifiers.length) {
-            action = 'keydown';
-        }
-
-        return action;
-    }
-
-    /**
-     * binds a key sequence to an event
-     *
-     * @param {string} combo - combo specified in bind call
-     * @param {Array} keys
-     * @param {Function} callback
-     * @param {string=} action
-     * @returns void
-     */
-    function _bindSequence(combo, keys, callback, action) {
-
-        // start off by adding a sequence level record for this combination
-        // and setting the level to 0
-        _sequence_levels[combo] = 0;
-
-        // if there is no action pick the best one for the first key
-        // in the sequence
-        if (!action) {
-            action = _pickBestAction(keys[0], []);
-        }
-
-        /**
-         * callback to increase the sequence level for this sequence and reset
-         * all other sequences that were active
-         *
-         * @param {Event} e
-         * @returns void
-         */
-        var _increaseSequence = function(e) {
-                _inside_sequence = action;
-                ++_sequence_levels[combo];
-                _resetSequenceTimer();
-            },
-
-            /**
-             * wraps the specified callback inside of another function in order
-             * to reset all sequence counters as soon as this sequence is done
-             *
-             * @param {Event} e
-             * @returns void
-             */
-            _callbackAndReset = function(e) {
-                _fireCallback(callback, e);
-
-                // we should ignore the next key up if the action is key down
-                // or keypress.  this is so if you finish a sequence and
-                // release the key the final key will not trigger a keyup
-                if (action !== 'keyup') {
-                    _ignore_next_keyup = _characterFromEvent(e);
-                }
-
-                // weird race condition if a sequence ends with the key
-                // another sequence begins with
-                setTimeout(_resetSequences, 10);
-            },
-            i;
-
-        // loop through keys one at a time and bind the appropriate callback
-        // function.  for any key leading up to the final one it should
-        // increase the sequence. after the final, it should reset all sequences
-        for (i = 0; i < keys.length; ++i) {
-            _bindSingle(keys[i], i < keys.length - 1 ? _increaseSequence : _callbackAndReset, action, combo, i);
-        }
-    }
-
-    /**
-     * binds a single keyboard combination
-     *
-     * @param {string} combination
-     * @param {Function} callback
-     * @param {string=} action
-     * @param {string=} sequence_name - name of sequence if part of sequence
-     * @param {number=} level - what part of the sequence the command is
-     * @returns void
-     */
-    function _bindSingle(combination, callback, action, sequence_name, level) {
-
-        // make sure multiple spaces in a row become a single space
-        combination = combination.replace(/\s+/g, ' ');
-
-        var sequence = combination.split(' '),
-            i,
-            key,
-            keys,
-            modifiers = [];
-
-        // if this pattern is a sequence of keys then run through this method
-        // to reprocess each pattern one key at a time
-        if (sequence.length > 1) {
-            return _bindSequence(combination, sequence, callback, action);
-        }
-
-        // take the keys from this pattern and figure out what the actual
-        // pattern is all about
-        keys = combination === '+' ? ['+'] : combination.split('+');
-
-        for (i = 0; i < keys.length; ++i) {
-            key = keys[i];
-
-            // normalize key names
-            if (_SPECIAL_ALIASES[key]) {
-                key = _SPECIAL_ALIASES[key];
-            }
-
-            // if this is not a keypress event then we should
-            // be smart about using shift keys
-            // this will only work for US keyboards however
-            if (action && action != 'keypress' && _SHIFT_MAP[key]) {
-                key = _SHIFT_MAP[key];
-                modifiers.push('shift');
-            }
-
-            // if this key is a modifier then add it to the list of modifiers
-            if (_isModifier(key)) {
-                modifiers.push(key);
-            }
-        }
-
-        // depending on what the key combination is
-        // we will try to pick the best event for it
-        action = _pickBestAction(key, modifiers, action);
-
-        // make sure to initialize array if this is the first time
-        // a callback is added for this key
-        if (!_callbacks[key]) {
-            _callbacks[key] = [];
-        }
-
-        // remove an existing match if there is one
-        _getMatches(key, modifiers, action, !sequence_name, combination);
-
-        // add this call back to the array
-        // if it is a sequence put it at the beginning
-        // if not put it at the end
-        //
-        // this is important because the way these are processed expects
-        // the sequence ones to come first
-        _callbacks[key][sequence_name ? 'unshift' : 'push']({
-            callback: callback,
-            modifiers: modifiers,
-            action: action,
-            seq: sequence_name,
-            level: level,
-            combo: combination
-        });
-    }
-
-    /**
-     * binds multiple combinations to the same callback
-     *
-     * @param {Array} combinations
-     * @param {Function} callback
-     * @param {string|undefined} action
-     * @returns void
-     */
-    function _bindMultiple(combinations, callback, action) {
-        for (var i = 0; i < combinations.length; ++i) {
-            _bindSingle(combinations[i], callback, action);
-        }
-    }
-
-    // start!
-    _addEvent(document, 'keypress', _handleKey);
-    _addEvent(document, 'keydown', _handleKey);
-    _addEvent(document, 'keyup', _handleKey);
-
-    var mousetrap = {
-
-        /**
-         * binds an event to mousetrap
-         *
-         * can be a single key, a combination of keys separated with +,
-         * a comma separated list of keys, an array of keys, or
-         * a sequence of keys separated by spaces
-         *
-         * be sure to list the modifier keys first to make sure that the
-         * correct key ends up getting bound (the last key in the pattern)
-         *
-         * @param {string|Array} keys
-         * @param {Function} callback
-         * @param {string=} action - 'keypress', 'keydown', or 'keyup'
-         * @returns void
-         */
-        bind: function(keys, callback, action) {
-            _bindMultiple(keys instanceof Array ? keys : [keys], callback, action);
-            _direct_map[keys + ':' + action] = callback;
-            return this;
-        },
-
-        /**
-         * unbinds an event to mousetrap
-         *
-         * the unbinding sets the callback function of the specified key combo
-         * to an empty function and deletes the corresponding key in the
-         * _direct_map dict.
-         *
-         * the keycombo+action has to be exactly the same as
-         * it was defined in the bind method
-         *
-         * TODO: actually remove this from the _callbacks dictionary instead
-         * of binding an empty function
-         *
-         * @param {string|Array} keys
-         * @param {string} action
-         * @returns void
-         */
-        unbind: function(keys, action) {
-            if (_direct_map[keys + ':' + action]) {
-                delete _direct_map[keys + ':' + action];
-                this.bind(keys, function() {}, action);
-            }
-            return this;
-        },
-
-        /**
-         * triggers an event that has already been bound
-         *
-         * @param {string} keys
-         * @param {string=} action
-         * @returns void
-         */
-        trigger: function(keys, action) {
-            _direct_map[keys + ':' + action]();
-            return this;
-        },
-
-        /**
-         * resets the library back to its initial state.  this is useful
-         * if you want to clear out the current keyboard shortcuts and bind
-         * new ones - for example if you switch to another page
-         *
-         * @returns void
-         */
-        reset: function() {
-            _callbacks = {};
-            _direct_map = {};
-            return this;
-        }
-    };
-
-  module.exports = mousetrap;
-
-
+  /**
+   * Hammer, use this to create instances
+   * ````
+   * var hammertime = new Hammer(myElement);
+   * ````
+   *
+   * @method Hammer
+   * @param {HTMLElement} element
+   * @param {Object} [options={}]
+   * @return {Hammer.Instance}
+   */
+  var Hammer = function Hammer(element, options) {
+      return new Hammer.Instance(element, options || {});
+  };
+
+  /**
+   * version, as defined in package.json
+   * the value will be set at each build
+   * @property VERSION
+   * @final
+   * @type {String}
+   */
+  Hammer.VERSION = '1.1.3';
+
+  /**
+   * default settings.
+   * more settings are defined per gesture at `/gestures`. Each gesture can be disabled/enabled
+   * by setting it's name (like `swipe`) to false.
+   * You can set the defaults for all instances by changing this object before creating an instance.
+   * @example
+   * ````
+   *  Hammer.defaults.drag = false;
+   *  Hammer.defaults.behavior.touchAction = 'pan-y';
+   *  delete Hammer.defaults.behavior.userSelect;
+   * ````
+   * @property defaults
+   * @type {Object}
+   */
+  Hammer.defaults = {
+      /**
+       * this setting object adds styles and attributes to the element to prevent the browser from doing
+       * its native behavior. The css properties are auto prefixed for the browsers when needed.
+       * @property defaults.behavior
+       * @type {Object}
+       */
+      behavior: {
+          /**
+           * Disables text selection to improve the dragging gesture. When the value is `none` it also sets
+           * `onselectstart=false` for IE on the element. Mainly for desktop browsers.
+           * @property defaults.behavior.userSelect
+           * @type {String}
+           * @default 'none'
+           */
+          userSelect: 'none',
+
+          /**
+           * Specifies whether and how a given region can be manipulated by the user (for instance, by panning or zooming).
+           * Used by Chrome 35> and IE10>. By default this makes the element blocking any touch event.
+           * @property defaults.behavior.touchAction
+           * @type {String}
+           * @default: 'pan-y'
+           */
+          touchAction: 'pan-y',
+
+          /**
+           * Disables the default callout shown when you touch and hold a touch target.
+           * On iOS, when you touch and hold a touch target such as a link, Safari displays
+           * a callout containing information about the link. This property allows you to disable that callout.
+           * @property defaults.behavior.touchCallout
+           * @type {String}
+           * @default 'none'
+           */
+          touchCallout: 'none',
+
+          /**
+           * Specifies whether zooming is enabled. Used by IE10>
+           * @property defaults.behavior.contentZooming
+           * @type {String}
+           * @default 'none'
+           */
+          contentZooming: 'none',
+
+          /**
+           * Specifies that an entire element should be draggable instead of its contents.
+           * Mainly for desktop browsers.
+           * @property defaults.behavior.userDrag
+           * @type {String}
+           * @default 'none'
+           */
+          userDrag: 'none',
+
+          /**
+           * Overrides the highlight color shown when the user taps a link or a JavaScript
+           * clickable element in Safari on iPhone. This property obeys the alpha value, if specified.
+           *
+           * If you don't specify an alpha value, Safari on iPhone applies a default alpha value
+           * to the color. To disable tap highlighting, set the alpha value to 0 (invisible).
+           * If you set the alpha value to 1.0 (opaque), the element is not visible when tapped.
+           * @property defaults.behavior.tapHighlightColor
+           * @type {String}
+           * @default 'rgba(0,0,0,0)'
+           */
+          tapHighlightColor: 'rgba(0,0,0,0)'
+      }
+  };
+
+  /**
+   * hammer document where the base events are added at
+   * @property DOCUMENT
+   * @type {HTMLElement}
+   * @default window.document
+   */
+  Hammer.DOCUMENT = document;
+
+  /**
+   * detect support for pointer events
+   * @property HAS_POINTEREVENTS
+   * @type {Boolean}
+   */
+  Hammer.HAS_POINTEREVENTS = navigator.pointerEnabled || navigator.msPointerEnabled;
+
+  /**
+   * detect support for touch events
+   * @property HAS_TOUCHEVENTS
+   * @type {Boolean}
+   */
+  Hammer.HAS_TOUCHEVENTS = ('ontouchstart' in window);
+
+  /**
+   * detect mobile browsers
+   * @property IS_MOBILE
+   * @type {Boolean}
+   */
+  Hammer.IS_MOBILE = /mobile|tablet|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
+
+  /**
+   * detect if we want to support mouseevents at all
+   * @property NO_MOUSEEVENTS
+   * @type {Boolean}
+   */
+  Hammer.NO_MOUSEEVENTS = (Hammer.HAS_TOUCHEVENTS && Hammer.IS_MOBILE) || Hammer.HAS_POINTEREVENTS;
+
+  /**
+   * interval in which Hammer recalculates current velocity/direction/angle in ms
+   * @property CALCULATE_INTERVAL
+   * @type {Number}
+   * @default 25
+   */
+  Hammer.CALCULATE_INTERVAL = 25;
+
+  /**
+   * eventtypes per touchevent (start, move, end) are filled by `Event.determineEventTypes` on `setup`
+   * the object contains the DOM event names per type (`EVENT_START`, `EVENT_MOVE`, `EVENT_END`)
+   * @property EVENT_TYPES
+   * @private
+   * @writeOnce
+   * @type {Object}
+   */
+  var EVENT_TYPES = {};
+
+  /**
+   * direction strings, for safe comparisons
+   * @property DIRECTION_DOWN|LEFT|UP|RIGHT
+   * @final
+   * @type {String}
+   * @default 'down' 'left' 'up' 'right'
+   */
+  var DIRECTION_DOWN = Hammer.DIRECTION_DOWN = 'down';
+  var DIRECTION_LEFT = Hammer.DIRECTION_LEFT = 'left';
+  var DIRECTION_UP = Hammer.DIRECTION_UP = 'up';
+  var DIRECTION_RIGHT = Hammer.DIRECTION_RIGHT = 'right';
+
+  /**
+   * pointertype strings, for safe comparisons
+   * @property POINTER_MOUSE|TOUCH|PEN
+   * @final
+   * @type {String}
+   * @default 'mouse' 'touch' 'pen'
+   */
+  var POINTER_MOUSE = Hammer.POINTER_MOUSE = 'mouse';
+  var POINTER_TOUCH = Hammer.POINTER_TOUCH = 'touch';
+  var POINTER_PEN = Hammer.POINTER_PEN = 'pen';
+
+  /**
+   * eventtypes
+   * @property EVENT_START|MOVE|END|RELEASE|TOUCH
+   * @final
+   * @type {String}
+   * @default 'start' 'change' 'move' 'end' 'release' 'touch'
+   */
+  var EVENT_START = Hammer.EVENT_START = 'start';
+  var EVENT_MOVE = Hammer.EVENT_MOVE = 'move';
+  var EVENT_END = Hammer.EVENT_END = 'end';
+  var EVENT_RELEASE = Hammer.EVENT_RELEASE = 'release';
+  var EVENT_TOUCH = Hammer.EVENT_TOUCH = 'touch';
+
+  /**
+   * if the window events are set...
+   * @property READY
+   * @writeOnce
+   * @type {Boolean}
+   * @default false
+   */
+  Hammer.READY = false;
+
+  /**
+   * plugins namespace
+   * @property plugins
+   * @type {Object}
+   */
+  Hammer.plugins = Hammer.plugins || {};
+
+  /**
+   * gestures namespace
+   * see `/gestures` for the definitions
+   * @property gestures
+   * @type {Object}
+   */
+  Hammer.gestures = Hammer.gestures || {};
+
+  /**
+   * setup events to detect gestures on the document
+   * this function is called when creating an new instance
+   * @private
+   */
+  function setup() {
+      if(Hammer.READY) {
+          return;
+      }
+
+      // find what eventtypes we add listeners to
+      Event.determineEventTypes();
+
+      // Register all gestures inside Hammer.gestures
+      Utils.each(Hammer.gestures, function(gesture) {
+          Detection.register(gesture);
+      });
+
+      // Add touch events on the document
+      Event.onTouch(Hammer.DOCUMENT, EVENT_MOVE, Detection.detect);
+      Event.onTouch(Hammer.DOCUMENT, EVENT_END, Detection.detect);
+
+      // Hammer is ready...!
+      Hammer.READY = true;
+  }
+
+  /**
+   * @module hammer
+   *
+   * @class Utils
+   * @static
+   */
+  var Utils = Hammer.utils = {
+      /**
+       * extend method, could also be used for cloning when `dest` is an empty object.
+       * changes the dest object
+       * @method extend
+       * @param {Object} dest
+       * @param {Object} src
+       * @param {Boolean} [merge=false]  do a merge
+       * @return {Object} dest
+       */
+      extend: function extend(dest, src, merge) {
+          for(var key in src) {
+              if(!src.hasOwnProperty(key) || (dest[key] !== undefined && merge)) {
+                  continue;
+              }
+              dest[key] = src[key];
+          }
+          return dest;
+      },
+
+      /**
+       * simple addEventListener wrapper
+       * @method on
+       * @param {HTMLElement} element
+       * @param {String} type
+       * @param {Function} handler
+       */
+      on: function on(element, type, handler) {
+          element.addEventListener(type, handler, false);
+      },
+
+      /**
+       * simple removeEventListener wrapper
+       * @method off
+       * @param {HTMLElement} element
+       * @param {String} type
+       * @param {Function} handler
+       */
+      off: function off(element, type, handler) {
+          element.removeEventListener(type, handler, false);
+      },
+
+      /**
+       * forEach over arrays and objects
+       * @method each
+       * @param {Object|Array} obj
+       * @param {Function} iterator
+       * @param {any} iterator.item
+       * @param {Number} iterator.index
+       * @param {Object|Array} iterator.obj the source object
+       * @param {Object} context value to use as `this` in the iterator
+       */
+      each: function each(obj, iterator, context) {
+          var i, len;
+
+          // native forEach on arrays
+          if('forEach' in obj) {
+              obj.forEach(iterator, context);
+          // arrays
+          } else if(obj.length !== undefined) {
+              for(i = 0, len = obj.length; i < len; i++) {
+                  if(iterator.call(context, obj[i], i, obj) === false) {
+                      return;
+                  }
+              }
+          // objects
+          } else {
+              for(i in obj) {
+                  if(obj.hasOwnProperty(i) &&
+                      iterator.call(context, obj[i], i, obj) === false) {
+                      return;
+                  }
+              }
+          }
+      },
+
+      /**
+       * find if a string contains the string using indexOf
+       * @method inStr
+       * @param {String} src
+       * @param {String} find
+       * @return {Boolean} found
+       */
+      inStr: function inStr(src, find) {
+          return src.indexOf(find) > -1;
+      },
+
+      /**
+       * find if a array contains the object using indexOf or a simple polyfill
+       * @method inArray
+       * @param {String} src
+       * @param {String} find
+       * @return {Boolean|Number} false when not found, or the index
+       */
+      inArray: function inArray(src, find) {
+          if(src.indexOf) {
+              var index = src.indexOf(find);
+              return (index === -1) ? false : index;
+          } else {
+              for(var i = 0, len = src.length; i < len; i++) {
+                  if(src[i] === find) {
+                      return i;
+                  }
+              }
+              return false;
+          }
+      },
+
+      /**
+       * convert an array-like object (`arguments`, `touchlist`) to an array
+       * @method toArray
+       * @param {Object} obj
+       * @return {Array}
+       */
+      toArray: function toArray(obj) {
+          return Array.prototype.slice.call(obj, 0);
+      },
+
+      /**
+       * find if a node is in the given parent
+       * @method hasParent
+       * @param {HTMLElement} node
+       * @param {HTMLElement} parent
+       * @return {Boolean} found
+       */
+      hasParent: function hasParent(node, parent) {
+          while(node) {
+              if(node == parent) {
+                  return true;
+              }
+              node = node.parentNode;
+          }
+          return false;
+      },
+
+      /**
+       * get the center of all the touches
+       * @method getCenter
+       * @param {Array} touches
+       * @return {Object} center contains `pageX`, `pageY`, `clientX` and `clientY` properties
+       */
+      getCenter: function getCenter(touches) {
+          var pageX = [],
+              pageY = [],
+              clientX = [],
+              clientY = [],
+              min = Math.min,
+              max = Math.max;
+
+          // no need to loop when only one touch
+          if(touches.length === 1) {
+              return {
+                  pageX: touches[0].pageX,
+                  pageY: touches[0].pageY,
+                  clientX: touches[0].clientX,
+                  clientY: touches[0].clientY
+              };
+          }
+
+          Utils.each(touches, function(touch) {
+              pageX.push(touch.pageX);
+              pageY.push(touch.pageY);
+              clientX.push(touch.clientX);
+              clientY.push(touch.clientY);
+          });
+
+          return {
+              pageX: (min.apply(Math, pageX) + max.apply(Math, pageX)) / 2,
+              pageY: (min.apply(Math, pageY) + max.apply(Math, pageY)) / 2,
+              clientX: (min.apply(Math, clientX) + max.apply(Math, clientX)) / 2,
+              clientY: (min.apply(Math, clientY) + max.apply(Math, clientY)) / 2
+          };
+      },
+
+      /**
+       * calculate the velocity between two points. unit is in px per ms.
+       * @method getVelocity
+       * @param {Number} deltaTime
+       * @param {Number} deltaX
+       * @param {Number} deltaY
+       * @return {Object} velocity `x` and `y`
+       */
+      getVelocity: function getVelocity(deltaTime, deltaX, deltaY) {
+          return {
+              x: Math.abs(deltaX / deltaTime) || 0,
+              y: Math.abs(deltaY / deltaTime) || 0
+          };
+      },
+
+      /**
+       * calculate the angle between two coordinates
+       * @method getAngle
+       * @param {Touch} touch1
+       * @param {Touch} touch2
+       * @return {Number} angle
+       */
+      getAngle: function getAngle(touch1, touch2) {
+          var x = touch2.clientX - touch1.clientX,
+              y = touch2.clientY - touch1.clientY;
+
+          return Math.atan2(y, x) * 180 / Math.PI;
+      },
+
+      /**
+       * do a small comparision to get the direction between two touches.
+       * @method getDirection
+       * @param {Touch} touch1
+       * @param {Touch} touch2
+       * @return {String} direction matches `DIRECTION_LEFT|RIGHT|UP|DOWN`
+       */
+      getDirection: function getDirection(touch1, touch2) {
+          var x = Math.abs(touch1.clientX - touch2.clientX),
+              y = Math.abs(touch1.clientY - touch2.clientY);
+
+          if(x >= y) {
+              return touch1.clientX - touch2.clientX > 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+          }
+          return touch1.clientY - touch2.clientY > 0 ? DIRECTION_UP : DIRECTION_DOWN;
+      },
+
+      /**
+       * calculate the distance between two touches
+       * @method getDistance
+       * @param {Touch}touch1
+       * @param {Touch} touch2
+       * @return {Number} distance
+       */
+      getDistance: function getDistance(touch1, touch2) {
+          var x = touch2.clientX - touch1.clientX,
+              y = touch2.clientY - touch1.clientY;
+
+          return Math.sqrt((x * x) + (y * y));
+      },
+
+      /**
+       * calculate the scale factor between two touchLists
+       * no scale is 1, and goes down to 0 when pinched together, and bigger when pinched out
+       * @method getScale
+       * @param {Array} start array of touches
+       * @param {Array} end array of touches
+       * @return {Number} scale
+       */
+      getScale: function getScale(start, end) {
+          // need two fingers...
+          if(start.length >= 2 && end.length >= 2) {
+              return this.getDistance(end[0], end[1]) / this.getDistance(start[0], start[1]);
+          }
+          return 1;
+      },
+
+      /**
+       * calculate the rotation degrees between two touchLists
+       * @method getRotation
+       * @param {Array} start array of touches
+       * @param {Array} end array of touches
+       * @return {Number} rotation
+       */
+      getRotation: function getRotation(start, end) {
+          // need two fingers
+          if(start.length >= 2 && end.length >= 2) {
+              return this.getAngle(end[1], end[0]) - this.getAngle(start[1], start[0]);
+          }
+          return 0;
+      },
+
+      /**
+       * find out if the direction is vertical   *
+       * @method isVertical
+       * @param {String} direction matches `DIRECTION_UP|DOWN`
+       * @return {Boolean} is_vertical
+       */
+      isVertical: function isVertical(direction) {
+          return direction == DIRECTION_UP || direction == DIRECTION_DOWN;
+      },
+
+      /**
+       * set css properties with their prefixes
+       * @param {HTMLElement} element
+       * @param {String} prop
+       * @param {String} value
+       * @param {Boolean} [toggle=true]
+       * @return {Boolean}
+       */
+      setPrefixedCss: function setPrefixedCss(element, prop, value, toggle) {
+          var prefixes = ['', 'Webkit', 'Moz', 'O', 'ms'];
+          prop = Utils.toCamelCase(prop);
+
+          for(var i = 0; i < prefixes.length; i++) {
+              var p = prop;
+              // prefixes
+              if(prefixes[i]) {
+                  p = prefixes[i] + p.slice(0, 1).toUpperCase() + p.slice(1);
+              }
+
+              // test the style
+              if(p in element.style) {
+                  element.style[p] = (toggle == null || toggle) && value || '';
+                  break;
+              }
+          }
+      },
+
+      /**
+       * toggle browser default behavior by setting css properties.
+       * `userSelect='none'` also sets `element.onselectstart` to false
+       * `userDrag='none'` also sets `element.ondragstart` to false
+       *
+       * @method toggleBehavior
+       * @param {HtmlElement} element
+       * @param {Object} props
+       * @param {Boolean} [toggle=true]
+       */
+      toggleBehavior: function toggleBehavior(element, props, toggle) {
+          if(!props || !element || !element.style) {
+              return;
+          }
+
+          // set the css properties
+          Utils.each(props, function(value, prop) {
+              Utils.setPrefixedCss(element, prop, value, toggle);
+          });
+
+          var falseFn = toggle && function() {
+              return false;
+          };
+
+          // also the disable onselectstart
+          if(props.userSelect == 'none') {
+              element.onselectstart = falseFn;
+          }
+          // and disable ondragstart
+          if(props.userDrag == 'none') {
+              element.ondragstart = falseFn;
+          }
+      },
+
+      /**
+       * convert a string with underscores to camelCase
+       * so prevent_default becomes preventDefault
+       * @param {String} str
+       * @return {String} camelCaseStr
+       */
+      toCamelCase: function toCamelCase(str) {
+          return str.replace(/[_-]([a-z])/g, function(s) {
+              return s[1].toUpperCase();
+          });
+      }
+  };
+
+
+  /**
+   * @module hammer
+   */
+  /**
+   * @class Event
+   * @static
+   */
+  var Event = Hammer.event = {
+      /**
+       * when touch events have been fired, this is true
+       * this is used to stop mouse events
+       * @property prevent_mouseevents
+       * @private
+       * @type {Boolean}
+       */
+      preventMouseEvents: false,
+
+      /**
+       * if EVENT_START has been fired
+       * @property started
+       * @private
+       * @type {Boolean}
+       */
+      started: false,
+
+      /**
+       * when the mouse is hold down, this is true
+       * @property should_detect
+       * @private
+       * @type {Boolean}
+       */
+      shouldDetect: false,
+
+      /**
+       * simple event binder with a hook and support for multiple types
+       * @method on
+       * @param {HTMLElement} element
+       * @param {String} type
+       * @param {Function} handler
+       * @param {Function} [hook]
+       * @param {Object} hook.type
+       */
+      on: function on(element, type, handler, hook) {
+          var types = type.split(' ');
+          Utils.each(types, function(type) {
+              Utils.on(element, type, handler);
+              hook && hook(type);
+          });
+      },
+
+      /**
+       * simple event unbinder with a hook and support for multiple types
+       * @method off
+       * @param {HTMLElement} element
+       * @param {String} type
+       * @param {Function} handler
+       * @param {Function} [hook]
+       * @param {Object} hook.type
+       */
+      off: function off(element, type, handler, hook) {
+          var types = type.split(' ');
+          Utils.each(types, function(type) {
+              Utils.off(element, type, handler);
+              hook && hook(type);
+          });
+      },
+
+      /**
+       * the core touch event handler.
+       * this finds out if we should to detect gestures
+       * @method onTouch
+       * @param {HTMLElement} element
+       * @param {String} eventType matches `EVENT_START|MOVE|END`
+       * @param {Function} handler
+       * @return onTouchHandler {Function} the core event handler
+       */
+      onTouch: function onTouch(element, eventType, handler) {
+          var self = this;
+
+          var onTouchHandler = function onTouchHandler(ev) {
+              var srcType = ev.type.toLowerCase(),
+                  isPointer = Hammer.HAS_POINTEREVENTS,
+                  isMouse = Utils.inStr(srcType, 'mouse'),
+                  triggerType;
+
+              // if we are in a mouseevent, but there has been a touchevent triggered in this session
+              // we want to do nothing. simply break out of the event.
+              if(isMouse && self.preventMouseEvents) {
+                  return;
+
+              // mousebutton must be down
+              } else if(isMouse && eventType == EVENT_START && ev.button === 0) {
+                  self.preventMouseEvents = false;
+                  self.shouldDetect = true;
+              } else if(isPointer && eventType == EVENT_START) {
+                  self.shouldDetect = (ev.buttons === 1 || PointerEvent.matchType(POINTER_TOUCH, ev));
+              // just a valid start event, but no mouse
+              } else if(!isMouse && eventType == EVENT_START) {
+                  self.preventMouseEvents = true;
+                  self.shouldDetect = true;
+              }
+
+              // update the pointer event before entering the detection
+              if(isPointer && eventType != EVENT_END) {
+                  PointerEvent.updatePointer(eventType, ev);
+              }
+
+              // we are in a touch/down state, so allowed detection of gestures
+              if(self.shouldDetect) {
+                  triggerType = self.doDetect.call(self, ev, eventType, element, handler);
+              }
+
+              // ...and we are done with the detection
+              // so reset everything to start each detection totally fresh
+              if(triggerType == EVENT_END) {
+                  self.preventMouseEvents = false;
+                  self.shouldDetect = false;
+                  PointerEvent.reset();
+              // update the pointerevent object after the detection
+              }
+
+              if(isPointer && eventType == EVENT_END) {
+                  PointerEvent.updatePointer(eventType, ev);
+              }
+          };
+
+          this.on(element, EVENT_TYPES[eventType], onTouchHandler);
+          return onTouchHandler;
+      },
+
+      /**
+       * the core detection method
+       * this finds out what hammer-touch-events to trigger
+       * @method doDetect
+       * @param {Object} ev
+       * @param {String} eventType matches `EVENT_START|MOVE|END`
+       * @param {HTMLElement} element
+       * @param {Function} handler
+       * @return {String} triggerType matches `EVENT_START|MOVE|END`
+       */
+      doDetect: function doDetect(ev, eventType, element, handler) {
+          var touchList = this.getTouchList(ev, eventType);
+          var touchListLength = touchList.length;
+          var triggerType = eventType;
+          var triggerChange = touchList.trigger; // used by fakeMultitouch plugin
+          var changedLength = touchListLength;
+
+          // at each touchstart-like event we want also want to trigger a TOUCH event...
+          if(eventType == EVENT_START) {
+              triggerChange = EVENT_TOUCH;
+          // ...the same for a touchend-like event
+          } else if(eventType == EVENT_END) {
+              triggerChange = EVENT_RELEASE;
+
+              // keep track of how many touches have been removed
+              changedLength = touchList.length - ((ev.changedTouches) ? ev.changedTouches.length : 1);
+          }
+
+          // after there are still touches on the screen,
+          // we just want to trigger a MOVE event. so change the START or END to a MOVE
+          // but only after detection has been started, the first time we actualy want a START
+          if(changedLength > 0 && this.started) {
+              triggerType = EVENT_MOVE;
+          }
+
+          // detection has been started, we keep track of this, see above
+          this.started = true;
+
+          // generate some event data, some basic information
+          var evData = this.collectEventData(element, triggerType, touchList, ev);
+
+          // trigger the triggerType event before the change (TOUCH, RELEASE) events
+          // but the END event should be at last
+          if(eventType != EVENT_END) {
+              handler.call(Detection, evData);
+          }
+
+          // trigger a change (TOUCH, RELEASE) event, this means the length of the touches changed
+          if(triggerChange) {
+              evData.changedLength = changedLength;
+              evData.eventType = triggerChange;
+
+              handler.call(Detection, evData);
+
+              evData.eventType = triggerType;
+              delete evData.changedLength;
+          }
+
+          // trigger the END event
+          if(triggerType == EVENT_END) {
+              handler.call(Detection, evData);
+
+              // ...and we are done with the detection
+              // so reset everything to start each detection totally fresh
+              this.started = false;
+          }
+
+          return triggerType;
+      },
+
+      /**
+       * we have different events for each device/browser
+       * determine what we need and set them in the EVENT_TYPES constant
+       * the `onTouch` method is bind to these properties.
+       * @method determineEventTypes
+       * @return {Object} events
+       */
+      determineEventTypes: function determineEventTypes() {
+          var types;
+          if(Hammer.HAS_POINTEREVENTS) {
+              if(window.PointerEvent) {
+                  types = [
+                      'pointerdown',
+                      'pointermove',
+                      'pointerup pointercancel lostpointercapture'
+                  ];
+              } else {
+                  types = [
+                      'MSPointerDown',
+                      'MSPointerMove',
+                      'MSPointerUp MSPointerCancel MSLostPointerCapture'
+                  ];
+              }
+          } else if(Hammer.NO_MOUSEEVENTS) {
+              types = [
+                  'touchstart',
+                  'touchmove',
+                  'touchend touchcancel'
+              ];
+          } else {
+              types = [
+                  'touchstart mousedown',
+                  'touchmove mousemove',
+                  'touchend touchcancel mouseup'
+              ];
+          }
+
+          EVENT_TYPES[EVENT_START] = types[0];
+          EVENT_TYPES[EVENT_MOVE] = types[1];
+          EVENT_TYPES[EVENT_END] = types[2];
+          return EVENT_TYPES;
+      },
+
+      /**
+       * create touchList depending on the event
+       * @method getTouchList
+       * @param {Object} ev
+       * @param {String} eventType
+       * @return {Array} touches
+       */
+      getTouchList: function getTouchList(ev, eventType) {
+          // get the fake pointerEvent touchlist
+          if(Hammer.HAS_POINTEREVENTS) {
+              return PointerEvent.getTouchList();
+          }
+
+          // get the touchlist
+          if(ev.touches) {
+              if(eventType == EVENT_MOVE) {
+                  return ev.touches;
+              }
+
+              var identifiers = [];
+              var concat = [].concat(Utils.toArray(ev.touches), Utils.toArray(ev.changedTouches));
+              var touchList = [];
+
+              Utils.each(concat, function(touch) {
+                  if(Utils.inArray(identifiers, touch.identifier) === false) {
+                      touchList.push(touch);
+                  }
+                  identifiers.push(touch.identifier);
+              });
+
+              return touchList;
+          }
+
+          // make fake touchList from mouse position
+          ev.identifier = 1;
+          return [ev];
+      },
+
+      /**
+       * collect basic event data
+       * @method collectEventData
+       * @param {HTMLElement} element
+       * @param {String} eventType matches `EVENT_START|MOVE|END`
+       * @param {Array} touches
+       * @param {Object} ev
+       * @return {Object} ev
+       */
+      collectEventData: function collectEventData(element, eventType, touches, ev) {
+          // find out pointerType
+          var pointerType = POINTER_TOUCH;
+          if(Utils.inStr(ev.type, 'mouse') || PointerEvent.matchType(POINTER_MOUSE, ev)) {
+              pointerType = POINTER_MOUSE;
+          } else if(PointerEvent.matchType(POINTER_PEN, ev)) {
+              pointerType = POINTER_PEN;
+          }
+
+          return {
+              center: Utils.getCenter(touches),
+              timeStamp: Date.now(),
+              target: ev.target,
+              touches: touches,
+              eventType: eventType,
+              pointerType: pointerType,
+              srcEvent: ev,
+
+              /**
+               * prevent the browser default actions
+               * mostly used to disable scrolling of the browser
+               */
+              preventDefault: function() {
+                  var srcEvent = this.srcEvent;
+                  srcEvent.preventManipulation && srcEvent.preventManipulation();
+                  srcEvent.preventDefault && srcEvent.preventDefault();
+              },
+
+              /**
+               * stop bubbling the event up to its parents
+               */
+              stopPropagation: function() {
+                  this.srcEvent.stopPropagation();
+              },
+
+              /**
+               * immediately stop gesture detection
+               * might be useful after a swipe was detected
+               * @return {*}
+               */
+              stopDetect: function() {
+                  return Detection.stopDetect();
+              }
+          };
+      }
+  };
+
+
+  /**
+   * @module hammer
+   *
+   * @class PointerEvent
+   * @static
+   */
+  var PointerEvent = Hammer.PointerEvent = {
+      /**
+       * holds all pointers, by `identifier`
+       * @property pointers
+       * @type {Object}
+       */
+      pointers: {},
+
+      /**
+       * get the pointers as an array
+       * @method getTouchList
+       * @return {Array} touchlist
+       */
+      getTouchList: function getTouchList() {
+          var touchlist = [];
+          // we can use forEach since pointerEvents only is in IE10
+          Utils.each(this.pointers, function(pointer) {
+              touchlist.push(pointer);
+          });
+          return touchlist;
+      },
+
+      /**
+       * update the position of a pointer
+       * @method updatePointer
+       * @param {String} eventType matches `EVENT_START|MOVE|END`
+       * @param {Object} pointerEvent
+       */
+      updatePointer: function updatePointer(eventType, pointerEvent) {
+          if(eventType == EVENT_END || (eventType != EVENT_END && pointerEvent.buttons !== 1)) {
+              delete this.pointers[pointerEvent.pointerId];
+          } else {
+              pointerEvent.identifier = pointerEvent.pointerId;
+              this.pointers[pointerEvent.pointerId] = pointerEvent;
+          }
+      },
+
+      /**
+       * check if ev matches pointertype
+       * @method matchType
+       * @param {String} pointerType matches `POINTER_MOUSE|TOUCH|PEN`
+       * @param {PointerEvent} ev
+       */
+      matchType: function matchType(pointerType, ev) {
+          if(!ev.pointerType) {
+              return false;
+          }
+
+          var pt = ev.pointerType,
+              types = {};
+
+          types[POINTER_MOUSE] = (pt === (ev.MSPOINTER_TYPE_MOUSE || POINTER_MOUSE));
+          types[POINTER_TOUCH] = (pt === (ev.MSPOINTER_TYPE_TOUCH || POINTER_TOUCH));
+          types[POINTER_PEN] = (pt === (ev.MSPOINTER_TYPE_PEN || POINTER_PEN));
+          return types[pointerType];
+      },
+
+      /**
+       * reset the stored pointers
+       * @method reset
+       */
+      reset: function resetList() {
+          this.pointers = {};
+      }
+  };
+
+
+  /**
+   * @module hammer
+   *
+   * @class Detection
+   * @static
+   */
+  var Detection = Hammer.detection = {
+      // contains all registred Hammer.gestures in the correct order
+      gestures: [],
+
+      // data of the current Hammer.gesture detection session
+      current: null,
+
+      // the previous Hammer.gesture session data
+      // is a full clone of the previous gesture.current object
+      previous: null,
+
+      // when this becomes true, no gestures are fired
+      stopped: false,
+
+      /**
+       * start Hammer.gesture detection
+       * @method startDetect
+       * @param {Hammer.Instance} inst
+       * @param {Object} eventData
+       */
+      startDetect: function startDetect(inst, eventData) {
+          // already busy with a Hammer.gesture detection on an element
+          if(this.current) {
+              return;
+          }
+
+          this.stopped = false;
+
+          // holds current session
+          this.current = {
+              inst: inst, // reference to HammerInstance we're working for
+              startEvent: Utils.extend({}, eventData), // start eventData for distances, timing etc
+              lastEvent: false, // last eventData
+              lastCalcEvent: false, // last eventData for calculations.
+              futureCalcEvent: false, // last eventData for calculations.
+              lastCalcData: {}, // last lastCalcData
+              name: '' // current gesture we're in/detected, can be 'tap', 'hold' etc
+          };
+
+          this.detect(eventData);
+      },
+
+      /**
+       * Hammer.gesture detection
+       * @method detect
+       * @param {Object} eventData
+       * @return {any}
+       */
+      detect: function detect(eventData) {
+          if(!this.current || this.stopped) {
+              return;
+          }
+
+          // extend event data with calculations about scale, distance etc
+          eventData = this.extendEventData(eventData);
+
+          // hammer instance and instance options
+          var inst = this.current.inst,
+              instOptions = inst.options;
+
+          // call Hammer.gesture handlers
+          Utils.each(this.gestures, function triggerGesture(gesture) {
+              // only when the instance options have enabled this gesture
+              if(!this.stopped && inst.enabled && instOptions[gesture.name]) {
+                  gesture.handler.call(gesture, eventData, inst);
+              }
+          }, this);
+
+          // store as previous event event
+          if(this.current) {
+              this.current.lastEvent = eventData;
+          }
+
+          if(eventData.eventType == EVENT_END) {
+              this.stopDetect();
+          }
+
+          return eventData;
+      },
+
+      /**
+       * clear the Hammer.gesture vars
+       * this is called on endDetect, but can also be used when a final Hammer.gesture has been detected
+       * to stop other Hammer.gestures from being fired
+       * @method stopDetect
+       */
+      stopDetect: function stopDetect() {
+          // clone current data to the store as the previous gesture
+          // used for the double tap gesture, since this is an other gesture detect session
+          this.previous = Utils.extend({}, this.current);
+
+          // reset the current
+          this.current = null;
+          this.stopped = true;
+      },
+
+      /**
+       * calculate velocity, angle and direction
+       * @method getVelocityData
+       * @param {Object} ev
+       * @param {Object} center
+       * @param {Number} deltaTime
+       * @param {Number} deltaX
+       * @param {Number} deltaY
+       */
+      getCalculatedData: function getCalculatedData(ev, center, deltaTime, deltaX, deltaY) {
+          var cur = this.current,
+              recalc = false,
+              calcEv = cur.lastCalcEvent,
+              calcData = cur.lastCalcData;
+
+          if(calcEv && ev.timeStamp - calcEv.timeStamp > Hammer.CALCULATE_INTERVAL) {
+              center = calcEv.center;
+              deltaTime = ev.timeStamp - calcEv.timeStamp;
+              deltaX = ev.center.clientX - calcEv.center.clientX;
+              deltaY = ev.center.clientY - calcEv.center.clientY;
+              recalc = true;
+          }
+
+          if(ev.eventType == EVENT_TOUCH || ev.eventType == EVENT_RELEASE) {
+              cur.futureCalcEvent = ev;
+          }
+
+          if(!cur.lastCalcEvent || recalc) {
+              calcData.velocity = Utils.getVelocity(deltaTime, deltaX, deltaY);
+              calcData.angle = Utils.getAngle(center, ev.center);
+              calcData.direction = Utils.getDirection(center, ev.center);
+
+              cur.lastCalcEvent = cur.futureCalcEvent || ev;
+              cur.futureCalcEvent = ev;
+          }
+
+          ev.velocityX = calcData.velocity.x;
+          ev.velocityY = calcData.velocity.y;
+          ev.interimAngle = calcData.angle;
+          ev.interimDirection = calcData.direction;
+      },
+
+      /**
+       * extend eventData for Hammer.gestures
+       * @method extendEventData
+       * @param {Object} ev
+       * @return {Object} ev
+       */
+      extendEventData: function extendEventData(ev) {
+          var cur = this.current,
+              startEv = cur.startEvent,
+              lastEv = cur.lastEvent || startEv;
+
+          // update the start touchlist to calculate the scale/rotation
+          if(ev.eventType == EVENT_TOUCH || ev.eventType == EVENT_RELEASE) {
+              startEv.touches = [];
+              Utils.each(ev.touches, function(touch) {
+                  startEv.touches.push({
+                      clientX: touch.clientX,
+                      clientY: touch.clientY
+                  });
+              });
+          }
+
+          var deltaTime = ev.timeStamp - startEv.timeStamp,
+              deltaX = ev.center.clientX - startEv.center.clientX,
+              deltaY = ev.center.clientY - startEv.center.clientY;
+
+          this.getCalculatedData(ev, lastEv.center, deltaTime, deltaX, deltaY);
+
+          Utils.extend(ev, {
+              startEvent: startEv,
+
+              deltaTime: deltaTime,
+              deltaX: deltaX,
+              deltaY: deltaY,
+
+              distance: Utils.getDistance(startEv.center, ev.center),
+              angle: Utils.getAngle(startEv.center, ev.center),
+              direction: Utils.getDirection(startEv.center, ev.center),
+              scale: Utils.getScale(startEv.touches, ev.touches),
+              rotation: Utils.getRotation(startEv.touches, ev.touches)
+          });
+
+          return ev;
+      },
+
+      /**
+       * register new gesture
+       * @method register
+       * @param {Object} gesture object, see `gestures/` for documentation
+       * @return {Array} gestures
+       */
+      register: function register(gesture) {
+          // add an enable gesture options if there is no given
+          var options = gesture.defaults || {};
+          if(options[gesture.name] === undefined) {
+              options[gesture.name] = true;
+          }
+
+          // extend Hammer default options with the Hammer.gesture options
+          Utils.extend(Hammer.defaults, options, true);
+
+          // set its index
+          gesture.index = gesture.index || 1000;
+
+          // add Hammer.gesture to the list
+          this.gestures.push(gesture);
+
+          // sort the list by index
+          this.gestures.sort(function(a, b) {
+              if(a.index < b.index) {
+                  return -1;
+              }
+              if(a.index > b.index) {
+                  return 1;
+              }
+              return 0;
+          });
+
+          return this.gestures;
+      }
+  };
+
+
+  /**
+   * @module hammer
+   */
+
+  /**
+   * create new hammer instance
+   * all methods should return the instance itself, so it is chainable.
+   *
+   * @class Instance
+   * @constructor
+   * @param {HTMLElement} element
+   * @param {Object} [options={}] options are merged with `Hammer.defaults`
+   * @return {Hammer.Instance}
+   */
+  Hammer.Instance = function(element, options) {
+      var self = this;
+
+      // setup HammerJS window events and register all gestures
+      // this also sets up the default options
+      setup();
+
+      /**
+       * @property element
+       * @type {HTMLElement}
+       */
+      this.element = element;
+
+      /**
+       * @property enabled
+       * @type {Boolean}
+       * @protected
+       */
+      this.enabled = true;
+
+      /**
+       * options, merged with the defaults
+       * options with an _ are converted to camelCase
+       * @property options
+       * @type {Object}
+       */
+      Utils.each(options, function(value, name) {
+          delete options[name];
+          options[Utils.toCamelCase(name)] = value;
+      });
+
+      this.options = Utils.extend(Utils.extend({}, Hammer.defaults), options || {});
+
+      // add some css to the element to prevent the browser from doing its native behavoir
+      if(this.options.behavior) {
+          Utils.toggleBehavior(this.element, this.options.behavior, true);
+      }
+
+      /**
+       * event start handler on the element to start the detection
+       * @property eventStartHandler
+       * @type {Object}
+       */
+      this.eventStartHandler = Event.onTouch(element, EVENT_START, function(ev) {
+          if(self.enabled && ev.eventType == EVENT_START) {
+              Detection.startDetect(self, ev);
+          } else if(ev.eventType == EVENT_TOUCH) {
+              Detection.detect(ev);
+          }
+      });
+
+      /**
+       * keep a list of user event handlers which needs to be removed when calling 'dispose'
+       * @property eventHandlers
+       * @type {Array}
+       */
+      this.eventHandlers = [];
+  };
+
+  Hammer.Instance.prototype = {
+      /**
+       * bind events to the instance
+       * @method on
+       * @chainable
+       * @param {String} gestures multiple gestures by splitting with a space
+       * @param {Function} handler
+       * @param {Object} handler.ev event object
+       */
+      on: function onEvent(gestures, handler) {
+          var self = this;
+          Event.on(self.element, gestures, handler, function(type) {
+              self.eventHandlers.push({ gesture: type, handler: handler });
+          });
+          return self;
+      },
+
+      /**
+       * unbind events to the instance
+       * @method off
+       * @chainable
+       * @param {String} gestures
+       * @param {Function} handler
+       */
+      off: function offEvent(gestures, handler) {
+          var self = this;
+
+          Event.off(self.element, gestures, handler, function(type) {
+              var index = Utils.inArray({ gesture: type, handler: handler });
+              if(index !== false) {
+                  self.eventHandlers.splice(index, 1);
+              }
+          });
+          return self;
+      },
+
+      /**
+       * trigger gesture event
+       * @method trigger
+       * @chainable
+       * @param {String} gesture
+       * @param {Object} [eventData]
+       */
+      trigger: function triggerEvent(gesture, eventData) {
+          // optional
+          if(!eventData) {
+              eventData = {};
+          }
+
+          // create DOM event
+          var event = Hammer.DOCUMENT.createEvent('Event');
+          event.initEvent(gesture, true, true);
+          event.gesture = eventData;
+
+          // trigger on the target if it is in the instance element,
+          // this is for event delegation tricks
+          var element = this.element;
+          if(Utils.hasParent(eventData.target, element)) {
+              element = eventData.target;
+          }
+
+          element.dispatchEvent(event);
+          return this;
+      },
+
+      /**
+       * enable of disable hammer.js detection
+       * @method enable
+       * @chainable
+       * @param {Boolean} state
+       */
+      enable: function enable(state) {
+          this.enabled = state;
+          return this;
+      },
+
+      /**
+       * dispose this hammer instance
+       * @method dispose
+       * @return {Null}
+       */
+      dispose: function dispose() {
+          var i, eh;
+
+          // undo all changes made by stop_browser_behavior
+          Utils.toggleBehavior(this.element, this.options.behavior, false);
+
+          // unbind all custom event handlers
+          for(i = -1; (eh = this.eventHandlers[++i]);) {
+              Utils.off(this.element, eh.gesture, eh.handler);
+          }
+
+          this.eventHandlers = [];
+
+          // unbind the start event listener
+          Event.off(this.element, EVENT_TYPES[EVENT_START], this.eventStartHandler);
+
+          return null;
+      }
+  };
+
+
+  /**
+   * @module gestures
+   */
+  /**
+   * Move with x fingers (default 1) around on the page.
+   * Preventing the default browser behavior is a good way to improve feel and working.
+   * ````
+   *  hammertime.on("drag", function(ev) {
+   *    console.log(ev);
+   *    ev.gesture.preventDefault();
+   *  });
+   * ````
+   *
+   * @class Drag
+   * @static
+   */
+  /**
+   * @event drag
+   * @param {Object} ev
+   */
+  /**
+   * @event dragstart
+   * @param {Object} ev
+   */
+  /**
+   * @event dragend
+   * @param {Object} ev
+   */
+  /**
+   * @event drapleft
+   * @param {Object} ev
+   */
+  /**
+   * @event dragright
+   * @param {Object} ev
+   */
+  /**
+   * @event dragup
+   * @param {Object} ev
+   */
+  /**
+   * @event dragdown
+   * @param {Object} ev
+   */
+
+  /**
+   * @param {String} name
+   */
+  (function(name) {
+      var triggered = false;
+
+      function dragGesture(ev, inst) {
+          var cur = Detection.current;
+
+          // max touches
+          if(inst.options.dragMaxTouches > 0 &&
+              ev.touches.length > inst.options.dragMaxTouches) {
+              return;
+          }
+
+          switch(ev.eventType) {
+              case EVENT_START:
+                  triggered = false;
+                  break;
+
+              case EVENT_MOVE:
+                  // when the distance we moved is too small we skip this gesture
+                  // or we can be already in dragging
+                  if(ev.distance < inst.options.dragMinDistance &&
+                      cur.name != name) {
+                      return;
+                  }
+
+                  var startCenter = cur.startEvent.center;
+
+                  // we are dragging!
+                  if(cur.name != name) {
+                      cur.name = name;
+                      if(inst.options.dragDistanceCorrection && ev.distance > 0) {
+                          // When a drag is triggered, set the event center to dragMinDistance pixels from the original event center.
+                          // Without this correction, the dragged distance would jumpstart at dragMinDistance pixels instead of at 0.
+                          // It might be useful to save the original start point somewhere
+                          var factor = Math.abs(inst.options.dragMinDistance / ev.distance);
+                          startCenter.pageX += ev.deltaX * factor;
+                          startCenter.pageY += ev.deltaY * factor;
+                          startCenter.clientX += ev.deltaX * factor;
+                          startCenter.clientY += ev.deltaY * factor;
+
+                          // recalculate event data using new start point
+                          ev = Detection.extendEventData(ev);
+                      }
+                  }
+
+                  // lock drag to axis?
+                  if(cur.lastEvent.dragLockToAxis ||
+                      ( inst.options.dragLockToAxis &&
+                          inst.options.dragLockMinDistance <= ev.distance
+                          )) {
+                      ev.dragLockToAxis = true;
+                  }
+
+                  // keep direction on the axis that the drag gesture started on
+                  var lastDirection = cur.lastEvent.direction;
+                  if(ev.dragLockToAxis && lastDirection !== ev.direction) {
+                      if(Utils.isVertical(lastDirection)) {
+                          ev.direction = (ev.deltaY < 0) ? DIRECTION_UP : DIRECTION_DOWN;
+                      } else {
+                          ev.direction = (ev.deltaX < 0) ? DIRECTION_LEFT : DIRECTION_RIGHT;
+                      }
+                  }
+
+                  // first time, trigger dragstart event
+                  if(!triggered) {
+                      inst.trigger(name + 'start', ev);
+                      triggered = true;
+                  }
+
+                  // trigger events
+                  inst.trigger(name, ev);
+                  inst.trigger(name + ev.direction, ev);
+
+                  var isVertical = Utils.isVertical(ev.direction);
+
+                  // block the browser events
+                  if((inst.options.dragBlockVertical && isVertical) ||
+                      (inst.options.dragBlockHorizontal && !isVertical)) {
+                      ev.preventDefault();
+                  }
+                  break;
+
+              case EVENT_RELEASE:
+                  if(triggered && ev.changedLength <= inst.options.dragMaxTouches) {
+                      inst.trigger(name + 'end', ev);
+                      triggered = false;
+                  }
+                  break;
+
+              case EVENT_END:
+                  triggered = false;
+                  break;
+          }
+      }
+
+      Hammer.gestures.Drag = {
+          name: name,
+          index: 50,
+          handler: dragGesture,
+          defaults: {
+              /**
+               * minimal movement that have to be made before the drag event gets triggered
+               * @property dragMinDistance
+               * @type {Number}
+               * @default 10
+               */
+              dragMinDistance: 10,
+
+              /**
+               * Set dragDistanceCorrection to true to make the starting point of the drag
+               * be calculated from where the drag was triggered, not from where the touch started.
+               * Useful to avoid a jerk-starting drag, which can make fine-adjustments
+               * through dragging difficult, and be visually unappealing.
+               * @property dragDistanceCorrection
+               * @type {Boolean}
+               * @default true
+               */
+              dragDistanceCorrection: true,
+
+              /**
+               * set 0 for unlimited, but this can conflict with transform
+               * @property dragMaxTouches
+               * @type {Number}
+               * @default 1
+               */
+              dragMaxTouches: 1,
+
+              /**
+               * prevent default browser behavior when dragging occurs
+               * be careful with it, it makes the element a blocking element
+               * when you are using the drag gesture, it is a good practice to set this true
+               * @property dragBlockHorizontal
+               * @type {Boolean}
+               * @default false
+               */
+              dragBlockHorizontal: false,
+
+              /**
+               * same as `dragBlockHorizontal`, but for vertical movement
+               * @property dragBlockVertical
+               * @type {Boolean}
+               * @default false
+               */
+              dragBlockVertical: false,
+
+              /**
+               * dragLockToAxis keeps the drag gesture on the axis that it started on,
+               * It disallows vertical directions if the initial direction was horizontal, and vice versa.
+               * @property dragLockToAxis
+               * @type {Boolean}
+               * @default false
+               */
+              dragLockToAxis: false,
+
+              /**
+               * drag lock only kicks in when distance > dragLockMinDistance
+               * This way, locking occurs only when the distance has become large enough to reliably determine the direction
+               * @property dragLockMinDistance
+               * @type {Number}
+               * @default 25
+               */
+              dragLockMinDistance: 25
+          }
+      };
+  })('drag');
+
+  /**
+   * @module gestures
+   */
+  /**
+   * trigger a simple gesture event, so you can do anything in your handler.
+   * only usable if you know what your doing...
+   *
+   * @class Gesture
+   * @static
+   */
+  /**
+   * @event gesture
+   * @param {Object} ev
+   */
+  Hammer.gestures.Gesture = {
+      name: 'gesture',
+      index: 1337,
+      handler: function releaseGesture(ev, inst) {
+          inst.trigger(this.name, ev);
+      }
+  };
+
+  /**
+   * @module gestures
+   */
+  /**
+   * Touch stays at the same place for x time
+   *
+   * @class Hold
+   * @static
+   */
+  /**
+   * @event hold
+   * @param {Object} ev
+   */
+
+  /**
+   * @param {String} name
+   */
+  (function(name) {
+      var timer;
+
+      function holdGesture(ev, inst) {
+          var options = inst.options,
+              current = Detection.current;
+
+          switch(ev.eventType) {
+              case EVENT_START:
+                  clearTimeout(timer);
+
+                  // set the gesture so we can check in the timeout if it still is
+                  current.name = name;
+
+                  // set timer and if after the timeout it still is hold,
+                  // we trigger the hold event
+                  timer = setTimeout(function() {
+                      if(current && current.name == name) {
+                          inst.trigger(name, ev);
+                      }
+                  }, options.holdTimeout);
+                  break;
+
+              case EVENT_MOVE:
+                  if(ev.distance > options.holdThreshold) {
+                      clearTimeout(timer);
+                  }
+                  break;
+
+              case EVENT_RELEASE:
+                  clearTimeout(timer);
+                  break;
+          }
+      }
+
+      Hammer.gestures.Hold = {
+          name: name,
+          index: 10,
+          defaults: {
+              /**
+               * @property holdTimeout
+               * @type {Number}
+               * @default 500
+               */
+              holdTimeout: 500,
+
+              /**
+               * movement allowed while holding
+               * @property holdThreshold
+               * @type {Number}
+               * @default 2
+               */
+              holdThreshold: 2
+          },
+          handler: holdGesture
+      };
+  })('hold');
+
+  /**
+   * @module gestures
+   */
+  /**
+   * when a touch is being released from the page
+   *
+   * @class Release
+   * @static
+   */
+  /**
+   * @event release
+   * @param {Object} ev
+   */
+  Hammer.gestures.Release = {
+      name: 'release',
+      index: Infinity,
+      handler: function releaseGesture(ev, inst) {
+          if(ev.eventType == EVENT_RELEASE) {
+              inst.trigger(this.name, ev);
+          }
+      }
+  };
+
+  /**
+   * @module gestures
+   */
+  /**
+   * triggers swipe events when the end velocity is above the threshold
+   * for best usage, set `preventDefault` (on the drag gesture) to `true`
+   * ````
+   *  hammertime.on("dragleft swipeleft", function(ev) {
+   *    console.log(ev);
+   *    ev.gesture.preventDefault();
+   *  });
+   * ````
+   *
+   * @class Swipe
+   * @static
+   */
+  /**
+   * @event swipe
+   * @param {Object} ev
+   */
+  /**
+   * @event swipeleft
+   * @param {Object} ev
+   */
+  /**
+   * @event swiperight
+   * @param {Object} ev
+   */
+  /**
+   * @event swipeup
+   * @param {Object} ev
+   */
+  /**
+   * @event swipedown
+   * @param {Object} ev
+   */
+  Hammer.gestures.Swipe = {
+      name: 'swipe',
+      index: 40,
+      defaults: {
+          /**
+           * @property swipeMinTouches
+           * @type {Number}
+           * @default 1
+           */
+          swipeMinTouches: 1,
+
+          /**
+           * @property swipeMaxTouches
+           * @type {Number}
+           * @default 1
+           */
+          swipeMaxTouches: 1,
+
+          /**
+           * horizontal swipe velocity
+           * @property swipeVelocityX
+           * @type {Number}
+           * @default 0.6
+           */
+          swipeVelocityX: 0.6,
+
+          /**
+           * vertical swipe velocity
+           * @property swipeVelocityY
+           * @type {Number}
+           * @default 0.6
+           */
+          swipeVelocityY: 0.6
+      },
+
+      handler: function swipeGesture(ev, inst) {
+          if(ev.eventType == EVENT_RELEASE) {
+              var touches = ev.touches.length,
+                  options = inst.options;
+
+              // max touches
+              if(touches < options.swipeMinTouches ||
+                  touches > options.swipeMaxTouches) {
+                  return;
+              }
+
+              // when the distance we moved is too small we skip this gesture
+              // or we can be already in dragging
+              if(ev.velocityX > options.swipeVelocityX ||
+                  ev.velocityY > options.swipeVelocityY) {
+                  // trigger swipe events
+                  inst.trigger(this.name, ev);
+                  inst.trigger(this.name + ev.direction, ev);
+              }
+          }
+      }
+  };
+
+  /**
+   * @module gestures
+   */
+  /**
+   * Single tap and a double tap on a place
+   *
+   * @class Tap
+   * @static
+   */
+  /**
+   * @event tap
+   * @param {Object} ev
+   */
+  /**
+   * @event doubletap
+   * @param {Object} ev
+   */
+
+  /**
+   * @param {String} name
+   */
+  (function(name) {
+      var hasMoved = false;
+
+      function tapGesture(ev, inst) {
+          var options = inst.options,
+              current = Detection.current,
+              prev = Detection.previous,
+              sincePrev,
+              didDoubleTap;
+
+          switch(ev.eventType) {
+              case EVENT_START:
+                  hasMoved = false;
+                  break;
+
+              case EVENT_MOVE:
+                  hasMoved = hasMoved || (ev.distance > options.tapMaxDistance);
+                  break;
+
+              case EVENT_END:
+                  if(!Utils.inStr(ev.srcEvent.type, 'cancel') && ev.deltaTime < options.tapMaxTime && !hasMoved) {
+                      // previous gesture, for the double tap since these are two different gesture detections
+                      sincePrev = prev && prev.lastEvent && ev.timeStamp - prev.lastEvent.timeStamp;
+                      didDoubleTap = false;
+
+                      // check if double tap
+                      if(prev && prev.name == name &&
+                          (sincePrev && sincePrev < options.doubleTapInterval) &&
+                          ev.distance < options.doubleTapDistance) {
+                          inst.trigger('doubletap', ev);
+                          didDoubleTap = true;
+                      }
+
+                      // do a single tap
+                      if(!didDoubleTap || options.tapAlways) {
+                          current.name = name;
+                          inst.trigger(current.name, ev);
+                      }
+                  }
+                  break;
+          }
+      }
+
+      Hammer.gestures.Tap = {
+          name: name,
+          index: 100,
+          handler: tapGesture,
+          defaults: {
+              /**
+               * max time of a tap, this is for the slow tappers
+               * @property tapMaxTime
+               * @type {Number}
+               * @default 250
+               */
+              tapMaxTime: 250,
+
+              /**
+               * max distance of movement of a tap, this is for the slow tappers
+               * @property tapMaxDistance
+               * @type {Number}
+               * @default 10
+               */
+              tapMaxDistance: 10,
+
+              /**
+               * always trigger the `tap` event, even while double-tapping
+               * @property tapAlways
+               * @type {Boolean}
+               * @default true
+               */
+              tapAlways: true,
+
+              /**
+               * max distance between two taps
+               * @property doubleTapDistance
+               * @type {Number}
+               * @default 20
+               */
+              doubleTapDistance: 20,
+
+              /**
+               * max time between two taps
+               * @property doubleTapInterval
+               * @type {Number}
+               * @default 300
+               */
+              doubleTapInterval: 300
+          }
+      };
+  })('tap');
+
+  /**
+   * @module gestures
+   */
+  /**
+   * when a touch is being touched at the page
+   *
+   * @class Touch
+   * @static
+   */
+  /**
+   * @event touch
+   * @param {Object} ev
+   */
+  Hammer.gestures.Touch = {
+      name: 'touch',
+      index: -Infinity,
+      defaults: {
+          /**
+           * call preventDefault at touchstart, and makes the element blocking by disabling the scrolling of the page,
+           * but it improves gestures like transforming and dragging.
+           * be careful with using this, it can be very annoying for users to be stuck on the page
+           * @property preventDefault
+           * @type {Boolean}
+           * @default false
+           */
+          preventDefault: false,
+
+          /**
+           * disable mouse events, so only touch (or pen!) input triggers events
+           * @property preventMouse
+           * @type {Boolean}
+           * @default false
+           */
+          preventMouse: false
+      },
+      handler: function touchGesture(ev, inst) {
+          if(inst.options.preventMouse && ev.pointerType == POINTER_MOUSE) {
+              ev.stopDetect();
+              return;
+          }
+
+          if(inst.options.preventDefault) {
+              ev.preventDefault();
+          }
+
+          if(ev.eventType == EVENT_TOUCH) {
+              inst.trigger('touch', ev);
+          }
+      }
+  };
+
+  /**
+   * @module gestures
+   */
+  /**
+   * User want to scale or rotate with 2 fingers
+   * Preventing the default browser behavior is a good way to improve feel and working. This can be done with the
+   * `preventDefault` option.
+   *
+   * @class Transform
+   * @static
+   */
+  /**
+   * @event transform
+   * @param {Object} ev
+   */
+  /**
+   * @event transformstart
+   * @param {Object} ev
+   */
+  /**
+   * @event transformend
+   * @param {Object} ev
+   */
+  /**
+   * @event pinchin
+   * @param {Object} ev
+   */
+  /**
+   * @event pinchout
+   * @param {Object} ev
+   */
+  /**
+   * @event rotate
+   * @param {Object} ev
+   */
+
+  /**
+   * @param {String} name
+   */
+  (function(name) {
+      var triggered = false;
+
+      function transformGesture(ev, inst) {
+          switch(ev.eventType) {
+              case EVENT_START:
+                  triggered = false;
+                  break;
+
+              case EVENT_MOVE:
+                  // at least multitouch
+                  if(ev.touches.length < 2) {
+                      return;
+                  }
+
+                  var scaleThreshold = Math.abs(1 - ev.scale);
+                  var rotationThreshold = Math.abs(ev.rotation);
+
+                  // when the distance we moved is too small we skip this gesture
+                  // or we can be already in dragging
+                  if(scaleThreshold < inst.options.transformMinScale &&
+                      rotationThreshold < inst.options.transformMinRotation) {
+                      return;
+                  }
+
+                  // we are transforming!
+                  Detection.current.name = name;
+
+                  // first time, trigger dragstart event
+                  if(!triggered) {
+                      inst.trigger(name + 'start', ev);
+                      triggered = true;
+                  }
+
+                  inst.trigger(name, ev); // basic transform event
+
+                  // trigger rotate event
+                  if(rotationThreshold > inst.options.transformMinRotation) {
+                      inst.trigger('rotate', ev);
+                  }
+
+                  // trigger pinch event
+                  if(scaleThreshold > inst.options.transformMinScale) {
+                      inst.trigger('pinch', ev);
+                      inst.trigger('pinch' + (ev.scale < 1 ? 'in' : 'out'), ev);
+                  }
+                  break;
+
+              case EVENT_RELEASE:
+                  if(triggered && ev.changedLength < 2) {
+                      inst.trigger(name + 'end', ev);
+                      triggered = false;
+                  }
+                  break;
+          }
+      }
+
+      Hammer.gestures.Transform = {
+          name: name,
+          index: 45,
+          defaults: {
+              /**
+               * minimal scale factor, no scale is 1, zoomin is to 0 and zoomout until higher then 1
+               * @property transformMinScale
+               * @type {Number}
+               * @default 0.01
+               */
+              transformMinScale: 0.01,
+
+              /**
+               * rotation in degrees
+               * @property transformMinRotation
+               * @type {Number}
+               * @default 1
+               */
+              transformMinRotation: 1
+          },
+
+          handler: transformGesture
+      };
+  })('transform');
+
+  /**
+   * @module hammer
+   */
+
+  // AMD export
+  if(true) {
+      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
+          return Hammer;
+      }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  // commonjs export
+  } else if(typeof module !== 'undefined' && module.exports) {
+      module.exports = Hammer;
+  // browser export
+  } else {
+      window.Hammer = Hammer;
+  }
+
+  })(window);
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
   var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {//! moment.js
@@ -29553,7 +31900,20 @@ return /******/ (function(modules) { // webpackBootstrap
   /* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(65)(module)))
 
 /***/ },
-/* 59 */
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+  function webpackContext(req) {
+  	throw new Error("Cannot find module '" + req + "'.");
+  }
+  webpackContext.keys = function() { return []; };
+  webpackContext.resolve = webpackContext;
+  module.exports = webpackContext;
+  webpackContext.id = 61;
+
+
+/***/ },
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -29617,7 +31977,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -29776,7 +32136,7 @@ return /******/ (function(modules) { // webpackBootstrap
   };
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
   /**
@@ -30178,2356 +32538,6 @@ return /******/ (function(modules) { // webpackBootstrap
      }
      */
   };
-
-
-/***/ },
-/* 62 */
-/***/ function(module, exports, __webpack_require__) {
-
-  var __WEBPACK_AMD_DEFINE_RESULT__;/*! Hammer.JS - v1.1.3 - 2014-05-20
-   * http://eightmedia.github.io/hammer.js
-   *
-   * Copyright (c) 2014 Jorik Tangelder <j.tangelder@gmail.com>;
-   * Licensed under the MIT license */
-
-  (function(window, undefined) {
-    'use strict';
-
-  /**
-   * @main
-   * @module hammer
-   *
-   * @class Hammer
-   * @static
-   */
-
-  /**
-   * Hammer, use this to create instances
-   * ````
-   * var hammertime = new Hammer(myElement);
-   * ````
-   *
-   * @method Hammer
-   * @param {HTMLElement} element
-   * @param {Object} [options={}]
-   * @return {Hammer.Instance}
-   */
-  var Hammer = function Hammer(element, options) {
-      return new Hammer.Instance(element, options || {});
-  };
-
-  /**
-   * version, as defined in package.json
-   * the value will be set at each build
-   * @property VERSION
-   * @final
-   * @type {String}
-   */
-  Hammer.VERSION = '1.1.3';
-
-  /**
-   * default settings.
-   * more settings are defined per gesture at `/gestures`. Each gesture can be disabled/enabled
-   * by setting it's name (like `swipe`) to false.
-   * You can set the defaults for all instances by changing this object before creating an instance.
-   * @example
-   * ````
-   *  Hammer.defaults.drag = false;
-   *  Hammer.defaults.behavior.touchAction = 'pan-y';
-   *  delete Hammer.defaults.behavior.userSelect;
-   * ````
-   * @property defaults
-   * @type {Object}
-   */
-  Hammer.defaults = {
-      /**
-       * this setting object adds styles and attributes to the element to prevent the browser from doing
-       * its native behavior. The css properties are auto prefixed for the browsers when needed.
-       * @property defaults.behavior
-       * @type {Object}
-       */
-      behavior: {
-          /**
-           * Disables text selection to improve the dragging gesture. When the value is `none` it also sets
-           * `onselectstart=false` for IE on the element. Mainly for desktop browsers.
-           * @property defaults.behavior.userSelect
-           * @type {String}
-           * @default 'none'
-           */
-          userSelect: 'none',
-
-          /**
-           * Specifies whether and how a given region can be manipulated by the user (for instance, by panning or zooming).
-           * Used by Chrome 35> and IE10>. By default this makes the element blocking any touch event.
-           * @property defaults.behavior.touchAction
-           * @type {String}
-           * @default: 'pan-y'
-           */
-          touchAction: 'pan-y',
-
-          /**
-           * Disables the default callout shown when you touch and hold a touch target.
-           * On iOS, when you touch and hold a touch target such as a link, Safari displays
-           * a callout containing information about the link. This property allows you to disable that callout.
-           * @property defaults.behavior.touchCallout
-           * @type {String}
-           * @default 'none'
-           */
-          touchCallout: 'none',
-
-          /**
-           * Specifies whether zooming is enabled. Used by IE10>
-           * @property defaults.behavior.contentZooming
-           * @type {String}
-           * @default 'none'
-           */
-          contentZooming: 'none',
-
-          /**
-           * Specifies that an entire element should be draggable instead of its contents.
-           * Mainly for desktop browsers.
-           * @property defaults.behavior.userDrag
-           * @type {String}
-           * @default 'none'
-           */
-          userDrag: 'none',
-
-          /**
-           * Overrides the highlight color shown when the user taps a link or a JavaScript
-           * clickable element in Safari on iPhone. This property obeys the alpha value, if specified.
-           *
-           * If you don't specify an alpha value, Safari on iPhone applies a default alpha value
-           * to the color. To disable tap highlighting, set the alpha value to 0 (invisible).
-           * If you set the alpha value to 1.0 (opaque), the element is not visible when tapped.
-           * @property defaults.behavior.tapHighlightColor
-           * @type {String}
-           * @default 'rgba(0,0,0,0)'
-           */
-          tapHighlightColor: 'rgba(0,0,0,0)'
-      }
-  };
-
-  /**
-   * hammer document where the base events are added at
-   * @property DOCUMENT
-   * @type {HTMLElement}
-   * @default window.document
-   */
-  Hammer.DOCUMENT = document;
-
-  /**
-   * detect support for pointer events
-   * @property HAS_POINTEREVENTS
-   * @type {Boolean}
-   */
-  Hammer.HAS_POINTEREVENTS = navigator.pointerEnabled || navigator.msPointerEnabled;
-
-  /**
-   * detect support for touch events
-   * @property HAS_TOUCHEVENTS
-   * @type {Boolean}
-   */
-  Hammer.HAS_TOUCHEVENTS = ('ontouchstart' in window);
-
-  /**
-   * detect mobile browsers
-   * @property IS_MOBILE
-   * @type {Boolean}
-   */
-  Hammer.IS_MOBILE = /mobile|tablet|ip(ad|hone|od)|android|silk/i.test(navigator.userAgent);
-
-  /**
-   * detect if we want to support mouseevents at all
-   * @property NO_MOUSEEVENTS
-   * @type {Boolean}
-   */
-  Hammer.NO_MOUSEEVENTS = (Hammer.HAS_TOUCHEVENTS && Hammer.IS_MOBILE) || Hammer.HAS_POINTEREVENTS;
-
-  /**
-   * interval in which Hammer recalculates current velocity/direction/angle in ms
-   * @property CALCULATE_INTERVAL
-   * @type {Number}
-   * @default 25
-   */
-  Hammer.CALCULATE_INTERVAL = 25;
-
-  /**
-   * eventtypes per touchevent (start, move, end) are filled by `Event.determineEventTypes` on `setup`
-   * the object contains the DOM event names per type (`EVENT_START`, `EVENT_MOVE`, `EVENT_END`)
-   * @property EVENT_TYPES
-   * @private
-   * @writeOnce
-   * @type {Object}
-   */
-  var EVENT_TYPES = {};
-
-  /**
-   * direction strings, for safe comparisons
-   * @property DIRECTION_DOWN|LEFT|UP|RIGHT
-   * @final
-   * @type {String}
-   * @default 'down' 'left' 'up' 'right'
-   */
-  var DIRECTION_DOWN = Hammer.DIRECTION_DOWN = 'down';
-  var DIRECTION_LEFT = Hammer.DIRECTION_LEFT = 'left';
-  var DIRECTION_UP = Hammer.DIRECTION_UP = 'up';
-  var DIRECTION_RIGHT = Hammer.DIRECTION_RIGHT = 'right';
-
-  /**
-   * pointertype strings, for safe comparisons
-   * @property POINTER_MOUSE|TOUCH|PEN
-   * @final
-   * @type {String}
-   * @default 'mouse' 'touch' 'pen'
-   */
-  var POINTER_MOUSE = Hammer.POINTER_MOUSE = 'mouse';
-  var POINTER_TOUCH = Hammer.POINTER_TOUCH = 'touch';
-  var POINTER_PEN = Hammer.POINTER_PEN = 'pen';
-
-  /**
-   * eventtypes
-   * @property EVENT_START|MOVE|END|RELEASE|TOUCH
-   * @final
-   * @type {String}
-   * @default 'start' 'change' 'move' 'end' 'release' 'touch'
-   */
-  var EVENT_START = Hammer.EVENT_START = 'start';
-  var EVENT_MOVE = Hammer.EVENT_MOVE = 'move';
-  var EVENT_END = Hammer.EVENT_END = 'end';
-  var EVENT_RELEASE = Hammer.EVENT_RELEASE = 'release';
-  var EVENT_TOUCH = Hammer.EVENT_TOUCH = 'touch';
-
-  /**
-   * if the window events are set...
-   * @property READY
-   * @writeOnce
-   * @type {Boolean}
-   * @default false
-   */
-  Hammer.READY = false;
-
-  /**
-   * plugins namespace
-   * @property plugins
-   * @type {Object}
-   */
-  Hammer.plugins = Hammer.plugins || {};
-
-  /**
-   * gestures namespace
-   * see `/gestures` for the definitions
-   * @property gestures
-   * @type {Object}
-   */
-  Hammer.gestures = Hammer.gestures || {};
-
-  /**
-   * setup events to detect gestures on the document
-   * this function is called when creating an new instance
-   * @private
-   */
-  function setup() {
-      if(Hammer.READY) {
-          return;
-      }
-
-      // find what eventtypes we add listeners to
-      Event.determineEventTypes();
-
-      // Register all gestures inside Hammer.gestures
-      Utils.each(Hammer.gestures, function(gesture) {
-          Detection.register(gesture);
-      });
-
-      // Add touch events on the document
-      Event.onTouch(Hammer.DOCUMENT, EVENT_MOVE, Detection.detect);
-      Event.onTouch(Hammer.DOCUMENT, EVENT_END, Detection.detect);
-
-      // Hammer is ready...!
-      Hammer.READY = true;
-  }
-
-  /**
-   * @module hammer
-   *
-   * @class Utils
-   * @static
-   */
-  var Utils = Hammer.utils = {
-      /**
-       * extend method, could also be used for cloning when `dest` is an empty object.
-       * changes the dest object
-       * @method extend
-       * @param {Object} dest
-       * @param {Object} src
-       * @param {Boolean} [merge=false]  do a merge
-       * @return {Object} dest
-       */
-      extend: function extend(dest, src, merge) {
-          for(var key in src) {
-              if(!src.hasOwnProperty(key) || (dest[key] !== undefined && merge)) {
-                  continue;
-              }
-              dest[key] = src[key];
-          }
-          return dest;
-      },
-
-      /**
-       * simple addEventListener wrapper
-       * @method on
-       * @param {HTMLElement} element
-       * @param {String} type
-       * @param {Function} handler
-       */
-      on: function on(element, type, handler) {
-          element.addEventListener(type, handler, false);
-      },
-
-      /**
-       * simple removeEventListener wrapper
-       * @method off
-       * @param {HTMLElement} element
-       * @param {String} type
-       * @param {Function} handler
-       */
-      off: function off(element, type, handler) {
-          element.removeEventListener(type, handler, false);
-      },
-
-      /**
-       * forEach over arrays and objects
-       * @method each
-       * @param {Object|Array} obj
-       * @param {Function} iterator
-       * @param {any} iterator.item
-       * @param {Number} iterator.index
-       * @param {Object|Array} iterator.obj the source object
-       * @param {Object} context value to use as `this` in the iterator
-       */
-      each: function each(obj, iterator, context) {
-          var i, len;
-
-          // native forEach on arrays
-          if('forEach' in obj) {
-              obj.forEach(iterator, context);
-          // arrays
-          } else if(obj.length !== undefined) {
-              for(i = 0, len = obj.length; i < len; i++) {
-                  if(iterator.call(context, obj[i], i, obj) === false) {
-                      return;
-                  }
-              }
-          // objects
-          } else {
-              for(i in obj) {
-                  if(obj.hasOwnProperty(i) &&
-                      iterator.call(context, obj[i], i, obj) === false) {
-                      return;
-                  }
-              }
-          }
-      },
-
-      /**
-       * find if a string contains the string using indexOf
-       * @method inStr
-       * @param {String} src
-       * @param {String} find
-       * @return {Boolean} found
-       */
-      inStr: function inStr(src, find) {
-          return src.indexOf(find) > -1;
-      },
-
-      /**
-       * find if a array contains the object using indexOf or a simple polyfill
-       * @method inArray
-       * @param {String} src
-       * @param {String} find
-       * @return {Boolean|Number} false when not found, or the index
-       */
-      inArray: function inArray(src, find) {
-          if(src.indexOf) {
-              var index = src.indexOf(find);
-              return (index === -1) ? false : index;
-          } else {
-              for(var i = 0, len = src.length; i < len; i++) {
-                  if(src[i] === find) {
-                      return i;
-                  }
-              }
-              return false;
-          }
-      },
-
-      /**
-       * convert an array-like object (`arguments`, `touchlist`) to an array
-       * @method toArray
-       * @param {Object} obj
-       * @return {Array}
-       */
-      toArray: function toArray(obj) {
-          return Array.prototype.slice.call(obj, 0);
-      },
-
-      /**
-       * find if a node is in the given parent
-       * @method hasParent
-       * @param {HTMLElement} node
-       * @param {HTMLElement} parent
-       * @return {Boolean} found
-       */
-      hasParent: function hasParent(node, parent) {
-          while(node) {
-              if(node == parent) {
-                  return true;
-              }
-              node = node.parentNode;
-          }
-          return false;
-      },
-
-      /**
-       * get the center of all the touches
-       * @method getCenter
-       * @param {Array} touches
-       * @return {Object} center contains `pageX`, `pageY`, `clientX` and `clientY` properties
-       */
-      getCenter: function getCenter(touches) {
-          var pageX = [],
-              pageY = [],
-              clientX = [],
-              clientY = [],
-              min = Math.min,
-              max = Math.max;
-
-          // no need to loop when only one touch
-          if(touches.length === 1) {
-              return {
-                  pageX: touches[0].pageX,
-                  pageY: touches[0].pageY,
-                  clientX: touches[0].clientX,
-                  clientY: touches[0].clientY
-              };
-          }
-
-          Utils.each(touches, function(touch) {
-              pageX.push(touch.pageX);
-              pageY.push(touch.pageY);
-              clientX.push(touch.clientX);
-              clientY.push(touch.clientY);
-          });
-
-          return {
-              pageX: (min.apply(Math, pageX) + max.apply(Math, pageX)) / 2,
-              pageY: (min.apply(Math, pageY) + max.apply(Math, pageY)) / 2,
-              clientX: (min.apply(Math, clientX) + max.apply(Math, clientX)) / 2,
-              clientY: (min.apply(Math, clientY) + max.apply(Math, clientY)) / 2
-          };
-      },
-
-      /**
-       * calculate the velocity between two points. unit is in px per ms.
-       * @method getVelocity
-       * @param {Number} deltaTime
-       * @param {Number} deltaX
-       * @param {Number} deltaY
-       * @return {Object} velocity `x` and `y`
-       */
-      getVelocity: function getVelocity(deltaTime, deltaX, deltaY) {
-          return {
-              x: Math.abs(deltaX / deltaTime) || 0,
-              y: Math.abs(deltaY / deltaTime) || 0
-          };
-      },
-
-      /**
-       * calculate the angle between two coordinates
-       * @method getAngle
-       * @param {Touch} touch1
-       * @param {Touch} touch2
-       * @return {Number} angle
-       */
-      getAngle: function getAngle(touch1, touch2) {
-          var x = touch2.clientX - touch1.clientX,
-              y = touch2.clientY - touch1.clientY;
-
-          return Math.atan2(y, x) * 180 / Math.PI;
-      },
-
-      /**
-       * do a small comparision to get the direction between two touches.
-       * @method getDirection
-       * @param {Touch} touch1
-       * @param {Touch} touch2
-       * @return {String} direction matches `DIRECTION_LEFT|RIGHT|UP|DOWN`
-       */
-      getDirection: function getDirection(touch1, touch2) {
-          var x = Math.abs(touch1.clientX - touch2.clientX),
-              y = Math.abs(touch1.clientY - touch2.clientY);
-
-          if(x >= y) {
-              return touch1.clientX - touch2.clientX > 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
-          }
-          return touch1.clientY - touch2.clientY > 0 ? DIRECTION_UP : DIRECTION_DOWN;
-      },
-
-      /**
-       * calculate the distance between two touches
-       * @method getDistance
-       * @param {Touch}touch1
-       * @param {Touch} touch2
-       * @return {Number} distance
-       */
-      getDistance: function getDistance(touch1, touch2) {
-          var x = touch2.clientX - touch1.clientX,
-              y = touch2.clientY - touch1.clientY;
-
-          return Math.sqrt((x * x) + (y * y));
-      },
-
-      /**
-       * calculate the scale factor between two touchLists
-       * no scale is 1, and goes down to 0 when pinched together, and bigger when pinched out
-       * @method getScale
-       * @param {Array} start array of touches
-       * @param {Array} end array of touches
-       * @return {Number} scale
-       */
-      getScale: function getScale(start, end) {
-          // need two fingers...
-          if(start.length >= 2 && end.length >= 2) {
-              return this.getDistance(end[0], end[1]) / this.getDistance(start[0], start[1]);
-          }
-          return 1;
-      },
-
-      /**
-       * calculate the rotation degrees between two touchLists
-       * @method getRotation
-       * @param {Array} start array of touches
-       * @param {Array} end array of touches
-       * @return {Number} rotation
-       */
-      getRotation: function getRotation(start, end) {
-          // need two fingers
-          if(start.length >= 2 && end.length >= 2) {
-              return this.getAngle(end[1], end[0]) - this.getAngle(start[1], start[0]);
-          }
-          return 0;
-      },
-
-      /**
-       * find out if the direction is vertical   *
-       * @method isVertical
-       * @param {String} direction matches `DIRECTION_UP|DOWN`
-       * @return {Boolean} is_vertical
-       */
-      isVertical: function isVertical(direction) {
-          return direction == DIRECTION_UP || direction == DIRECTION_DOWN;
-      },
-
-      /**
-       * set css properties with their prefixes
-       * @param {HTMLElement} element
-       * @param {String} prop
-       * @param {String} value
-       * @param {Boolean} [toggle=true]
-       * @return {Boolean}
-       */
-      setPrefixedCss: function setPrefixedCss(element, prop, value, toggle) {
-          var prefixes = ['', 'Webkit', 'Moz', 'O', 'ms'];
-          prop = Utils.toCamelCase(prop);
-
-          for(var i = 0; i < prefixes.length; i++) {
-              var p = prop;
-              // prefixes
-              if(prefixes[i]) {
-                  p = prefixes[i] + p.slice(0, 1).toUpperCase() + p.slice(1);
-              }
-
-              // test the style
-              if(p in element.style) {
-                  element.style[p] = (toggle == null || toggle) && value || '';
-                  break;
-              }
-          }
-      },
-
-      /**
-       * toggle browser default behavior by setting css properties.
-       * `userSelect='none'` also sets `element.onselectstart` to false
-       * `userDrag='none'` also sets `element.ondragstart` to false
-       *
-       * @method toggleBehavior
-       * @param {HtmlElement} element
-       * @param {Object} props
-       * @param {Boolean} [toggle=true]
-       */
-      toggleBehavior: function toggleBehavior(element, props, toggle) {
-          if(!props || !element || !element.style) {
-              return;
-          }
-
-          // set the css properties
-          Utils.each(props, function(value, prop) {
-              Utils.setPrefixedCss(element, prop, value, toggle);
-          });
-
-          var falseFn = toggle && function() {
-              return false;
-          };
-
-          // also the disable onselectstart
-          if(props.userSelect == 'none') {
-              element.onselectstart = falseFn;
-          }
-          // and disable ondragstart
-          if(props.userDrag == 'none') {
-              element.ondragstart = falseFn;
-          }
-      },
-
-      /**
-       * convert a string with underscores to camelCase
-       * so prevent_default becomes preventDefault
-       * @param {String} str
-       * @return {String} camelCaseStr
-       */
-      toCamelCase: function toCamelCase(str) {
-          return str.replace(/[_-]([a-z])/g, function(s) {
-              return s[1].toUpperCase();
-          });
-      }
-  };
-
-
-  /**
-   * @module hammer
-   */
-  /**
-   * @class Event
-   * @static
-   */
-  var Event = Hammer.event = {
-      /**
-       * when touch events have been fired, this is true
-       * this is used to stop mouse events
-       * @property prevent_mouseevents
-       * @private
-       * @type {Boolean}
-       */
-      preventMouseEvents: false,
-
-      /**
-       * if EVENT_START has been fired
-       * @property started
-       * @private
-       * @type {Boolean}
-       */
-      started: false,
-
-      /**
-       * when the mouse is hold down, this is true
-       * @property should_detect
-       * @private
-       * @type {Boolean}
-       */
-      shouldDetect: false,
-
-      /**
-       * simple event binder with a hook and support for multiple types
-       * @method on
-       * @param {HTMLElement} element
-       * @param {String} type
-       * @param {Function} handler
-       * @param {Function} [hook]
-       * @param {Object} hook.type
-       */
-      on: function on(element, type, handler, hook) {
-          var types = type.split(' ');
-          Utils.each(types, function(type) {
-              Utils.on(element, type, handler);
-              hook && hook(type);
-          });
-      },
-
-      /**
-       * simple event unbinder with a hook and support for multiple types
-       * @method off
-       * @param {HTMLElement} element
-       * @param {String} type
-       * @param {Function} handler
-       * @param {Function} [hook]
-       * @param {Object} hook.type
-       */
-      off: function off(element, type, handler, hook) {
-          var types = type.split(' ');
-          Utils.each(types, function(type) {
-              Utils.off(element, type, handler);
-              hook && hook(type);
-          });
-      },
-
-      /**
-       * the core touch event handler.
-       * this finds out if we should to detect gestures
-       * @method onTouch
-       * @param {HTMLElement} element
-       * @param {String} eventType matches `EVENT_START|MOVE|END`
-       * @param {Function} handler
-       * @return onTouchHandler {Function} the core event handler
-       */
-      onTouch: function onTouch(element, eventType, handler) {
-          var self = this;
-
-          var onTouchHandler = function onTouchHandler(ev) {
-              var srcType = ev.type.toLowerCase(),
-                  isPointer = Hammer.HAS_POINTEREVENTS,
-                  isMouse = Utils.inStr(srcType, 'mouse'),
-                  triggerType;
-
-              // if we are in a mouseevent, but there has been a touchevent triggered in this session
-              // we want to do nothing. simply break out of the event.
-              if(isMouse && self.preventMouseEvents) {
-                  return;
-
-              // mousebutton must be down
-              } else if(isMouse && eventType == EVENT_START && ev.button === 0) {
-                  self.preventMouseEvents = false;
-                  self.shouldDetect = true;
-              } else if(isPointer && eventType == EVENT_START) {
-                  self.shouldDetect = (ev.buttons === 1 || PointerEvent.matchType(POINTER_TOUCH, ev));
-              // just a valid start event, but no mouse
-              } else if(!isMouse && eventType == EVENT_START) {
-                  self.preventMouseEvents = true;
-                  self.shouldDetect = true;
-              }
-
-              // update the pointer event before entering the detection
-              if(isPointer && eventType != EVENT_END) {
-                  PointerEvent.updatePointer(eventType, ev);
-              }
-
-              // we are in a touch/down state, so allowed detection of gestures
-              if(self.shouldDetect) {
-                  triggerType = self.doDetect.call(self, ev, eventType, element, handler);
-              }
-
-              // ...and we are done with the detection
-              // so reset everything to start each detection totally fresh
-              if(triggerType == EVENT_END) {
-                  self.preventMouseEvents = false;
-                  self.shouldDetect = false;
-                  PointerEvent.reset();
-              // update the pointerevent object after the detection
-              }
-
-              if(isPointer && eventType == EVENT_END) {
-                  PointerEvent.updatePointer(eventType, ev);
-              }
-          };
-
-          this.on(element, EVENT_TYPES[eventType], onTouchHandler);
-          return onTouchHandler;
-      },
-
-      /**
-       * the core detection method
-       * this finds out what hammer-touch-events to trigger
-       * @method doDetect
-       * @param {Object} ev
-       * @param {String} eventType matches `EVENT_START|MOVE|END`
-       * @param {HTMLElement} element
-       * @param {Function} handler
-       * @return {String} triggerType matches `EVENT_START|MOVE|END`
-       */
-      doDetect: function doDetect(ev, eventType, element, handler) {
-          var touchList = this.getTouchList(ev, eventType);
-          var touchListLength = touchList.length;
-          var triggerType = eventType;
-          var triggerChange = touchList.trigger; // used by fakeMultitouch plugin
-          var changedLength = touchListLength;
-
-          // at each touchstart-like event we want also want to trigger a TOUCH event...
-          if(eventType == EVENT_START) {
-              triggerChange = EVENT_TOUCH;
-          // ...the same for a touchend-like event
-          } else if(eventType == EVENT_END) {
-              triggerChange = EVENT_RELEASE;
-
-              // keep track of how many touches have been removed
-              changedLength = touchList.length - ((ev.changedTouches) ? ev.changedTouches.length : 1);
-          }
-
-          // after there are still touches on the screen,
-          // we just want to trigger a MOVE event. so change the START or END to a MOVE
-          // but only after detection has been started, the first time we actualy want a START
-          if(changedLength > 0 && this.started) {
-              triggerType = EVENT_MOVE;
-          }
-
-          // detection has been started, we keep track of this, see above
-          this.started = true;
-
-          // generate some event data, some basic information
-          var evData = this.collectEventData(element, triggerType, touchList, ev);
-
-          // trigger the triggerType event before the change (TOUCH, RELEASE) events
-          // but the END event should be at last
-          if(eventType != EVENT_END) {
-              handler.call(Detection, evData);
-          }
-
-          // trigger a change (TOUCH, RELEASE) event, this means the length of the touches changed
-          if(triggerChange) {
-              evData.changedLength = changedLength;
-              evData.eventType = triggerChange;
-
-              handler.call(Detection, evData);
-
-              evData.eventType = triggerType;
-              delete evData.changedLength;
-          }
-
-          // trigger the END event
-          if(triggerType == EVENT_END) {
-              handler.call(Detection, evData);
-
-              // ...and we are done with the detection
-              // so reset everything to start each detection totally fresh
-              this.started = false;
-          }
-
-          return triggerType;
-      },
-
-      /**
-       * we have different events for each device/browser
-       * determine what we need and set them in the EVENT_TYPES constant
-       * the `onTouch` method is bind to these properties.
-       * @method determineEventTypes
-       * @return {Object} events
-       */
-      determineEventTypes: function determineEventTypes() {
-          var types;
-          if(Hammer.HAS_POINTEREVENTS) {
-              if(window.PointerEvent) {
-                  types = [
-                      'pointerdown',
-                      'pointermove',
-                      'pointerup pointercancel lostpointercapture'
-                  ];
-              } else {
-                  types = [
-                      'MSPointerDown',
-                      'MSPointerMove',
-                      'MSPointerUp MSPointerCancel MSLostPointerCapture'
-                  ];
-              }
-          } else if(Hammer.NO_MOUSEEVENTS) {
-              types = [
-                  'touchstart',
-                  'touchmove',
-                  'touchend touchcancel'
-              ];
-          } else {
-              types = [
-                  'touchstart mousedown',
-                  'touchmove mousemove',
-                  'touchend touchcancel mouseup'
-              ];
-          }
-
-          EVENT_TYPES[EVENT_START] = types[0];
-          EVENT_TYPES[EVENT_MOVE] = types[1];
-          EVENT_TYPES[EVENT_END] = types[2];
-          return EVENT_TYPES;
-      },
-
-      /**
-       * create touchList depending on the event
-       * @method getTouchList
-       * @param {Object} ev
-       * @param {String} eventType
-       * @return {Array} touches
-       */
-      getTouchList: function getTouchList(ev, eventType) {
-          // get the fake pointerEvent touchlist
-          if(Hammer.HAS_POINTEREVENTS) {
-              return PointerEvent.getTouchList();
-          }
-
-          // get the touchlist
-          if(ev.touches) {
-              if(eventType == EVENT_MOVE) {
-                  return ev.touches;
-              }
-
-              var identifiers = [];
-              var concat = [].concat(Utils.toArray(ev.touches), Utils.toArray(ev.changedTouches));
-              var touchList = [];
-
-              Utils.each(concat, function(touch) {
-                  if(Utils.inArray(identifiers, touch.identifier) === false) {
-                      touchList.push(touch);
-                  }
-                  identifiers.push(touch.identifier);
-              });
-
-              return touchList;
-          }
-
-          // make fake touchList from mouse position
-          ev.identifier = 1;
-          return [ev];
-      },
-
-      /**
-       * collect basic event data
-       * @method collectEventData
-       * @param {HTMLElement} element
-       * @param {String} eventType matches `EVENT_START|MOVE|END`
-       * @param {Array} touches
-       * @param {Object} ev
-       * @return {Object} ev
-       */
-      collectEventData: function collectEventData(element, eventType, touches, ev) {
-          // find out pointerType
-          var pointerType = POINTER_TOUCH;
-          if(Utils.inStr(ev.type, 'mouse') || PointerEvent.matchType(POINTER_MOUSE, ev)) {
-              pointerType = POINTER_MOUSE;
-          } else if(PointerEvent.matchType(POINTER_PEN, ev)) {
-              pointerType = POINTER_PEN;
-          }
-
-          return {
-              center: Utils.getCenter(touches),
-              timeStamp: Date.now(),
-              target: ev.target,
-              touches: touches,
-              eventType: eventType,
-              pointerType: pointerType,
-              srcEvent: ev,
-
-              /**
-               * prevent the browser default actions
-               * mostly used to disable scrolling of the browser
-               */
-              preventDefault: function() {
-                  var srcEvent = this.srcEvent;
-                  srcEvent.preventManipulation && srcEvent.preventManipulation();
-                  srcEvent.preventDefault && srcEvent.preventDefault();
-              },
-
-              /**
-               * stop bubbling the event up to its parents
-               */
-              stopPropagation: function() {
-                  this.srcEvent.stopPropagation();
-              },
-
-              /**
-               * immediately stop gesture detection
-               * might be useful after a swipe was detected
-               * @return {*}
-               */
-              stopDetect: function() {
-                  return Detection.stopDetect();
-              }
-          };
-      }
-  };
-
-
-  /**
-   * @module hammer
-   *
-   * @class PointerEvent
-   * @static
-   */
-  var PointerEvent = Hammer.PointerEvent = {
-      /**
-       * holds all pointers, by `identifier`
-       * @property pointers
-       * @type {Object}
-       */
-      pointers: {},
-
-      /**
-       * get the pointers as an array
-       * @method getTouchList
-       * @return {Array} touchlist
-       */
-      getTouchList: function getTouchList() {
-          var touchlist = [];
-          // we can use forEach since pointerEvents only is in IE10
-          Utils.each(this.pointers, function(pointer) {
-              touchlist.push(pointer);
-          });
-          return touchlist;
-      },
-
-      /**
-       * update the position of a pointer
-       * @method updatePointer
-       * @param {String} eventType matches `EVENT_START|MOVE|END`
-       * @param {Object} pointerEvent
-       */
-      updatePointer: function updatePointer(eventType, pointerEvent) {
-          if(eventType == EVENT_END || (eventType != EVENT_END && pointerEvent.buttons !== 1)) {
-              delete this.pointers[pointerEvent.pointerId];
-          } else {
-              pointerEvent.identifier = pointerEvent.pointerId;
-              this.pointers[pointerEvent.pointerId] = pointerEvent;
-          }
-      },
-
-      /**
-       * check if ev matches pointertype
-       * @method matchType
-       * @param {String} pointerType matches `POINTER_MOUSE|TOUCH|PEN`
-       * @param {PointerEvent} ev
-       */
-      matchType: function matchType(pointerType, ev) {
-          if(!ev.pointerType) {
-              return false;
-          }
-
-          var pt = ev.pointerType,
-              types = {};
-
-          types[POINTER_MOUSE] = (pt === (ev.MSPOINTER_TYPE_MOUSE || POINTER_MOUSE));
-          types[POINTER_TOUCH] = (pt === (ev.MSPOINTER_TYPE_TOUCH || POINTER_TOUCH));
-          types[POINTER_PEN] = (pt === (ev.MSPOINTER_TYPE_PEN || POINTER_PEN));
-          return types[pointerType];
-      },
-
-      /**
-       * reset the stored pointers
-       * @method reset
-       */
-      reset: function resetList() {
-          this.pointers = {};
-      }
-  };
-
-
-  /**
-   * @module hammer
-   *
-   * @class Detection
-   * @static
-   */
-  var Detection = Hammer.detection = {
-      // contains all registred Hammer.gestures in the correct order
-      gestures: [],
-
-      // data of the current Hammer.gesture detection session
-      current: null,
-
-      // the previous Hammer.gesture session data
-      // is a full clone of the previous gesture.current object
-      previous: null,
-
-      // when this becomes true, no gestures are fired
-      stopped: false,
-
-      /**
-       * start Hammer.gesture detection
-       * @method startDetect
-       * @param {Hammer.Instance} inst
-       * @param {Object} eventData
-       */
-      startDetect: function startDetect(inst, eventData) {
-          // already busy with a Hammer.gesture detection on an element
-          if(this.current) {
-              return;
-          }
-
-          this.stopped = false;
-
-          // holds current session
-          this.current = {
-              inst: inst, // reference to HammerInstance we're working for
-              startEvent: Utils.extend({}, eventData), // start eventData for distances, timing etc
-              lastEvent: false, // last eventData
-              lastCalcEvent: false, // last eventData for calculations.
-              futureCalcEvent: false, // last eventData for calculations.
-              lastCalcData: {}, // last lastCalcData
-              name: '' // current gesture we're in/detected, can be 'tap', 'hold' etc
-          };
-
-          this.detect(eventData);
-      },
-
-      /**
-       * Hammer.gesture detection
-       * @method detect
-       * @param {Object} eventData
-       * @return {any}
-       */
-      detect: function detect(eventData) {
-          if(!this.current || this.stopped) {
-              return;
-          }
-
-          // extend event data with calculations about scale, distance etc
-          eventData = this.extendEventData(eventData);
-
-          // hammer instance and instance options
-          var inst = this.current.inst,
-              instOptions = inst.options;
-
-          // call Hammer.gesture handlers
-          Utils.each(this.gestures, function triggerGesture(gesture) {
-              // only when the instance options have enabled this gesture
-              if(!this.stopped && inst.enabled && instOptions[gesture.name]) {
-                  gesture.handler.call(gesture, eventData, inst);
-              }
-          }, this);
-
-          // store as previous event event
-          if(this.current) {
-              this.current.lastEvent = eventData;
-          }
-
-          if(eventData.eventType == EVENT_END) {
-              this.stopDetect();
-          }
-
-          return eventData;
-      },
-
-      /**
-       * clear the Hammer.gesture vars
-       * this is called on endDetect, but can also be used when a final Hammer.gesture has been detected
-       * to stop other Hammer.gestures from being fired
-       * @method stopDetect
-       */
-      stopDetect: function stopDetect() {
-          // clone current data to the store as the previous gesture
-          // used for the double tap gesture, since this is an other gesture detect session
-          this.previous = Utils.extend({}, this.current);
-
-          // reset the current
-          this.current = null;
-          this.stopped = true;
-      },
-
-      /**
-       * calculate velocity, angle and direction
-       * @method getVelocityData
-       * @param {Object} ev
-       * @param {Object} center
-       * @param {Number} deltaTime
-       * @param {Number} deltaX
-       * @param {Number} deltaY
-       */
-      getCalculatedData: function getCalculatedData(ev, center, deltaTime, deltaX, deltaY) {
-          var cur = this.current,
-              recalc = false,
-              calcEv = cur.lastCalcEvent,
-              calcData = cur.lastCalcData;
-
-          if(calcEv && ev.timeStamp - calcEv.timeStamp > Hammer.CALCULATE_INTERVAL) {
-              center = calcEv.center;
-              deltaTime = ev.timeStamp - calcEv.timeStamp;
-              deltaX = ev.center.clientX - calcEv.center.clientX;
-              deltaY = ev.center.clientY - calcEv.center.clientY;
-              recalc = true;
-          }
-
-          if(ev.eventType == EVENT_TOUCH || ev.eventType == EVENT_RELEASE) {
-              cur.futureCalcEvent = ev;
-          }
-
-          if(!cur.lastCalcEvent || recalc) {
-              calcData.velocity = Utils.getVelocity(deltaTime, deltaX, deltaY);
-              calcData.angle = Utils.getAngle(center, ev.center);
-              calcData.direction = Utils.getDirection(center, ev.center);
-
-              cur.lastCalcEvent = cur.futureCalcEvent || ev;
-              cur.futureCalcEvent = ev;
-          }
-
-          ev.velocityX = calcData.velocity.x;
-          ev.velocityY = calcData.velocity.y;
-          ev.interimAngle = calcData.angle;
-          ev.interimDirection = calcData.direction;
-      },
-
-      /**
-       * extend eventData for Hammer.gestures
-       * @method extendEventData
-       * @param {Object} ev
-       * @return {Object} ev
-       */
-      extendEventData: function extendEventData(ev) {
-          var cur = this.current,
-              startEv = cur.startEvent,
-              lastEv = cur.lastEvent || startEv;
-
-          // update the start touchlist to calculate the scale/rotation
-          if(ev.eventType == EVENT_TOUCH || ev.eventType == EVENT_RELEASE) {
-              startEv.touches = [];
-              Utils.each(ev.touches, function(touch) {
-                  startEv.touches.push({
-                      clientX: touch.clientX,
-                      clientY: touch.clientY
-                  });
-              });
-          }
-
-          var deltaTime = ev.timeStamp - startEv.timeStamp,
-              deltaX = ev.center.clientX - startEv.center.clientX,
-              deltaY = ev.center.clientY - startEv.center.clientY;
-
-          this.getCalculatedData(ev, lastEv.center, deltaTime, deltaX, deltaY);
-
-          Utils.extend(ev, {
-              startEvent: startEv,
-
-              deltaTime: deltaTime,
-              deltaX: deltaX,
-              deltaY: deltaY,
-
-              distance: Utils.getDistance(startEv.center, ev.center),
-              angle: Utils.getAngle(startEv.center, ev.center),
-              direction: Utils.getDirection(startEv.center, ev.center),
-              scale: Utils.getScale(startEv.touches, ev.touches),
-              rotation: Utils.getRotation(startEv.touches, ev.touches)
-          });
-
-          return ev;
-      },
-
-      /**
-       * register new gesture
-       * @method register
-       * @param {Object} gesture object, see `gestures/` for documentation
-       * @return {Array} gestures
-       */
-      register: function register(gesture) {
-          // add an enable gesture options if there is no given
-          var options = gesture.defaults || {};
-          if(options[gesture.name] === undefined) {
-              options[gesture.name] = true;
-          }
-
-          // extend Hammer default options with the Hammer.gesture options
-          Utils.extend(Hammer.defaults, options, true);
-
-          // set its index
-          gesture.index = gesture.index || 1000;
-
-          // add Hammer.gesture to the list
-          this.gestures.push(gesture);
-
-          // sort the list by index
-          this.gestures.sort(function(a, b) {
-              if(a.index < b.index) {
-                  return -1;
-              }
-              if(a.index > b.index) {
-                  return 1;
-              }
-              return 0;
-          });
-
-          return this.gestures;
-      }
-  };
-
-
-  /**
-   * @module hammer
-   */
-
-  /**
-   * create new hammer instance
-   * all methods should return the instance itself, so it is chainable.
-   *
-   * @class Instance
-   * @constructor
-   * @param {HTMLElement} element
-   * @param {Object} [options={}] options are merged with `Hammer.defaults`
-   * @return {Hammer.Instance}
-   */
-  Hammer.Instance = function(element, options) {
-      var self = this;
-
-      // setup HammerJS window events and register all gestures
-      // this also sets up the default options
-      setup();
-
-      /**
-       * @property element
-       * @type {HTMLElement}
-       */
-      this.element = element;
-
-      /**
-       * @property enabled
-       * @type {Boolean}
-       * @protected
-       */
-      this.enabled = true;
-
-      /**
-       * options, merged with the defaults
-       * options with an _ are converted to camelCase
-       * @property options
-       * @type {Object}
-       */
-      Utils.each(options, function(value, name) {
-          delete options[name];
-          options[Utils.toCamelCase(name)] = value;
-      });
-
-      this.options = Utils.extend(Utils.extend({}, Hammer.defaults), options || {});
-
-      // add some css to the element to prevent the browser from doing its native behavoir
-      if(this.options.behavior) {
-          Utils.toggleBehavior(this.element, this.options.behavior, true);
-      }
-
-      /**
-       * event start handler on the element to start the detection
-       * @property eventStartHandler
-       * @type {Object}
-       */
-      this.eventStartHandler = Event.onTouch(element, EVENT_START, function(ev) {
-          if(self.enabled && ev.eventType == EVENT_START) {
-              Detection.startDetect(self, ev);
-          } else if(ev.eventType == EVENT_TOUCH) {
-              Detection.detect(ev);
-          }
-      });
-
-      /**
-       * keep a list of user event handlers which needs to be removed when calling 'dispose'
-       * @property eventHandlers
-       * @type {Array}
-       */
-      this.eventHandlers = [];
-  };
-
-  Hammer.Instance.prototype = {
-      /**
-       * bind events to the instance
-       * @method on
-       * @chainable
-       * @param {String} gestures multiple gestures by splitting with a space
-       * @param {Function} handler
-       * @param {Object} handler.ev event object
-       */
-      on: function onEvent(gestures, handler) {
-          var self = this;
-          Event.on(self.element, gestures, handler, function(type) {
-              self.eventHandlers.push({ gesture: type, handler: handler });
-          });
-          return self;
-      },
-
-      /**
-       * unbind events to the instance
-       * @method off
-       * @chainable
-       * @param {String} gestures
-       * @param {Function} handler
-       */
-      off: function offEvent(gestures, handler) {
-          var self = this;
-
-          Event.off(self.element, gestures, handler, function(type) {
-              var index = Utils.inArray({ gesture: type, handler: handler });
-              if(index !== false) {
-                  self.eventHandlers.splice(index, 1);
-              }
-          });
-          return self;
-      },
-
-      /**
-       * trigger gesture event
-       * @method trigger
-       * @chainable
-       * @param {String} gesture
-       * @param {Object} [eventData]
-       */
-      trigger: function triggerEvent(gesture, eventData) {
-          // optional
-          if(!eventData) {
-              eventData = {};
-          }
-
-          // create DOM event
-          var event = Hammer.DOCUMENT.createEvent('Event');
-          event.initEvent(gesture, true, true);
-          event.gesture = eventData;
-
-          // trigger on the target if it is in the instance element,
-          // this is for event delegation tricks
-          var element = this.element;
-          if(Utils.hasParent(eventData.target, element)) {
-              element = eventData.target;
-          }
-
-          element.dispatchEvent(event);
-          return this;
-      },
-
-      /**
-       * enable of disable hammer.js detection
-       * @method enable
-       * @chainable
-       * @param {Boolean} state
-       */
-      enable: function enable(state) {
-          this.enabled = state;
-          return this;
-      },
-
-      /**
-       * dispose this hammer instance
-       * @method dispose
-       * @return {Null}
-       */
-      dispose: function dispose() {
-          var i, eh;
-
-          // undo all changes made by stop_browser_behavior
-          Utils.toggleBehavior(this.element, this.options.behavior, false);
-
-          // unbind all custom event handlers
-          for(i = -1; (eh = this.eventHandlers[++i]);) {
-              Utils.off(this.element, eh.gesture, eh.handler);
-          }
-
-          this.eventHandlers = [];
-
-          // unbind the start event listener
-          Event.off(this.element, EVENT_TYPES[EVENT_START], this.eventStartHandler);
-
-          return null;
-      }
-  };
-
-
-  /**
-   * @module gestures
-   */
-  /**
-   * Move with x fingers (default 1) around on the page.
-   * Preventing the default browser behavior is a good way to improve feel and working.
-   * ````
-   *  hammertime.on("drag", function(ev) {
-   *    console.log(ev);
-   *    ev.gesture.preventDefault();
-   *  });
-   * ````
-   *
-   * @class Drag
-   * @static
-   */
-  /**
-   * @event drag
-   * @param {Object} ev
-   */
-  /**
-   * @event dragstart
-   * @param {Object} ev
-   */
-  /**
-   * @event dragend
-   * @param {Object} ev
-   */
-  /**
-   * @event drapleft
-   * @param {Object} ev
-   */
-  /**
-   * @event dragright
-   * @param {Object} ev
-   */
-  /**
-   * @event dragup
-   * @param {Object} ev
-   */
-  /**
-   * @event dragdown
-   * @param {Object} ev
-   */
-
-  /**
-   * @param {String} name
-   */
-  (function(name) {
-      var triggered = false;
-
-      function dragGesture(ev, inst) {
-          var cur = Detection.current;
-
-          // max touches
-          if(inst.options.dragMaxTouches > 0 &&
-              ev.touches.length > inst.options.dragMaxTouches) {
-              return;
-          }
-
-          switch(ev.eventType) {
-              case EVENT_START:
-                  triggered = false;
-                  break;
-
-              case EVENT_MOVE:
-                  // when the distance we moved is too small we skip this gesture
-                  // or we can be already in dragging
-                  if(ev.distance < inst.options.dragMinDistance &&
-                      cur.name != name) {
-                      return;
-                  }
-
-                  var startCenter = cur.startEvent.center;
-
-                  // we are dragging!
-                  if(cur.name != name) {
-                      cur.name = name;
-                      if(inst.options.dragDistanceCorrection && ev.distance > 0) {
-                          // When a drag is triggered, set the event center to dragMinDistance pixels from the original event center.
-                          // Without this correction, the dragged distance would jumpstart at dragMinDistance pixels instead of at 0.
-                          // It might be useful to save the original start point somewhere
-                          var factor = Math.abs(inst.options.dragMinDistance / ev.distance);
-                          startCenter.pageX += ev.deltaX * factor;
-                          startCenter.pageY += ev.deltaY * factor;
-                          startCenter.clientX += ev.deltaX * factor;
-                          startCenter.clientY += ev.deltaY * factor;
-
-                          // recalculate event data using new start point
-                          ev = Detection.extendEventData(ev);
-                      }
-                  }
-
-                  // lock drag to axis?
-                  if(cur.lastEvent.dragLockToAxis ||
-                      ( inst.options.dragLockToAxis &&
-                          inst.options.dragLockMinDistance <= ev.distance
-                          )) {
-                      ev.dragLockToAxis = true;
-                  }
-
-                  // keep direction on the axis that the drag gesture started on
-                  var lastDirection = cur.lastEvent.direction;
-                  if(ev.dragLockToAxis && lastDirection !== ev.direction) {
-                      if(Utils.isVertical(lastDirection)) {
-                          ev.direction = (ev.deltaY < 0) ? DIRECTION_UP : DIRECTION_DOWN;
-                      } else {
-                          ev.direction = (ev.deltaX < 0) ? DIRECTION_LEFT : DIRECTION_RIGHT;
-                      }
-                  }
-
-                  // first time, trigger dragstart event
-                  if(!triggered) {
-                      inst.trigger(name + 'start', ev);
-                      triggered = true;
-                  }
-
-                  // trigger events
-                  inst.trigger(name, ev);
-                  inst.trigger(name + ev.direction, ev);
-
-                  var isVertical = Utils.isVertical(ev.direction);
-
-                  // block the browser events
-                  if((inst.options.dragBlockVertical && isVertical) ||
-                      (inst.options.dragBlockHorizontal && !isVertical)) {
-                      ev.preventDefault();
-                  }
-                  break;
-
-              case EVENT_RELEASE:
-                  if(triggered && ev.changedLength <= inst.options.dragMaxTouches) {
-                      inst.trigger(name + 'end', ev);
-                      triggered = false;
-                  }
-                  break;
-
-              case EVENT_END:
-                  triggered = false;
-                  break;
-          }
-      }
-
-      Hammer.gestures.Drag = {
-          name: name,
-          index: 50,
-          handler: dragGesture,
-          defaults: {
-              /**
-               * minimal movement that have to be made before the drag event gets triggered
-               * @property dragMinDistance
-               * @type {Number}
-               * @default 10
-               */
-              dragMinDistance: 10,
-
-              /**
-               * Set dragDistanceCorrection to true to make the starting point of the drag
-               * be calculated from where the drag was triggered, not from where the touch started.
-               * Useful to avoid a jerk-starting drag, which can make fine-adjustments
-               * through dragging difficult, and be visually unappealing.
-               * @property dragDistanceCorrection
-               * @type {Boolean}
-               * @default true
-               */
-              dragDistanceCorrection: true,
-
-              /**
-               * set 0 for unlimited, but this can conflict with transform
-               * @property dragMaxTouches
-               * @type {Number}
-               * @default 1
-               */
-              dragMaxTouches: 1,
-
-              /**
-               * prevent default browser behavior when dragging occurs
-               * be careful with it, it makes the element a blocking element
-               * when you are using the drag gesture, it is a good practice to set this true
-               * @property dragBlockHorizontal
-               * @type {Boolean}
-               * @default false
-               */
-              dragBlockHorizontal: false,
-
-              /**
-               * same as `dragBlockHorizontal`, but for vertical movement
-               * @property dragBlockVertical
-               * @type {Boolean}
-               * @default false
-               */
-              dragBlockVertical: false,
-
-              /**
-               * dragLockToAxis keeps the drag gesture on the axis that it started on,
-               * It disallows vertical directions if the initial direction was horizontal, and vice versa.
-               * @property dragLockToAxis
-               * @type {Boolean}
-               * @default false
-               */
-              dragLockToAxis: false,
-
-              /**
-               * drag lock only kicks in when distance > dragLockMinDistance
-               * This way, locking occurs only when the distance has become large enough to reliably determine the direction
-               * @property dragLockMinDistance
-               * @type {Number}
-               * @default 25
-               */
-              dragLockMinDistance: 25
-          }
-      };
-  })('drag');
-
-  /**
-   * @module gestures
-   */
-  /**
-   * trigger a simple gesture event, so you can do anything in your handler.
-   * only usable if you know what your doing...
-   *
-   * @class Gesture
-   * @static
-   */
-  /**
-   * @event gesture
-   * @param {Object} ev
-   */
-  Hammer.gestures.Gesture = {
-      name: 'gesture',
-      index: 1337,
-      handler: function releaseGesture(ev, inst) {
-          inst.trigger(this.name, ev);
-      }
-  };
-
-  /**
-   * @module gestures
-   */
-  /**
-   * Touch stays at the same place for x time
-   *
-   * @class Hold
-   * @static
-   */
-  /**
-   * @event hold
-   * @param {Object} ev
-   */
-
-  /**
-   * @param {String} name
-   */
-  (function(name) {
-      var timer;
-
-      function holdGesture(ev, inst) {
-          var options = inst.options,
-              current = Detection.current;
-
-          switch(ev.eventType) {
-              case EVENT_START:
-                  clearTimeout(timer);
-
-                  // set the gesture so we can check in the timeout if it still is
-                  current.name = name;
-
-                  // set timer and if after the timeout it still is hold,
-                  // we trigger the hold event
-                  timer = setTimeout(function() {
-                      if(current && current.name == name) {
-                          inst.trigger(name, ev);
-                      }
-                  }, options.holdTimeout);
-                  break;
-
-              case EVENT_MOVE:
-                  if(ev.distance > options.holdThreshold) {
-                      clearTimeout(timer);
-                  }
-                  break;
-
-              case EVENT_RELEASE:
-                  clearTimeout(timer);
-                  break;
-          }
-      }
-
-      Hammer.gestures.Hold = {
-          name: name,
-          index: 10,
-          defaults: {
-              /**
-               * @property holdTimeout
-               * @type {Number}
-               * @default 500
-               */
-              holdTimeout: 500,
-
-              /**
-               * movement allowed while holding
-               * @property holdThreshold
-               * @type {Number}
-               * @default 2
-               */
-              holdThreshold: 2
-          },
-          handler: holdGesture
-      };
-  })('hold');
-
-  /**
-   * @module gestures
-   */
-  /**
-   * when a touch is being released from the page
-   *
-   * @class Release
-   * @static
-   */
-  /**
-   * @event release
-   * @param {Object} ev
-   */
-  Hammer.gestures.Release = {
-      name: 'release',
-      index: Infinity,
-      handler: function releaseGesture(ev, inst) {
-          if(ev.eventType == EVENT_RELEASE) {
-              inst.trigger(this.name, ev);
-          }
-      }
-  };
-
-  /**
-   * @module gestures
-   */
-  /**
-   * triggers swipe events when the end velocity is above the threshold
-   * for best usage, set `preventDefault` (on the drag gesture) to `true`
-   * ````
-   *  hammertime.on("dragleft swipeleft", function(ev) {
-   *    console.log(ev);
-   *    ev.gesture.preventDefault();
-   *  });
-   * ````
-   *
-   * @class Swipe
-   * @static
-   */
-  /**
-   * @event swipe
-   * @param {Object} ev
-   */
-  /**
-   * @event swipeleft
-   * @param {Object} ev
-   */
-  /**
-   * @event swiperight
-   * @param {Object} ev
-   */
-  /**
-   * @event swipeup
-   * @param {Object} ev
-   */
-  /**
-   * @event swipedown
-   * @param {Object} ev
-   */
-  Hammer.gestures.Swipe = {
-      name: 'swipe',
-      index: 40,
-      defaults: {
-          /**
-           * @property swipeMinTouches
-           * @type {Number}
-           * @default 1
-           */
-          swipeMinTouches: 1,
-
-          /**
-           * @property swipeMaxTouches
-           * @type {Number}
-           * @default 1
-           */
-          swipeMaxTouches: 1,
-
-          /**
-           * horizontal swipe velocity
-           * @property swipeVelocityX
-           * @type {Number}
-           * @default 0.6
-           */
-          swipeVelocityX: 0.6,
-
-          /**
-           * vertical swipe velocity
-           * @property swipeVelocityY
-           * @type {Number}
-           * @default 0.6
-           */
-          swipeVelocityY: 0.6
-      },
-
-      handler: function swipeGesture(ev, inst) {
-          if(ev.eventType == EVENT_RELEASE) {
-              var touches = ev.touches.length,
-                  options = inst.options;
-
-              // max touches
-              if(touches < options.swipeMinTouches ||
-                  touches > options.swipeMaxTouches) {
-                  return;
-              }
-
-              // when the distance we moved is too small we skip this gesture
-              // or we can be already in dragging
-              if(ev.velocityX > options.swipeVelocityX ||
-                  ev.velocityY > options.swipeVelocityY) {
-                  // trigger swipe events
-                  inst.trigger(this.name, ev);
-                  inst.trigger(this.name + ev.direction, ev);
-              }
-          }
-      }
-  };
-
-  /**
-   * @module gestures
-   */
-  /**
-   * Single tap and a double tap on a place
-   *
-   * @class Tap
-   * @static
-   */
-  /**
-   * @event tap
-   * @param {Object} ev
-   */
-  /**
-   * @event doubletap
-   * @param {Object} ev
-   */
-
-  /**
-   * @param {String} name
-   */
-  (function(name) {
-      var hasMoved = false;
-
-      function tapGesture(ev, inst) {
-          var options = inst.options,
-              current = Detection.current,
-              prev = Detection.previous,
-              sincePrev,
-              didDoubleTap;
-
-          switch(ev.eventType) {
-              case EVENT_START:
-                  hasMoved = false;
-                  break;
-
-              case EVENT_MOVE:
-                  hasMoved = hasMoved || (ev.distance > options.tapMaxDistance);
-                  break;
-
-              case EVENT_END:
-                  if(!Utils.inStr(ev.srcEvent.type, 'cancel') && ev.deltaTime < options.tapMaxTime && !hasMoved) {
-                      // previous gesture, for the double tap since these are two different gesture detections
-                      sincePrev = prev && prev.lastEvent && ev.timeStamp - prev.lastEvent.timeStamp;
-                      didDoubleTap = false;
-
-                      // check if double tap
-                      if(prev && prev.name == name &&
-                          (sincePrev && sincePrev < options.doubleTapInterval) &&
-                          ev.distance < options.doubleTapDistance) {
-                          inst.trigger('doubletap', ev);
-                          didDoubleTap = true;
-                      }
-
-                      // do a single tap
-                      if(!didDoubleTap || options.tapAlways) {
-                          current.name = name;
-                          inst.trigger(current.name, ev);
-                      }
-                  }
-                  break;
-          }
-      }
-
-      Hammer.gestures.Tap = {
-          name: name,
-          index: 100,
-          handler: tapGesture,
-          defaults: {
-              /**
-               * max time of a tap, this is for the slow tappers
-               * @property tapMaxTime
-               * @type {Number}
-               * @default 250
-               */
-              tapMaxTime: 250,
-
-              /**
-               * max distance of movement of a tap, this is for the slow tappers
-               * @property tapMaxDistance
-               * @type {Number}
-               * @default 10
-               */
-              tapMaxDistance: 10,
-
-              /**
-               * always trigger the `tap` event, even while double-tapping
-               * @property tapAlways
-               * @type {Boolean}
-               * @default true
-               */
-              tapAlways: true,
-
-              /**
-               * max distance between two taps
-               * @property doubleTapDistance
-               * @type {Number}
-               * @default 20
-               */
-              doubleTapDistance: 20,
-
-              /**
-               * max time between two taps
-               * @property doubleTapInterval
-               * @type {Number}
-               * @default 300
-               */
-              doubleTapInterval: 300
-          }
-      };
-  })('tap');
-
-  /**
-   * @module gestures
-   */
-  /**
-   * when a touch is being touched at the page
-   *
-   * @class Touch
-   * @static
-   */
-  /**
-   * @event touch
-   * @param {Object} ev
-   */
-  Hammer.gestures.Touch = {
-      name: 'touch',
-      index: -Infinity,
-      defaults: {
-          /**
-           * call preventDefault at touchstart, and makes the element blocking by disabling the scrolling of the page,
-           * but it improves gestures like transforming and dragging.
-           * be careful with using this, it can be very annoying for users to be stuck on the page
-           * @property preventDefault
-           * @type {Boolean}
-           * @default false
-           */
-          preventDefault: false,
-
-          /**
-           * disable mouse events, so only touch (or pen!) input triggers events
-           * @property preventMouse
-           * @type {Boolean}
-           * @default false
-           */
-          preventMouse: false
-      },
-      handler: function touchGesture(ev, inst) {
-          if(inst.options.preventMouse && ev.pointerType == POINTER_MOUSE) {
-              ev.stopDetect();
-              return;
-          }
-
-          if(inst.options.preventDefault) {
-              ev.preventDefault();
-          }
-
-          if(ev.eventType == EVENT_TOUCH) {
-              inst.trigger('touch', ev);
-          }
-      }
-  };
-
-  /**
-   * @module gestures
-   */
-  /**
-   * User want to scale or rotate with 2 fingers
-   * Preventing the default browser behavior is a good way to improve feel and working. This can be done with the
-   * `preventDefault` option.
-   *
-   * @class Transform
-   * @static
-   */
-  /**
-   * @event transform
-   * @param {Object} ev
-   */
-  /**
-   * @event transformstart
-   * @param {Object} ev
-   */
-  /**
-   * @event transformend
-   * @param {Object} ev
-   */
-  /**
-   * @event pinchin
-   * @param {Object} ev
-   */
-  /**
-   * @event pinchout
-   * @param {Object} ev
-   */
-  /**
-   * @event rotate
-   * @param {Object} ev
-   */
-
-  /**
-   * @param {String} name
-   */
-  (function(name) {
-      var triggered = false;
-
-      function transformGesture(ev, inst) {
-          switch(ev.eventType) {
-              case EVENT_START:
-                  triggered = false;
-                  break;
-
-              case EVENT_MOVE:
-                  // at least multitouch
-                  if(ev.touches.length < 2) {
-                      return;
-                  }
-
-                  var scaleThreshold = Math.abs(1 - ev.scale);
-                  var rotationThreshold = Math.abs(ev.rotation);
-
-                  // when the distance we moved is too small we skip this gesture
-                  // or we can be already in dragging
-                  if(scaleThreshold < inst.options.transformMinScale &&
-                      rotationThreshold < inst.options.transformMinRotation) {
-                      return;
-                  }
-
-                  // we are transforming!
-                  Detection.current.name = name;
-
-                  // first time, trigger dragstart event
-                  if(!triggered) {
-                      inst.trigger(name + 'start', ev);
-                      triggered = true;
-                  }
-
-                  inst.trigger(name, ev); // basic transform event
-
-                  // trigger rotate event
-                  if(rotationThreshold > inst.options.transformMinRotation) {
-                      inst.trigger('rotate', ev);
-                  }
-
-                  // trigger pinch event
-                  if(scaleThreshold > inst.options.transformMinScale) {
-                      inst.trigger('pinch', ev);
-                      inst.trigger('pinch' + (ev.scale < 1 ? 'in' : 'out'), ev);
-                  }
-                  break;
-
-              case EVENT_RELEASE:
-                  if(triggered && ev.changedLength < 2) {
-                      inst.trigger(name + 'end', ev);
-                      triggered = false;
-                  }
-                  break;
-          }
-      }
-
-      Hammer.gestures.Transform = {
-          name: name,
-          index: 45,
-          defaults: {
-              /**
-               * minimal scale factor, no scale is 1, zoomin is to 0 and zoomout until higher then 1
-               * @property transformMinScale
-               * @type {Number}
-               * @default 0.01
-               */
-              transformMinScale: 0.01,
-
-              /**
-               * rotation in degrees
-               * @property transformMinRotation
-               * @type {Number}
-               * @default 1
-               */
-              transformMinRotation: 1
-          },
-
-          handler: transformGesture
-      };
-  })('transform');
-
-  /**
-   * @module hammer
-   */
-
-  // AMD export
-  if(true) {
-      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
-          return Hammer;
-      }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  // commonjs export
-  } else if(typeof module !== 'undefined' && module.exports) {
-      module.exports = Hammer;
-  // browser export
-  } else {
-      window.Hammer = Hammer;
-  }
-
-  })(window);
-
-/***/ },
-/* 63 */
-/***/ function(module, exports, __webpack_require__) {
-
-  
-  /**
-   * Expose `Emitter`.
-   */
-
-  module.exports = Emitter;
-
-  /**
-   * Initialize a new `Emitter`.
-   *
-   * @api public
-   */
-
-  function Emitter(obj) {
-    if (obj) return mixin(obj);
-  };
-
-  /**
-   * Mixin the emitter properties.
-   *
-   * @param {Object} obj
-   * @return {Object}
-   * @api private
-   */
-
-  function mixin(obj) {
-    for (var key in Emitter.prototype) {
-      obj[key] = Emitter.prototype[key];
-    }
-    return obj;
-  }
-
-  /**
-   * Listen on the given `event` with `fn`.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.on =
-  Emitter.prototype.addEventListener = function(event, fn){
-    this._callbacks = this._callbacks || {};
-    (this._callbacks[event] = this._callbacks[event] || [])
-      .push(fn);
-    return this;
-  };
-
-  /**
-   * Adds an `event` listener that will be invoked a single
-   * time then automatically removed.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.once = function(event, fn){
-    var self = this;
-    this._callbacks = this._callbacks || {};
-
-    function on() {
-      self.off(event, on);
-      fn.apply(this, arguments);
-    }
-
-    on.fn = fn;
-    this.on(event, on);
-    return this;
-  };
-
-  /**
-   * Remove the given callback for `event` or all
-   * registered callbacks.
-   *
-   * @param {String} event
-   * @param {Function} fn
-   * @return {Emitter}
-   * @api public
-   */
-
-  Emitter.prototype.off =
-  Emitter.prototype.removeListener =
-  Emitter.prototype.removeAllListeners =
-  Emitter.prototype.removeEventListener = function(event, fn){
-    this._callbacks = this._callbacks || {};
-
-    // all
-    if (0 == arguments.length) {
-      this._callbacks = {};
-      return this;
-    }
-
-    // specific event
-    var callbacks = this._callbacks[event];
-    if (!callbacks) return this;
-
-    // remove all handlers
-    if (1 == arguments.length) {
-      delete this._callbacks[event];
-      return this;
-    }
-
-    // remove specific handler
-    var cb;
-    for (var i = 0; i < callbacks.length; i++) {
-      cb = callbacks[i];
-      if (cb === fn || cb.fn === fn) {
-        callbacks.splice(i, 1);
-        break;
-      }
-    }
-    return this;
-  };
-
-  /**
-   * Emit `event` with the given args.
-   *
-   * @param {String} event
-   * @param {Mixed} ...
-   * @return {Emitter}
-   */
-
-  Emitter.prototype.emit = function(event){
-    this._callbacks = this._callbacks || {};
-    var args = [].slice.call(arguments, 1)
-      , callbacks = this._callbacks[event];
-
-    if (callbacks) {
-      callbacks = callbacks.slice(0);
-      for (var i = 0, len = callbacks.length; i < len; ++i) {
-        callbacks[i].apply(this, args);
-      }
-    }
-
-    return this;
-  };
-
-  /**
-   * Return array of callbacks for `event`.
-   *
-   * @param {String} event
-   * @return {Array}
-   * @api public
-   */
-
-  Emitter.prototype.listeners = function(event){
-    this._callbacks = this._callbacks || {};
-    return this._callbacks[event] || [];
-  };
-
-  /**
-   * Check if this emitter has `event` handlers.
-   *
-   * @param {String} event
-   * @return {Boolean}
-   * @api public
-   */
-
-  Emitter.prototype.hasListeners = function(event){
-    return !! this.listeners(event).length;
-  };
-
-
-/***/ },
-/* 64 */
-/***/ function(module, exports, __webpack_require__) {
-
-  function webpackContext(req) {
-  	throw new Error("Cannot find module '" + req + "'.");
-  }
-  webpackContext.keys = function() { return []; };
-  webpackContext.resolve = webpackContext;
-  module.exports = webpackContext;
-  webpackContext.id = 64;
 
 
 /***/ },

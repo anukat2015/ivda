@@ -148,6 +148,7 @@ function Toolbar() {
     };
 
     this.setFeature = function (items) {
+        var instance = this;
         this.featurePanel.selectize({
             valueField: 'id',
             labelField: 'name',
@@ -157,15 +158,11 @@ function Toolbar() {
             options: items,
             onChange: function (id) {
                 var com = gGlobals.graphs.find(id);
-                var granularities;
-                if (com.grouped === true) {
-                    granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
-                } else if (com.grouped === false) {
-                    granularities = ["PER_VALUE"];
-                } else {
-                    granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
-                }
-                this.setGranularity(granularities);
+                var selectize = instance.granularityPanel[0].selectize;
+                selectize.clearOptions();
+                com.groups.forEach(function (x) {
+                    selectize.addOption({ name: x });
+                })
             }
         });
     };

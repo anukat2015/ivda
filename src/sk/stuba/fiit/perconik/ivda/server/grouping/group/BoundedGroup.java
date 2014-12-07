@@ -15,17 +15,19 @@ import java.io.Serializable;
 public class BoundedGroup extends Group implements Serializable {
     private static final long serialVersionUID = 2522657623315850131L;
 
-    private final EventDto firstEvent;  // potrebne a urcenie zaciatocnej pozicie
+    private EventDto firstEvent;  // potrebne a urcenie zaciatocnej pozicie
     private EventDto lastEvent;  // potrebne pre meranie podla casu
     private int inGroup;
 
-    public BoundedGroup(EventDto actual) {  // alias createNewGroup
+    public BoundedGroup() {  // alias createNewGroup
         inGroup = 0;
-        firstEvent = actual;
     }
 
     @Override
-    public void add2Group(EventDto event) {
+    public void push(EventDto event) {
+        if(firstEvent == null) {
+            firstEvent = event;
+        }
         lastEvent = event;
         inGroup++;
     }
@@ -41,12 +43,7 @@ public class BoundedGroup extends Group implements Serializable {
     }
 
     @Override
-    public boolean isEmpty() {
-        return getFirstEvent() == null;
-    }
-
-    @Override
-    public int size() {
+    public int countEvents() {
         return inGroup;
     }
 }

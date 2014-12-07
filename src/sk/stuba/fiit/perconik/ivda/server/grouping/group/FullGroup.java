@@ -22,7 +22,7 @@ public class FullGroup extends Group implements Serializable {
     }
 
     @Override
-    public void add2Group(EventDto event) {
+    public void push(EventDto event) {
         list.add(event);
     }
 
@@ -41,12 +41,7 @@ public class FullGroup extends Group implements Serializable {
     }
 
     @Override
-    public int size() {
+    public int countEvents() {
         return list.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return list.isEmpty();
     }
 }

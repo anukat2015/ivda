@@ -3,31 +3,23 @@
  */
 DetailComponent = function () {
     DiagramComponent.call();
-    this.loader = new ChunksLoader(this);
-    this.charts = new ChartPanel(this);
+    this.loader = new ChunksLoader();
+    this.charts = new ChartPanel();
     this.title = "Action visualization";
     this.name = "actions";
+    this.groups = ["Size by changes in future", "Size by LOC", "Constant size"];
 };
 DetailComponent.prototype = new DiagramComponent();
 
 DetailComponent.prototype.init = function (atts, manager) {
     DiagramComponent.prototype.init.call(this, atts, manager);
-    this.loader.init();
-    this.charts.loadRange(atts.range.start, atts.range.end);
+    this.charts.init(this);
+    this.loader.loadRange(this, atts.range.start, atts.range.end);
+    this._toggleMetric(atts.granularity);
     this._createTimeline();
     this._registerQTip();
     this.diagram.draw();
     this.diagram.setVisibleChartRange(atts.range.start, atts.range.end);
-    this.updateData();
-};
-
-DetailComponent.prototype._onRangeChanged = function () {
-    if(this.diagram == undefined) {
-        return;
-    }
-    var range = this.diagram.getVisibleChartRange();
-    this.loader.onRangeChanged(this.attributes.developer, range.start, range.end);
-    this.charts.redraw();
 };
 
 DetailComponent.prototype._createTimeline = function () {
@@ -52,7 +44,16 @@ DetailComponent.prototype._createTimeline = function () {
 
     // Instantiate our timeline object.
     this.diagram = new links.Timeline(this.getDiagramElement(), options);
-    google.visualization.events.addListener(this.diagram, 'rangechanged', this._onRangeChanged);
+
+    var instance = this;
+    google.visualization.events.addListener(this.diagram, 'rangechanged', function () {
+        if (instance.diagram == undefined) {
+            return;
+        }
+        var range = instance.diagram.getVisibleChartRange();
+        instance.loader.onRangeChanged(range.start, range.end);
+        instance.charts.redraw();
+    });
 };
 
 DetailComponent.prototype._onItemMouseClick = function (api, item) {
@@ -80,15 +81,15 @@ DetailComponent.prototype.destroy = function () {
 DetailComponent.prototype._toggleMetric = function (value) {
     var value;
     var prototyp = links.Timeline.Item.prototype;
-    if (value === 1) {
+    if (value === "Size by changes in future") {
         value = prototyp.computeSizeByChangesInFuture;
-    } else if (value === 2) {
+    } else if (value === "Size by LOC") {
         value = prototyp.computeSizeByChangedLines;
     } else {
         value = prototyp.computeSizeConstant;
     }
     prototyp.computeSize = value;
-    this.diagram.redraw();
+    //this.diagram.redraw();
 };
 
 DetailComponent.prototype._registerQTip = function () {
@@ -100,7 +101,7 @@ DetailComponent.prototype._registerQTip = function () {
             show: 'click',
             content: {
                 text: function (event, api) {
-                    var item = instance.panel.getSelected();
+                    var item = instance.diagram.getSelected();
                     if (item === undefined) {
                         return 'Not selected entity.';
                     } else if (item.isCluster) {
@@ -121,7 +122,7 @@ DetailComponent.prototype.setRange = function (range) {
     this._updateDescription();
 };
 
-DetailComponent.prototype._buildDom = function () {
+DetailComponent.prototype._buildHtml = function () {
     return this._buildHeader() + '<div> \
      <div class="leftBar">     \
         <div class="mytimeline diagram graph-' + this.getName() + '"></div>  \
@@ -135,7 +136,7 @@ DetailComponent.prototype._buildDom = function () {
             <div class="legenda">    \
                 <div class="title posun">Nezobrazuju sa ziadne aktivity.</div>  \
                 <div class="title posun">Preto si vyber developera alebo sa posun na casovej osi.</div>  \
-                <div class="title">Snaz sa identifikovat tieto aktivity:</div> \
+                <div class="title">Legenda udalosti:</div> \
                 <table width="100%" align="center">  \
                     <tr> \
                         <td>  \

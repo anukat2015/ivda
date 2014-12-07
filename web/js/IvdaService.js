@@ -5,7 +5,6 @@ function IvdaService() {
     this.timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000 * 2;  // day light saving
 
     this.getTimeline = function (start, end, developer, callback) {
-        var restURL = "datatable?";
         var parameters = $.param({
             start: start.toISOString(),
             end: end.toISOString(),
@@ -14,6 +13,21 @@ function IvdaService() {
         $.ajax({
             dataType: "json",
             url: "datatable?" + parameters,
+            success: function (data, textStatus, jqXHR) {
+                callback(data);
+            }
+        });
+    };
+
+    this.getProcesses = function (params, callback) {
+        var parameters = $.param({
+            start: params.range.start.toISOString(),
+            end: params.range.end.toISOString(),
+            developer: params.developer
+        });
+        $.ajax({
+            dataType: "json",
+            url: "processes?" + parameters,
             success: function (data, textStatus, jqXHR) {
                 callback(data);
             }
