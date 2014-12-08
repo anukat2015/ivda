@@ -184,3 +184,11 @@ DetailComponent.prototype._buildHtml = function () {
         <div class="clear"></div>  \
     </div>';
 };
+
+DetailComponent.prototype.draw = function () {
+    if (this.diagram == undefined) {
+        return;
+    }
+    this.diagram.redraw();
+    this.charts.redraw();
+};

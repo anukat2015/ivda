@@ -54,11 +54,11 @@ function Toolbar() {
             if (value == "1") {
                 icon = {};
                 value = "0";
-                gGlobals.graphs.lockMove = false;
+                gGlobals.graphs.lockedMove = false;
             } else {
                 icon = { primary: "ui-icon-locked"};
                 value = "1";
-                gGlobals.graphs.lockMove = true;
+                gGlobals.graphs.lockedMove = true;
             }
             instance.lockButton.button("option", "icons", icon);
             $(this).attr("value", value);

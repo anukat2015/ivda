@@ -4,12 +4,14 @@
 
 GoogleChartComponent = function () {
     DiagramComponent.call();
+    this.gdata = undefined;
+    this.options = undefined;
 };
 GoogleChartComponent.prototype = new DiagramComponent();
 
 GoogleChartComponent.prototype.init = function (attributes, manager) {
     DiagramComponent.prototype.init.call(this, attributes, manager);
-    // TODO: Options sa moze nacitat tu vypracovat a ulozit
+    this.generateGraph();
     this.updateData();
 };
 
@@ -18,6 +20,26 @@ GoogleChartComponent.prototype.destroy = function () {
         this.diagram.clearChart();
     }
     DiagramComponent.prototype.destroy.call(this);
+};
+
+GoogleChartComponent.prototype.draw = function () {
+    if (this.diagram == undefined) {
+        return;
+    }
+    this.diagram.draw(this.gdata, this.options);
+};
+
+GoogleChartComponent.prototype.generateGraph = function () {
+    throw new error("not implemented")
+};
+
+GoogleChartComponent.prototype.setData = function (data) {
+    this.gdata = this.convertData(data);
+    this.draw();
+};
+
+GoogleChartComponent.prototype.convertData = function (data) {
+    throw new error("not implemented")
 };
 
 // ------------- Web Duration
@@ -29,26 +51,28 @@ WebDurationComp = function () {
 };
 WebDurationComp.prototype = new GoogleChartComponent();
 
-WebDurationComp.prototype.setData = function (data) {
-    // Activity at web pages
+WebDurationComp.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Domena');
     gdata.addColumn('number', 'Dlzka');
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y]);
     });
-    var options = {
+    return gdata;
+};
+
+WebDurationComp.prototype.generateGraph = function () {
+    this.options = {
         height: 500,
         vAxis: {title: this.attributes.granularity + "S"},
-        legend: { position: 'none' } ,
+        legend: { position: 'none' },
         explorer: {
-            maxZoomOut:2,
+            maxZoomOut: 2,
             keepInBounds: true
         }
     };
 
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
-    this.diagram.draw(gdata, options);
 };
 
 
@@ -61,7 +85,7 @@ BrowserVsRewrittenCodeCom = function () {
 };
 BrowserVsRewrittenCodeCom.prototype = new GoogleChartComponent();
 
-BrowserVsRewrittenCodeCom.prototype.setData = function (data) {
+BrowserVsRewrittenCodeCom.prototype.convertData = function (data) {
     // https://google-developers.appspot.com/chart/interactive/docs/gallery/scatterchart
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('number', 'Aktivita v prehliadaci');
@@ -69,20 +93,21 @@ BrowserVsRewrittenCodeCom.prototype.setData = function (data) {
     data.forEach(function (key) {
         gdata.addRow([parseInt(key.content), key.y]);
     });
-
-    var options = {
+    return gdata;
+};
+BrowserVsRewrittenCodeCom.prototype.generateGraph = function () {
+    this.options = {
         hAxis: {title: 'Aktivita v prehliadaci v ' + this.attributes.granularity + "S"},
         vAxis: {title: 'Napisany kod v LOC metrike'},
         height: 500,
-        legend: { position: 'none' } ,
+        legend: { position: 'none' },
         explorer: {
-            maxZoomOut:2,
+            maxZoomOut: 2,
             keepInBounds: true
         }
     };
 
     this.diagram = new google.visualization.ScatterChart(this.getDiagramElement());
-    this.diagram.draw(gdata, options);
 };
 
 
@@ -94,7 +119,7 @@ FilesModificationCom = function () {
 };
 FilesModificationCom.prototype = new GoogleChartComponent();
 
-FilesModificationCom.prototype.setData = function (data) {
+FilesModificationCom.prototype.convertData = function (data) {
     // Files modifications
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Path');
@@ -102,16 +127,19 @@ FilesModificationCom.prototype.setData = function (data) {
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y]);
     });
-    var options = {
+    return gdata;
+};
+
+FilesModificationCom.prototype.generateGraph = function () {
+    thisoptions = {
         vAxis: {title: 'Pocet modifikacii suboru'},
-        legend: { position: 'none' } ,
+        legend: { position: 'none' },
         explorer: {
-            maxZoomOut:2,
+            maxZoomOut: 2,
             keepInBounds: true
         }
     };
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
-    this.diagram.draw(gdata, options);
 };
 
 
@@ -123,24 +151,26 @@ DomainVisitCom = function () {
 };
 DomainVisitCom.prototype = new GoogleChartComponent();
 
-DomainVisitCom.prototype.setData = function (data) {
-    // Files modifications
+DomainVisitCom.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Domena');
     gdata.addColumn('number', 'Pocet navstev');
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y]);
     });
-    var options = {
+    return gdata;
+};
+
+DomainVisitCom.prototype.generateGraph = function() {
+    this.options = {
         vAxis: {title: 'Pocet navstev'},
         hAxis: {title: 'Domena navstivena kliknutim, zadanim url, vybranim z oblubenych, ...'},
-        legend: { position: 'none' } ,
+        legend: { position: 'none' },
         explorer: {
-            maxZoomOut:2,
+            maxZoomOut: 2,
             keepInBounds: true
         }
     };
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
-    this.diagram.draw(gdata, options);
 };
 
