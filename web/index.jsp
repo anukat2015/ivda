@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Interactive visualization of developer‘s actions</title>
@@ -7,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
     <meta name="Author" content="Lukas Sekerak"/>
     <meta name="robots" content="noindex"/>
+    <meta charset="UTF-8">
 
     <script type="text/javascript" src="libs/vis/dist/vis.js"></script>
     <link href="libs/vis/dist/vis.css" rel="stylesheet" type="text/css"/>

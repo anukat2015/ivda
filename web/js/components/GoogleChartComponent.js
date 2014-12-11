@@ -104,6 +104,9 @@ BrowserVsRewrittenCodeCom.prototype.generateGraph = function () {
         explorer: {
             maxZoomOut: 2,
             keepInBounds: true
+        },
+        trendlines: {
+            0: {type: 'linear'}
         }
     };
 
