@@ -56,7 +56,6 @@ public final class Array2Json {
     }
 
     public void write(IvdaEvent event) {
-        // Black out developer name
         try {
             generator.writeObject(event);
         } catch (IOException e) {

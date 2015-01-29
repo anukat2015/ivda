@@ -59,7 +59,7 @@ public abstract class ProcessProcesses extends ProcessIterator<EventDto> {
 
     private void handleStarted(ProcessesChangedSinceCheckEventDto event) {
         for (ProcessDto started : event.getStartedProcesses()) {
-            if (appBlackList.exist(started)) {
+            if (appBlackList.exist(started.getName())) {
                 continue;
             }
             handleStarted(event, started);

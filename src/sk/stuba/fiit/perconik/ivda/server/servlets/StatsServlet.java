@@ -15,6 +15,7 @@ import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
 import sk.stuba.fiit.perconik.ivda.server.processevents.BrowserVsWrittenCode;
 import sk.stuba.fiit.perconik.ivda.server.processevents.CountEventsHistogram;
 import sk.stuba.fiit.perconik.ivda.server.processevents.CreateBaseActivities;
+import sk.stuba.fiit.perconik.ivda.util.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramByHashTable;
 import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramBySiblings;
@@ -126,6 +127,7 @@ public class StatsServlet extends HttpServlet {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
             e.setY(entry.getValue().toInteger());
+            e.setGroup(Catalog.Web.classify(entry.getKey()));
             json.write(e);
         }
         json.close();
@@ -446,6 +448,7 @@ public class StatsServlet extends HttpServlet {
             IvdaEvent event = new IvdaEvent();
             event.setContent(entry.getKey());
             event.setY(entry.getValue().toInteger() / (int) g.millis());
+            event.setGroup(Catalog.Web.classify(entry.getKey()));
             json.write(event);
         }
         json.close();
