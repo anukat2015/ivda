@@ -55,8 +55,9 @@ WebDurationComp.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Domena');
     gdata.addColumn('number', 'Dlzka');
+    gdata.addColumn({ type: 'string', role: 'style' });
     data.forEach(function (key) {
-        gdata.addRow([key.content, key.y]);
+        gdata.addRow([key.content, key.y, CatalogGetColor("Web", key.group)]);
     });
     return gdata;
 };
@@ -72,6 +73,7 @@ WebDurationComp.prototype.generateGraph = function () {
         }
     };
 
+    this.options = google.charts.Column.convertOptions(this.options);
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
 };
 
@@ -158,8 +160,9 @@ DomainVisitCom.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Domena');
     gdata.addColumn('number', 'Pocet navstev');
+    gdata.addColumn({ type: 'string', role: 'style' });
     data.forEach(function (key) {
-        gdata.addRow([key.content, key.y]);
+        gdata.addRow([key.content, key.y, CatalogGetColor("Web", key.group)]);
     });
     return gdata;
 };

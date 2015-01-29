@@ -53,6 +53,7 @@
     <script type="text/javascript" src="js/components/DiagramManager.js"></script>
 
     <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/colors.js"></script>
     <script type="text/javascript" src="js/Preloader.js"></script>
     <script type="text/javascript" src="js/GraphData.js"></script>
     <script type="text/javascript" src="js/Toolbar.js"></script>

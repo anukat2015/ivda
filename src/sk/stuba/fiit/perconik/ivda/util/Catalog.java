@@ -3,16 +3,15 @@ package sk.stuba.fiit.perconik.ivda.util;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessDto;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -44,17 +43,13 @@ public final class Catalog implements Serializable {
         return Collections.unmodifiableSet(catalog);
     }
 
-    public boolean exist(ProcessDto process) {
-        return exist(process.getName());
-    }
-
     public boolean exist(String process) {
         return catalog.contains(process);
     }
 
-    public boolean checkAtLeastOneDontExist(Collection<ProcessDto> list) {
-        for (ProcessDto process : list) {
-            if (!exist(process)) {
+    public boolean checkAtLeastOneDontExist(Iterator<String> list) {
+        while (list.hasNext()) {
+            if (!exist(list.next())) {
                 // Ide o zaujimavy process
                 return true;
             }
@@ -108,11 +103,29 @@ public final class Catalog implements Serializable {
         public Catalog getList() {
             return list;
         }
+
+        public static Processes determine(String code) {
+            for (Processes type : Processes.values()) {
+                if (type.getList().exist(code)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        public static String classify(String code) {
+            Processes type = determine(code);
+            if (type != null) {
+                return type.toString();
+            }
+            return null;
+        }
     }
 
     public enum Web implements Serializable {
         WORK("work.txt"),
-        PERSONAL("personal.txt");
+        PERSONAL("personal.txt"),
+        UNKNOWN("unknown.txt");
 
         Catalog list;
 
@@ -122,6 +135,30 @@ public final class Catalog implements Serializable {
 
         public Catalog getList() {
             return list;
+        }
+
+        /**
+         * Vrat typ Webu podla toho kde sa kod nachadza.
+         * Prepodkladame, ze jeden kod je len v jednom subore.
+         *
+         * @param code
+         * @return
+         */
+        public static Web determine(String code) {
+            for (Web type : Web.values()) {
+                if (type.getList().exist(code)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        public static String classify(String code) {
+            Web type = determine(code);
+            if (type != null) {
+                return type.toString();
+            }
+            return null;
         }
     }
 }

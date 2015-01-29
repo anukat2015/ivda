@@ -9,4 +9,3 @@ Date.prototype.floor = function (chunkSize) {
 Date.prototype.ceil = function (chunkSize) {
     return new Date(( Math.ceil(this.getTime() / chunkSize) * chunkSize));
 };
-
