@@ -24,7 +24,10 @@ public class WebEventDto extends ApplicationEventDto {
         return super.getDefaultEventTypeUri().path("web");
     }
 
-    public String getDomain() {
+    /**
+     * @return Ziskaj domenu z URL stranky.
+     */
+    public String getUrlDomain() {
         if (Strings.isNullOrEmpty(url)) {
             return url;
         }

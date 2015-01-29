@@ -94,8 +94,8 @@ public class BaseDividing implements IDividing {
             if (!(actual instanceof WebEventDto)) {
                 return true; // druhy prvok je iny typ
             }
-            String url1 = ((WebEventDto) first).getDomain();
-            String url2 = ((WebEventDto) actual).getDomain();
+            String url1 = ((WebEventDto) first).getUrlDomain();
+            String url2 = ((WebEventDto) actual).getUrlDomain();
             if (url1 == null || url2 == null) {
                 return true;
             }

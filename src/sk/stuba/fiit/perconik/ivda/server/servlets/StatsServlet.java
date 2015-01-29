@@ -113,7 +113,7 @@ public class StatsServlet extends HttpServlet {
             protected void proccessItem(EventDto event) {
                 if (event instanceof WebNavigateEventDto) {
                     WebNavigateEventDto cevent = (WebNavigateEventDto) event;
-                    histogram.map(cevent.getDomain());
+                    histogram.map(cevent.getUrlDomain());
                 }
             }
         };
@@ -283,7 +283,7 @@ public class StatsServlet extends HttpServlet {
                 String content;
                 if (group instanceof WebGroup) {
                     WebEventDto web = (WebEventDto) group.getFirstEvent();
-                    String url = web.getDomain();
+                    String url = web.getUrlDomain();
                     if (url == null) {
                         return;
                     }
@@ -428,7 +428,7 @@ public class StatsServlet extends HttpServlet {
                 }
 
                 WebEventDto web = (WebEventDto) group.getFirstEvent();
-                String url = web.getDomain();
+                String url = web.getUrlDomain();
                 if (url == null) {
                     return;
                 }

@@ -77,8 +77,7 @@ public final class ListOfEventsForTimeline extends ProcessIterator<EventDto> {
     }
 
     private void webEvent(WebNavigateEventDto event) {
-        String link = event.getUrl();
-        out.write(event, link, null, null);
+        out.write(event, event.getUrlDomain(), null, null);
     }
 
     private void ideEvent(IdeCodeEventDto event) {
