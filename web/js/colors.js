@@ -34,6 +34,6 @@ function CatalogGetColor(type, name) {
     if( part.hasOwnProperty(name) ) {
         return part[name];
     }
-    return return part["DEFAULT"];
+    return part["DEFAULT"];
 }
 

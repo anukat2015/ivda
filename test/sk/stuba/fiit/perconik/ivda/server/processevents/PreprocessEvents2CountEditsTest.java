@@ -18,8 +18,8 @@ public class PreprocessEvents2CountEditsTest extends TestCase {
 
     public void testProccessList() throws Exception {
         Configuration.getInstance();
-        Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
-        Date end = DateUtils.fromString("2014-11-09T00:00:00.000Z");
+        Date start = DateUtils.fromString("2010-01-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2020-11-09T00:00:00.000Z");
         Iterator<EventDto> it = BankOfChunks.getEvents(start, end);
 
         PreprocessEvents2CountEdits p = new PreprocessEvents2CountEdits();

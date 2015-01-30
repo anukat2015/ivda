@@ -17,7 +17,7 @@ public class BankOfChunksTest extends TestCase {
     public void testProcessChunks() throws Exception {
         Configuration.getInstance();
         Date start = DateUtils.fromString("2014-01-01T00:00:00.000Z");
-        Date end = DateUtils.fromString("2014-11-01T00:00:00.000Z");
+        Date end = DateUtils.fromString("2015-02-01T00:00:00.000Z");
         BankOfChunks.processChunks(start, end);
     }
 

@@ -27,7 +27,7 @@ DetailComponent.prototype._createTimeline = function () {
     var windowHeight = $(window).height();
     var options = {
         width: "100%",
-        height: "94%",
+        height: "600px",
         layout: "circle",
         style: 'circle',
         axisOnTop: true,

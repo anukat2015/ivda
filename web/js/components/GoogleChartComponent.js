@@ -73,7 +73,6 @@ WebDurationComp.prototype.generateGraph = function () {
         }
     };
 
-    this.options = google.charts.Column.convertOptions(this.options);
     this.diagram = new google.visualization.ColumnChart(this.getDiagramElement());
 };
 
@@ -136,7 +135,7 @@ FilesModificationCom.prototype.convertData = function (data) {
 };
 
 FilesModificationCom.prototype.generateGraph = function () {
-    thisoptions = {
+    this.options = {
         vAxis: {title: 'Pocet modifikacii suboru'},
         legend: { position: 'none' },
         explorer: {
