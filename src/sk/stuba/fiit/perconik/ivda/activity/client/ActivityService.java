@@ -5,11 +5,14 @@ import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.UriUtils;
+import sk.stuba.fiit.perconik.ivda.util.cache.CompositeGuavaCache;
+import sk.stuba.fiit.perconik.ivda.util.cache.ofy.OfyDynamicCache;
 import sk.stuba.fiit.perconik.ivda.util.rest.RestClient;
 import sk.stuba.fiit.perconik.ivda.util.rest.WebClient;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +80,7 @@ public class ActivityService extends RestClient {
         public static final ActivityService INSTANCE = new ActivityService();
     }
 
-    /*
+
     private final class ActivityCache extends CompositeGuavaCache<URI, Serializable> {
         public ActivityCache() {
             super(new OfyDynamicCache<URI, Serializable>() {
@@ -87,5 +90,5 @@ public class ActivityService extends RestClient {
                 }
             });
         }
-    } */
+    }
 }

@@ -65,7 +65,7 @@ function Toolbar() {
         });
 
         // Nastav hodnoty pre dropdown menu
-        this.setTime2(new Date("2014-08-06T12:00:00.000"));
+        this.setTime2(new Date("2014-12-06T12:00:00.000"));
         this.setFeature(gGlobals.graphs.getGraphs());
         var granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
         this.setGranularity(granularities);
@@ -113,7 +113,7 @@ function Toolbar() {
     };
 
     this.setTime2 = function (end) {
-        var start = new Date(end.getTime() - 2 * 24 * 60 * 60 * 1000); // posledne 2 dni
+        var start = new Date(end.getTime() - 6 * 24 * 60 * 60 * 1000); // posledne 2 dni
         this.setTime(start, end);
     };
 

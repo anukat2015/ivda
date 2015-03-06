@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Seky on 5. 9. 2014.
  */
 @SuppressWarnings("unchecked")
-public abstract class RestClient {
+public abstract class RestClient extends WebClient {
     private static final Logger LOGGER = Logger.getLogger(RestClient.class.getName());
 
     protected final WebClient client;
