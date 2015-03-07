@@ -7,6 +7,12 @@ function GraphData() {
     this.items = new vis.DataSet();
     this.itemIndex = 0;
 
+    this.createGroup3 = function (type, name, className) {
+        if (!this.groups.get(type)) {
+            this.groups.add({id: type, content: name, className: className});
+        }
+    };
+
     this.createGroup2 = function (type, name) {
         if (!this.groups.get(type)) {
             this.groups.add({id: type, content: name});

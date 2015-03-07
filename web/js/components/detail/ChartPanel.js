@@ -16,13 +16,13 @@ ChartPanel.prototype.init = function (component) {
 
     this.visibleChart = new google.visualization.PieChart(this.parent.dom.find('.pieChart2')[0]);
     this.visibleOptions = {
-        title: 'Chart of visible objects',
+        title: 'Chart of visible objects per time',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 
     this.metadataChart = new google.visualization.PieChart(this.parent.dom.find('.pieChart3')[0]);
     this.metadataOptions = {
-        title: 'Chart of changed lines',
+        title: 'Chart of changed lines of code',
         chartArea: {width: '100%', height: '100%', left: '20', top: '20'}
     };
 

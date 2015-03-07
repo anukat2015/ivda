@@ -45,7 +45,7 @@ DiagramManager.prototype.getGraphs = function () {
 
 DiagramManager.prototype.find = function (id) {
     if (!this.components.hasOwnProperty(id)) {
-        throw new Error("component nenajdeny");
+        throw new Error("Component not found");
     }
     return this.components[id];
 };

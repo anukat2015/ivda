@@ -4,17 +4,18 @@ import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.log4j.Logger;
 import sk.stuba.fiit.perconik.ivda.activity.dto.EventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeCodeEventDto;
+import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeDocumentDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebNavigateEventDto;
 import sk.stuba.fiit.perconik.ivda.server.BankOfChunks;
 import sk.stuba.fiit.perconik.ivda.server.EventsUtil;
-import sk.stuba.fiit.perconik.ivda.server.grouping.BaseDividing;
+import sk.stuba.fiit.perconik.ivda.server.grouping.CreateBaseActivities;
+import sk.stuba.fiit.perconik.ivda.server.grouping.DividingByContext;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
 import sk.stuba.fiit.perconik.ivda.server.processevents.Array2Json;
 import sk.stuba.fiit.perconik.ivda.server.processevents.BrowserVsWrittenCode;
 import sk.stuba.fiit.perconik.ivda.server.processevents.CountEventsHistogram;
-import sk.stuba.fiit.perconik.ivda.server.processevents.CreateBaseActivities;
 import sk.stuba.fiit.perconik.ivda.util.Catalog;
 import sk.stuba.fiit.perconik.ivda.util.histogram.Histogram;
 import sk.stuba.fiit.perconik.ivda.util.histogram.HistogramByHashTable;
@@ -269,13 +270,7 @@ public class StatsServlet extends HttpServlet {
 
     private static void activityDetail(Iterator<EventDto> events, ServletOutputStream stream) throws IOException {
         final Array2Json out = new Array2Json(stream);
-        ProcessIterator<EventDto> process = new CreateBaseActivities() {
-            @Override
-            protected void started() {
-                super.started();
-                divide = new BaseDividing.PerWebDividing(); //chceme delenie klasicke + domeny
-            }
-
+        ProcessIterator<EventDto> process = new CreateBaseActivities(new DividingByContext()) {
             @Override
             protected void foundEndOfGroup(Group group) {
                 if (!group.isInterval()) {
@@ -291,10 +286,14 @@ public class StatsServlet extends HttpServlet {
                     }
                     content = url;
                 } else if (group instanceof IdeGroup) {
-                    IdeEventDto ide = (IdeEventDto) group.getFirstEvent();
-                    content = "PATH"; // TODO: dokoncit delenie pre subory
+                    IdeCodeEventDto ide = (IdeCodeEventDto) group.getFirstEvent();
+                    IdeDocumentDto doc = ide.getDocument();
+                    if (doc == null) {
+                        return;
+                    }
+                    content = doc.getLocalPath();
                 } else {
-                    // Bo vytvorena skupina ale nevieme co su dnu za prvky
+                    // Bola vytvorena skupina ale nevieme s akym kontextom pracuju
                     content = "UNKNOWN";
                 }
 
@@ -416,13 +415,7 @@ public class StatsServlet extends HttpServlet {
         final Histogram<String> histogram = new HistogramByHashTable<>();
 
         // Iterujeme cez aktivity
-        ProcessIterator<EventDto> process = new CreateBaseActivities() {
-            @Override
-            protected void started() {
-                super.started();
-                divide = new BaseDividing.PerWebDividing(); //chceme delenie klasicke + domeny
-            }
-
+        ProcessIterator<EventDto> process = new CreateBaseActivities(new DividingByContext()) {
             @Override
             protected void foundEndOfGroup(Group group) {
                 if (!(group instanceof WebGroup) || !group.isInterval()) {

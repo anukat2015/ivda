@@ -18,7 +18,7 @@ import java.util.Set;
  * Trieda sa pozera na vytvorene a ukoncene procesy.
  * Pomocou PID procesu hlada zaciatok a ukoncenie procesu.
  * Nasledne danemu procesu priradi aproximovane casi zaciatku a ukoncenia.
- * Mnohe procesy nas nezaujimaju na to sluzi black list procesov
+ * Mnohe procesy nas nezaujimaju na to sluzi black list procesov, definovany v ProcessProcesses.
  */
 @NotThreadSafe
 public class PairingProcesses extends ProcessProcesses implements Serializable {

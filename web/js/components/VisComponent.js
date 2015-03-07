@@ -39,6 +39,34 @@ VisComponent.prototype._prepareDiagram = function () {
     this.setRange(this.attributes.range);
 };
 
+/**
+ * Vypracuj zanaranie objektov v grafe.
+ * Tzv po kliknuti na stlpec sa vytvori rovnaky graf.
+ * Novy graf zobrazuje casovy horizont daneho stlpca a ma mensiu granularitu.
+ * @private
+ */
+VisComponent.prototype._zanaranie = function () {
+    var nextGranularity = this.getNextGranularity();
+    if (nextGranularity == null) {
+        return; // dalsia uroven neexistuje
+    }
+    var toTime = this.diagram.linegraph.body.util.toTime;
+    var instance = this;
+    this.dom.find(".LineGraph .bar").dblclick(function (event) {
+        var bar = $(this);
+        var x = bar.attr('x');
+        var endPosition = bar.attr('width') + x;
+        var atts = jQuery.extend(true, {}, instance.attributes);
+        atts.range = {
+            start: toTime(x),
+            end: toTime(endPosition)
+        };
+        atts.granularity = nextGranularity;
+        instance.manager.create(instance.getName(), atts);
+    });
+};
+
+
 VisComponent.prototype._createTimeline = function () {
     var options = {
         width: "100%",
@@ -88,7 +116,7 @@ VisComponent.prototype._createDynamicHistogram = function (items, groups, overla
         drawPoints: true,
         dataAxis: {
             icons: false,
-            popisY: "Pocet"
+            popisY: "Count"
         },
         orientation: 'top'
     };
@@ -105,7 +133,7 @@ VisComponent.prototype.init = function (attributes, manager) {
 // ----- Pocet eventov
 CountEventsCom = function () {
     VisComponent.call();
-    this.title = "Pocet eventov histogram";
+    this.title = "Histogram of actions";
     this.name = "countEvents";
 };
 CountEventsCom.prototype = new VisComponent();
@@ -122,7 +150,7 @@ CountEventsCom.prototype.init = function (attributes, manager) {
 // ----- Pocet eventov divided
 CountEventsDividedCom = function () {
     VisComponent.call();
-    this.title = "Pocet eventov rozdelenych do skupin";
+    this.title = "Histogram of actions, grouped by enviroment";
     this.name = "countEventsDivided";
 };
 CountEventsDividedCom.prototype = new VisComponent();
@@ -131,9 +159,9 @@ CountEventsDividedCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Pocet akcii v prehliadaci');
-    info.createGroup2('Ide', 'Pocet akcii v ide prostredi');
-    info.createGroup2('Mix', 'Pocet inych akcii');
+    info.createGroup2('Web', 'Count of actions in Web browser');
+    info.createGroup2('Ide', 'Count of actions in Ide enviroment');
+    info.createGroup2('Mix', 'Count of another actions');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -142,7 +170,7 @@ CountEventsDividedCom.prototype.init = function (attributes, manager) {
 // ----- Changes of source codes
 CodeChangesCom = function () {
     VisComponent.call();
-    this.title = "Zmeny v zdrojovom kode";
+    this.title = "Graph of source code adjustment";
     this.name = "locChanges";
     this.groups = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
 };
@@ -152,7 +180,7 @@ CodeChangesCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "overlap");
     var info = new GraphData();
-    info.createGroup2("changedLines", "Zmeny v zdrojovom kode podla LOC metriky");
+    info.createGroup3("changedLines", "Source code adjustments by LOC metric", "graphGroup1");
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -161,7 +189,7 @@ CodeChangesCom.prototype.init = function (attributes, manager) {
 // ----- Activity time grouped
 ActivityTimeGroupedCom = function () {
     VisComponent.call();
-    this.title = "Zoskupene trvanie pre aktivity";
+    this.title = "Grouped duration of activities";
     this.name = "activityTimeGrouped";
     this.groups = ["MONTH", "DAY", "HOUR"];
 };
@@ -171,8 +199,8 @@ ActivityTimeGroupedCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Dlzka aktivity vo webovom prehliadaci v minutach');
-    info.createGroup2('Ide', 'Dlzka aktivity v ide prostredi v minutach');
+    info.createGroup2('Web', 'Duration of activities in Browser, in' + this.getGranularity());
+    info.createGroup2('Ide', 'Duration of activities in Ide enviroment, in' + this.getGranularity());
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -180,7 +208,7 @@ ActivityTimeGroupedCom.prototype.init = function (attributes, manager) {
 // ----- Activity time grouped
 ActivityLocDomainVisitsGrouped = function () {
     VisComponent.call();
-    this.title = "Vybrane a zoskupene crty aktivit";
+    this.title = "Activities and their features, grouped by period";
     this.name = "activityLocDomainVisitsGrouped";
     this.groups = ["MONTH", "DAY", "HOUR"];
 };
@@ -190,8 +218,8 @@ ActivityLocDomainVisitsGrouped.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Pocet navstivenych domen pocas aktivit v prehliadaci');
-    info.createGroup2('Ide', 'Zmeny v zdrojovom kode podla LOC metriky pocas aktivit v ide');
+    info.createGroup2('Web', 'Count of visited domains during activity in Browser, one bar is group of same type activity');
+    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in Ide, one bar is group of same type activity');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -200,7 +228,7 @@ ActivityLocDomainVisitsGrouped.prototype.init = function (attributes, manager) {
 // ----- Activity Unique domains vs Changed LOC
 ActivityDynamicCom = function () {
     VisComponent.call();
-    this.title = "Vybrane crty aktivit";
+    this.title = "Activities and their features";
     this.name = "activityHistogram";
     this.groups = ["PER_VALUE"];
 };
@@ -210,8 +238,8 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "overlap");
     var info = new GraphData();
-    info.createGroup2('Web', 'Pocet navstivenych domen pocas aktivity v prehliadaci, jeden stlpec je aktivita');
-    info.createGroup2('Ide', 'Zmeny v zdrojovom kode podla LOC metriky pocas aktivity v ide, jeden stlpec je aktivita');
+    info.createGroup2('Web', 'Count of visited domains during activity in Browser, one bar is one activity');
+    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in Ide enviroment, one bar is one activity');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -219,7 +247,7 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
 // ----- Activity detail
 ActivityDetailCom = function () {
     VisComponent.call();
-    this.title = "Detaily aktivit";
+    this.title = "Detail of activities per enviroment";
     this.name = "activityDetail";
     this.groups = ["PER_VALUE"];
 };
@@ -229,8 +257,8 @@ ActivityDetailCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createTimeline();
     var info = new GraphData();
-    info.createGroup2('Web', 'Aktivita v prehliadaci');
-    info.createGroup2('Ide', 'Aktivita v ide prostredi');
+    info.createGroup2('Web', 'Activity in Web browser');
+    info.createGroup2('Ide', 'Activity in Ide enviroment');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -239,7 +267,7 @@ ActivityDetailCom.prototype.init = function (attributes, manager) {
 // ----- Processes detail
 ProcessesDetailCom = function () {
     VisComponent.call();
-    this.title = "Detail spustenych procesov";
+    this.title = "Detail of runned OS processes";
     this.name = "processDetail";
     this.groups = ["PER_VALUE"];
 };
@@ -249,7 +277,7 @@ ProcessesDetailCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createTimeline();
     var info = new GraphData();
-    info.createGroup2('processes', 'Zoznam procesov');
+    info.createGroup2('processes', 'List of process');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };

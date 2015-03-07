@@ -5,6 +5,7 @@ import java.util.Iterator;
 /**
  * Created by Seky on 21. 10. 2014.
  * Metoda na spracovania iteratora.
+ * Ide o spracovanie prvkov v streame.
  */
 public abstract class ProcessIterator<T> {
     private boolean enabledProcess;

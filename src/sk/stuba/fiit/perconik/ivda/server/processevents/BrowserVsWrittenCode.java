@@ -1,6 +1,8 @@
 package sk.stuba.fiit.perconik.ivda.server.processevents;
 
+import sk.stuba.fiit.perconik.ivda.server.grouping.CreateBaseActivities;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import java.util.ArrayList;
@@ -12,9 +14,9 @@ import java.util.concurrent.TimeUnit;
  * Created by Seky on 5. 12. 2014.
  */
 public abstract class BrowserVsWrittenCode extends CreateBaseActivities {
-    // Threshold urcuje budovanie skupin aktivit
+    // Threshold urcuje budovanie skupin aktivit, pre meranie BrowserVsWrittenCode
     // Ma byt urcite vacsi ako THRESHOLD pre budovanie aktivit
-    private static long TIME_THRESHOLD = TimeUnit.MINUTES.toMillis(10);
+    private static long TIME_THRESHOLD = TimeUnit.MINUTES.toMillis(Configuration.getInstance().getBrowserVsWrittenCodeTh());
 
     protected List<WebGroup> webActivities = new ArrayList<>(24);
     protected List<IdeGroup> ideActivities = new ArrayList<>(24);

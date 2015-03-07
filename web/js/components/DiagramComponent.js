@@ -78,6 +78,31 @@ DiagramComponent.prototype.setData = function (data) {
 
 };
 
+/**
+ * Vrat pouzivatelsky nazov granularity
+ * @returns {string}
+ */
+DiagramComponent.prototype.getGranularity = function () {
+    return this.attributes.granularity.toLowerCase() + "s";
+};
+
+/**
+ * Vyhladaj dalsiu uroven granulariy
+ * Ak neexistuje vrat null.
+ * @returns {*}
+ */
+DiagramComponent.prototype.getNextGranularity = function () {
+    var index = this.groups.indexOf(this.attributes.granularity);
+    if (index == -1) {
+        throw new Error("Unknown granularity");
+    }
+    index++;
+    if (index >= this.groups.length) {
+        return null;
+    }
+    return this.groups[index];
+};
+
 DiagramComponent.prototype.draw = function () {
     if (this.diagram == undefined) {
         return;

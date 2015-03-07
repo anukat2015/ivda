@@ -8,13 +8,21 @@ import sk.stuba.fiit.perconik.ivda.util.lang.ProcessIterator;
 
 /**
  * Created by Seky on 8. 8. 2014.
+ * Trieda predstavuje zakladne budovanie skupiny  z udalosti.
+ * Udalost moze byt ignorovana.
+ * Udalost moze byt byt a nemusi byt pridana do skupiny. Napriklad na zaklade casu od poslednej udalosti.
+ * Na zaklade noveho typu udalosti, moze byt doterajsia skupina uzatvorena a vznikne nova skupina.
  */
 public abstract class ProcessAsGroup extends ProcessIterator<EventDto> {
-    protected IDividing divide;
+    private IDividing divide;
     private Group currentGroup;
 
+    protected ProcessAsGroup(IDividing divide) {
+        this.divide = divide;
+    }
+
     protected ProcessAsGroup() {
-        this.divide = new BaseDividing();
+        this(new DividingByEnviroment());
     }
 
     /**
@@ -39,7 +47,7 @@ public abstract class ProcessAsGroup extends ProcessIterator<EventDto> {
 
         boolean canPush = divide.canPush(currentGroup, event);
         boolean canDivide = false;
-        if(canPush) {
+        if (canPush) {
             canDivide = divide.canDivide(currentGroup, event);
             currentGroup.push(event);
         } else {

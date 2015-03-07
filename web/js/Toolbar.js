@@ -12,6 +12,7 @@ function Toolbar() {
     this.granularityPanel = $('#t-granularity');
     this.lockButton = $("#t-lockMovement");
     this.trashVisible = false;
+    //this.trashTooltipVisible = false;
 
     this.init = function () {
         // Stiahni mena vyvojarov
@@ -97,7 +98,36 @@ function Toolbar() {
         this.trashVisible = false;
     };
 
+    this.createTrashTooltip = function () {
+        // Vytvor animaciu
+        $("#t-submit").qtip({
+            overwrite: false,
+            hide: {
+                effect: function() {
+                    $(this).hide('puff', 500);
+                }
+            },
+            show: {
+                event: 'click',
+                effect: function() {
+                    $(this).show('slide', 500);
+                }
+            },
+            onHide: function(){
+                $("#t-submit").qtip('destroy');
+            },
+            content: 'Every graph you can shift by moving, or move to trash!'
+        });
+        $("#t-submit").qtip('toggle', true);
+    };
+
     this.createDiagram = function () {
+        // Vytvor tooltip
+        if (!this.trashTooltipVisible) {
+            this.createTrashTooltip();
+            this.trashTooltipVisible = true;
+        }
+
         // Vytvor diagram
         var atts = {
             developer: this.getDeveloper(),
@@ -178,6 +208,7 @@ function Toolbar() {
                 return { name: x };
             })
         });
+        this.granularityPanel[0].selectize.setValue(items[items.length - 1]);
     };
 }
 

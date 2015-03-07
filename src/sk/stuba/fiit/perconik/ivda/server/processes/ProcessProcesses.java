@@ -17,7 +17,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  */
 @NotThreadSafe
 public abstract class ProcessProcesses extends ProcessIterator<EventDto> {
-    private final Catalog appBlackList;
+    protected final Catalog appBlackList;
 
     protected ProcessProcesses() {
         appBlackList = Catalog.Processes.BANNED.getList();

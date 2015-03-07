@@ -7,6 +7,7 @@ import sk.stuba.fiit.perconik.ivda.activity.dto.ProcessesChangedSinceCheckEventD
 import sk.stuba.fiit.perconik.ivda.activity.dto.ide.IdeEventDto;
 import sk.stuba.fiit.perconik.ivda.activity.dto.web.WebEventDto;
 import sk.stuba.fiit.perconik.ivda.server.grouping.group.Group;
+import sk.stuba.fiit.perconik.ivda.util.Configuration;
 import sk.stuba.fiit.perconik.ivda.util.lang.DateUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * Skupiny rozdelujeme na zaklade casu alebo typu.
  */
 @ThreadSafe
-public class BaseDividing implements IDividing {
+public class DividingByEnviroment implements IDividing {
 
     @Override
     public boolean canIgnore(EventDto event) {
@@ -39,15 +40,21 @@ public class BaseDividing implements IDividing {
         return !divideByTime(currentGroup, actual);
     }
 
+    /**
+     * Ma sa skupina rozdelit?
+     * @param group  Aktualna skupina.
+     * @param actual Pricadzajuci event.
+     * @return
+     */
     @Override
     public boolean canDivide(Group group, EventDto actual) {
-        return divideByType(group, actual);
+        return divideByEnviroment(group, actual);
     }
 
     /**
      * Tzv. raz za minutu sa posle event, vtedy vieme urcite ze je aktivny
      */
-    private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(6L);
+    private static final long ACTIVITY_MIN_INTERVAL = TimeUnit.MINUTES.toMillis(Configuration.getInstance().getActivityMinIntervalTh());
 
     /**
      * Ked interval medzi eventami je priliz velky, rozdel interval.
@@ -61,13 +68,13 @@ public class BaseDividing implements IDividing {
     }
 
     /**
-     * Rozdel interval ked prvky su odlisneho typu
+     * Rozdel interval ked prvky su odlisneho typu.
+     * Tzv tuto delime podla prostredia.
      *
      * @param actual
      * @return
-     * @throws com.google.visualization.datasource.base.TypeMismatchException
      */
-    protected static boolean divideByType(Group group, EventDto actual) {
+    protected static boolean divideByEnviroment(Group group, EventDto actual) {
         if (group.getFirstEvent() instanceof WebEventDto && actual instanceof WebEventDto) {
             return false; // su rovnake
         } else if (group.getFirstEvent() instanceof IdeEventDto && actual instanceof IdeEventDto) {
@@ -78,29 +85,5 @@ public class BaseDividing implements IDividing {
 
         // nie su rovnake alebo pojde o novy typ
         return true;
-    }
-
-    public static class PerWebDividing extends BaseDividing {
-        @Override
-        public boolean canDivide(Group group, EventDto actual) {    // Zapneme per domain filter
-            return divideForWebTabSpendTime(group, actual) || divideByType(group, actual);
-        }
-
-        protected static boolean divideForWebTabSpendTime(Group group, EventDto actual) {
-            EventDto first = group.getFirstEvent();
-            if (!(first instanceof WebEventDto)) {
-                return false; // nejde o Web, ignorujeme, rozdeli to nieco dalsie
-            }
-            if (!(actual instanceof WebEventDto)) {
-                return true; // druhy prvok je iny typ
-            }
-            String url1 = ((WebEventDto) first).getUrlDomain();
-            String url2 = ((WebEventDto) actual).getUrlDomain();
-            if (url1 == null || url2 == null) {
-                return true;
-            }
-            // url1 ponechaj take ake je, ked je ine ako url2 rozdeli to samo, co je pravdepodobne, inak mohol byt aj na rovnakej neznamen stranke
-            return !url1.equals(url2); // tzv prida event na zaciatok a na konci bude druhy event
-        }
     }
 }

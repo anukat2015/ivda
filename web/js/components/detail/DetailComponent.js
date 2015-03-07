@@ -5,9 +5,9 @@ DetailComponent = function () {
     DiagramComponent.call();
     this.loader = new ChunksLoader();
     this.charts = new ChartPanel();
-    this.title = "Vizualizacia akcii";
+    this.title = "Visualization of all actions";
     this.name = "actions";
-    this.groups = ["Size by changes in future", "Size by LOC", "Constant size"];
+    this.groups = ["Size by changes in future", "Size by LOC metric", "Constant size"];
 };
 DetailComponent.prototype = new DiagramComponent();
 
@@ -135,8 +135,8 @@ DetailComponent.prototype._buildHtml = function () {
              </div>   \
             <div class="legenda">    \
                 <div class="title posun">Nezobrazuju sa ziadne aktivity.</div>  \
-                <div class="title posun">Preto si vyber developera alebo sa posun na casovej osi.</div>  \
-                <div class="title">Legenda udalosti:</div> \
+                <div class="title posun">Choose another developer or move on time axis.</div>  \
+                <div class="title">Legend of events:</div> \
                 <table width="100%" align="center">  \
                     <tr> \
                         <td>  \
@@ -145,7 +145,7 @@ DetailComponent.prototype._buildHtml = function () {
                             </div>   \
                         </td> \
                         <td>  \
-                            <p>Udalost vo webovom prehliadaci.</p> \
+                            <p>Event in web browser.</p> \
                         </td>  \
                     </tr>  \
                     <tr>   \
@@ -155,17 +155,17 @@ DetailComponent.prototype._buildHtml = function () {
                             </div>  \
                         </td> \
                         <td> \
-                            <p>Udalost vo vyvojom prostredi.</p> \
+                            <p>Event in IDE.</p> \
                         </td> \
                     </tr> \
                     <tr>   \
                         <td>  \
-                            <div class="timeline-event timeline-event-circle cUnkown">  \
+                            <div class="timeline-event timeline-event-circle cUnknown">  \
                                 <div class="timeline-event-content fixed-size">Unknown</div>  \
                             </div> \
                         </td>  \
                         <td> \
-                            <p>Neznama udalost.</p>  \
+                            <p>Unknown event.</p>  \
                         </td>  \
                     </tr> \
                     <tr>   \
@@ -175,7 +175,7 @@ DetailComponent.prototype._buildHtml = function () {
                             </div>  \
                         </td>  \
                         <td>  \
-                            <p>Aktivita reprezentuje skupinu udalosti.</p>  \
+                            <p>Group of events.</p>  \
                         </td> \
                     </tr> \
                 </table> \

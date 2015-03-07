@@ -105,7 +105,6 @@ ChunksLoader.prototype.loadChunk = function (start, end) {
         // Pozor: Odpoved mohla prist asynchronne a mohla nejaku predbehnut ;)
         // Alebo prisla neskoro a hranice uz su zmenene ..
         // To nevadi ,... lebo timeline sa nepozera na poradie v array len na datumy
-        //console.log("addItems " + data.getNumberOfRows());
         instance.acceptData(data);
     });
 };

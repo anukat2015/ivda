@@ -45,7 +45,7 @@ GoogleChartComponent.prototype.convertData = function (data) {
 // ------------- Web Duration
 WebDurationComp = function () {
     GoogleChartComponent.call();
-    this.title = "Dlzka navstivenych webov";
+    this.title = "Duration spent on web pages (domains)";
     this.name = "webDuration";
     this.groups = ["DAY", "HOUR", "MINUTE"];
 };
@@ -53,8 +53,8 @@ WebDurationComp.prototype = new GoogleChartComponent();
 
 WebDurationComp.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
-    gdata.addColumn('string', 'Domena');
-    gdata.addColumn('number', 'Dlzka');
+    gdata.addColumn('string', 'Domain');
+    gdata.addColumn('number', 'Duration in ' + this.getGranularity());
     gdata.addColumn({ type: 'string', role: 'style' });
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y, CatalogGetColor("Web", key.group)]);
@@ -80,7 +80,7 @@ WebDurationComp.prototype.generateGraph = function () {
 // ------------- BrowserVsRewrittenCodeCom
 BrowserVsRewrittenCodeCom = function () {
     GoogleChartComponent.call();
-    this.title = "Aktivita v prehliadaci voci naslednemu napisanemu kodu";
+    this.title = "Web browser activity wz Rewritten code";
     this.name = "browserVsRewrittenCode";
     this.groups = ["HOUR", "MINUTE"];
 };
@@ -89,8 +89,8 @@ BrowserVsRewrittenCodeCom.prototype = new GoogleChartComponent();
 BrowserVsRewrittenCodeCom.prototype.convertData = function (data) {
     // https://google-developers.appspot.com/chart/interactive/docs/gallery/scatterchart
     var gdata = new google.visualization.DataTable();
-    gdata.addColumn('number', 'Aktivita v prehliadaci');
-    gdata.addColumn('number', 'Aktivita v prehliadaci v minutach, Zmeny v zdrojovom kode podla LOC metriky');
+    gdata.addColumn('number', 'Activity at Web browser');
+    gdata.addColumn('number', 'Activity at Web browser in ' + this.getGranularity() + ', Rewritten code by LOC metric');
     data.forEach(function (key) {
         gdata.addRow([parseInt(key.content), key.y]);
     });
@@ -98,8 +98,8 @@ BrowserVsRewrittenCodeCom.prototype.convertData = function (data) {
 };
 BrowserVsRewrittenCodeCom.prototype.generateGraph = function () {
     this.options = {
-        hAxis: {title: 'Aktivita v prehliadaci v ' + this.attributes.granularity + "S"},
-        vAxis: {title: 'Napisany kod v LOC metrike'},
+        hAxis: {title: 'Activity at web browser in ' + this.getGranularity()},
+        vAxis: {title: 'Rewritten code by LOC metric'},
         height: 500,
         legend: { position: 'none' },
         explorer: {
@@ -118,7 +118,7 @@ BrowserVsRewrittenCodeCom.prototype.generateGraph = function () {
 // ------------- Files modifications, in counts
 FilesModificationCom = function () {
     GoogleChartComponent.call();
-    this.title = "Modifikovane subory";
+    this.title = "Modified source code files";
     this.name = "fileModifications";
 };
 FilesModificationCom.prototype = new GoogleChartComponent();
@@ -127,7 +127,7 @@ FilesModificationCom.prototype.convertData = function (data) {
     // Files modifications
     var gdata = new google.visualization.DataTable();
     gdata.addColumn('string', 'Path');
-    gdata.addColumn('number', 'Pocet modifikacii');
+    gdata.addColumn('number', 'Count of modifications');
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y]);
     });
@@ -136,7 +136,7 @@ FilesModificationCom.prototype.convertData = function (data) {
 
 FilesModificationCom.prototype.generateGraph = function () {
     this.options = {
-        vAxis: {title: 'Pocet modifikacii suboru'},
+        vAxis: {title: 'Count of modifications'},
         legend: { position: 'none' },
         explorer: {
             maxZoomOut: 2,
@@ -150,15 +150,15 @@ FilesModificationCom.prototype.generateGraph = function () {
 // ------------- Files modifications, in counts
 DomainVisitCom = function () {
     GoogleChartComponent.call();
-    this.title = "Navstivene domeny";
+    this.title = "Visited domains";
     this.name = "domainVisits";
 };
 DomainVisitCom.prototype = new GoogleChartComponent();
 
 DomainVisitCom.prototype.convertData = function (data) {
     var gdata = new google.visualization.DataTable();
-    gdata.addColumn('string', 'Domena');
-    gdata.addColumn('number', 'Pocet navstev');
+    gdata.addColumn('string', 'Domain');
+    gdata.addColumn('number', 'Count of visit');
     gdata.addColumn({ type: 'string', role: 'style' });
     data.forEach(function (key) {
         gdata.addRow([key.content, key.y, CatalogGetColor("Web", key.group)]);
@@ -168,8 +168,8 @@ DomainVisitCom.prototype.convertData = function (data) {
 
 DomainVisitCom.prototype.generateGraph = function() {
     this.options = {
-        vAxis: {title: 'Pocet navstev'},
-        hAxis: {title: 'Domena navstivena kliknutim, zadanim url, vybranim z oblubenych, ...'},
+        vAxis: {title: 'Count of visit'},
+        hAxis: {title: 'Domain could be visited by clicking on anchor, by url or picked up from bookmarks'},
         legend: { position: 'none' },
         explorer: {
             maxZoomOut: 2,

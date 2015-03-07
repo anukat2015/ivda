@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import sk.stuba.fiit.perconik.ivda.util.Configuration;
 
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.inject.Singleton;
 import java.util.Collections;
@@ -33,23 +32,8 @@ public final class Developers {
         return DevelopersHolder.INSTANCE;
     }
 
-    public String blackoutName(@Nullable String name) throws IllegalArgumentException {
-        if (name == null) {
-            throw new IllegalArgumentException();
-        }
-        if (!Configuration.getInstance().getBlackout()) {
-            return name;
-        }
-        String balckOutName = replaceGroup.inverse().get(name);
-        if (balckOutName == null) {
-            throw new IllegalArgumentException();
-        }
-        return balckOutName;
-    }
-
     public String getRealName(String name) throws IllegalArgumentException {
-        String real;
-        real = replaceGroup.get(name);
+        String real = replaceGroup.get(name);
         if (real == null) {
             throw new IllegalArgumentException();
         }

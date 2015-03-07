@@ -35,7 +35,8 @@ public final class Configuration implements Serializable {
     private Map<String, String> developers;
     private Boolean cacheEnabled;
     private Integer cacheResponseDuration;
-    private Boolean blackout;
+    private Long activityMinIntervalTh;
+    private Long browserVsWrittenCodeTh;
 
     static {
         // Load conf dir
@@ -143,11 +144,19 @@ public final class Configuration implements Serializable {
         this.cacheResponseDuration = cacheResponseDuration;
     }
 
-    public Boolean getBlackout() {
-        return blackout;
+    public Long getActivityMinIntervalTh() {
+        return activityMinIntervalTh;
     }
 
-    public void setBlackout(Boolean blackout) {
-        this.blackout = blackout;
+    public void setActivityMinIntervalTh(Long activityMinIntervalTh) {
+        this.activityMinIntervalTh = activityMinIntervalTh;
+    }
+
+    public Long getBrowserVsWrittenCodeTh() {
+        return browserVsWrittenCodeTh;
+    }
+
+    public void setBrowserVsWrittenCodeTh(Long browserVsWrittenCodeTh) {
+        this.browserVsWrittenCodeTh = browserVsWrittenCodeTh;
     }
 }
