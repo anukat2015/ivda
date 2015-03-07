@@ -116,7 +116,7 @@ function Toolbar() {
             onHide: function(){
                 $("#t-submit").qtip('destroy');
             },
-            content: 'Every graph you can shift by moving, or move to trash!'
+            content: 'Every graph you can move by grabbing title, or move to trash.'
         });
         $("#t-submit").qtip('toggle', true);
     };
@@ -183,6 +183,7 @@ function Toolbar() {
             valueField: 'id',
             labelField: 'name',
             searchField: 'name',
+            sortField: 'name',
             create: false,
             maxItems: 1,
             options: items,
@@ -192,9 +193,15 @@ function Toolbar() {
                 selectize.clearOptions();
                 com.groups.forEach(function (x) {
                     selectize.addOption({ name: x });
-                })
+                });
+                // Defaultne vyber posledne
+                instance._setDefaultGranularity(com.groups[com.groups.length - 1]);
             }
         });
+    };
+
+    this._setDefaultGranularity = function (id) {
+        this.granularityPanel[0].selectize.setValue(id);
     };
 
     this.setGranularity = function (items) {
@@ -202,13 +209,13 @@ function Toolbar() {
             valueField: 'name',
             labelField: 'name',
             searchField: 'name',
+            sortField: [[]],
             create: false,
             maxItems: 1,
             options: items.map(function (x) {
                 return { name: x };
             })
         });
-        this.granularityPanel[0].selectize.setValue(items[items.length - 1]);
     };
 }
 

@@ -24,7 +24,7 @@ public class HistogramByHashTable<K extends Comparable<K>> extends Histogram<K> 
     }
 
     @Override
-    public Collection<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse) {
+    public List<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse) {
         return sort(new ArrayList(map.entrySet()), sorted, byKey, reverse);
     }
 }

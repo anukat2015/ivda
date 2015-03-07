@@ -15,11 +15,11 @@ public abstract class Histogram<K extends Comparable<K>> {
 
     public abstract void map(K key, int count);
 
-    public final Collection<Map.Entry<K, MutableInt>> reduce() {
+    public final List<Map.Entry<K, MutableInt>> reduce() {
         return reduce(true, true, false);
     }
 
-    public abstract Collection<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse);
+    public abstract List<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse);
 
     protected static class KeyComparator<K extends Comparable<K>> implements Comparator<Map.Entry<K, MutableInt>> {
         @Override

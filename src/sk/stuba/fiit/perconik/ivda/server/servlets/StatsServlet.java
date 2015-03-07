@@ -29,10 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Seky on 9. 11. 2014.
@@ -123,7 +120,7 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
+        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true).subList(0, 30);
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
@@ -153,7 +150,7 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
+        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true).subList(0, 30);
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
@@ -167,7 +164,7 @@ public class StatsServlet extends HttpServlet {
         // Vypocitaj histogram udaje
         CountEventsHistogram histogram = new CountEventsHistogram(g);
         histogram.proccess(events);
-        Collection<Map.Entry<Date, MutableInt>> zoznam = histogram.getHistogram().reduce();
+        List<Map.Entry<Date, MutableInt>> zoznam = histogram.getHistogram().reduce();
 
         // Posli udaje do vystupu
         Array2Json json = new Array2Json(stream);
@@ -194,7 +191,7 @@ public class StatsServlet extends HttpServlet {
                 mixH.map(date);
             }
         }
-        Collection<Map.Entry<Date, MutableInt>> zoznam;
+        List<Map.Entry<Date, MutableInt>> zoznam;
         zoznam = webH.reduce();
         flushMapEntry(json, zoznam, g, "Web");
         zoznam = ideH.reduce();
@@ -227,7 +224,7 @@ public class StatsServlet extends HttpServlet {
                 }
             }
         }
-        Collection<Map.Entry<Date, MutableInt>> zoznam = histogram.reduce();
+        List<Map.Entry<Date, MutableInt>> zoznam = histogram.reduce();
         flushMapEntry(json, zoznam, g, "changedLines");
         json.close();
     }
@@ -286,6 +283,9 @@ public class StatsServlet extends HttpServlet {
                     }
                     content = url;
                 } else if (group instanceof IdeGroup) {
+                    if(!(group.getFirstEvent() instanceof IdeCodeEventDto)) {
+                        return;
+                    }
                     IdeCodeEventDto ide = (IdeCodeEventDto) group.getFirstEvent();
                     IdeDocumentDto doc = ide.getDocument();
                     if (doc == null) {
@@ -340,7 +340,7 @@ public class StatsServlet extends HttpServlet {
         process.proccess(events);
 
         // Posli udaje do vystupu
-        Collection<Map.Entry<Date, MutableInt>> zoznam;
+        List<Map.Entry<Date, MutableInt>> zoznam;
         Array2Json json = new Array2Json(stream);
         json.start();
         zoznam = webHistogram.reduce(false, false, false);
@@ -350,7 +350,7 @@ public class StatsServlet extends HttpServlet {
         json.close();
     }
 
-    private static void flushMapEntry2(Array2Json json, Collection<Map.Entry<Date, MutableInt>> zoznam, TimeGranularity g, String group) {
+    private static void flushMapEntry2(Array2Json json, List<Map.Entry<Date, MutableInt>> zoznam, TimeGranularity g, String group) {
         for (Map.Entry<Date, MutableInt> entry : zoznam) {
             Date start = entry.getKey();
             IvdaEvent e = new IvdaEvent();
@@ -388,7 +388,7 @@ public class StatsServlet extends HttpServlet {
         process.proccess(events);
 
         // Posli udaje do vystupu
-        Collection<Map.Entry<Date, MutableInt>> zoznam;
+        List<Map.Entry<Date, MutableInt>> zoznam;
         Array2Json json = new Array2Json(stream);
         json.start();
         zoznam = webHistogram.reduce(false, false, false);
@@ -398,7 +398,7 @@ public class StatsServlet extends HttpServlet {
         json.close();
     }
 
-    private static void flushMapEntry(Array2Json json, Collection<Map.Entry<Date, MutableInt>> zoznam, TimeGranularity g, String group) {
+    private static void flushMapEntry(Array2Json json, List<Map.Entry<Date, MutableInt>> zoznam, TimeGranularity g, String group) {
         for (Map.Entry<Date, MutableInt> entry : zoznam) {
             Date start = entry.getKey();
             IvdaEvent e = new IvdaEvent();
@@ -435,7 +435,7 @@ public class StatsServlet extends HttpServlet {
         // Zapiseme vysledok
         Array2Json json = new Array2Json(stream);
         json.start();
-        Collection<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
+        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             // Store event
             IvdaEvent event = new IvdaEvent();

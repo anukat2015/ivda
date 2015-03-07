@@ -59,7 +59,7 @@ public class HistogramBySiblings<K extends Comparable<K>> extends Histogram<K> {
     }
 
     @Override
-    public Collection<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse) {
+    public List<Map.Entry<K, MutableInt>> reduce(boolean sorted, boolean byKey, boolean reverse) {
         return sort(keys, sorted, byKey, reverse);
     }
 }

@@ -134,8 +134,8 @@ DetailComponent.prototype._buildHtml = function () {
                 <div class="pieChart3"></div>  \
              </div>   \
             <div class="legenda">    \
-                <div class="title posun">Nezobrazuju sa ziadne aktivity.</div>  \
-                <div class="title posun">Choose another developer or move on time axis.</div>  \
+                <div class="title posun">Foundn no activities.</div>  \
+                <div class="title posun">Try another developer or move on time axis.</div>  \
                 <div class="title">Legend of events:</div> \
                 <table width="100%" align="center">  \
                     <tr> \
@@ -145,7 +145,7 @@ DetailComponent.prototype._buildHtml = function () {
                             </div>   \
                         </td> \
                         <td>  \
-                            <p>Event in web browser.</p> \
+                            <p>Event in Web browser.</p> \
                         </td>  \
                     </tr>  \
                     <tr>   \
@@ -155,7 +155,7 @@ DetailComponent.prototype._buildHtml = function () {
                             </div>  \
                         </td> \
                         <td> \
-                            <p>Event in IDE.</p> \
+                            <p>Event in Ide env.</p> \
                         </td> \
                     </tr> \
                     <tr>   \

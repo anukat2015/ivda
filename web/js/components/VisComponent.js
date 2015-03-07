@@ -50,13 +50,18 @@ VisComponent.prototype._zanaranie = function () {
     if (nextGranularity == null) {
         return; // dalsia uroven neexistuje
     }
-    var toTime = this.diagram.linegraph.body.util.toTime;
     var instance = this;
-    this.dom.find(".LineGraph .bar").dblclick(function (event) {
+    this.dom.on("dblclick", ".LineGraph .bar", function (event) {
         var bar = $(this);
         var x = bar.attr('x');
-        var endPosition = bar.attr('width') + x;
+        if(x == undefined ) {
+            return;
+        }
+        var shiftX = bar.parent().position().left;
+        x = parseFloat(x) + shiftX;
+        var endPosition = parseFloat(bar.attr('width')) + x;
         var atts = jQuery.extend(true, {}, instance.attributes);
+        var toTime = instance.diagram.linegraph.body.util.toTime;
         atts.range = {
             start: toTime(x),
             end: toTime(endPosition)
@@ -70,7 +75,7 @@ VisComponent.prototype._zanaranie = function () {
 VisComponent.prototype._createTimeline = function () {
     var options = {
         width: "100%",
-        height: "300px",
+        height: "700px",
         stack: true,
         margin: {
             item: 10, // minimal margin between items
@@ -123,6 +128,7 @@ VisComponent.prototype._createDynamicHistogram = function (items, groups, overla
 
     this.diagram = new vis.Graph2d(this.getDiagramElement(), items, options, groups);
     this._prepareDiagram();
+    this._zanaranie();
 };
 
 VisComponent.prototype.init = function (attributes, manager) {
