@@ -11,6 +11,7 @@ function Toolbar() {
     this.featurePanel = $('#t-feature');
     this.granularityPanel = $('#t-granularity');
     this.lockButton = $("#t-lockMovement");
+    this.sameScale = $("#t-sameScale");
     this.trashVisible = false;
     //this.trashTooltipVisible = false;
 
@@ -55,13 +56,28 @@ function Toolbar() {
             if (value == "1") {
                 icon = {};
                 value = "0";
-                gGlobals.graphs.lockedMove = false;
+                gGlobals.graphs.setLockedMove(false);
             } else {
                 icon = { primary: "ui-icon-locked"};
                 value = "1";
-                gGlobals.graphs.lockedMove = true;
+                gGlobals.graphs.setLockedMove(true);
             }
             instance.lockButton.button("option", "icons", icon);
+            $(this).attr("value", value);
+        });
+        this.sameScale.button({
+            icons: {
+                primary: "ui-icon-arrow-2-ne-sw"
+            }
+        }).click(function (event) {
+            var value = $(this).attr("value");
+            if (value == "1") {
+                value = "0";
+                gGlobals.graphs.setSameScale(false);
+            } else {
+                value = "1";
+                gGlobals.graphs.setSameScale(true);
+            }
             $(this).attr("value", value);
         });
 

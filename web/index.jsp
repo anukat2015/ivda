@@ -88,6 +88,7 @@
     <input type="text" id="t-developer" value="" placeholder="Choose developer"/>
     <input type="text" id="t-granularity" value="" placeholder="Choose granularity"/>
     <input type="checkbox" id="t-lockMovement" value="1" checked/>
+    <input type="checkbox" id="t-sameScale" value="1" checked/>
     <label for="t-lockMovement" style="float: right;">Lock movement</label>
     <input type="submit" id="t-submit" value="Create new graph"/>
 

@@ -9,6 +9,8 @@ DiagramManager = function () {
     this.visibleComponents = {};
     this.registerComponents();
     this.lockedMove = true;
+    this.sameScale = true;
+    this.maxScaleValue = -1;
 
     // Sprav zoznam presuvatelny
     this.dom.sortable({
@@ -21,6 +23,50 @@ DiagramManager = function () {
             gGlobals.toolbar.hideTrash();
         }
     });
+};
+
+DiagramManager.prototype.setLockedMove = function (type) {
+    this.lockedMove = type;
+};
+
+DiagramManager.prototype._maxYRange = function () {
+    var instance = this;
+    var maxScaleValue = -1;
+    Object.keys(this.visibleComponents).forEach(function (key) {
+        var range = instance.visibleComponents[key].getYRange();
+        if(range != undefined) {
+            maxScaleValue = maxScaleValue > range.max ? maxScaleValue : range.max;
+        }
+    });
+    return maxScaleValue;
+};
+
+DiagramManager.prototype._updateYRange = function (range) {
+    var instance = this;
+    Object.keys(this.visibleComponents).forEach(function (key) {
+        instance.visibleComponents[key].setYRange(range);
+    });
+};
+
+DiagramManager.prototype.updateScale = function () {
+    if(!this.sameScale) {
+        return
+    }
+    var maxYRange = this._maxYRange();
+    if(maxYRange ==-1) {
+        return;
+    }
+    this._updateYRange({min:0, max: maxYRange});
+};
+
+
+DiagramManager.prototype.setSameScale = function (type) {
+    this.sameScale = type;
+    if(!this.sameScale) {
+        this._updateYRange(undefined);
+    } else {
+        this.updateScale();
+    }
 };
 
 DiagramManager.prototype.redraw = function () {

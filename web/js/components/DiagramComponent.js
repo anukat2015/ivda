@@ -18,6 +18,14 @@ DiagramComponent = function () {
     this.groups = ["PER_VALUE"];
 };
 
+DiagramComponent.prototype.getYRange = function (range) {
+    return undefined;
+};
+
+// range undefined tak nulujeme skalu
+DiagramComponent.prototype.setYRange = function (range) {
+};
+
 DiagramComponent.prototype.setRange = function (range) {
 };
 
