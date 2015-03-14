@@ -120,7 +120,8 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true).subList(0, 30);
+        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
+        zoznam = zoznam.subList(0, Math.min(zoznam.size(), 30));
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
@@ -150,7 +151,8 @@ public class StatsServlet extends HttpServlet {
 
         Array2Json json = new Array2Json(stream);
         json.start();
-        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true).subList(0, 30);
+        List<Map.Entry<String, MutableInt>> zoznam = histogram.reduce(true, false, true);
+        zoznam = zoznam.subList(0, Math.min(zoznam.size(), 30));
         for (Map.Entry<String, MutableInt> entry : zoznam) {
             IvdaEvent e = new IvdaEvent();
             e.setContent(entry.getKey());
