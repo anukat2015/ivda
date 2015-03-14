@@ -12,6 +12,9 @@ function Toolbar() {
     this.granularityPanel = $('#t-granularity');
     this.lockButton = $("#t-lockMovement");
     this.sameScale = $("#t-sameScale");
+    this.createButton = $("#t-submit");
+    this.currentTime = $("#t-currentTime");
+
     this.trashVisible = false;
     //this.trashTooltipVisible = false;
 
@@ -34,15 +37,34 @@ function Toolbar() {
         });
 
         // Priprav tlacitka
-        $("#t-submit")
-            .button()
-            .click(function (event) {
+        this.createButtons();
+        this.createTooltips();
+
+        // Nastav hodnoty pre dropdown menu
+        this.setTime2(new Date("2014-12-06T12:00:00.000"));
+        this.setFeature(gGlobals.graphs.getGraphs());
+        var granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
+        this.setGranularity(granularities);
+
+        // Vybuduj kos
+        this.trash.droppable({
+            accept: ".component",
+            tolerance: "pointer",
+            drop: function (e, ui) {
+                var dropped = ui.draggable;
+                var id = dropped.attr('id');
+                gGlobals.graphs.destroy(id.substr(2));
+            }
+        });
+    };
+
+    this.createButtons = function() {
+        var instance = this;
+        this.createButton.button().click(function (event) {
                 event.preventDefault();
                 instance.createDiagram();
             });
-        $("#t-currentTime")
-            .button()
-            .click(function (event) {
+        this.currentTime.button().click(function (event) {
                 event.preventDefault();
                 instance.setTime2(new Date());
             });
@@ -80,23 +102,6 @@ function Toolbar() {
             }
             $(this).attr("value", value);
         });
-
-        // Nastav hodnoty pre dropdown menu
-        this.setTime2(new Date("2014-12-06T12:00:00.000"));
-        this.setFeature(gGlobals.graphs.getGraphs());
-        var granularities = ["MONTH", "DAY", "HOUR", "MINUTE", "PER_VALUE"];
-        this.setGranularity(granularities);
-
-        // Vybuduj kos
-        this.trash.droppable({
-            accept: ".component",
-            tolerance: "pointer",
-            drop: function (e, ui) {
-                var dropped = ui.draggable;
-                var id = dropped.attr('id');
-                gGlobals.graphs.destroy(id.substr(2));
-            }
-        });
     };
 
     this.showTrash = function () {
@@ -114,36 +119,33 @@ function Toolbar() {
         this.trashVisible = false;
     };
 
-    this.createTrashTooltip = function () {
-        // Vytvor animaciu
-        $("#t-submit").qtip({
+    this.createTooltips = function () {
+        var hideEffect = function() {
+            $(this).hide('puff', 500);
+        };
+        var showEffect = function() {
+                $(this).hide('slide', 500);
+        };
+
+        this.createButton.qtip({
             overwrite: false,
-            hide: {
-                effect: function() {
-                    $(this).hide('puff', 500);
-                }
-            },
+            hide: { effect: hideEffect },
             show: {
-                event: 'click',
-                effect: function() {
-                    $(this).show('slide', 500);
-                }
-            },
-            onHide: function(){
-                $("#t-submit").qtip('destroy');
+                event: false,
+                effect: showEffect
             },
             content: 'Every graph you can move by grabbing title, or move to trash.'
         });
-        $("#t-submit").qtip('toggle', true);
+        this.sameScale.qtip({
+            overwrite: false,
+            hide: { effect: hideEffect },
+            show: { effect: showEffect },
+            content: 'Enable/Disable same scale at Y axis.'
+        });
     };
 
     this.createDiagram = function () {
-        // Vytvor tooltip
-        if (!this.trashTooltipVisible) {
-            this.createTrashTooltip();
-            this.trashTooltipVisible = true;
-        }
-
+        $("#t-submit").qtip('toggle', true);
         // Vytvor diagram
         var atts = {
             developer: this.getDeveloper(),
