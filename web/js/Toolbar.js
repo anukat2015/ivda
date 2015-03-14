@@ -145,7 +145,7 @@ function Toolbar() {
     };
 
     this.createDiagram = function () {
-        $("#t-submit").qtip('toggle', true);
+        this.createButton.qtip('toggle', true);
         // Vytvor diagram
         var atts = {
             developer: this.getDeveloper(),

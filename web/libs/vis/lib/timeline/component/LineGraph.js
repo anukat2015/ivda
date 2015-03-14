@@ -920,6 +920,7 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
                     combinedData.push({
                         start: processedGroupData[groupIds[i]][j].start,
                         end: processedGroupData[groupIds[i]][j].end,
+                        distance: processedGroupData[groupIds[i]][j].distance,
                         y: processedGroupData[groupIds[i]][j].y,
                         oldY: processedGroupData[groupIds[i]][j].oldY,
                         groupId: groupIds[i]
@@ -994,7 +995,11 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
 
         var start = combinedData[i].start + drawData.offset;
         var end = combinedData[i].end;
-        var title = "Value: " + combinedData[i].oldY;
+        var title = "";
+        if(combinedData[i].distance > 0) {
+            title = "Length of activity: " + this.toHHMMSS(combinedData[i].distance) + "\n";
+        }
+        title = title + "Value: " + combinedData[i].oldY;
         var width = drawData.width;
         var className = group.className + ' bar';
         var posY = combinedData[i].y - heightOffset;
@@ -1013,6 +1018,19 @@ LineGraph.prototype._drawBarGraphs = function (groupIds, processedGroupData) {
         }
     }
 };
+
+LineGraph.prototype.toHHMMSS = function (duration) {
+    var sec_num = duration / 1000;
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
+}
 
 /**
  * Fill the intersections object with counters of how many datapoints share the same x coordinates
@@ -1182,7 +1200,7 @@ LineGraph.prototype._convertXcoordinates = function (datapoints) {
  */
 LineGraph.prototype._convertYcoordinates = function (datapoints, group) {
     var extractedData = [];
-    var xValue, xEnd, yValue, y_temp;
+    var xValue, xEnd, yValue, y_temp, xDistance;
     var toScreen = this.body.util.toScreen;
     var axis = this.yAxisLeft;
     var svgHeight = Number(this.svg.style.height.replace("px", ""));
@@ -1194,12 +1212,14 @@ LineGraph.prototype._convertYcoordinates = function (datapoints, group) {
         xValue = toScreen(datapoints[i].start) + this.width;
         if(datapoints[i].end != undefined) {
             xEnd = toScreen(datapoints[i].end) + this.width;
+            xDistance = datapoints[i].end - datapoints[i].start;
         } else {
             xEnd = undefined;
+            xDistance = 0;
         }
         y_temp = datapoints[i].y;
         yValue = Math.round(axis.convertValue(y_temp));
-        extractedData.push({start: xValue, end: xEnd, y: yValue, oldY: y_temp}); // added oldY fo title
+        extractedData.push({start: xValue, end: xEnd, y: yValue, oldY: y_temp, distance: xDistance}); // added oldY fo title
     }
 
     group.setZeroPosition(Math.min(svgHeight, axis.convertValue(0)));

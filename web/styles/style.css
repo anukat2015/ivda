@@ -166,3 +166,7 @@ html, body {
     stroke: #FFA500;
 }
 
+.qtip {
+    font-size: 16.0px;
+    line-height: 18px;
+}
