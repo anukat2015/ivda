@@ -45,7 +45,7 @@ GoogleChartComponent.prototype.convertData = function (data) {
 // ------------- Web Duration
 WebDurationComp = function () {
     GoogleChartComponent.call();
-    this.title = "Duration spent on web pages (domains)";
+    this.title = "Duration spent on Web pages (domains)";
     this.name = "webDuration";
     this.groups = ["DAY", "HOUR", "MINUTE"];
 };
@@ -98,7 +98,7 @@ BrowserVsRewrittenCodeCom.prototype.convertData = function (data) {
 };
 BrowserVsRewrittenCodeCom.prototype.generateGraph = function () {
     this.options = {
-        hAxis: {title: 'Activity at web browser in ' + this.getGranularity()},
+        hAxis: {title: 'Activity at Web browser in ' + this.getGranularity()},
         vAxis: {title: 'Rewritten code by LOC metric'},
         height: 500,
         legend: { position: 'none' },

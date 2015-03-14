@@ -166,7 +166,7 @@ CountEventsDividedCom.prototype.init = function (attributes, manager) {
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
     info.createGroup2('Web', 'Count of actions in Web browser');
-    info.createGroup2('Ide', 'Count of actions in Ide enviroment');
+    info.createGroup2('Ide', 'Count of actions in IDE enviroment');
     info.createGroup2('Mix', 'Count of another actions');
     this.diagram.setGroups(info.groups);
     this.updateData();
@@ -205,8 +205,8 @@ ActivityTimeGroupedCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Duration of activities in Browser, in' + this.getGranularity());
-    info.createGroup2('Ide', 'Duration of activities in Ide enviroment, in' + this.getGranularity());
+    info.createGroup2('Web', 'Duration of activities in Web browser, in' + this.getGranularity());
+    info.createGroup2('Ide', 'Duration of activities in IDE enviroment, in' + this.getGranularity());
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -224,8 +224,8 @@ ActivityLocDomainVisitsGrouped.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Count of visited domains during activity in Browser, one bar is group of same type activity');
-    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in Ide, one bar is group of same type activity');
+    info.createGroup2('Web', 'Count of visited domains during activity in Web browser, one bar is group of same type activity');
+    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in IDE, one bar is group of same type activity');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -244,8 +244,8 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "overlap");
     var info = new GraphData();
-    info.createGroup2('Web', 'Count of visited domains during activity in Browser, one bar is one activity');
-    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in Ide enviroment, one bar is one activity');
+    info.createGroup2('Web', 'Count of visited domains during activity in Web browser, one bar is one activity');
+    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in IDE enviroment, one bar is one activity');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -264,7 +264,7 @@ ActivityDetailCom.prototype.init = function (attributes, manager) {
     this._createTimeline();
     var info = new GraphData();
     info.createGroup2('Web', 'Activity in Web browser');
-    info.createGroup2('Ide', 'Activity in Ide enviroment');
+    info.createGroup2('Ide', 'Activity in IDE enviroment');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };

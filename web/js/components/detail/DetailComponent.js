@@ -151,11 +151,11 @@ DetailComponent.prototype._buildHtml = function () {
                     <tr>   \
                         <td> \
                             <div class="timeline-event timeline-event-circle cIde"> \
-                                <div class="timeline-event-content fixed-size">Ide</div>  \
+                                <div class="timeline-event-content fixed-size">IDE</div>  \
                             </div>  \
                         </td> \
                         <td> \
-                            <p>Event in Ide env.</p> \
+                            <p>Event in IDE env.</p> \
                         </td> \
                     </tr> \
                     <tr>   \
