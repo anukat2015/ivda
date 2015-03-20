@@ -51,6 +51,8 @@
     <script type="text/javascript" src="js/components/detail/ChartPanel.js"></script>
     <script type="text/javascript" src="js/components/detail/DetailComponent.js"></script>
     <script type="text/javascript" src="js/components/DiagramManager.js"></script>
+    <script type="text/javascript" src="js/components/HistogramComponent.js"></script>
+    <script type="text/javascript" src="js/components/TimelineComponent.js"></script>
 
     <script type="text/javascript" src="js/util.js"></script>
     <script type="text/javascript" src="js/colors.js"></script>
@@ -90,7 +92,8 @@
     <input type="checkbox" id="t-lockMovement" value="1" checked/>
     <input type="checkbox" id="t-sameScale" value="1" checked/>
     <label for="t-lockMovement" style="float: right;">Lock movement</label>
-    <input type="submit" id="t-submit" value="Create new graph"/>
+    <label for="t-sameScale" style="float: right;">Same scale</label>
+    <input type="submit" id="t-submit" value="Create graph"/>
 
     <div class="clear"></div>
 </div>

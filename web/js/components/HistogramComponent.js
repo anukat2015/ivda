@@ -10,6 +10,7 @@ HistogramComponent.prototype = new VisComponent();
 
 HistogramComponent.prototype.getYRange = function (range) {
     var step = this.diagram.linegraph.yAxisLeft.step;
+    if(step == undefined) return undefined;
     return {min: step._start, max: step._end};
 };
 
