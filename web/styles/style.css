@@ -1,7 +1,7 @@
 /* Styles for the page */
 html, body {
     font: 10pt arial;
-    margin: 4px;
+    margin: 1px;
     padding: 0;
 }
 
@@ -79,10 +79,11 @@ html, body {
     width: 70%;
     float: left;
     cursor: move;
+    font-size: 14pt;
 }
 #graphs .description {
     float: right;
-    color: #ccc;
+    color: #666;
     font-style: italic;
     font-weight: normal;
     font-size: 12px;
@@ -94,7 +95,7 @@ html, body {
 
 }
 #graphs .description .developer {
-    padding-right: 20px;
+    /*padding-right: 20px;    */
 }
 
 
@@ -169,4 +170,8 @@ html, body {
 .qtip {
     font-size: 16.0px;
     line-height: 18px;
+}
+
+.vis.timeline .dataaxis .yAxis.minor {
+    color: #000;
 }

@@ -161,7 +161,7 @@ ActivityTimeGroupedCom.prototype.init = function (attributes, manager) {
 // ----- Activity time grouped
 ActivityLocDomainVisitsGrouped = function () {
     HistogramComponent.call();
-    this.title = "Activities and their features, grouped by period";
+    this.title = "Web and IDE activities vs time (number vs. days)";
     this.name = "activityLocDomainVisitsGrouped";
     this.groups = ["MONTH", "DAY", "HOUR"];
 };
@@ -171,8 +171,8 @@ ActivityLocDomainVisitsGrouped.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "stack");
     var info = new GraphData();
-    info.createGroup2('Web', 'Count of visited domains during activity in Web browser, one bar is group of same type activity');
-    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in IDE, one bar is group of same type activity');
+    info.createGroup2('Web', 'Number of visited domains in an day');
+    info.createGroup2('Ide', 'Number edited lines of code in an day');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
@@ -191,8 +191,8 @@ ActivityDynamicCom.prototype.init = function (attributes, manager) {
     VisComponent.prototype.init.call(this, attributes, manager);
     this._createDynamicHistogram(new vis.DataSet(), new vis.DataSet(), "overlap");
     var info = new GraphData();
-    info.createGroup2('Web', 'Count of visited domains during activity in Web browser, one bar is one activity');
-    info.createGroup2('Ide', 'Adjusted source code by LOC metric during activity in IDE enviroment, one bar is one activity');
+    info.createGroup2('Web', 'Number of visited domains per activity in Web browser');
+    info.createGroup2('Ide', 'Number edited lines of code per activity in IDE enviroment');
     this.diagram.setGroups(info.groups);
     this.updateData();
 };
